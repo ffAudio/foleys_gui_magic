@@ -14,5 +14,27 @@ Status
 
 This is just starting now, if you want to get involved, play around. But it is not useful yet...
 
+Contributing
+------------
+
+Everybody is welcome and encouraged to contribute. This is supposed to be helpful for as 
+many people as possible, so please give your ideas as github issues and send pull requests.
+
+We might ask you to change things in your pull requests to keep the style consistent and
+to keep the API as concise as possible.
+
+We have a repository containing example projects, that are our reference what must not break.
+These will be built on our CI for OSX and Windows 10, so we catch hopefully any breakage 
+early on. 
+Clone that repository using:
+```
+git clone --recurse-submodules https://github.com/ffAudio/PluginGuiMagic.git
+```
+To update:
+```
+git pull origin master
+git submodule update
+```
+
 
 Brighton, UK - Sept. 2019
