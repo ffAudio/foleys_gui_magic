@@ -14,6 +14,11 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse)
     setSize (600, 400);
 }
 
+void MagicPluginEditor::restoreGUI (const juce::ValueTree& gui)
+{
+    builder.restoreGUI (gui);
+}
+
 void MagicPluginEditor::paint (juce::Graphics& g)
 {
     g.fillAll (juce::Colours::darkgrey);
@@ -22,7 +27,7 @@ void MagicPluginEditor::paint (juce::Graphics& g)
 
 void MagicPluginEditor::resized()
 {
-
+    builder.updateLayout();
 }
 
 }

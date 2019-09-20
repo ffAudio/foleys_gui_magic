@@ -3,7 +3,19 @@ namespace foleys
 {
 
 template <class AppType>
-MagicGUIBuilder<AppType>::MagicGUIBuilder (juce::Component& parent)
+MagicGUIBuilder<AppType>::MagicGUIBuilder (juce::Component& parentToUse)
+  : parent (parentToUse)
+{
+}
+
+template <class AppType>
+void MagicGUIBuilder<AppType>::restoreGUI (const juce::ValueTree& gui)
+{
+    // TODO: recalculate the layout of the components
+}
+
+template <class AppType>
+void MagicGUIBuilder<AppType>::updateLayout ()
 {
 
 }

@@ -15,6 +15,13 @@ class MagicPluginEditor  : public juce::AudioProcessorEditor,
 public:
     MagicPluginEditor (MagicProcessorState& processorState);
 
+    /**
+     Setup a GUI from a previously stored ValueTree
+
+     @param gui the ValueTree that defines the GUI of the editor
+     */
+    void restoreGUI (const juce::ValueTree& gui);
+
     void paint (juce::Graphics& g) override;
     void resized() override;
 

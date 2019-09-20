@@ -17,6 +17,16 @@ public:
 
     MagicGUIBuilder (juce::Component& parent);
 
+    /**
+     Loads a gui from a previously stored ValueTree.
+     */
+    void restoreGUI (const juce::ValueTree& gui);
+
+    /**
+     Recalculates the layout of all components
+     */
+    void updateLayout ();
+
     void registerFactory (juce::String type, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&, AppType&)> factory);
 
     void registerJUCEFactories();
@@ -26,6 +36,8 @@ public:
     void registerJUCELookAndFeels();
 
 private:
+
+    juce::Component& parent;
 
     std::map<juce::String, std::unique_ptr<juce::LookAndFeel>> lookAndFeels;
 
