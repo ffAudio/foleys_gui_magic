@@ -48,6 +48,12 @@ void MagicGUIBuilder<juce::AudioProcessor>::registerJUCEFactories()
                      {
                          return std::make_unique<juce::ComboBox>();
                      });
+
+    registerFactory ("TextButton",
+                     [] (const juce::ValueTree& config, auto& app)
+                     {
+                         return std::make_unique<juce::TextButton>();
+                     });
 }
 
 template <>
@@ -71,7 +77,6 @@ void MagicGUIBuilder<juce::AudioProcessor>::registerJUCELookAndFeels()
     registerLookAndFeel ("LookAndFeel_V2", std::make_unique<juce::LookAndFeel_V2>());
     registerLookAndFeel ("LookAndFeel_V3", std::make_unique<juce::LookAndFeel_V3>());
     registerLookAndFeel ("LookAndFeel_V4", std::make_unique<juce::LookAndFeel_V4>());
-
 }
 
 }
