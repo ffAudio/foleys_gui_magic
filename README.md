@@ -9,4 +9,10 @@ There will be a drag and drop editor to add GUI elements, and to connect to
 parameters of your AudioProcessorValueTreeState. Also an editor in the style of FireBug
 to investigate the individual properties, and how they were obtained/calculated.
 
+Status
+------
 
+This is just starting now, if you want to get involved, play around. But it is not useful yet...
+
+
+Brighton, UK - Sept. 2019
