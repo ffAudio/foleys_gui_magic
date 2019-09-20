@@ -22,6 +22,8 @@ public:
      */
     void restoreGUI (const juce::ValueTree& gui);
 
+    void restoreGUI (const char* data, const int dataSize);
+
     void paint (juce::Graphics& g) override;
     void resized() override;
 
