@@ -4,9 +4,9 @@
 namespace foleys
 {
 
-MagicPluginEditor::MagicPluginEditor (juce::AudioProcessor& processorToUse)
-  : juce::AudioProcessorEditor (processorToUse),
-    processor (processorToUse)
+MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse)
+  : juce::AudioProcessorEditor (stateToUse.getProcessor()),
+    processorState (stateToUse)
 {
     builder.registerJUCEFactories();
     builder.registerJUCELookAndFeels();

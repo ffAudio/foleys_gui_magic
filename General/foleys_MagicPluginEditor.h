@@ -13,13 +13,13 @@ class MagicPluginEditor  : public juce::AudioProcessorEditor,
                            public juce::DragAndDropContainer
 {
 public:
-    MagicPluginEditor (juce::AudioProcessor& processor);
+    MagicPluginEditor (MagicProcessorState& processorState);
 
     void paint (juce::Graphics& g) override;
     void resized() override;
 
 private:
-    juce::AudioProcessor& processor;
+    MagicProcessorState& processorState;
 
     MagicGUIBuilder<juce::AudioProcessor> builder { *this };
 
