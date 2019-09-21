@@ -11,6 +11,12 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse)
     builder.registerJUCEFactories();
     builder.registerJUCELookAndFeels();
 
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    magicToolBox = std::make_unique<ToolBox>(getTopLevelComponent());
+#endif
+
+    setResizable (true, true);
+
     setSize (600, 400);
 }
 

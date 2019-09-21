@@ -44,6 +44,13 @@
 
 #pragma once
 
+/** Config: FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+            Enables the GUI editor palette allowing to edit the GUI. Ideally set this to 0 in a release build.
+  */
+#ifndef FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+#define FOLEYS_SHOW_GUI_EDITOR_PALLETTE 1
+#endif
+
 #include <juce_core/juce_core.h>
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_audio_processors/juce_audio_processors.h>
@@ -52,6 +59,9 @@
 #include "Layout/foleys_Stylesheet.h"
 #include "Layout/foleys_Decorator.h"
 #include "Layout/foleys_Container.h"
+
+#include "Editor/foleys_ToolBox.h"
+
 #include "General/foleys_MagicProcessorState.h"
 #include "General/foleys_MagicGUIBuilder.h"
 #include "General/foleys_MagicPluginEditor.h"

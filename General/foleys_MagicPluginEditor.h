@@ -48,6 +48,10 @@ private:
 
     MagicGUIBuilder<juce::AudioProcessor> builder { *this };
 
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    std::unique_ptr<ToolBox> magicToolBox;
+#endif
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicPluginEditor)
 };
 

@@ -8,3 +8,4 @@
 #include "Layout/foleys_Stylesheet.cpp"
 #include "Layout/foleys_Decorator.cpp"
 #include "Layout/foleys_Container.cpp"
+#include "Editor/foleys_ToolBox.cpp"
