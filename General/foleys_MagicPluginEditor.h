@@ -22,6 +22,22 @@ public:
      */
     void restoreGUI (const juce::ValueTree& gui);
 
+    /**
+     Setup a GUI from a previously stored ValueTree. This is the
+     usual way to deploy your finished GUI via the Projucer:
+
+     @code{.cpp}
+     AudioProcessorEditor* MyAudioProcessor::createEditor()
+     {
+         auto* editor = new foleys::MagicPluginEditor (magicState);
+         editor->restoreGUI (BinaryData::magic_xml, BinaryData::magic_xmlSize);
+         return editor;
+     }
+     @endcode
+
+     @param data points to the binary data of the XML file
+     @param dataSize the number of bytes
+     */
     void restoreGUI (const char* data, const int dataSize);
 
     void paint (juce::Graphics& g) override;
