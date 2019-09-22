@@ -45,15 +45,16 @@ MagicGUIBuilder<AppType>::MagicGUIBuilder (juce::Component& parentToUse, AppType
   : parent (parentToUse),
     app (appToUse)
 {
+    config = juce::ValueTree (IDs::magic);
 }
 
 template <class AppType>
 void MagicGUIBuilder<AppType>::restoreGUI (const juce::ValueTree& gui)
 {
-    if (gui.isValid())
-        config = gui;
-    else
-        config = juce::ValueTree (IDs::magic);
+    if (gui.isValid() == false)
+        return;
+
+    config = gui;
 
     stylesheet.readFromValueTree (config, &undo);
     auto rootNode = config.getOrCreateChildWithName (IDs::div, &undo);
@@ -151,4 +152,39 @@ std::unique_ptr<Decorator> MagicGUIBuilder<juce::AudioProcessor>::restoreNode (j
     return item;
 }
 
+template <>
+void MagicGUIBuilder<juce::AudioProcessor>::createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree)
+{
+    for (const auto& sub : tree.getSubgroups (false))
+    {
+        auto child = juce::ValueTree (IDs::div);
+        child.setProperty ("caption", sub->getName(), nullptr);
+        createDefaultFromParameters (child, *sub);
+        node.appendChild (child, nullptr);
+    }
+
+    for (const auto& param : tree.getParameters (false))
+    {
+        auto child = juce::ValueTree (IDs::slider);
+        child.setProperty ("caption", param->getName (64), nullptr);
+        if (const auto* parameterWithID = dynamic_cast<juce::AudioProcessorParameterWithID*>(param))
+            child.setProperty ("parameter", parameterWithID->paramID, nullptr);
+
+        node.appendChild (child, nullptr);
+    }
 }
+
+template <>
+void MagicGUIBuilder<juce::AudioProcessor>::createDefaultGUITree()
+{
+    auto rootNode = config.getOrCreateChildWithName (IDs::div, &undo);
+    createDefaultFromParameters (rootNode, app.getParameterTree());
+    root = restoreNode (parent, rootNode);
+
+    updateLayout();
+
+    DBG ("default:\n" << rootNode.toXmlString());
+}
+
+
+} // namespace foleys

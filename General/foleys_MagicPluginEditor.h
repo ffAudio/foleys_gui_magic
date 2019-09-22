@@ -68,6 +68,8 @@ public:
      */
     void restoreGUI (const char* data, const int dataSize);
 
+    void createDefaultGUI();
+
     void resized() override;
 
 private:

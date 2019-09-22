@@ -50,10 +50,14 @@ public:
      */
     void restoreGUI (const juce::ValueTree& gui);
 
+    void createDefaultGUITree();
+
     /**
      Recalculates the layout of all components
      */
     void updateLayout ();
+
+    void createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree);
 
     void registerFactory (juce::String type, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&, AppType&)> factory);
 

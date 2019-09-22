@@ -65,4 +65,9 @@ void MagicPluginEditor::restoreGUI (const char* data, const int dataSize)
     restoreGUI (gui);
 }
 
+void MagicPluginEditor::createDefaultGUI()
+{
+    builder.createDefaultGUITree();
 }
+
+} // namespace foleys
