@@ -1,6 +1,44 @@
+/*
+ ==============================================================================
+    Copyright (c) 2019 Foleys Finest Audio Ltd. - Daniel Walz
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the following conditions are met:
+    1. Redistributions of source code must retain the above copyright notice, this
+       list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
+       and/or other materials provided with the distribution.
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
+       specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+    IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+    INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+    OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+    OF THE POSSIBILITY OF SUCH DAMAGE.
+ ==============================================================================
+ */
 
 namespace foleys
 {
+
+namespace IDs
+{
+    static juce::Identifier magic       { "magic" };
+    static juce::Identifier div         { "Div" };
+    static juce::Identifier slider      { "Slider" };
+    static juce::Identifier textButton  { "TextButton" };
+    static juce::Identifier comboBox    { "ComboBox" };
+}
+
 
 template <class AppType>
 MagicGUIBuilder<AppType>::MagicGUIBuilder (juce::Component& parentToUse, AppType& appToUse)
@@ -15,10 +53,10 @@ void MagicGUIBuilder<AppType>::restoreGUI (const juce::ValueTree& gui)
     if (gui.isValid())
         config = gui;
     else
-        config = juce::ValueTree ("magic");
+        config = juce::ValueTree (IDs::magic);
 
     stylesheet.readFromValueTree (config, &undo);
-    auto rootNode = config.getOrCreateChildWithName ("Div", &undo);
+    auto rootNode = config.getOrCreateChildWithName (IDs::div, &undo);
     root = restoreNode (parent, rootNode);
 
     updateLayout();
@@ -48,19 +86,19 @@ void MagicGUIBuilder<AppType>::registerFactory (juce::String type, std::function
 template <>
 void MagicGUIBuilder<juce::AudioProcessor>::registerJUCEFactories()
 {
-    registerFactory ("Slider",
+    registerFactory (IDs::slider.toString(),
                      [] (const juce::ValueTree& config, auto& app)
                      {
                          return std::make_unique<juce::Slider>(juce::Slider::RotaryHorizontalVerticalDrag, juce::Slider::TextBoxBelow);
                      });
 
-    registerFactory ("ComboBox",
+    registerFactory (IDs::comboBox.toString(),
                      [] (const juce::ValueTree& config, auto& app)
                      {
                          return std::make_unique<juce::ComboBox>();
                      });
 
-    registerFactory ("TextButton",
+    registerFactory (IDs::textButton.toString(),
                      [] (const juce::ValueTree& config, auto& app)
                      {
                          return std::make_unique<juce::TextButton>();
@@ -93,12 +131,12 @@ void MagicGUIBuilder<juce::AudioProcessor>::registerJUCELookAndFeels()
 template <>
 std::unique_ptr<Decorator> MagicGUIBuilder<juce::AudioProcessor>::restoreNode (juce::Component& component, const juce::ValueTree& node)
 {
-    if (node.getType().toString() == "Div")
+    if (node.getType() == IDs::div)
     {
         auto item = std::make_unique<Container>();
         for (auto childNode : node)
         {
-            item->addChild (restoreNode (*item, childNode));
+            item->addChildItem (restoreNode (*item, childNode));
         }
 
         component.addAndMakeVisible (item.get());
