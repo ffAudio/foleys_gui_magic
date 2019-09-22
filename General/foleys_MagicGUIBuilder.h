@@ -48,9 +48,9 @@ public:
     /**
      Loads a gui from a previously stored ValueTree.
      */
-    void restoreGUI (const juce::ValueTree& gui);
+    void restoreGUI (const juce::ValueTree& gui, juce::AudioProcessorValueTreeState* state=nullptr);
 
-    void createDefaultGUITree();
+    void createDefaultGUITree (juce::AudioProcessorValueTreeState* state);
 
     /**
      Recalculates the layout of all components
@@ -67,7 +67,7 @@ public:
 
     void registerJUCELookAndFeels();
 
-    std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node);
+    std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node, juce::AudioProcessorValueTreeState* state);
 
 private:
 

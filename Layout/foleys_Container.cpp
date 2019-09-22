@@ -36,16 +36,38 @@ void Container::addChildItem (std::unique_ptr<Decorator> child)
     addAndMakeVisible (child.get());
 }
 
+void Container::setLayout (Layout l)
+{
+    layout = l;
+}
+
 void Container::resized()
 {
     if (children.empty())
         return;
 
     auto bounds = getClientBounds();
-    int w = bounds.getWidth() / children.size();
 
-    for (auto& child : children)
-        child->setBounds (bounds.removeFromLeft (w));
+    if (layout == Layout::HorizontalBox)
+    {
+        int w = bounds.getWidth() / children.size();
+
+        for (auto& child : children)
+            child->setBounds (bounds.removeFromLeft (w));
+    }
+    else if (layout == Layout::VerticalBox)
+    {
+        int h = bounds.getHeight() / children.size();
+
+        for (auto& child : children)
+            child->setBounds (bounds.removeFromTop (h));
+    }
+    else
+    {
+        for (auto& child : children)
+            child->setBounds (bounds);
+    }
+
 }
 
 } // namespace foleys

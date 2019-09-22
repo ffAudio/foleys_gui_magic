@@ -50,7 +50,7 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse)
 
 void MagicPluginEditor::restoreGUI (const juce::ValueTree& gui)
 {
-    builder.restoreGUI (gui);
+    builder.restoreGUI (gui, &processorState.getValueTreeState());
 }
 
 void MagicPluginEditor::resized()
@@ -67,7 +67,7 @@ void MagicPluginEditor::restoreGUI (const char* data, const int dataSize)
 
 void MagicPluginEditor::createDefaultGUI()
 {
-    builder.createDefaultGUITree();
+    builder.createDefaultGUITree (&processorState.getValueTreeState());
 }
 
 } // namespace foleys

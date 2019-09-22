@@ -52,6 +52,26 @@ void Decorator::setEditable (bool shouldEdit)
         component->setInterceptsMouseClicks (!shouldEdit, true);
 }
 
+void Decorator::connectToState (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)
+{
+    if (auto* slider = dynamic_cast<juce::Slider*>(component.get()))
+    {
+        sliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(state, paramID, *slider);
+    }
+    else if (auto* combo = dynamic_cast<juce::ComboBox*>(component.get()))
+    {
+        if (auto* choice = dynamic_cast<juce::AudioParameterChoice*>(state.getParameter (paramID)))
+            combo->addItemList (choice->choices, 1);
+
+        comboboxAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(state, paramID, *combo);
+    }
+    else if (auto* button = dynamic_cast<juce::Button*>(component.get()))
+    {
+        button->setClickingTogglesState (true);
+        buttonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(state, paramID, *button);
+    }
+}
+
 void Decorator::paint (juce::Graphics& g)
 {
     const auto bounds = getLocalBounds().toFloat().reduced (margin);
@@ -95,6 +115,11 @@ void Decorator::resized()
 {
     if (component.get() != nullptr)
         component->setBounds (getClientBounds());
+}
+
+juce::Component* Decorator::getWrappedComponent()
+{
+    return component.get();
 }
 
 }

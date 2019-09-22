@@ -48,8 +48,12 @@ public:
      */
     void setEditable (bool shouldEdit);
 
+    void connectToState (const juce::String& paramID, juce::AudioProcessorValueTreeState& state);
+
     void paint (juce::Graphics& g) override;
     void resized() override;
+
+    juce::Component* getWrappedComponent();
 
 protected:
 

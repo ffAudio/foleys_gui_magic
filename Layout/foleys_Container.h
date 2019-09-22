@@ -50,7 +50,11 @@ public:
 
     void resized() override;
 
+    void setLayout (Layout l);
+
 private:
+
+    Layout layout = Layout::HorizontalBox;
 
     std::vector<std::unique_ptr<Decorator>> children;
 
