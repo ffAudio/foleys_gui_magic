@@ -3,21 +3,32 @@ namespace foleys
 {
 
 template <class AppType>
-MagicGUIBuilder<AppType>::MagicGUIBuilder (juce::Component& parentToUse)
-  : parent (parentToUse)
+MagicGUIBuilder<AppType>::MagicGUIBuilder (juce::Component& parentToUse, AppType& appToUse)
+  : parent (parentToUse),
+    app (appToUse)
 {
 }
 
 template <class AppType>
 void MagicGUIBuilder<AppType>::restoreGUI (const juce::ValueTree& gui)
 {
-    // TODO: recalculate the layout of the components
+    if (gui.isValid())
+        config = gui;
+    else
+        config = juce::ValueTree ("magic");
+
+    stylesheet.readFromValueTree (config, &undo);
+    auto rootNode = config.getOrCreateChildWithName ("Div", &undo);
+    root = restoreNode (parent, rootNode);
+
+    updateLayout();
 }
 
 template <class AppType>
 void MagicGUIBuilder<AppType>::updateLayout ()
 {
-
+    if (root.get() != nullptr)
+        root->setBounds (parent.getLocalBounds());
 }
 
 template <class AppType>
@@ -40,7 +51,7 @@ void MagicGUIBuilder<juce::AudioProcessor>::registerJUCEFactories()
     registerFactory ("Slider",
                      [] (const juce::ValueTree& config, auto& app)
                      {
-                         return std::make_unique<juce::Slider>();
+                         return std::make_unique<juce::Slider>(juce::Slider::RotaryHorizontalVerticalDrag, juce::Slider::TextBoxBelow);
                      });
 
     registerFactory ("ComboBox",
@@ -77,6 +88,29 @@ void MagicGUIBuilder<juce::AudioProcessor>::registerJUCELookAndFeels()
     registerLookAndFeel ("LookAndFeel_V2", std::make_unique<juce::LookAndFeel_V2>());
     registerLookAndFeel ("LookAndFeel_V3", std::make_unique<juce::LookAndFeel_V3>());
     registerLookAndFeel ("LookAndFeel_V4", std::make_unique<juce::LookAndFeel_V4>());
+}
+
+template <>
+std::unique_ptr<Decorator> MagicGUIBuilder<juce::AudioProcessor>::restoreNode (juce::Component& component, const juce::ValueTree& node)
+{
+    if (node.getType().toString() == "Div")
+    {
+        auto item = std::make_unique<Container>();
+        for (auto childNode : node)
+        {
+            item->addChild (restoreNode (*item, childNode));
+        }
+
+        component.addAndMakeVisible (item.get());
+        return item;
+    }
+
+    auto factory = factories [node.getType().toString()];
+
+    auto item = std::make_unique<Decorator> (factory (node, app));
+    component.addAndMakeVisible (item.get());
+
+    return item;
 }
 
 }

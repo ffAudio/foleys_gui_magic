@@ -25,12 +25,6 @@ void MagicPluginEditor::restoreGUI (const juce::ValueTree& gui)
     builder.restoreGUI (gui);
 }
 
-void MagicPluginEditor::paint (juce::Graphics& g)
-{
-    g.fillAll (juce::Colours::darkgrey);
-    g.drawFittedText ("Nothing to see yet", getLocalBounds().withSizeKeepingCentre (300, 30), juce::Justification::centred, 1);
-}
-
 void MagicPluginEditor::resized()
 {
     builder.updateLayout();

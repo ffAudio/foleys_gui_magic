@@ -40,13 +40,12 @@ public:
      */
     void restoreGUI (const char* data, const int dataSize);
 
-    void paint (juce::Graphics& g) override;
     void resized() override;
 
 private:
     MagicProcessorState& processorState;
 
-    MagicGUIBuilder<juce::AudioProcessor> builder { *this };
+    MagicGUIBuilder<juce::AudioProcessor> builder { *this, processorState.getProcessor() };
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     std::unique_ptr<ToolBox> magicToolBox;

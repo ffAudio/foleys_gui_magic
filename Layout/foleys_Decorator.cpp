@@ -3,9 +3,16 @@
 namespace foleys
 {
 
+Decorator::Decorator()
+{
+    setOpaque (margin == 0 && radius == 0);
+}
+
 Decorator::Decorator (std::unique_ptr<juce::Component> wrapped)
   : component (std::move (wrapped))
 {
+    setOpaque (margin == 0 && radius == 0);
+
     if (component.get() != nullptr)
         addAndMakeVisible (component.get());
 }
@@ -54,10 +61,15 @@ void Decorator::paint (juce::Graphics& g)
 
 }
 
+juce::Rectangle<int> Decorator::getClientBounds() const
+{
+    return getLocalBounds().reduced (margin + padding);
+}
+
 void Decorator::resized()
 {
     if (component.get() != nullptr)
-        component->setBounds (getLocalBounds().reduced (margin + padding));
+        component->setBounds (getClientBounds());
 }
 
 }

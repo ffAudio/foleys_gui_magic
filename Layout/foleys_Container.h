@@ -4,7 +4,7 @@
 namespace foleys
 {
 
-class Container : public juce::Component
+class Container : public Decorator
 {
 public:
     enum class Layout
@@ -17,6 +17,10 @@ public:
     };
 
     Container() = default;
+
+    void addChild (std::unique_ptr<Decorator> child);
+
+    void resized() override;
 
 private:
 

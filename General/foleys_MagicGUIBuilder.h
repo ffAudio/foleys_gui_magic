@@ -15,7 +15,7 @@ class MagicGUIBuilder
 {
 public:
 
-    MagicGUIBuilder (juce::Component& parent);
+    MagicGUIBuilder (juce::Component& parent, AppType& app);
 
     /**
      Loads a gui from a previously stored ValueTree.
@@ -35,15 +35,23 @@ public:
 
     void registerJUCELookAndFeels();
 
+    std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node);
+
 private:
 
     juce::Component& parent;
+
+    AppType&         app;
 
     std::map<juce::String, std::unique_ptr<juce::LookAndFeel>> lookAndFeels;
 
     std::map<juce::String, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&, AppType&)>> factories;
 
+    juce::UndoManager undo;
+    juce::ValueTree   config;
     Stylesheet stylesheet;
+
+    std::unique_ptr<Decorator> root;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicGUIBuilder)
 };

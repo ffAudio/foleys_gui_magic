@@ -12,6 +12,7 @@ namespace foleys
 class Decorator : public juce::Component
 {
 public:
+    Decorator();
     Decorator (std::unique_ptr<juce::Component> wrapped);
 
     /**
@@ -21,6 +22,10 @@ public:
 
     void paint (juce::Graphics& g) override;
     void resized() override;
+
+protected:
+
+    juce::Rectangle<int> getClientBounds() const;
 
 private:
 
