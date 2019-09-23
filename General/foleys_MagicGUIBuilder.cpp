@@ -194,8 +194,11 @@ void MagicGUIBuilder<juce::AudioProcessor>::createDefaultFromParameters (juce::V
 }
 
 template <>
-    void MagicGUIBuilder<juce::AudioProcessor>::createDefaultGUITree (juce::AudioProcessorValueTreeState* state)
+    void MagicGUIBuilder<juce::AudioProcessor>::createDefaultGUITree (juce::AudioProcessorValueTreeState* state, bool keepExisting)
 {
+    if (keepExisting && config.getChildWithName (IDs::div).isValid())
+        return;
+
     auto rootNode = config.getOrCreateChildWithName (IDs::div, &undo);
     createDefaultFromParameters (rootNode, app.getParameterTree());
     root = restoreNode (parent, rootNode, state);

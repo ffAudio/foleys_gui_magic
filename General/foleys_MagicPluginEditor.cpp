@@ -65,9 +65,9 @@ void MagicPluginEditor::restoreGUI (const char* data, const int dataSize)
     restoreGUI (gui);
 }
 
-void MagicPluginEditor::createDefaultGUI()
+void MagicPluginEditor::createDefaultGUI (bool keepExisting)
 {
-    builder.createDefaultGUITree (&processorState.getValueTreeState());
+    builder.createDefaultGUITree (&processorState.getValueTreeState(), keepExisting);
 }
 
 } // namespace foleys

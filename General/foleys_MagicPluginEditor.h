@@ -68,7 +68,7 @@ public:
      */
     void restoreGUI (const char* data, const int dataSize);
 
-    void createDefaultGUI();
+    void createDefaultGUI (bool keepExisting);
 
     void resized() override;
 

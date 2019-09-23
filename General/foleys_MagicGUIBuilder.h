@@ -50,7 +50,7 @@ public:
      */
     void restoreGUI (const juce::ValueTree& gui, juce::AudioProcessorValueTreeState* state=nullptr);
 
-    void createDefaultGUITree (juce::AudioProcessorValueTreeState* state);
+    void createDefaultGUITree (juce::AudioProcessorValueTreeState* state, bool keepExisting);
 
     /**
      Recalculates the layout of all components
