@@ -72,6 +72,8 @@ public:
 
     void createDefaultGUI (bool keepExisting);
 
+    void paint (juce::Graphics& g) override;
+
     void resized() override;
 
 private:
