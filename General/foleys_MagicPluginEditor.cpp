@@ -72,11 +72,6 @@ void MagicPluginEditor::restoreGUI (const juce::ValueTree& gui)
     builder.restoreGUI (gui);
 }
 
-void MagicPluginEditor::resized()
-{
-    builder.updateLayout();
-}
-
 void MagicPluginEditor::restoreGUI (const char* data, const int dataSize)
 {
     juce::String text (data, dataSize);
@@ -87,6 +82,16 @@ void MagicPluginEditor::restoreGUI (const char* data, const int dataSize)
 void MagicPluginEditor::createDefaultGUI (bool keepExisting)
 {
     builder.createDefaultGUITree (keepExisting);
+}
+
+void MagicPluginEditor::paint (juce::Graphics& g)
+{
+    g.fillAll (juce::Colours::black);
+}
+
+void MagicPluginEditor::resized()
+{
+    builder.updateLayout();
 }
 
 } // namespace foleys
