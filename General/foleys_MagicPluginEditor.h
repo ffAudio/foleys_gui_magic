@@ -43,6 +43,8 @@ class MagicPluginEditor  : public juce::AudioProcessorEditor,
 public:
     MagicPluginEditor (MagicProcessorState& processorState);
 
+    MagicPluginEditor (MagicProcessorState& processorState, const char* data, const int dataSize);
+
     /**
      Setup a GUI from a previously stored ValueTree
 
@@ -75,7 +77,7 @@ public:
 private:
     MagicProcessorState& processorState;
 
-    MagicGUIBuilder<juce::AudioProcessor> builder { *this, processorState.getProcessor() };
+    MagicGUIBuilder<juce::AudioProcessor> builder { *this, processorState.getProcessor(), &processorState };
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     std::unique_ptr<ToolBox> magicToolBox;

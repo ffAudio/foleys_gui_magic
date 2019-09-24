@@ -46,15 +46,16 @@ namespace IDs
 
 
 template <class AppType>
-MagicGUIBuilder<AppType>::MagicGUIBuilder (juce::Component& parentToUse, AppType& appToUse)
+MagicGUIBuilder<AppType>::MagicGUIBuilder (juce::Component& parentToUse, AppType& appToUse, MagicProcessorState* magicStateToUse)
   : parent (parentToUse),
-    app (appToUse)
+    app (appToUse),
+    magicState (magicStateToUse)
 {
     config = juce::ValueTree (IDs::magic);
 }
 
 template <class AppType>
-    void MagicGUIBuilder<AppType>::restoreGUI (const juce::ValueTree& gui, juce::AudioProcessorValueTreeState* state)
+void MagicGUIBuilder<AppType>::restoreGUI (const juce::ValueTree& gui)
 {
     if (gui.isValid() == false)
         return;
@@ -62,14 +63,20 @@ template <class AppType>
     config = gui;
 
     stylesheet.readFromValueTree (config, &undo);
-    auto rootNode = config.getOrCreateChildWithName (IDs::div, &undo);
-    root = restoreNode (parent, rootNode, state);
 
+    updateComponents();
     updateLayout();
 }
 
 template <class AppType>
-void MagicGUIBuilder<AppType>::updateLayout ()
+void MagicGUIBuilder<AppType>::updateComponents()
+{
+    auto rootNode = config.getOrCreateChildWithName (IDs::div, &undo);
+    root = restoreNode (parent, rootNode);
+}
+
+template <class AppType>
+void MagicGUIBuilder<AppType>::updateLayout()
 {
     if (root.get() != nullptr)
         root->setBounds (parent.getLocalBounds());
@@ -135,14 +142,14 @@ void MagicGUIBuilder<juce::AudioProcessor>::registerJUCELookAndFeels()
 }
 
 template <>
-std::unique_ptr<Decorator> MagicGUIBuilder<juce::AudioProcessor>::restoreNode (juce::Component& component, const juce::ValueTree& node, juce::AudioProcessorValueTreeState* state)
+std::unique_ptr<Decorator> MagicGUIBuilder<juce::AudioProcessor>::restoreNode (juce::Component& component, const juce::ValueTree& node)
 {
     if (node.getType() == IDs::div)
     {
         auto item = std::make_unique<Container>();
         for (auto childNode : node)
         {
-            item->addChildItem (restoreNode (*item, childNode, state));
+            item->addChildItem (restoreNode (*item, childNode));
         }
 
         // hardcoded for testing - should come from stylesheet
@@ -158,9 +165,12 @@ std::unique_ptr<Decorator> MagicGUIBuilder<juce::AudioProcessor>::restoreNode (j
     auto item = std::make_unique<Decorator> (factory (node, app));
     component.addAndMakeVisible (item.get());
 
-    auto parameter = node.getProperty (IDs::parameter, juce::String()).toString();
-    if (state != nullptr && parameter.isNotEmpty())
-        item->connectToState (parameter, *state);
+    if (magicState != nullptr)
+    {
+        auto parameter = node.getProperty (IDs::parameter, juce::String()).toString();
+        if (parameter.isNotEmpty())
+            item->connectToState (parameter, magicState->getValueTreeState());
+    }
 
     return item;
 }
@@ -194,15 +204,17 @@ void MagicGUIBuilder<juce::AudioProcessor>::createDefaultFromParameters (juce::V
 }
 
 template <>
-    void MagicGUIBuilder<juce::AudioProcessor>::createDefaultGUITree (juce::AudioProcessorValueTreeState* state, bool keepExisting)
+void MagicGUIBuilder<juce::AudioProcessor>::createDefaultGUITree (bool keepExisting)
 {
     if (keepExisting && config.getChildWithName (IDs::div).isValid())
         return;
 
     auto rootNode = config.getOrCreateChildWithName (IDs::div, &undo);
-    createDefaultFromParameters (rootNode, app.getParameterTree());
-    root = restoreNode (parent, rootNode, state);
 
+    if (magicState != nullptr)
+        createDefaultFromParameters (rootNode, magicState->getProcessor().getParameterTree());
+
+    root = restoreNode (parent, rootNode);
     updateLayout();
 }
 

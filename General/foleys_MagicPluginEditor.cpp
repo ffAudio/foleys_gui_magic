@@ -48,9 +48,28 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse)
     setSize (600, 400);
 }
 
+MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const char* data, const int dataSize)
+  : juce::AudioProcessorEditor (stateToUse.getProcessor()),
+    processorState (stateToUse)
+{
+    builder.registerJUCEFactories();
+    builder.registerJUCELookAndFeels();
+
+    restoreGUI (data, dataSize);
+    createDefaultGUI (true);
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    magicToolBox = std::make_unique<ToolBox>(getTopLevelComponent());
+#endif
+
+    setResizable (true, true);
+
+    setSize (600, 400);
+}
+
 void MagicPluginEditor::restoreGUI (const juce::ValueTree& gui)
 {
-    builder.restoreGUI (gui, &processorState.getValueTreeState());
+    builder.restoreGUI (gui);
 }
 
 void MagicPluginEditor::resized()
@@ -67,7 +86,7 @@ void MagicPluginEditor::restoreGUI (const char* data, const int dataSize)
 
 void MagicPluginEditor::createDefaultGUI (bool keepExisting)
 {
-    builder.createDefaultGUITree (&processorState.getValueTreeState(), keepExisting);
+    builder.createDefaultGUITree (keepExisting);
 }
 
 } // namespace foleys

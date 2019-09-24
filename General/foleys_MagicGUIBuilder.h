@@ -43,19 +43,40 @@ class MagicGUIBuilder
 {
 public:
 
-    MagicGUIBuilder (juce::Component& parent, AppType& app);
+    /**
+     Creates the MagicGUIBuilder. This is responsible to create the GUI elements from the ValueTree.
+     To allow custom Components to be created with a backlink to the containing application.
+     This can be an AudioProcessor or it's descendents. Or it could be your custom MainComponent.
+     In which case you have to template it with your own type. Now you can reference it in the
+     factory method.
+
+     @param parent      is the component, the GUI will be imbedded into.
+     @param app         is the model the components might connect to.
+     @param magicState  an optional pointer to the MagicProcessorState. This is only useful
+                        for AudioProcessors, but will allow automatic connection of parameters.
+     */
+    MagicGUIBuilder (juce::Component& parent, AppType& app, MagicProcessorState* magicState);
 
     /**
      Loads a gui from a previously stored ValueTree.
      */
-    void restoreGUI (const juce::ValueTree& gui, juce::AudioProcessorValueTreeState* state=nullptr);
+    void restoreGUI (const juce::ValueTree& gui);
 
-    void createDefaultGUITree (juce::AudioProcessorValueTreeState* state, bool keepExisting);
+    /**
+     This method creates a default DOM from the MagicProcessorState. It will read the
+     parameterTree() from the AudioProcessor.
+     */
+    void createDefaultGUITree (bool keepExisting);
+
+    /**
+     Recreates all components from the <div/> tree
+     */
+    void updateComponents();
 
     /**
      Recalculates the layout of all components
      */
-    void updateLayout ();
+    void updateLayout();
 
     void createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree);
 
@@ -67,13 +88,15 @@ public:
 
     void registerJUCELookAndFeels();
 
-    std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node, juce::AudioProcessorValueTreeState* state);
+    std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node);
 
 private:
 
     juce::Component& parent;
 
     AppType&         app;
+
+    MagicProcessorState* magicState;
 
     std::map<juce::String, std::unique_ptr<juce::LookAndFeel>> lookAndFeels;
 
