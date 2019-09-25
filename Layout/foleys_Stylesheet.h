@@ -48,20 +48,26 @@ public:
     /**
      Read the DOM and style classes from the ValueTree
 
-     @param config is the ValueTree containing the whole GUI
+     @param config is the ValueTree containing the whole GUI.
      */
     void readFromValueTree (juce::ValueTree config, juce::UndoManager* undo);
 
     /**
      This method traverses the dom and checks each style, if that property was defined.
 
-     @param name the name of the property
+     @param name the name of the property.
+     @param node is the node in the DOM. This is used for inheritance by traversing upwards.
      */
-    juce::var getProperty (const juce::String& name);
+    juce::var getProperty (const juce::Identifier& name, const juce::ValueTree& node);
+
+    juce::ValueTree createDefaultStyle();
 
 private:
 
-    juce::ValueTree config;
+    juce::ValueTree     config;
+    juce::UndoManager*  undo = nullptr;
+
+    juce::ValueTree     currentStyle;
 
     std::map<juce::String, Class> classes;
 

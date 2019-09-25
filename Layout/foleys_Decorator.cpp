@@ -60,8 +60,8 @@ void Decorator::connectToState (const juce::String& paramID, juce::AudioProcesso
     }
     else if (auto* combo = dynamic_cast<juce::ComboBox*>(component.get()))
     {
-        if (auto* choice = dynamic_cast<juce::AudioParameterChoice*>(state.getParameter (paramID)))
-            combo->addItemList (choice->choices, 1);
+        if (auto* parameter = state.getParameter (paramID))
+            combo->addItemList (parameter->getAllValueStrings(), 1);
 
         comboboxAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(state, paramID, *combo);
     }
@@ -74,17 +74,11 @@ void Decorator::connectToState (const juce::String& paramID, juce::AudioProcesso
 
 void Decorator::paint (juce::Graphics& g)
 {
-    const auto bounds = getLocalBounds().toFloat().reduced (margin);
-    // TODO: read from stylesheet
-    auto parentBackground = juce::Colours::grey;
-    auto background = juce::Colours::magenta;
-    auto borderColour = juce::Colours::red;
-
-    g.fillAll (parentBackground);
+    const auto bounds = getLocalBounds().reduced (margin).toFloat();
 
     if (radius > 0.0f)
     {
-        g.setColour (background);
+        g.setColour (backgroundColour);
         g.fillRoundedRectangle (bounds, radius);
 
         if (border > 0.0f)
@@ -95,7 +89,7 @@ void Decorator::paint (juce::Graphics& g)
     }
     else
     {
-        g.setColour (background);
+        g.setColour (backgroundColour);
         g.fillRect (bounds);
 
         if (border > 0.0f)

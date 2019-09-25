@@ -30,27 +30,86 @@
 namespace foleys
 {
 
-Stylesheet::Stylesheet (juce::ValueTree configToUse, juce::UndoManager* undo)
+namespace IDs
 {
-    readFromValueTree (configToUse, undo);
+    static juce::Identifier styles    { "Styles"  };
+    static juce::Identifier style     { "Style"   };
+    static juce::Identifier nodes     { "Nodes"   };
+    static juce::Identifier classes   { "Classes" };
+    static juce::Identifier types     { "Types"   };
+
+    static juce::Identifier name      { "name"     };
+    static juce::Identifier selected  { "selected" };
 }
 
-void Stylesheet::readFromValueTree (juce::ValueTree configToUse, juce::UndoManager* undo)
+Stylesheet::Stylesheet (juce::ValueTree configToUse, juce::UndoManager* undoToUse)
 {
+    readFromValueTree (configToUse, undoToUse);
+}
+
+void Stylesheet::readFromValueTree (juce::ValueTree configToUse, juce::UndoManager* undoToUse)
+{
+    undo   = undoToUse;
     config = configToUse;
 
     classes.clear();
 
-    auto styleNode = config.getOrCreateChildWithName ("Style", undo);
-    if (styleNode.isValid())
-    {
+    auto styleParent = config.getOrCreateChildWithName (IDs::styles, undo);
+    if (styleParent.getNumChildren() < 1)
+        styleParent.appendChild (createDefaultStyle(), undo);
 
-    }
+    auto name = styleParent.getProperty (IDs::selected, {}).toString();
+    if (name.isEmpty())
+        name = "default";
+
+    auto selected = styleParent.getChildWithProperty (IDs::name, name);
+
+    if (selected.isValid())
+        currentStyle = selected;
+    else
+        currentStyle = styleParent.getChild (0);
 }
 
-juce::var Stylesheet::getProperty (const juce::String& name)
+juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::ValueTree& node)
 {
+    if (node.hasProperty (IDs::id))
+    {
+        auto styleNode = currentStyle.getChildWithName (IDs::nodes);
+        auto idNode = styleNode.getChildWithName (node.getProperty (IDs::id).toString());
+        if (idNode.hasProperty (name))
+            return idNode.getProperty (name);
+    }
+
+    auto classNames = node.getProperty (IDs::styleClass, {}).toString();
+    for (auto className : juce::StringArray::fromTokens (classNames, ";", {}))
+    {
+        auto classesNode = currentStyle.getChildWithName (IDs::classes);
+        auto classNode = classesNode.getChildWithName (className);
+        if (classNode.hasProperty (name))
+            return classNode.getProperty (name);
+    }
+
+    auto typeNode = currentStyle.getChildWithName (IDs::types).getChildWithName (node.getType());
+    if (typeNode.isValid() && typeNode.hasProperty (name))
+        return typeNode.getProperty (name);
+
+    auto parent = node.getParent();
+    if (parent.isValid() && parent.getType() != IDs::magic)
+        return getProperty (name, parent);
+
     return {};
 }
+
+juce::ValueTree Stylesheet::createDefaultStyle()
+{
+    juce::ValueTree style (IDs::style);
+    style.setProperty (IDs::name, "default", undo);
+    style.appendChild (juce::ValueTree (IDs::nodes), undo);
+    style.appendChild (juce::ValueTree (IDs::classes), undo);
+    style.appendChild (juce::ValueTree (IDs::types), undo);
+
+    return style;
+}
+
 
 } // namespace foleys

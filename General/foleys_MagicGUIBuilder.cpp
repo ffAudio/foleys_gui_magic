@@ -41,7 +41,15 @@ namespace IDs
     static juce::Identifier caption     { "caption" };
     static juce::Identifier lookAndFeel { "lookAndFeel" };
     static juce::Identifier parameter   { "parameter" };
+    static juce::Identifier id          { "id" };
     static juce::Identifier styleClass  { "class" };
+
+    static juce::Identifier backgroundColour  { "backgroundColour" };
+    static juce::Identifier borderColour      { "borderColour" };
+    static juce::Identifier border  { "border" };
+    static juce::Identifier margin  { "margin" };
+    static juce::Identifier padding { "padding" };
+
 }
 
 
@@ -152,8 +160,30 @@ std::unique_ptr<Decorator> MagicGUIBuilder<juce::AudioProcessor>::restoreNode (j
             item->addChildItem (restoreNode (*item, childNode));
         }
 
+        {
+            auto bg = stylesheet.getProperty (IDs::backgroundColour, node);
+            if (! bg.isVoid())
+                item->backgroundColour = juce::Colour::fromString (bg.toString());
+
+            auto borderColour = stylesheet.getProperty (IDs::borderColour, node);
+            if (! borderColour.isVoid())
+                item->borderColour = juce::Colour::fromString (borderColour.toString());
+
+            auto border = stylesheet.getProperty (IDs::border, node);
+            if (! border.isVoid())
+                item->border = static_cast<float> (border);
+
+            auto margin = stylesheet.getProperty (IDs::margin, node);
+            if (! margin.isVoid())
+                item->margin = static_cast<float> (margin);
+
+            auto padding = stylesheet.getProperty (IDs::padding, node);
+            if (! padding.isVoid())
+                item->padding = static_cast<float> (padding);
+        }
+
         // hardcoded for testing - should come from stylesheet
-        if (node.getProperty (IDs::styleClass, "") == "group")
+        if (node.getProperty (IDs::styleClass, "").toString().startsWith ("group"))
             item->setLayout (Container::Layout::VerticalBox);
 
         component.addAndMakeVisible (item.get());
@@ -162,7 +192,10 @@ std::unique_ptr<Decorator> MagicGUIBuilder<juce::AudioProcessor>::restoreNode (j
 
     auto factory = factories [node.getType().toString()];
 
-    auto item = std::make_unique<Decorator> (factory (node, app));
+    if (factory == nullptr)
+        DBG ("No factory for: " << node.getType().toString());
+
+    auto item = std::make_unique<Decorator> (factory ? factory (node, app) : nullptr);
     component.addAndMakeVisible (item.get());
 
     if (magicState != nullptr)
@@ -213,6 +246,8 @@ void MagicGUIBuilder<juce::AudioProcessor>::createDefaultGUITree (bool keepExist
 
     if (magicState != nullptr)
         createDefaultFromParameters (rootNode, magicState->getProcessor().getParameterTree());
+
+    stylesheet.readFromValueTree (config, nullptr);
 
     root = restoreNode (parent, rootNode);
     updateLayout();

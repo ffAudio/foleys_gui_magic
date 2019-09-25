@@ -64,7 +64,8 @@ public:
 
     /**
      This method creates a default DOM from the MagicProcessorState. It will read the
-     parameterTree() from the AudioProcessor.
+     parameterTree() from the AudioProcessor. It does nothing, if magicState is not provided
+     (e.g. if the project is not an audio plugin).
      */
     void createDefaultGUITree (bool keepExisting);
 
@@ -88,9 +89,9 @@ public:
 
     void registerJUCELookAndFeels();
 
-    std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node);
-
 private:
+
+    std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node);
 
     juce::Component& parent;
 

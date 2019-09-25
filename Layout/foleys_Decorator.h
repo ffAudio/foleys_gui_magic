@@ -55,6 +55,14 @@ public:
 
     juce::Component* getWrappedComponent();
 
+    juce::Colour backgroundColour { juce::Colours::darkgrey };
+    juce::Colour borderColour     { juce::Colours::silver };
+
+    float margin  = 5.0f;
+    float padding = 5.0f;
+    float border  = 0.0f;
+    float radius  = 5.0f;
+
 protected:
 
     juce::Rectangle<int> getClientBounds() const;
@@ -62,11 +70,6 @@ protected:
 private:
 
     std::unique_ptr<juce::Component> component;
-
-    float margin  = 3.0f;
-    float padding = 5.0f;
-    float border  = 2.0f;
-    float radius  = 5.0f;
 
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> buttonAttachment;
