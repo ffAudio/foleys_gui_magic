@@ -46,28 +46,13 @@ void Container::resized()
     if (children.empty())
         return;
 
-    auto bounds = getClientBounds();
+    juce::FlexBox fb;
+    fb.flexDirection = (layout == Layout::HorizontalBox)? juce::FlexBox::Direction::row : juce::FlexBox::Direction::column;
 
-    if (layout == Layout::HorizontalBox)
-    {
-        int w = bounds.getWidth() / children.size();
+    for (auto& child : children)
+        fb.items.add (juce::FlexItem (*child).withFlex (1.0f));
 
-        for (auto& child : children)
-            child->setBounds (bounds.removeFromLeft (w));
-    }
-    else if (layout == Layout::VerticalBox)
-    {
-        int h = bounds.getHeight() / children.size();
-
-        for (auto& child : children)
-            child->setBounds (bounds.removeFromTop (h));
-    }
-    else
-    {
-        for (auto& child : children)
-            child->setBounds (bounds);
-    }
-
+    fb.performLayout (getLocalBounds());
 }
 
 } // namespace foleys
