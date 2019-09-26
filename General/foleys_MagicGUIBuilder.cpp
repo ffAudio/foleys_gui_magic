@@ -50,6 +50,8 @@ namespace IDs
     static juce::Identifier margin  { "margin" };
     static juce::Identifier padding { "padding" };
 
+    static juce::String     root    { "root" };
+
 }
 
 
@@ -243,6 +245,7 @@ void MagicGUIBuilder<juce::AudioProcessor>::createDefaultGUITree (bool keepExist
         return;
 
     auto rootNode = config.getOrCreateChildWithName (IDs::div, &undo);
+    rootNode.setProperty (IDs::id, IDs::root, &undo);
 
     if (magicState != nullptr)
         createDefaultFromParameters (rootNode, magicState->getProcessor().getParameterTree());

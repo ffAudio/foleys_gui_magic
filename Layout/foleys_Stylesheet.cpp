@@ -81,7 +81,7 @@ juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::Val
     }
 
     auto classNames = node.getProperty (IDs::styleClass, {}).toString();
-    for (auto className : juce::StringArray::fromTokens (classNames, ";", {}))
+    for (auto className : juce::StringArray::fromTokens (classNames, " ", {}))
     {
         auto classesNode = currentStyle.getChildWithName (IDs::classes);
         auto classNode = classesNode.getChildWithName (className);
