@@ -40,6 +40,21 @@ namespace IDs
 
     static juce::Identifier name      { "name"     };
     static juce::Identifier selected  { "selected" };
+
+    static juce::Identifier flexDirection       { "flex-direction" };
+    static juce::String     flexDirRow          { "row" };
+    static juce::String     flexDirRowReverse   { "row-reverse" };
+    static juce::String     flexDirColumn       { "column" };
+    static juce::String     flexDirColumnReverse { "column-reverse" };
+
+    static juce::Identifier flexGrow    { "flex-grow" };
+    static juce::Identifier flexShrink  { "flex-shrink" };
+
+    static juce::Identifier minWidth    { "min-width" };
+    static juce::Identifier maxWidth    { "max-width" };
+    static juce::Identifier minHeight   { "min-height" };
+    static juce::Identifier maxHeight   { "max-height" };
+
 }
 
 Stylesheet::Stylesheet (juce::ValueTree configToUse, juce::UndoManager* undoToUse)
@@ -51,8 +66,6 @@ void Stylesheet::readFromValueTree (juce::ValueTree configToUse, juce::UndoManag
 {
     undo   = undoToUse;
     config = configToUse;
-
-    classes.clear();
 
     auto styleParent = config.getOrCreateChildWithName (IDs::styles, undo);
     if (styleParent.getNumChildren() < 1)
@@ -70,7 +83,7 @@ void Stylesheet::readFromValueTree (juce::ValueTree configToUse, juce::UndoManag
         currentStyle = styleParent.getChild (0);
 }
 
-juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::ValueTree& node)
+juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::ValueTree& node) const
 {
     if (node.hasProperty (IDs::id))
     {
@@ -98,6 +111,48 @@ juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::Val
         return getProperty (name, parent);
 
     return {};
+}
+
+void Stylesheet::configureFlexBox (juce::FlexBox& flexBox, const juce::ValueTree& node) const
+{
+    auto direction = getProperty (IDs::flexDirection, node).toString();
+    if (direction == IDs::flexDirRow)
+        flexBox.flexDirection = juce::FlexBox::Direction::row;
+    else if (direction == IDs::flexDirRowReverse)
+        flexBox.flexDirection = juce::FlexBox::Direction::rowReverse;
+    else if (direction == IDs::flexDirColumn)
+        flexBox.flexDirection = juce::FlexBox::Direction::column;
+    else if (direction == IDs::flexDirColumnReverse)
+        flexBox.flexDirection = juce::FlexBox::Direction::columnReverse;
+
+}
+
+void Stylesheet::configureFlexBoxItem (juce::FlexItem& item, const juce::ValueTree& node) const
+{
+    auto minWidth = getProperty (IDs::minWidth, node);
+    if (! minWidth.isVoid())
+        item.minWidth = minWidth;
+
+    auto maxWidth = getProperty (IDs::maxWidth, node);
+    if (! maxWidth.isVoid())
+        item.maxWidth = maxWidth;
+
+    auto minHeight = getProperty (IDs::minHeight, node);
+    if (! minHeight.isVoid())
+        item.minHeight = minHeight;
+
+    auto maxHeight = getProperty (IDs::maxHeight, node);
+    if (! maxHeight.isVoid())
+        item.maxHeight = maxHeight;
+
+    auto grow = getProperty (IDs::flexGrow, node);
+    if (! grow.isVoid())
+        item.flexGrow = grow;
+
+    auto flexShrink = getProperty (IDs::flexShrink, node);
+    if (! flexShrink.isVoid())
+        item.flexShrink = flexShrink;
+
 }
 
 juce::ValueTree Stylesheet::createDefaultStyle()

@@ -36,12 +36,6 @@ class Stylesheet
 {
 public:
 
-    struct Class
-    {
-
-
-    };
-
     Stylesheet() = default;
     Stylesheet (juce::ValueTree config, juce::UndoManager* undo = nullptr);
 
@@ -58,7 +52,15 @@ public:
      @param name the name of the property.
      @param node is the node in the DOM. This is used for inheritance by traversing upwards.
      */
-    juce::var getProperty (const juce::Identifier& name, const juce::ValueTree& node);
+    juce::var getProperty (const juce::Identifier& name, const juce::ValueTree& node) const;
+
+
+    void configureFlexBox (juce::FlexBox& flexBox, const juce::ValueTree& node) const;
+
+    void configureFlexBoxItem (juce::FlexItem& item, const juce::ValueTree& node) const;
+
+
+
 
     juce::ValueTree createDefaultStyle();
 
@@ -68,8 +70,6 @@ private:
     juce::UndoManager*  undo = nullptr;
 
     juce::ValueTree     currentStyle;
-
-    std::map<juce::String, Class> classes;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Stylesheet)
 };

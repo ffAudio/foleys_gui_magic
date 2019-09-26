@@ -46,13 +46,11 @@ void Container::resized()
     if (children.empty())
         return;
 
-    juce::FlexBox fb;
-    fb.flexDirection = (layout == Layout::HorizontalBox)? juce::FlexBox::Direction::row : juce::FlexBox::Direction::column;
-
+    flexBox.items.clear();
     for (auto& child : children)
-        fb.items.add (juce::FlexItem (*child).withFlex (1.0f));
+        flexBox.items.add (child->flexItem);
 
-    fb.performLayout (getLocalBounds());
+    flexBox.performLayout (getLocalBounds());
 }
 
 } // namespace foleys

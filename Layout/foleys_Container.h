@@ -52,6 +52,8 @@ public:
 
     void setLayout (Layout l);
 
+    juce::FlexBox flexBox;
+
 private:
 
     Layout layout = Layout::HorizontalBox;

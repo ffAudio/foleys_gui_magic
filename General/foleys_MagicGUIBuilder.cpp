@@ -32,25 +32,26 @@ namespace foleys
 
 namespace IDs
 {
-    static juce::Identifier magic       { "magic" };
-    static juce::Identifier div         { "Div" };
-    static juce::Identifier slider      { "Slider" };
-    static juce::Identifier textButton  { "TextButton" };
-    static juce::Identifier comboBox    { "ComboBox" };
+    static juce::Identifier magic        { "magic" };
+    static juce::Identifier div          { "Div" };
+    static juce::Identifier slider       { "Slider" };
+    static juce::Identifier textButton   { "TextButton" };
+    static juce::Identifier toggleButton { "ToggleButton" };
+    static juce::Identifier comboBox     { "ComboBox" };
 
-    static juce::Identifier caption     { "caption" };
-    static juce::Identifier lookAndFeel { "lookAndFeel" };
-    static juce::Identifier parameter   { "parameter" };
-    static juce::Identifier id          { "id" };
-    static juce::Identifier styleClass  { "class" };
+    static juce::Identifier caption      { "caption" };
+    static juce::Identifier lookAndFeel  { "lookAndFeel" };
+    static juce::Identifier parameter    { "parameter" };
+    static juce::Identifier id           { "id" };
+    static juce::Identifier styleClass   { "class" };
 
     static juce::Identifier backgroundColour  { "backgroundColour" };
     static juce::Identifier borderColour      { "borderColour" };
-    static juce::Identifier border  { "border" };
-    static juce::Identifier margin  { "margin" };
-    static juce::Identifier padding { "padding" };
+    static juce::Identifier border       { "border" };
+    static juce::Identifier margin       { "margin" };
+    static juce::Identifier padding      { "padding" };
 
-    static juce::String     root    { "root" };
+    static juce::String     root         { "root" };
 
 }
 
@@ -81,6 +82,8 @@ void MagicGUIBuilder<AppType>::restoreGUI (const juce::ValueTree& gui)
 template <class AppType>
 void MagicGUIBuilder<AppType>::updateComponents()
 {
+    createDefaultGUITree (true);
+
     auto rootNode = config.getOrCreateChildWithName (IDs::div, &undo);
     root = restoreNode (parent, rootNode);
 }
@@ -125,6 +128,13 @@ void MagicGUIBuilder<juce::AudioProcessor>::registerJUCEFactories()
                      [] (const juce::ValueTree& config, auto& app)
                      {
                          return std::make_unique<juce::TextButton>();
+                     });
+
+    registerFactory (IDs::toggleButton.toString(),
+                     [] (const juce::ValueTree& config, auto& app)
+                     {
+                         auto text = config.getProperty (IDs::caption, "Active");
+                         return std::make_unique<juce::ToggleButton>(text);
                      });
 }
 
@@ -184,9 +194,7 @@ std::unique_ptr<Decorator> MagicGUIBuilder<juce::AudioProcessor>::restoreNode (j
                 item->padding = static_cast<float> (padding);
         }
 
-        // hardcoded for testing - should come from stylesheet
-        if (node.getProperty (IDs::styleClass, "").toString().startsWith ("group"))
-            item->setLayout (Container::Layout::VerticalBox);
+        stylesheet.configureFlexBox (item->flexBox, node);
 
         component.addAndMakeVisible (item.get());
         return item;
@@ -195,10 +203,14 @@ std::unique_ptr<Decorator> MagicGUIBuilder<juce::AudioProcessor>::restoreNode (j
     auto factory = factories [node.getType().toString()];
 
     if (factory == nullptr)
+    {
         DBG ("No factory for: " << node.getType().toString());
+    }
 
     auto item = std::make_unique<Decorator> (factory ? factory (node, app) : nullptr);
     component.addAndMakeVisible (item.get());
+
+    stylesheet.configureFlexBoxItem (item->flexItem, node);
 
     if (magicState != nullptr)
     {
@@ -228,7 +240,7 @@ void MagicGUIBuilder<juce::AudioProcessor>::createDefaultFromParameters (juce::V
         if (dynamic_cast<juce::AudioParameterChoice*>(param) != nullptr)
             child = juce::ValueTree (IDs::comboBox);
         else if (dynamic_cast<juce::AudioParameterBool*>(param) != nullptr)
-            child = juce::ValueTree (IDs::textButton);
+            child = juce::ValueTree (IDs::toggleButton);
 
         child.setProperty (IDs::caption, param->getName (64), nullptr);
         if (const auto* parameterWithID = dynamic_cast<juce::AudioProcessorParameterWithID*>(param))
@@ -254,6 +266,8 @@ void MagicGUIBuilder<juce::AudioProcessor>::createDefaultGUITree (bool keepExist
 
     root = restoreNode (parent, rootNode);
     updateLayout();
+
+    DBG ("Config: " << config.toXmlString());
 }
 
 
