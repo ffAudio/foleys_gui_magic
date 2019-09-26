@@ -45,6 +45,8 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse)
 
     setResizable (true, true);
 
+    createDefaultGUI (true);
+
     setSize (600, 400);
 }
 

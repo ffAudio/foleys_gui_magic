@@ -9,22 +9,25 @@ There will be a drag and drop editor to add GUI elements, and to connect to
 parameters of your AudioProcessorValueTreeState. Also an editor in the style of FireBug
 to investigate the individual properties, and how they were obtained/calculated.
 
+
 Status
 ------
-
-**This is just starting now, if you want to get involved, play around. But it is not useful yet...**
 
 foleys_gui_magic is a fresh take on ff_layouts and ff_meters. In addition to just layouting 
 the Components, foleys_gui_magic sets the colours according to the information defined
 in the stylesheet and the position in the DOM.
 
+There is a default tree created from reading the processors `getParameterTree()` method,
+so it is easy to get an appealing starting point or even a fully functional generic processor
+editor with almost no effort.
+
+The designer can create style sheets, so every default editor is already styled in a
+consistent and appealing way. You can even create several style sheets and select from them.
+
 There will be the chance to register measure points inside your code to visualise the
 signal with an oscilloscope, the level with a meter or plotting curves including an analyser
 spectrum.
 
-There will be a default tree created from reading the processors `getParameterTree()` method,
-so it should be easy to get an appealing starting point or even a fully functional generic
-processor editor with almost no effort.
 
 Contributing
 ------------

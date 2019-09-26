@@ -160,13 +160,16 @@ juce::ValueTree Stylesheet::createDefaultStyle()
     juce::ValueTree style (IDs::style);
     style.setProperty (IDs::name, "default", undo);
     style.appendChild (juce::ValueTree (IDs::nodes), undo);
-    style.appendChild (juce::ValueTree (IDs::types), undo);
 
-    // add a node group to be in rows, so parameter groups will be layouted automatically
+    // add a few defaults
     auto classesNode = style.getOrCreateChildWithName (IDs::classes, undo);
-    auto groupNode = classesNode.getOrCreateChildWithName ("group", undo);
-    groupNode.setProperty (IDs::border, 2, undo);
-    groupNode.setProperty (IDs::flexDirection, IDs::flexDirColumn, undo);
+    classesNode.appendChild ({ "group", {{ IDs::border, 2 }, {IDs::flexDirection, IDs::flexDirColumn}} }, undo);
+
+    auto typesNode = style.getOrCreateChildWithName (IDs::types, undo);
+    typesNode.appendChild ({ "Slider", {{ IDs::border, 0 }} }, undo);
+    typesNode.appendChild ({ "ToggleButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }} }, undo);
+    typesNode.appendChild ({ "TextButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }} }, undo);
+    typesNode.appendChild ({ "ComboBox", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }} }, undo);
 
     return style;
 }
