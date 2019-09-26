@@ -50,7 +50,7 @@ void Container::resized()
     for (auto& child : children)
         flexBox.items.add (child->flexItem);
 
-    flexBox.performLayout (getLocalBounds());
+    flexBox.performLayout (getClientBounds());
 }
 
 } // namespace foleys

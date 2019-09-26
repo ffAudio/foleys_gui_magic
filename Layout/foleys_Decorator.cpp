@@ -52,6 +52,29 @@ void Decorator::setEditable (bool shouldEdit)
         component->setInterceptsMouseClicks (!shouldEdit, true);
 }
 
+void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTree& node)
+{
+    auto bg = stylesheet.getProperty (IDs::backgroundColour, node);
+    if (! bg.isVoid())
+        backgroundColour = juce::Colour::fromString (bg.toString());
+
+    auto bcVar = stylesheet.getProperty (IDs::borderColour, node);
+    if (! bcVar.isVoid())
+        borderColour = juce::Colour::fromString (bcVar.toString());
+
+    auto borderVar = stylesheet.getProperty (IDs::border, node);
+    if (! borderVar.isVoid())
+        border = static_cast<float> (borderVar);
+
+    auto marginVar = stylesheet.getProperty (IDs::margin, node);
+    if (! marginVar.isVoid())
+        margin = static_cast<float> (marginVar);
+
+    auto paddingVar = stylesheet.getProperty (IDs::padding, node);
+    if (! paddingVar.isVoid())
+        padding = static_cast<float> (paddingVar);
+}
+
 void Decorator::connectToState (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)
 {
     if (auto* slider = dynamic_cast<juce::Slider*>(component.get()))

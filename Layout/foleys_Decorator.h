@@ -48,6 +48,8 @@ public:
      */
     void setEditable (bool shouldEdit);
 
+    void configureDecorator (Stylesheet& stylesheet, const juce::ValueTree& node);
+
     void connectToState (const juce::String& paramID, juce::AudioProcessorValueTreeState& state);
 
     void paint (juce::Graphics& g) override;

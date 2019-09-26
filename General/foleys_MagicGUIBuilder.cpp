@@ -172,27 +172,7 @@ std::unique_ptr<Decorator> MagicGUIBuilder<juce::AudioProcessor>::restoreNode (j
             item->addChildItem (restoreNode (*item, childNode));
         }
 
-        {
-            auto bg = stylesheet.getProperty (IDs::backgroundColour, node);
-            if (! bg.isVoid())
-                item->backgroundColour = juce::Colour::fromString (bg.toString());
-
-            auto borderColour = stylesheet.getProperty (IDs::borderColour, node);
-            if (! borderColour.isVoid())
-                item->borderColour = juce::Colour::fromString (borderColour.toString());
-
-            auto border = stylesheet.getProperty (IDs::border, node);
-            if (! border.isVoid())
-                item->border = static_cast<float> (border);
-
-            auto margin = stylesheet.getProperty (IDs::margin, node);
-            if (! margin.isVoid())
-                item->margin = static_cast<float> (margin);
-
-            auto padding = stylesheet.getProperty (IDs::padding, node);
-            if (! padding.isVoid())
-                item->padding = static_cast<float> (padding);
-        }
+        item->configureDecorator (stylesheet, node);
 
         stylesheet.configureFlexBox (item->flexBox, node);
 
@@ -209,6 +189,8 @@ std::unique_ptr<Decorator> MagicGUIBuilder<juce::AudioProcessor>::restoreNode (j
 
     auto item = std::make_unique<Decorator> (factory ? factory (node, app) : nullptr);
     component.addAndMakeVisible (item.get());
+
+    item->configureDecorator (stylesheet, node);
 
     stylesheet.configureFlexBoxItem (item->flexItem, node);
 

@@ -160,8 +160,13 @@ juce::ValueTree Stylesheet::createDefaultStyle()
     juce::ValueTree style (IDs::style);
     style.setProperty (IDs::name, "default", undo);
     style.appendChild (juce::ValueTree (IDs::nodes), undo);
-    style.appendChild (juce::ValueTree (IDs::classes), undo);
     style.appendChild (juce::ValueTree (IDs::types), undo);
+
+    // add a node group to be in rows, so parameter groups will be layouted automatically
+    auto classesNode = style.getOrCreateChildWithName (IDs::classes, undo);
+    auto groupNode = classesNode.getOrCreateChildWithName ("group", undo);
+    groupNode.setProperty (IDs::border, 2, undo);
+    groupNode.setProperty (IDs::flexDirection, IDs::flexDirColumn, undo);
 
     return style;
 }
