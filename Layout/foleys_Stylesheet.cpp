@@ -131,14 +131,13 @@ void Stylesheet::configureFlexBoxItem (juce::FlexItem& item, const juce::ValueTr
 
 juce::ValueTree Stylesheet::createDefaultStyle()
 {
-    juce::ValueTree style (IDs::style, {{ IDs::name, "default" }}
-    ,
+    juce::ValueTree style (IDs::style, {{ IDs::name, "default" }},
     {
-        { IDs::nodes, {{ "foo", 0 }} },
-        { IDs::classes, {{ "foo", 0 }}, {
+        { IDs::nodes, {} },
+        { IDs::classes, {}, {
             { "group", {{ IDs::border, 2 }, { IDs::flexDirection, IDs::flexDirColumn }} }
         } },
-        { IDs::types, {{ "foo", 0 }}, {
+        { IDs::types, {}, {
             { "Slider", {{ IDs::border, 0 }} },
             { "ToggleButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }} },
             { "TextButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }} },
@@ -146,7 +145,6 @@ juce::ValueTree Stylesheet::createDefaultStyle()
         } }
     });
 
-    DBG (style.toXmlString());
     return style;
 }
 
