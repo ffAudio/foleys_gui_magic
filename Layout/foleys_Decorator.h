@@ -75,6 +75,9 @@ private:
 
     std::unique_ptr<juce::Component> component;
 
+    juce::Image                 backgroundImage;
+    juce::Array<juce::Colour>   backgroundFill;
+
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> buttonAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> comboboxAttachment;

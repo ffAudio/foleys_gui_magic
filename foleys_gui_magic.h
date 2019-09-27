@@ -51,6 +51,14 @@
 #define FOLEYS_SHOW_GUI_EDITOR_PALLETTE 1
 #endif
 
+/** Config: FOLEYS_ENABLE_BINARY_DATA
+            Makes the binary resources available to the GUI. Make sure you actually have
+            at least one file added, or this will fail to compile.
+ */
+#ifndef FOLEYS_ENABLE_BINARY_DATA
+#define FOLEYS_ENABLE_BINARY_DATA 0
+#endif
+
 #include <juce_core/juce_core.h>
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_audio_processors/juce_audio_processors.h>

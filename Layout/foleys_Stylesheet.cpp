@@ -27,6 +27,21 @@
  ==============================================================================
  */
 
+#if FOLEYS_ENABLE_BINARY_DATA
+namespace BinaryData
+{
+    // Number of elements in the namedResourceList and originalFileNames arrays.
+    extern const int namedResourceListSize;
+
+    // Points to the start of a list of resource names.
+    extern const char* namedResourceList[];
+
+    // If you provide the name of one of the binary resource variables above, this function will
+    // return the corresponding data and its size (or a null pointer if the name isn't found).
+    extern const char* getNamedResource (const char* resourceNameUTF8, int& dataSizeInBytes);
+}
+#endif
+
 namespace foleys
 {
 
@@ -35,6 +50,12 @@ namespace IDs
     static juce::Identifier nodes     { "Nodes"   };
     static juce::Identifier classes   { "Classes" };
     static juce::Identifier types     { "Types"   };
+
+    static juce::Identifier backgroundImage     { "background-image" };
+    static juce::String     linearGradient      { "linear-gradient" };
+    static juce::String     radialGradient      { "radial-gradient" };
+    static juce::String     repeatingLinearGradient { "repeating-linear-gradient" };
+    static juce::String     repeatingRadialGradient { "repeating-radial-gradient" };
 
     static juce::Identifier flexDirection       { "flex-direction" };
     static juce::String     flexDirRow          { "row" };
@@ -76,9 +97,9 @@ void Stylesheet::setStyle (const juce::ValueTree& node)
     currentStyle = node;
 }
 
-juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::ValueTree& node) const
+juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::ValueTree& node, bool inherit) const
 {
-    if (node.hasProperty (IDs::id))
+    if (inherit && node.hasProperty (IDs::id))
     {
         auto styleNode = currentStyle.getChildWithName (IDs::nodes);
         auto idNode = styleNode.getChildWithName (node.getProperty (IDs::id).toString());
@@ -95,18 +116,26 @@ juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::Val
             return classNode.getProperty (name);
     }
 
-    auto typeNode = currentStyle.getChildWithName (IDs::types).getChildWithName (node.getType());
-    if (typeNode.isValid() && typeNode.hasProperty (name))
-        return typeNode.getProperty (name);
+    if (inherit)
+    {
+        auto typeNode = currentStyle.getChildWithName (IDs::types).getChildWithName (node.getType());
+        if (typeNode.isValid() && typeNode.hasProperty (name))
+            return typeNode.getProperty (name);
+    }
 
     auto parent = node.getParent();
     if (parent.isValid() && parent.getType() != IDs::magic)
-        return getProperty (name, parent);
+        return getProperty (name, parent, false);
 
     return {};
 }
 
-juce::LookAndFeel* Stylesheet::getLookAndFeel (const juce::ValueTree& node)
+juce::Colour Stylesheet::parseColour (const juce::String& name) const
+{
+    return juce::Colours::findColourForName (name, juce::Colour::fromString (name.length() < 8 ? "ff" + name : name));
+}
+
+juce::LookAndFeel* Stylesheet::getLookAndFeel (const juce::ValueTree& node) const
 {
     auto lnf = getProperty (IDs::lookAndFeel, node).toString();
     if (lnf.isNotEmpty())
@@ -117,6 +146,48 @@ juce::LookAndFeel* Stylesheet::getLookAndFeel (const juce::ValueTree& node)
     }
 
     return nullptr;
+}
+
+juce::Image Stylesheet::getBackgroundImage (const juce::ValueTree& node) const
+{
+#if FOLEYS_ENABLE_BINARY_DATA
+    auto name = getProperty (IDs::backgroundImage, node);
+    if (name.isVoid())
+        return {};
+
+    int dataSize = 0;
+    const char* data = BinaryData::getNamedResource (name.toString().toRawUTF8(), dataSize);
+    if (data != nullptr)
+        return juce::ImageCache::getFromMemory (data, dataSize);
+
+#endif
+    return {};
+}
+
+juce::Array<juce::Colour> Stylesheet::getBackgroundGradient (const juce::ValueTree& node) const
+{
+    auto text = getProperty (IDs::backgroundImage, node).toString();
+
+    if (text.startsWith (IDs::linearGradient))
+    {
+        auto parameters = getParameters (text);
+        if (parameters.size() < 2)
+            return {};
+
+        juce::Array<juce::Colour> colours;
+        for (int i=0; i < parameters.size(); ++i)
+            colours.add (parseColour (parameters [i].trim()));
+
+        return colours;
+    }
+
+    return {};
+}
+
+juce::StringArray Stylesheet::getParameters (const juce::String& text) const
+{
+    auto content = text.fromFirstOccurrenceOf ("(", false, true).upToFirstOccurrenceOf (")", false, true);
+    return juce::StringArray::fromTokens (content, ",", {});
 }
 
 void Stylesheet::registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel)

@@ -46,9 +46,15 @@ public:
      @param name the name of the property.
      @param node is the node in the DOM. This is used for inheritance by traversing upwards.
      */
-    juce::var getProperty (const juce::Identifier& name, const juce::ValueTree& node) const;
+    juce::var getProperty (const juce::Identifier& name, const juce::ValueTree& node, bool inherit=true) const;
 
-    juce::LookAndFeel* getLookAndFeel (const juce::ValueTree& node);
+    juce::LookAndFeel* getLookAndFeel (const juce::ValueTree& node) const;
+
+    juce::Image getBackgroundImage (const juce::ValueTree& node) const;
+
+    juce::Array<juce::Colour> getBackgroundGradient (const juce::ValueTree& node) const;
+
+    juce::Colour parseColour (const juce::String& name) const;
 
     /**
      With that method you can register your custom LookAndFeel class and apply it to different components.
@@ -61,9 +67,12 @@ public:
 
     static juce::ValueTree createDefaultStyle();
 
+
 private:
 
-    juce::ValueTree     currentStyle;
+    juce::StringArray getParameters (const juce::String& text) const;
+
+    juce::ValueTree   currentStyle;
 
     std::map<juce::String, std::unique_ptr<juce::LookAndFeel>> lookAndFeels;
 

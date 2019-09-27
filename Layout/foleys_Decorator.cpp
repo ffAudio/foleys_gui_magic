@@ -56,11 +56,11 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
 {
     auto bg = stylesheet.getProperty (IDs::backgroundColour, node);
     if (! bg.isVoid())
-        backgroundColour = juce::Colour::fromString (bg.toString());
+        backgroundColour = stylesheet.parseColour (bg.toString());
 
     auto bcVar = stylesheet.getProperty (IDs::borderColour, node);
     if (! bcVar.isVoid())
-        borderColour = juce::Colour::fromString (bcVar.toString());
+        borderColour = stylesheet.parseColour (bcVar.toString());
 
     auto borderVar = stylesheet.getProperty (IDs::border, node);
     if (! borderVar.isVoid())
@@ -73,6 +73,9 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
     auto paddingVar = stylesheet.getProperty (IDs::padding, node);
     if (! paddingVar.isVoid())
         padding = static_cast<float> (paddingVar);
+
+    backgroundImage = stylesheet.getBackgroundImage (node);
+    backgroundFill  = stylesheet.getBackgroundGradient (node);
 
     if (component)
         if (auto* lookAndFeel = stylesheet.getLookAndFeel (node))
@@ -101,12 +104,21 @@ void Decorator::connectToState (const juce::String& paramID, juce::AudioProcesso
 
 void Decorator::paint (juce::Graphics& g)
 {
+    juce::Graphics::ScopedSaveState stateSave (g);
+
     const auto bounds = getLocalBounds().reduced (margin).toFloat();
 
     if (radius > 0.0f)
     {
         g.setColour (backgroundColour);
+
+        if (backgroundFill.size() > 1)
+            g.setGradientFill (juce::ColourGradient::vertical (backgroundFill.getFirst(), backgroundFill.getLast(), bounds));
+
         g.fillRoundedRectangle (bounds, radius);
+
+        if (! backgroundImage.isNull())
+            g.drawImage (backgroundImage, bounds);
 
         if (border > 0.0f)
         {
@@ -117,7 +129,14 @@ void Decorator::paint (juce::Graphics& g)
     else
     {
         g.setColour (backgroundColour);
+
+        if (backgroundFill.size() > 1)
+            g.setGradientFill (juce::ColourGradient::vertical (backgroundFill.getFirst(), backgroundFill.getLast(), bounds));
+
         g.fillRect (bounds);
+
+        if (! backgroundImage.isNull())
+            g.drawImage (backgroundImage, bounds);
 
         if (border > 0.0f)
         {
