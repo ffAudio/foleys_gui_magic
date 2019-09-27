@@ -42,14 +42,33 @@ namespace IDs
     static juce::String     flexDirColumn       { "column" };
     static juce::String     flexDirColumnReverse { "column-reverse" };
 
-    static juce::Identifier flexGrow    { "flex-grow" };
-    static juce::Identifier flexShrink  { "flex-shrink" };
+    static juce::Identifier flexWrap            { "flex-wrap" };
+    static juce::String     flexNoWrap          { "nowrap" };
+    static juce::String     flexWrapNormal      { "wrap" };
+    static juce::String     flexWrapReverse     { "wrap-reverse" };
+
+    static juce::Identifier flexGrow            { "flex-grow" };
+    static juce::Identifier flexShrink          { "flex-shrink" };
+
+    static juce::Identifier flexAlignContent    { "flex-align-content" };
+    static juce::Identifier flexAlignItems      { "flex-align-items" };
+    static juce::Identifier flexJustifyContent  { "flex-justify-content" };
+    static juce::Identifier flexAlignSelf       { "flex-align-self" };
+    static juce::Identifier flexOrder           { "flex-order" };
+    static juce::String     flexStretch         { "stretch" };
+    static juce::String     flexStart           { "start" };
+    static juce::String     flexEnd             { "end" };
+    static juce::String     flexCenter          { "center" };
+    static juce::String     flexSpaceBetween    { "space-between" };
+    static juce::String     flexSpaceAround     { "space-around" };
+    static juce::String     flexAuto            { "auto" };
 
     static juce::Identifier minWidth    { "min-width" };
     static juce::Identifier maxWidth    { "max-width" };
     static juce::Identifier minHeight   { "min-height" };
     static juce::Identifier maxHeight   { "max-height" };
-
+    static juce::Identifier width       { "width" };
+    static juce::Identifier height      { "height" };
 }
 
 void Stylesheet::setStyle (const juce::ValueTree& node)
@@ -125,6 +144,49 @@ void Stylesheet::configureFlexBox (juce::FlexBox& flexBox, const juce::ValueTree
     else if (direction == IDs::flexDirColumnReverse)
         flexBox.flexDirection = juce::FlexBox::Direction::columnReverse;
 
+    auto wrap = getProperty (IDs::flexWrap, node).toString();
+    if (wrap == IDs::flexWrapNormal)
+        flexBox.flexWrap = juce::FlexBox::Wrap::wrap;
+    else if (wrap == IDs::flexWrapReverse)
+        flexBox.flexWrap = juce::FlexBox::Wrap::wrapReverse;
+    else
+        flexBox.flexWrap = juce::FlexBox::Wrap::noWrap;
+
+    auto alignContent = getProperty (IDs::flexAlignContent, node).toString();
+    if (alignContent == IDs::flexStart)
+        flexBox.alignContent = juce::FlexBox::AlignContent::flexStart;
+    else if (alignContent == IDs::flexEnd)
+        flexBox.alignContent = juce::FlexBox::AlignContent::flexEnd;
+    else if (alignContent == IDs::flexCenter)
+        flexBox.alignContent = juce::FlexBox::AlignContent::center;
+    else if (alignContent == IDs::flexSpaceAround)
+        flexBox.alignContent = juce::FlexBox::AlignContent::spaceAround;
+    else if (alignContent == IDs::flexSpaceBetween)
+        flexBox.alignContent = juce::FlexBox::AlignContent::spaceBetween;
+    else
+        flexBox.alignContent = juce::FlexBox::AlignContent::stretch;
+
+    auto alignItems = getProperty (IDs::flexAlignItems, node).toString();
+    if (alignItems == IDs::flexStart)
+        flexBox.alignItems = juce::FlexBox::AlignItems::flexStart;
+    else if (alignItems == IDs::flexEnd)
+        flexBox.alignItems = juce::FlexBox::AlignItems::flexEnd;
+    else if (alignItems == IDs::flexCenter)
+        flexBox.alignItems = juce::FlexBox::AlignItems::center;
+    else
+        flexBox.alignItems = juce::FlexBox::AlignItems::stretch;
+
+    auto justify = getProperty (IDs::flexJustifyContent, node).toString();
+    if (justify == IDs::flexEnd)
+        flexBox.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
+    else if (justify == IDs::flexCenter)
+        flexBox.justifyContent = juce::FlexBox::JustifyContent::center;
+    else if (justify == IDs::flexSpaceAround)
+        flexBox.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+    else if (justify == IDs::flexSpaceBetween)
+        flexBox.justifyContent = juce::FlexBox::JustifyContent::spaceBetween;
+    else
+        flexBox.justifyContent = juce::FlexBox::JustifyContent::flexStart;
 }
 
 void Stylesheet::configureFlexBoxItem (juce::FlexItem& item, const juce::ValueTree& node) const
@@ -145,6 +207,14 @@ void Stylesheet::configureFlexBoxItem (juce::FlexItem& item, const juce::ValueTr
     if (! maxHeight.isVoid())
         item.maxHeight = maxHeight;
 
+    auto width = getProperty (IDs::width, node);
+    if (! width.isVoid())
+        item.width = width;
+
+    auto height = getProperty (IDs::height, node);
+    if (! height.isVoid())
+        item.height = height;
+
     auto grow = getProperty (IDs::flexGrow, node);
     if (! grow.isVoid())
         item.flexGrow = grow;
@@ -153,6 +223,21 @@ void Stylesheet::configureFlexBoxItem (juce::FlexItem& item, const juce::ValueTr
     if (! flexShrink.isVoid())
         item.flexShrink = flexShrink;
 
+    auto flexOrder = getProperty (IDs::flexOrder, node);
+    if (! flexOrder.isVoid())
+        item.order = flexOrder;
+
+    auto alignSelf = getProperty (IDs::flexAlignSelf, node).toString();
+    if (alignSelf == IDs::flexStart)
+        item.alignSelf = juce::FlexItem::AlignSelf::flexStart;
+    else if (alignSelf == IDs::flexEnd)
+        item.alignSelf = juce::FlexItem::AlignSelf::flexEnd;
+    else if (alignSelf == IDs::flexCenter)
+        item.alignSelf = juce::FlexItem::AlignSelf::center;
+    else if (alignSelf == IDs::flexAuto)
+        item.alignSelf = juce::FlexItem::AlignSelf::autoAlign;
+    else
+        item.alignSelf = juce::FlexItem::AlignSelf::stretch;
 }
 
 juce::ValueTree Stylesheet::createDefaultStyle()
