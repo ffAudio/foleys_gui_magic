@@ -73,6 +73,10 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
     auto paddingVar = stylesheet.getProperty (IDs::padding, node);
     if (! paddingVar.isVoid())
         padding = static_cast<float> (paddingVar);
+
+    if (component)
+        if (auto* lookAndFeel = stylesheet.getLookAndFeel (node))
+            component->setLookAndFeel (lookAndFeel);
 }
 
 void Decorator::connectToState (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)

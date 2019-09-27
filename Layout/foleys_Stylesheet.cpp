@@ -87,6 +87,32 @@ juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::Val
     return {};
 }
 
+juce::LookAndFeel* Stylesheet::getLookAndFeel (const juce::ValueTree& node)
+{
+    auto lnf = getProperty (IDs::lookAndFeel, node).toString();
+    if (lnf.isNotEmpty())
+    {
+        const auto& it = lookAndFeels.find (lnf);
+        if (it != lookAndFeels.end())
+            return it->second.get();
+    }
+
+    return nullptr;
+}
+
+void Stylesheet::registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel)
+{
+    if (lookAndFeels.find (name) != lookAndFeels.cend())
+    {
+        // You tried to register more than one LookAndFeel with the same name!
+        // That cannot work, the second LookAndFeel will be ignored
+        jassertfalse;
+        return;
+    }
+
+    lookAndFeels [name] = std::move (lookAndFeel);
+}
+
 void Stylesheet::configureFlexBox (juce::FlexBox& flexBox, const juce::ValueTree& node) const
 {
     auto direction = getProperty (IDs::flexDirection, node).toString();

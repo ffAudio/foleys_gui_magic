@@ -65,10 +65,22 @@ public:
      */
     void updateLayout();
 
+    /**
+     With that method you can register your custom LookAndFeel class and apply it to different components.
+     */
     void registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel);
 
+    /**
+     Registers automatically the JUCE LookAndFeel classes (V1..V4 at the time of writing)
+     */
     void registerJUCELookAndFeels();
 
+    /**
+     This will create a default GUI, in case of AudioProcessors from AudioProcessor::getParameterTree().
+
+     @param keepExisting if set to true, it will not change an existing root div tree,
+                         if set to false, it will replace any existing data.
+     */
     virtual void createDefaultGUITree (bool keepExisting) = 0;
 
 protected:
@@ -78,8 +90,6 @@ protected:
     juce::UndoManager undo;
     juce::ValueTree   config;
     Stylesheet        stylesheet;
-
-    std::map<juce::String, std::unique_ptr<juce::LookAndFeel>> lookAndFeels;
 
 private:
 

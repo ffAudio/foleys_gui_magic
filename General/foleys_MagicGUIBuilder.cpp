@@ -127,23 +127,15 @@ void MagicBuilder::updateLayout()
 
 void MagicBuilder::registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel)
 {
-    if (lookAndFeels.find (name) != lookAndFeels.cend())
-    {
-        // You tried to register more than one LookAndFeel with the same name!
-        // That cannot work, the second LookAndFeel will be ignored
-        jassertfalse;
-        return;
-    }
-
-    lookAndFeels [name] = std::move (lookAndFeel);
+    stylesheet.registerLookAndFeel (name, std::move (lookAndFeel));
 }
 
 void MagicBuilder::registerJUCELookAndFeels()
 {
-    registerLookAndFeel ("LookAndFeel_V1", std::make_unique<juce::LookAndFeel_V1>());
-    registerLookAndFeel ("LookAndFeel_V2", std::make_unique<juce::LookAndFeel_V2>());
-    registerLookAndFeel ("LookAndFeel_V3", std::make_unique<juce::LookAndFeel_V3>());
-    registerLookAndFeel ("LookAndFeel_V4", std::make_unique<juce::LookAndFeel_V4>());
+    stylesheet.registerLookAndFeel ("LookAndFeel_V1", std::make_unique<juce::LookAndFeel_V1>());
+    stylesheet.registerLookAndFeel ("LookAndFeel_V2", std::make_unique<juce::LookAndFeel_V2>());
+    stylesheet.registerLookAndFeel ("LookAndFeel_V3", std::make_unique<juce::LookAndFeel_V3>());
+    stylesheet.registerLookAndFeel ("LookAndFeel_V4", std::make_unique<juce::LookAndFeel_V4>());
 }
 
 

@@ -48,6 +48,12 @@ public:
      */
     juce::var getProperty (const juce::Identifier& name, const juce::ValueTree& node) const;
 
+    juce::LookAndFeel* getLookAndFeel (const juce::ValueTree& node);
+
+    /**
+     With that method you can register your custom LookAndFeel class and apply it to different components.
+     */
+    void registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel);
 
     void configureFlexBox (juce::FlexBox& flexBox, const juce::ValueTree& node) const;
 
@@ -58,6 +64,8 @@ public:
 private:
 
     juce::ValueTree     currentStyle;
+
+    std::map<juce::String, std::unique_ptr<juce::LookAndFeel>> lookAndFeels;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Stylesheet)
 };
