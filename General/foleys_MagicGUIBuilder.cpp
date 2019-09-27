@@ -60,6 +60,12 @@ namespace IDs
 
 }
 
+
+MagicBuilder::MagicBuilder (juce::Component& parentToUse)
+  : parent (parentToUse)
+{
+}
+
 Stylesheet& MagicBuilder::getStylesheet()
 {
     return stylesheet;
@@ -68,6 +74,13 @@ Stylesheet& MagicBuilder::getStylesheet()
 juce::ValueTree& MagicBuilder::getGuiTree()
 {
     return config;
+}
+
+void MagicBuilder::updateAll()
+{
+    updateStylesheet();
+    updateComponents();
+    updateLayout();
 }
 
 void MagicBuilder::updateStylesheet()
@@ -86,6 +99,30 @@ void MagicBuilder::updateStylesheet()
     {
         stylesheet.setStyle (stylesNode.getChild (0));
     }
+}
+
+void MagicBuilder::restoreGUI (const juce::ValueTree& gui)
+{
+    if (gui.isValid() == false)
+        return;
+
+    config = gui;
+
+    updateAll();
+}
+
+void MagicBuilder::updateComponents()
+{
+    createDefaultGUITree (true);
+
+    auto rootNode = config.getOrCreateChildWithName (IDs::div, &undo);
+    root = restoreNode (parent, rootNode);
+}
+
+void MagicBuilder::updateLayout()
+{
+    if (root.get() != nullptr)
+        root->setBounds (parent.getLocalBounds());
 }
 
 void MagicBuilder::registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel)
@@ -112,42 +149,13 @@ void MagicBuilder::registerJUCELookAndFeels()
 
 template <class AppType>
 MagicGUIBuilder<AppType>::MagicGUIBuilder (juce::Component& parentToUse, AppType& appToUse, MagicProcessorState* magicStateToUse)
-  : parent (parentToUse),
+  : MagicBuilder (parentToUse),
     app (appToUse),
     magicState (magicStateToUse)
 {
     config = juce::ValueTree (IDs::magic);
 
     updateStylesheet();
-}
-
-template <class AppType>
-void MagicGUIBuilder<AppType>::restoreGUI (const juce::ValueTree& gui)
-{
-    if (gui.isValid() == false)
-        return;
-
-    config = gui;
-
-    updateStylesheet();
-    updateComponents();
-    updateLayout();
-}
-
-template <class AppType>
-void MagicGUIBuilder<AppType>::updateComponents()
-{
-    createDefaultGUITree (true);
-
-    auto rootNode = config.getOrCreateChildWithName (IDs::div, &undo);
-    root = restoreNode (parent, rootNode);
-}
-
-template <class AppType>
-void MagicGUIBuilder<AppType>::updateLayout()
-{
-    if (root.get() != nullptr)
-        root->setBounds (parent.getLocalBounds());
 }
 
 template <class AppType>
@@ -275,9 +283,6 @@ void MagicGUIBuilder<juce::AudioProcessor>::createDefaultGUITree (bool keepExist
 
     if (magicState != nullptr)
         createDefaultFromParameters (rootNode, magicState->getProcessor().getParameterTree());
-
-    root = restoreNode (parent, rootNode);
-    updateLayout();
 }
 
 

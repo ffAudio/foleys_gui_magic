@@ -35,22 +35,45 @@ namespace foleys
 class MagicBuilder
 {
 public:
-    MagicBuilder() = default;
+    MagicBuilder (juce::Component& parent);
+
     virtual ~MagicBuilder() = default;
 
-    virtual void restoreGUI (const juce::ValueTree& gui) = 0;
+    void restoreGUI (const juce::ValueTree& gui);
 
     Stylesheet& getStylesheet();
 
     juce::ValueTree& getGuiTree();
 
+    void updateAll();
+
+    /**
+     This selects the stylesheet node and sets it to the Stylesheet.
+     If no stylesheet is found, a default one is created.
+     */
     void updateStylesheet();
+
+    /**
+     Recreates all components from the <div/> tree.
+     If no div tree is found, createDefaultGUITree is called to give subclasses
+     a chance to create a suitable default.
+     */
+    void updateComponents();
+
+    /**
+     Recalculates the layout of all components
+     */
+    void updateLayout();
 
     void registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel);
 
     void registerJUCELookAndFeels();
 
+    virtual void createDefaultGUITree (bool keepExisting) = 0;
+
 protected:
+
+    virtual std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node) = 0;
 
     juce::UndoManager undo;
     juce::ValueTree   config;
@@ -60,7 +83,9 @@ protected:
 
 private:
 
+    juce::Component& parent;
 
+    std::unique_ptr<Decorator> root;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicBuilder)
 };
@@ -91,26 +116,11 @@ public:
     MagicGUIBuilder (juce::Component& parent, AppType& app, MagicProcessorState* magicState);
 
     /**
-     Loads a gui from a previously stored ValueTree.
-     */
-    void restoreGUI (const juce::ValueTree& gui);
-
-    /**
      This method creates a default DOM from the MagicProcessorState. It will read the
      parameterTree() from the AudioProcessor. It does nothing, if magicState is not provided
      (e.g. if the project is not an audio plugin).
      */
     void createDefaultGUITree (bool keepExisting);
-
-    /**
-     Recreates all components from the <div/> tree
-     */
-    void updateComponents();
-
-    /**
-     Recalculates the layout of all components
-     */
-    void updateLayout();
 
     void createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree);
 
@@ -118,19 +128,17 @@ public:
 
     void registerJUCEFactories();
 
-private:
+protected:
 
     std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node);
 
-    juce::Component& parent;
+private:
 
     AppType&         app;
 
     MagicProcessorState* magicState;
 
     std::map<juce::String, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&, AppType&)>> factories;
-
-    std::unique_ptr<Decorator> root;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicGUIBuilder)
 };

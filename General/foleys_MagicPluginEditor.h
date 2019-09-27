@@ -70,8 +70,6 @@ public:
      */
     void restoreGUI (const char* data, const int dataSize);
 
-    void createDefaultGUI (bool keepExisting);
-
     void paint (juce::Graphics& g) override;
 
     void resized() override;

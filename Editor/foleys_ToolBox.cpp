@@ -53,6 +53,8 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
         {
             juce::File xmlFile (myChooser.getResult());
             juce::FileOutputStream stream (xmlFile);
+            stream.setPosition (0);
+            stream.truncate();
             stream.writeString (builder.getGuiTree().toXmlString());
             lastLocation = xmlFile;
         }
@@ -60,7 +62,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
 
     loadXml.onClick = [&]
     {
-        juce::FileChooser myChooser ("Save XML to file...", getLastLocation(), "*.xml");
+        juce::FileChooser myChooser ("Load from XML file...", getLastLocation(), "*.xml");
         if (myChooser.browseForFileToOpen())
         {
             juce::File xmlFile (myChooser.getResult());

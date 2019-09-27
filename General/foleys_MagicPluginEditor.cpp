@@ -41,7 +41,7 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse)
 
     setResizable (true, true);
 
-    createDefaultGUI (true);
+    builder.updateAll();
 
     setSize (600, 400);
 
@@ -58,7 +58,6 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const cha
     builder.registerJUCELookAndFeels();
 
     restoreGUI (data, dataSize);
-    createDefaultGUI (true);
 
     setResizable (true, true);
 
@@ -79,11 +78,6 @@ void MagicPluginEditor::restoreGUI (const char* data, const int dataSize)
     juce::String text (data, dataSize);
     auto gui = juce::ValueTree::fromXml (text);
     restoreGUI (gui);
-}
-
-void MagicPluginEditor::createDefaultGUI (bool keepExisting)
-{
-    builder.createDefaultGUITree (keepExisting);
 }
 
 void MagicPluginEditor::paint (juce::Graphics& g)
