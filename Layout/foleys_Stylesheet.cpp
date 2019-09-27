@@ -32,14 +32,9 @@ namespace foleys
 
 namespace IDs
 {
-    static juce::Identifier styles    { "Styles"  };
-    static juce::Identifier style     { "Style"   };
     static juce::Identifier nodes     { "Nodes"   };
     static juce::Identifier classes   { "Classes" };
     static juce::Identifier types     { "Types"   };
-
-    static juce::Identifier name      { "name"     };
-    static juce::Identifier selected  { "selected" };
 
     static juce::Identifier flexDirection       { "flex-direction" };
     static juce::String     flexDirRow          { "row" };
@@ -57,30 +52,9 @@ namespace IDs
 
 }
 
-Stylesheet::Stylesheet (juce::ValueTree configToUse, juce::UndoManager* undoToUse)
+void Stylesheet::setStyle (const juce::ValueTree& node)
 {
-    readFromValueTree (configToUse, undoToUse);
-}
-
-void Stylesheet::readFromValueTree (juce::ValueTree configToUse, juce::UndoManager* undoToUse)
-{
-    undo   = undoToUse;
-    config = configToUse;
-
-    auto styleParent = config.getOrCreateChildWithName (IDs::styles, undo);
-    if (styleParent.getNumChildren() < 1)
-        styleParent.appendChild (createDefaultStyle(), undo);
-
-    auto name = styleParent.getProperty (IDs::selected, {}).toString();
-    if (name.isEmpty())
-        name = "default";
-
-    auto selected = styleParent.getChildWithProperty (IDs::name, name);
-
-    if (selected.isValid())
-        currentStyle = selected;
-    else
-        currentStyle = styleParent.getChild (0);
+    currentStyle = node;
 }
 
 juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::ValueTree& node) const
@@ -157,20 +131,22 @@ void Stylesheet::configureFlexBoxItem (juce::FlexItem& item, const juce::ValueTr
 
 juce::ValueTree Stylesheet::createDefaultStyle()
 {
-    juce::ValueTree style (IDs::style);
-    style.setProperty (IDs::name, "default", undo);
-    style.appendChild (juce::ValueTree (IDs::nodes), undo);
+    juce::ValueTree style (IDs::style, {{ IDs::name, "default" }}
+    ,
+    {
+        { IDs::nodes, {{ "foo", 0 }} },
+        { IDs::classes, {{ "foo", 0 }}, {
+            { "group", {{ IDs::border, 2 }, { IDs::flexDirection, IDs::flexDirColumn }} }
+        } },
+        { IDs::types, {{ "foo", 0 }}, {
+            { "Slider", {{ IDs::border, 0 }} },
+            { "ToggleButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }} },
+            { "TextButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }} },
+            { "ComboBox", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }} }
+        } }
+    });
 
-    // add a few defaults
-    auto classesNode = style.getOrCreateChildWithName (IDs::classes, undo);
-    classesNode.appendChild ({ "group", {{ IDs::border, 2 }, {IDs::flexDirection, IDs::flexDirColumn}} }, undo);
-
-    auto typesNode = style.getOrCreateChildWithName (IDs::types, undo);
-    typesNode.appendChild ({ "Slider", {{ IDs::border, 0 }} }, undo);
-    typesNode.appendChild ({ "ToggleButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }} }, undo);
-    typesNode.appendChild ({ "TextButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }} }, undo);
-    typesNode.appendChild ({ "ComboBox", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }} }, undo);
-
+    DBG (style.toXmlString());
     return style;
 }
 

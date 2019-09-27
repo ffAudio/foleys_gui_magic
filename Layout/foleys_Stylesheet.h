@@ -37,14 +37,8 @@ class Stylesheet
 public:
 
     Stylesheet() = default;
-    Stylesheet (juce::ValueTree config, juce::UndoManager* undo = nullptr);
 
-    /**
-     Read the DOM and style classes from the ValueTree
-
-     @param config is the ValueTree containing the whole GUI.
-     */
-    void readFromValueTree (juce::ValueTree config, juce::UndoManager* undo);
+    void setStyle (const juce::ValueTree& node);
 
     /**
      This method traverses the dom and checks each style, if that property was defined.
@@ -59,15 +53,9 @@ public:
 
     void configureFlexBoxItem (juce::FlexItem& item, const juce::ValueTree& node) const;
 
-
-
-
-    juce::ValueTree createDefaultStyle();
+    static juce::ValueTree createDefaultStyle();
 
 private:
-
-    juce::ValueTree     config;
-    juce::UndoManager*  undo = nullptr;
 
     juce::ValueTree     currentStyle;
 

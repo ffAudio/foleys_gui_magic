@@ -39,15 +39,15 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse)
     builder.registerJUCEFactories();
     builder.registerJUCELookAndFeels();
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-    magicToolBox = std::make_unique<ToolBox>(getTopLevelComponent());
-#endif
-
     setResizable (true, true);
 
     createDefaultGUI (true);
 
     setSize (600, 400);
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    magicToolBox = std::make_unique<ToolBox>(getTopLevelComponent(), builder);
+#endif
 }
 
 MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const char* data, const int dataSize)
@@ -60,13 +60,13 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const cha
     restoreGUI (data, dataSize);
     createDefaultGUI (true);
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-    magicToolBox = std::make_unique<ToolBox>(getTopLevelComponent());
-#endif
-
     setResizable (true, true);
 
     setSize (600, 400);
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    magicToolBox = std::make_unique<ToolBox>(getTopLevelComponent(), builder);
+#endif
 }
 
 void MagicPluginEditor::restoreGUI (const juce::ValueTree& gui)

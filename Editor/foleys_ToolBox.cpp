@@ -30,10 +30,51 @@
 namespace foleys
 {
 
-ToolBox::ToolBox (juce::Component* parentToUse)
-  : parent (parentToUse)
+ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
+  : parent (parentToUse),
+    builder (builderToControl)
 {
     setOpaque (true);
+
+    saveXml.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
+    loadXml.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
+    saveCSS.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
+    loadCSS.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
+
+    addAndMakeVisible (saveXml);
+    addAndMakeVisible (loadXml);
+    addAndMakeVisible (saveCSS);
+    addAndMakeVisible (loadCSS);
+
+    saveXml.onClick = [&]
+    {
+        juce::FileChooser myChooser ("Save XML to file...", getLastLocation(), "*.xml");
+        if (myChooser.browseForFileToSave (true))
+        {
+            juce::File xmlFile (myChooser.getResult());
+            juce::FileOutputStream stream (xmlFile);
+            stream.writeString (builder.getGuiTree().toXmlString());
+            lastLocation = xmlFile;
+        }
+    };
+
+    loadXml.onClick = [&]
+    {
+        juce::FileChooser myChooser ("Save XML to file...", getLastLocation(), "*.xml");
+        if (myChooser.browseForFileToOpen())
+        {
+            juce::File xmlFile (myChooser.getResult());
+            juce::FileInputStream stream (xmlFile);
+            auto tree = juce::ValueTree::fromXml (stream.readEntireStreamAsString());
+
+            if (tree.isValid() && tree.getType() == IDs::magic)
+                builder.restoreGUI (tree);
+
+            lastLocation = xmlFile;
+        }
+    };
+
+
     setBounds (100, 100, 300, 700);
     addToDesktop (getLookAndFeel().getMenuWindowFlags());
 
@@ -48,6 +89,17 @@ void ToolBox::paint (juce::Graphics& g)
     g.setColour (juce::Colours::silver);
     g.drawRect (getLocalBounds().toFloat(), 2.0f);
     g.drawFittedText ("foleys GUI Magic", getLocalBounds().withHeight (24), juce::Justification::centred, 1);
+}
+
+void ToolBox::resized()
+{
+    auto bounds = getLocalBounds().reduced (2).withTop (24);
+    auto buttons = bounds.removeFromTop (24);
+    auto w = buttons.getWidth() / 4;
+    saveXml.setBounds (buttons.removeFromLeft (w));
+    loadXml.setBounds (buttons.removeFromLeft (w));
+    saveCSS.setBounds (buttons.removeFromLeft (w));
+    loadCSS.setBounds (buttons);
 }
 
 void ToolBox::timerCallback ()
@@ -67,6 +119,28 @@ void ToolBox::timerCallback ()
     }
 }
 
+    juce::File ToolBox::getLastLocation() const
+    {
+        if (lastLocation.exists())
+            return lastLocation;
+
+        auto start = juce::File::getSpecialLocation (juce::File::currentExecutableFile);
+        while (start.exists() && start.getFileName() != "Builds")
+            start = start.getParentDirectory();
+
+        if (start.getFileName() == "Builds")
+        {
+            auto resources = start.getSiblingFile ("Resources");
+            if (resources.isDirectory())
+                return resources;
+
+            auto sources = start.getSiblingFile ("Sources");
+            if (sources.isDirectory())
+                return sources;
+        }
+
+        return juce::File::getSpecialLocation (juce::File::currentExecutableFile);
+    }
 
 
 } // namespace foleys

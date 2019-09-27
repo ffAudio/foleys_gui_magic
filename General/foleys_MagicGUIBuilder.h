@@ -32,6 +32,39 @@
 namespace foleys
 {
 
+class MagicBuilder
+{
+public:
+    MagicBuilder() = default;
+    virtual ~MagicBuilder() = default;
+
+    virtual void restoreGUI (const juce::ValueTree& gui) = 0;
+
+    Stylesheet& getStylesheet();
+
+    juce::ValueTree& getGuiTree();
+
+    void updateStylesheet();
+
+    void registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel);
+
+    void registerJUCELookAndFeels();
+
+protected:
+
+    juce::UndoManager undo;
+    juce::ValueTree   config;
+    Stylesheet        stylesheet;
+
+    std::map<juce::String, std::unique_ptr<juce::LookAndFeel>> lookAndFeels;
+
+private:
+
+
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicBuilder)
+};
+
 /**
  The MagicGUIBuilder is responsible to recreate the GUI from a single ValueTree.
  You can add your own factories to the builder to allow additional components.
@@ -39,7 +72,7 @@ namespace foleys
  it is intended to be eithe AudioProcessor, JUCEApplication or your own MainWindow, it's up to you.
  */
 template <class AppType>
-class MagicGUIBuilder
+class MagicGUIBuilder : public MagicBuilder
 {
 public:
 
@@ -85,10 +118,6 @@ public:
 
     void registerJUCEFactories();
 
-    void registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel);
-
-    void registerJUCELookAndFeels();
-
 private:
 
     std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node);
@@ -99,13 +128,7 @@ private:
 
     MagicProcessorState* magicState;
 
-    std::map<juce::String, std::unique_ptr<juce::LookAndFeel>> lookAndFeels;
-
     std::map<juce::String, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&, AppType&)>> factories;
-
-    juce::UndoManager undo;
-    juce::ValueTree   config;
-    Stylesheet stylesheet;
 
     std::unique_ptr<Decorator> root;
 

@@ -33,6 +33,8 @@ namespace foleys
 namespace IDs
 {
     static juce::Identifier magic        { "magic" };
+    static juce::Identifier styles       { "Styles"  };
+    static juce::Identifier style        { "Style"   };
     static juce::Identifier div          { "Div" };
     static juce::Identifier slider       { "Slider" };
     static juce::Identifier textButton   { "TextButton" };
@@ -42,6 +44,9 @@ namespace IDs
     static juce::Identifier caption      { "caption" };
     static juce::Identifier lookAndFeel  { "lookAndFeel" };
     static juce::Identifier parameter    { "parameter" };
+
+    static juce::Identifier name         { "name"     };
+    static juce::Identifier selected     { "selected" };
     static juce::Identifier id           { "id" };
     static juce::Identifier styleClass   { "class" };
 
@@ -55,6 +60,55 @@ namespace IDs
 
 }
 
+Stylesheet& MagicBuilder::getStylesheet()
+{
+    return stylesheet;
+}
+
+juce::ValueTree& MagicBuilder::getGuiTree()
+{
+    return config;
+}
+
+void MagicBuilder::updateStylesheet()
+{
+    auto stylesNode = config.getOrCreateChildWithName (IDs::styles, &undo);
+    if (stylesNode.getNumChildren() == 0)
+        stylesNode.appendChild (Stylesheet::createDefaultStyle(), &undo);
+
+    auto selectedName = stylesNode.getProperty (IDs::selected, {}).toString();
+    if (selectedName.isNotEmpty())
+    {
+        auto style = stylesNode.getChildWithProperty (IDs::name, selectedName);
+        stylesheet.setStyle (style);
+    }
+    else
+    {
+        stylesheet.setStyle (stylesNode.getChild (0));
+    }
+}
+
+void MagicBuilder::registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel)
+{
+    if (lookAndFeels.find (name) != lookAndFeels.cend())
+    {
+        // You tried to register more than one LookAndFeel with the same name!
+        // That cannot work, the second LookAndFeel will be ignored
+        jassertfalse;
+        return;
+    }
+
+    lookAndFeels [name] = std::move (lookAndFeel);
+}
+
+void MagicBuilder::registerJUCELookAndFeels()
+{
+    registerLookAndFeel ("LookAndFeel_V1", std::make_unique<juce::LookAndFeel_V1>());
+    registerLookAndFeel ("LookAndFeel_V2", std::make_unique<juce::LookAndFeel_V2>());
+    registerLookAndFeel ("LookAndFeel_V3", std::make_unique<juce::LookAndFeel_V3>());
+    registerLookAndFeel ("LookAndFeel_V4", std::make_unique<juce::LookAndFeel_V4>());
+}
+
 
 template <class AppType>
 MagicGUIBuilder<AppType>::MagicGUIBuilder (juce::Component& parentToUse, AppType& appToUse, MagicProcessorState* magicStateToUse)
@@ -63,6 +117,8 @@ MagicGUIBuilder<AppType>::MagicGUIBuilder (juce::Component& parentToUse, AppType
     magicState (magicStateToUse)
 {
     config = juce::ValueTree (IDs::magic);
+
+    updateStylesheet();
 }
 
 template <class AppType>
@@ -73,8 +129,7 @@ void MagicGUIBuilder<AppType>::restoreGUI (const juce::ValueTree& gui)
 
     config = gui;
 
-    stylesheet.readFromValueTree (config, &undo);
-
+    updateStylesheet();
     updateComponents();
     updateLayout();
 }
@@ -138,31 +193,8 @@ void MagicGUIBuilder<juce::AudioProcessor>::registerJUCEFactories()
                      });
 }
 
-template <>
-void MagicGUIBuilder<juce::AudioProcessor>::registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel)
-{
-    if (lookAndFeels.find (name) != lookAndFeels.cend())
-    {
-        // You tried to register more than one LookAndFeel with the same name!
-        // That cannot work, the second LookAndFeel will be ignored
-        jassertfalse;
-        return;
-    }
-
-    lookAndFeels [name] = std::move (lookAndFeel);
-}
-
-template <>
-void MagicGUIBuilder<juce::AudioProcessor>::registerJUCELookAndFeels()
-{
-    registerLookAndFeel ("LookAndFeel_V1", std::make_unique<juce::LookAndFeel_V1>());
-    registerLookAndFeel ("LookAndFeel_V2", std::make_unique<juce::LookAndFeel_V2>());
-    registerLookAndFeel ("LookAndFeel_V3", std::make_unique<juce::LookAndFeel_V3>());
-    registerLookAndFeel ("LookAndFeel_V4", std::make_unique<juce::LookAndFeel_V4>());
-}
-
-template <>
-std::unique_ptr<Decorator> MagicGUIBuilder<juce::AudioProcessor>::restoreNode (juce::Component& component, const juce::ValueTree& node)
+template <class AppType>
+std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Component& component, const juce::ValueTree& node)
 {
     if (node.getType() == IDs::div)
     {
@@ -244,12 +276,8 @@ void MagicGUIBuilder<juce::AudioProcessor>::createDefaultGUITree (bool keepExist
     if (magicState != nullptr)
         createDefaultFromParameters (rootNode, magicState->getProcessor().getParameterTree());
 
-    stylesheet.readFromValueTree (config, nullptr);
-
     root = restoreNode (parent, rootNode);
     updateLayout();
-
-    DBG ("Config: " << config.toXmlString());
 }
 
 
