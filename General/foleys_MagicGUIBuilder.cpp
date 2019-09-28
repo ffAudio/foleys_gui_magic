@@ -50,8 +50,8 @@ namespace IDs
     static juce::Identifier id           { "id" };
     static juce::Identifier styleClass   { "class" };
 
-    static juce::Identifier backgroundColour  { "backgroundColour" };
-    static juce::Identifier borderColour      { "borderColour" };
+    static juce::Identifier backgroundColour  { "background-color" };
+    static juce::Identifier borderColour      { "border-color" };
     static juce::Identifier border       { "border" };
     static juce::Identifier margin       { "margin" };
     static juce::Identifier padding      { "padding" };
