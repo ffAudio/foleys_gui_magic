@@ -69,6 +69,8 @@
 #include "Layout/foleys_Decorator.h"
 #include "Layout/foleys_Container.h"
 
+#include "LookAndFeels/foleys_LookAndFeel.h"
+
 #include "Visualisers/foleys_MagicLevelSource.h"
 #include "Visualisers/foleys_MagicPlotSource.h"
 #include "Visualisers/foleys_MagicFilterPlot.h"

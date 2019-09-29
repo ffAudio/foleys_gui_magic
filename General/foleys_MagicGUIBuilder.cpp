@@ -33,8 +33,8 @@ namespace foleys
 namespace IDs
 {
     static juce::Identifier magic        { "magic" };
-    static juce::Identifier styles       { "Styles"  };
-    static juce::Identifier style        { "Style"   };
+    static juce::Identifier styles       { "Styles" };
+    static juce::Identifier style        { "Style" };
     static juce::Identifier div          { "Div" };
     static juce::Identifier slider       { "Slider" };
     static juce::Identifier textButton   { "TextButton" };
@@ -47,7 +47,7 @@ namespace IDs
     static juce::Identifier parameter    { "parameter" };
     static juce::Identifier source       { "source" };
 
-    static juce::Identifier name         { "name"     };
+    static juce::Identifier name         { "name" };
     static juce::Identifier selected     { "selected" };
     static juce::Identifier id           { "id" };
     static juce::Identifier styleClass   { "class" };
@@ -142,6 +142,7 @@ void MagicBuilder::registerJUCELookAndFeels()
     stylesheet.registerLookAndFeel ("LookAndFeel_V2", std::make_unique<juce::LookAndFeel_V2>());
     stylesheet.registerLookAndFeel ("LookAndFeel_V3", std::make_unique<juce::LookAndFeel_V3>());
     stylesheet.registerLookAndFeel ("LookAndFeel_V4", std::make_unique<juce::LookAndFeel_V4>());
+    stylesheet.registerLookAndFeel ("FoleysFinest", std::make_unique<LookAndFeel>());
 }
 
 
