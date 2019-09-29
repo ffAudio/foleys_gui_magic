@@ -32,30 +32,20 @@
 namespace foleys
 {
 
-class Container : public Decorator
+    class MagicPlotSource  : public juce::ChangeBroadcaster
 {
 public:
-    enum class Layout
-    {
-        Contents,
-        FlexBox
-    };
 
-    Container() = default;
+    MagicPlotSource()=default;
+    virtual ~MagicPlotSource()=default;
 
-    void addChildItem (std::unique_ptr<Decorator> child);
+    virtual void pushSamples (const juce::AudioBuffer<float>& buffer)=0;
 
-    void resized() override;
-
-    juce::FlexBox flexBox;
-
-    Layout layout = Layout::FlexBox;
+    virtual void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, std::map<int, juce::Colour>& colourMap)=0;
 
 private:
-
-    std::vector<std::unique_ptr<Decorator>> children;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Container)
+    JUCE_DECLARE_WEAK_REFERENCEABLE (MagicPlotSource)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicPlotSource)
 };
 
 } // namespace foleys

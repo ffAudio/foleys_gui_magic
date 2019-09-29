@@ -40,10 +40,12 @@ namespace IDs
     static juce::Identifier textButton   { "TextButton" };
     static juce::Identifier toggleButton { "ToggleButton" };
     static juce::Identifier comboBox     { "ComboBox" };
+    static juce::Identifier plot         { "Plot" };
 
     static juce::Identifier caption      { "caption" };
     static juce::Identifier lookAndFeel  { "lookAndFeel" };
     static juce::Identifier parameter    { "parameter" };
+    static juce::Identifier source       { "source" };
 
     static juce::Identifier name         { "name"     };
     static juce::Identifier selected     { "selected" };
@@ -55,6 +57,10 @@ namespace IDs
     static juce::Identifier border       { "border" };
     static juce::Identifier margin       { "margin" };
     static juce::Identifier padding      { "padding" };
+
+    static juce::Identifier display      { "display" };
+    static juce::String     contents     { "contents" };
+    static juce::String     flexbox      { "flexbox" };
 
     static juce::String     root         { "root" };
 
@@ -191,6 +197,18 @@ void MagicGUIBuilder<juce::AudioProcessor>::registerJUCEFactories()
                          auto text = config.getProperty (IDs::caption, "Active");
                          return std::make_unique<juce::ToggleButton>(text);
                      });
+
+    registerFactory (IDs::plot.toString(),
+                     [&] (const juce::ValueTree& config, auto& app)
+                     {
+                         auto item = std::make_unique<MagicPlotComponent>();
+                         if (magicState && config.hasProperty (IDs::source))
+                         {
+                             auto* source = magicState->getPlotSource (config.getProperty (IDs::source).toString());
+                             item->setPlotSource (source);
+                         }
+                         return std::move (item);
+                     });
 }
 
 template <class AppType>
@@ -206,7 +224,16 @@ std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Componen
 
         item->configureDecorator (stylesheet, node);
 
-        stylesheet.configureFlexBox (item->flexBox, node);
+        auto display = stylesheet.getProperty (IDs::display, node).toString();
+        if (display == IDs::contents)
+        {
+            item->layout = Container::Layout::Contents;
+        }
+        else
+        {
+            item->layout = Container::Layout::FlexBox;
+            stylesheet.configureFlexBox (item->flexBox, node);
+        }
 
         component.addAndMakeVisible (item.get());
         return item;

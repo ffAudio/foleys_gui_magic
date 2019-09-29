@@ -38,6 +38,11 @@ public:
     MagicProcessorState (juce::AudioProcessor& processorToUse,
                          juce::AudioProcessorValueTreeState& stateToUse);
 
+    void addLevelSource (const juce::Identifier& sourceID, std::unique_ptr<MagicLevelSource> source);
+    MagicLevelSource* getLevelSource (const juce::Identifier& sourceID);
+    void addPlotSource (const juce::Identifier& sourceID, std::unique_ptr<MagicPlotSource> source);
+    MagicPlotSource* getPlotSource (const juce::Identifier& sourceID);
+
     juce::AudioProcessor& getProcessor();
     juce::AudioProcessorValueTreeState& getValueTreeState();
 
@@ -45,6 +50,9 @@ private:
 
     juce::AudioProcessor& processor;
     juce::AudioProcessorValueTreeState& state;
+
+    std::map<juce::Identifier, std::unique_ptr<MagicLevelSource>> levelSources;
+    std::map<juce::Identifier, std::unique_ptr<MagicPlotSource>>  plotSources;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicProcessorState)
 };

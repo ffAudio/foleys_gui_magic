@@ -32,30 +32,26 @@
 namespace foleys
 {
 
-class Container : public Decorator
+class MagicPlotComponent  : public juce::Component,
+                            public juce::AsyncUpdater,
+                            private juce::ChangeListener
 {
 public:
-    enum class Layout
-    {
-        Contents,
-        FlexBox
-    };
+    MagicPlotComponent();
+    ~MagicPlotComponent();
 
-    Container() = default;
+    void setPlotSource (MagicPlotSource* source);
 
-    void addChildItem (std::unique_ptr<Decorator> child);
+    void paint (juce::Graphics& g) override;
 
-    void resized() override;
-
-    juce::FlexBox flexBox;
-
-    Layout layout = Layout::FlexBox;
+    void changeListenerCallback (juce::ChangeBroadcaster *source) override;
+    void handleAsyncUpdate() override;
 
 private:
+    juce::WeakReference<MagicPlotSource> plotSource;
+    std::map<int, juce::Colour>          colourMap;
 
-    std::vector<std::unique_ptr<Decorator>> children;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Container)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicPlotComponent)
 };
 
 } // namespace foleys

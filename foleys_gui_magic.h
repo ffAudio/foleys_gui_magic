@@ -33,7 +33,7 @@
     version:       0.0.1
     name:          Foleys GUI magic
     description:   This module allows to create GUI with a drag and drop editor
-    dependencies:  juce_core,juce_audio_basics, juce_gui_basics
+    dependencies:  juce_core,juce_audio_basics, juce_gui_basics, juce_dsp
     website:       http://www.foleysfinest.com/
     license:       BSD V2 3-clause
 
@@ -63,10 +63,16 @@
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_gui_basics/juce_gui_basics.h>
+#include <juce_dsp/juce_dsp.h>
 
 #include "Layout/foleys_Stylesheet.h"
 #include "Layout/foleys_Decorator.h"
 #include "Layout/foleys_Container.h"
+
+#include "Visualisers/foleys_MagicLevelSource.h"
+#include "Visualisers/foleys_MagicPlotSource.h"
+#include "Visualisers/foleys_MagicFilterPlot.h"
+#include "Visualisers/foleys_MagicPlotComponent.h"
 
 #include "Editor/foleys_ToolBox.h"
 

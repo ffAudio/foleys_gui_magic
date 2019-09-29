@@ -36,21 +36,24 @@ void Container::addChildItem (std::unique_ptr<Decorator> child)
     addAndMakeVisible (child.get());
 }
 
-void Container::setLayout (Layout l)
-{
-    layout = l;
-}
-
 void Container::resized()
 {
     if (children.empty())
         return;
 
-    flexBox.items.clear();
-    for (auto& child : children)
-        flexBox.items.add (child->flexItem);
+    if (layout == Layout::FlexBox)
+    {
+        flexBox.items.clear();
+        for (auto& child : children)
+            flexBox.items.add (child->flexItem);
 
-    flexBox.performLayout (getClientBounds());
+        flexBox.performLayout (getClientBounds());
+    }
+    else
+    {
+        for (auto& child : children)
+            child->setBounds (getClientBounds());
+    }
 }
 
 } // namespace foleys

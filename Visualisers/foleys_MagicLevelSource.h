@@ -32,30 +32,15 @@
 namespace foleys
 {
 
-class Container : public Decorator
+class MagicLevelSource
 {
 public:
-    enum class Layout
-    {
-        Contents,
-        FlexBox
-    };
 
-    Container() = default;
-
-    void addChildItem (std::unique_ptr<Decorator> child);
-
-    void resized() override;
-
-    juce::FlexBox flexBox;
-
-    Layout layout = Layout::FlexBox;
 
 private:
 
-    std::vector<std::unique_ptr<Decorator>> children;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Container)
+    JUCE_DECLARE_WEAK_REFERENCEABLE (MagicLevelSource)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicLevelSource)
 };
 
 } // namespace foleys

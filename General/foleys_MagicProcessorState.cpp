@@ -39,6 +39,48 @@ MagicProcessorState::MagicProcessorState (juce::AudioProcessor& processorToUse,
 
 }
 
+void MagicProcessorState::addLevelSource (const juce::Identifier& sourceID, std::unique_ptr<MagicLevelSource> source)
+{
+    if (levelSources.find (sourceID) != levelSources.cend())
+    {
+        // You tried to add two MagicLevelSources with the same sourceID
+        jassertfalse;
+        return;
+    }
+
+    levelSources [sourceID] = std::move (source);
+}
+
+MagicLevelSource* MagicProcessorState::getLevelSource (const juce::Identifier& sourceID)
+{
+    auto it = levelSources.find (sourceID);
+    if (it != levelSources.end())
+        return nullptr;
+
+    return it->second.get();
+}
+
+void MagicProcessorState::addPlotSource (const juce::Identifier& sourceID, std::unique_ptr<MagicPlotSource> source)
+{
+    if (plotSources.find (sourceID) != plotSources.cend())
+    {
+        // You tried to add two MagicPlotSources with the same sourceID
+        jassertfalse;
+        return;
+    }
+
+    plotSources [sourceID] = std::move (source);
+}
+
+MagicPlotSource* MagicProcessorState::getPlotSource (const juce::Identifier& sourceID)
+{
+    auto it = plotSources.find (sourceID);
+    if (it == plotSources.end())
+        return nullptr;
+
+    return it->second.get();
+}
+
 juce::AudioProcessor& MagicProcessorState::getProcessor()
 {
     return processor;

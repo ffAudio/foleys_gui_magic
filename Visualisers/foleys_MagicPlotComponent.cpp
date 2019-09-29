@@ -27,35 +27,51 @@
  ==============================================================================
  */
 
-#pragma once
 
 namespace foleys
 {
 
-class Container : public Decorator
+
+MagicPlotComponent::MagicPlotComponent()
 {
-public:
-    enum class Layout
-    {
-        Contents,
-        FlexBox
-    };
+    setOpaque (false);
+    setInterceptsMouseClicks (false, false);
+}
 
-    Container() = default;
+MagicPlotComponent::~MagicPlotComponent()
+{
+    if (plotSource != nullptr)
+        plotSource->removeChangeListener (this);
+}
 
-    void addChildItem (std::unique_ptr<Decorator> child);
+void MagicPlotComponent::setPlotSource (MagicPlotSource* source)
+{
+    if (plotSource != nullptr)
+        plotSource->removeChangeListener (this);
 
-    void resized() override;
+    plotSource = source;
 
-    juce::FlexBox flexBox;
+    if (plotSource != nullptr)
+        plotSource->addChangeListener (this);
+}
 
-    Layout layout = Layout::FlexBox;
+void MagicPlotComponent::paint (juce::Graphics& g)
+{
+    if (plotSource == nullptr)
+        return;
 
-private:
+    plotSource->drawPlot (g, getLocalBounds().toFloat(), colourMap);
+}
 
-    std::vector<std::unique_ptr<Decorator>> children;
+void MagicPlotComponent::changeListenerCallback (juce::ChangeBroadcaster *source)
+{
+    triggerAsyncUpdate();
+}
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Container)
-};
+void MagicPlotComponent::handleAsyncUpdate()
+{
+    repaint();
+}
+
 
 } // namespace foleys

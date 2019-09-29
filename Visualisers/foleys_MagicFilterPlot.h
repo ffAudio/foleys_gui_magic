@@ -32,30 +32,29 @@
 namespace foleys
 {
 
-class Container : public Decorator
+class MagicFilterPlot : public MagicPlotSource
 {
 public:
-    enum class Layout
-    {
-        Contents,
-        FlexBox
-    };
 
-    Container() = default;
+    MagicFilterPlot();
 
-    void addChildItem (std::unique_ptr<Decorator> child);
+    void setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::Ptr coefficients, double sampleRate, float maxDB);
 
-    void resized() override;
+    void pushSamples (const juce::AudioBuffer<float>& buffer) override;
 
-    juce::FlexBox flexBox;
-
-    Layout layout = Layout::FlexBox;
+    void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, std::map<int, juce::Colour>& colourMap) override;
 
 private:
+    juce::ReadWriteLock     plotLock;
+    bool                    plotChanged = true;
+    juce::Path              path;
+    juce::Rectangle<float>  lastBounds;
 
-    std::vector<std::unique_ptr<Decorator>> children;
+    std::vector<double>     frequencies;
+    std::vector<double>     magnitudes;
+    float                   maxDB = 100.0f;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Container)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicFilterPlot)
 };
 
 } // namespace foleys
