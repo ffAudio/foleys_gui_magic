@@ -32,17 +32,39 @@
 namespace foleys
 {
 
+/**
+ This will plot the frequency responce for a juce IIR filter. To use it, add it to
+ the MagicPluginState. It will automatically update each time you set new coefficients
+ using setIIRCoefficients.
+ */
 class MagicFilterPlot : public MagicPlotSource
 {
 public:
 
     MagicFilterPlot();
 
+    /**
+     Set new coefficients to calculate the frequency response from.
+
+     @param coefficients the coefficients to calculate the frequency response for
+     @param sampleRate is the sampleRate the processing is happening with
+     @param maxDB is the maximum level in dB, that the curve will display
+     */
     void setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::Ptr coefficients, double sampleRate, float maxDB);
 
+    /**
+     Does nothing in this class
+     */
     void pushSamples (const juce::AudioBuffer<float>& buffer) override;
 
-    void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, std::map<int, juce::Colour>& colourMap) override;
+    /**
+     This is the callback that draws the frequency plot.
+
+     @param g the Graphics context to draw onto
+     @param bounds the bounds of the plot
+     @param component grants access to the plot component, e.g. to find the colours from it
+     */
+    void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component) override;
 
 private:
     juce::ReadWriteLock     plotLock;

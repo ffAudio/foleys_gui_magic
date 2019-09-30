@@ -76,6 +76,12 @@ public:
     void registerJUCELookAndFeels();
 
     /**
+     For each factory you can register a translation table, which will forward the colours from the
+     Stylesheet to the Components.
+     */
+    void setColourTranslation (juce::Identifier type, std::vector<std::pair<juce::String, int>> mapping);
+
+    /**
      This will create a default GUI, in case of AudioProcessors from AudioProcessor::getParameterTree().
 
      @param keepExisting if set to true, it will not change an existing root div tree,
@@ -90,6 +96,8 @@ protected:
     juce::UndoManager undo;
     juce::ValueTree   config;
     Stylesheet        stylesheet;
+
+    std::map<juce::Identifier, std::vector<std::pair<juce::String, int>>> colourTranslations;
 
 private:
 
@@ -134,7 +142,7 @@ public:
 
     void createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree);
 
-    void registerFactory (juce::String type, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&, AppType&)> factory);
+    void registerFactory (juce::Identifier type, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&, AppType&)> factory);
 
     void registerJUCEFactories();
 
@@ -148,7 +156,7 @@ private:
 
     MagicProcessorState* magicState;
 
-    std::map<juce::String, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&, AppType&)>> factories;
+    std::map<juce::Identifier, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&, AppType&)>> factories;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicGUIBuilder)
 };

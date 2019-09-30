@@ -38,9 +38,24 @@ public:
     MagicProcessorState (juce::AudioProcessor& processorToUse,
                          juce::AudioProcessorValueTreeState& stateToUse);
 
+    /**
+     Add a MagicLevelSource to measure the level at any point in your DSP. For instance you can have
+     one MagicLevelSource at the beginning of your processing and one at the end to show the user
+     the input and output level.
+     */
     void addLevelSource (const juce::Identifier& sourceID, std::unique_ptr<MagicLevelSource> source);
     MagicLevelSource* getLevelSource (const juce::Identifier& sourceID);
+
+    /**
+     Add a MagicPlotSource to generate a plot for visualisation. There are some plots ready made
+     like the MagicFilterPlot to show an IIR frequency response plot.
+     */
     void addPlotSource (const juce::Identifier& sourceID, std::unique_ptr<MagicPlotSource> source);
+
+    /**
+     Use this to lookup a MagicPlotSource. Since they can only be added and never removed, it makes
+     sense to have the result as member pointer so you can push the data there.
+     */
     MagicPlotSource* getPlotSource (const juce::Identifier& sourceID);
 
     juce::AudioProcessor& getProcessor();

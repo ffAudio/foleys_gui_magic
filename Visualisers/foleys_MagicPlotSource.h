@@ -31,17 +31,33 @@
 
 namespace foleys
 {
+class MagicPlotComponent;
 
-    class MagicPlotSource  : public juce::ChangeBroadcaster
+/**
+ The MagicPlotSources act as an interface, so the GUI can visualise an arbitrary plot
+ of data. To create a specific new plot, create a subclass and implement drawPlot.
+ */
+class MagicPlotSource  : public juce::ChangeBroadcaster
 {
 public:
 
     MagicPlotSource()=default;
     virtual ~MagicPlotSource()=default;
 
+    /**
+     This is the callback whenever new sample data arrives. It is the subclasses
+     responsibility to put that into a FIFO and return as quickly as possible.
+     */
     virtual void pushSamples (const juce::AudioBuffer<float>& buffer)=0;
 
-    virtual void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, std::map<int, juce::Colour>& colourMap)=0;
+    /**
+     This is the callback that draws the plot.
+
+     @param g the Graphics context to draw onto
+     @param bounds the bounds of the plot
+     @param component grants access to the plot component, e.g. to find the colours from it
+     */
+    virtual void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component)=0;
 
 private:
     JUCE_DECLARE_WEAK_REFERENCEABLE (MagicPlotSource)

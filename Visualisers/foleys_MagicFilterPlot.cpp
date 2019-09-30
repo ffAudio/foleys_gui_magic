@@ -56,7 +56,7 @@ void MagicFilterPlot::setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::P
 
 void MagicFilterPlot::pushSamples (const juce::AudioBuffer<float>&){}
 
-void MagicFilterPlot::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, std::map<int, juce::Colour>& colourMap)
+void MagicFilterPlot::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component)
 {
     if (plotChanged || lastBounds != bounds)
     {
@@ -75,7 +75,7 @@ void MagicFilterPlot::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds
         plotChanged = false;
     }
 
-    g.setColour (juce::Colours::orange);
+    g.setColour (component.findColour (MagicPlotComponent::plotColourId));
     g.strokePath (path, juce::PathStrokeType (2.0f));
 }
 

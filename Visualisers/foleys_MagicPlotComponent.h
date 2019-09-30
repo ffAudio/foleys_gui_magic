@@ -32,11 +32,20 @@
 namespace foleys
 {
 
+/**
+ */
 class MagicPlotComponent  : public juce::Component,
                             public juce::AsyncUpdater,
                             private juce::ChangeListener
 {
 public:
+
+    enum ColourIds
+    {
+        plotColourId = 0x2001000,
+        plotFillColourId
+    };
+
     MagicPlotComponent();
     ~MagicPlotComponent();
 
@@ -49,7 +58,6 @@ public:
 
 private:
     juce::WeakReference<MagicPlotSource> plotSource;
-    std::map<int, juce::Colour>          colourMap;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicPlotComponent)
 };

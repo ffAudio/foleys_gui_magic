@@ -128,7 +128,7 @@ void LookAndFeel::drawRotarySlider (juce::Graphics& g, int x, int y, int width, 
 
     juce::Path p;
     p.startNewSubPath (centre.getPointOnCircumference (knobRadius - lineW, toAngle));
-    p.lineTo (centre.getPointOnCircumference (knobRadius - lineW * 4.0f, toAngle));
+    p.lineTo (centre.getPointOnCircumference ((knobRadius - lineW) * 0.6f, toAngle));
     g.strokePath (p, juce::PathStrokeType (lineW, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
 }
 

@@ -34,6 +34,9 @@ namespace foleys
 
 MagicPlotComponent::MagicPlotComponent()
 {
+    setColour (plotColourId, juce::Colours::orange);
+    setColour (plotFillColourId, juce::Colours::orange.withAlpha (0.5f));
+
     setOpaque (false);
     setInterceptsMouseClicks (false, false);
 }
@@ -60,7 +63,7 @@ void MagicPlotComponent::paint (juce::Graphics& g)
     if (plotSource == nullptr)
         return;
 
-    plotSource->drawPlot (g, getLocalBounds().toFloat(), colourMap);
+    plotSource->drawPlot (g, getLocalBounds().toFloat(), *this);
 }
 
 void MagicPlotComponent::changeListenerCallback (juce::ChangeBroadcaster *source)
