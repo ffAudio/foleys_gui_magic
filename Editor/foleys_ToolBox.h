@@ -27,8 +27,6 @@
  ==============================================================================
  */
 
-#pragma once
-
 namespace foleys
 {
 
@@ -39,6 +37,7 @@ class ToolBox  : public juce::Component,
 {
 public:
     ToolBox (juce::Component* parent, MagicBuilder& builder);
+    ~ToolBox() override;
 
     void paint (juce::Graphics& g) override;
 
@@ -60,6 +59,15 @@ private:
     juce::TextButton loadXml { TRANS ("Load") };
     juce::TextButton saveCSS { TRANS ("Save CSS") };
     juce::TextButton loadCSS { TRANS ("Load CSS") };
+
+    juce::TreeView treeView;
+
+    juce::TextButton addNode    { TRANS ("+") };
+    juce::TextButton removeNode { TRANS ("X") };
+
+    PropertiesPanel propertiesPanel;
+
+    juce::ValueTree tree;
 
     juce::File lastLocation;
 

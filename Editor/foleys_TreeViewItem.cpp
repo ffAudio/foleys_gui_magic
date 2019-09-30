@@ -27,20 +27,51 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+namespace foleys
+{
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
+GuiTreeItem::~GuiTreeItem()
+{
+    tree.getParent().removeChild (tree, nullptr);
+    clearSubItems();
+}
 
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
-#include "Editor/foleys_PropertiesPanel.cpp"
-#include "Editor/foleys_TreeViewItem.cpp"
-#include "Editor/foleys_ToolBox.cpp"
+void foleys::GuiTreeItem::paintItem (juce::Graphics& g, int width, int height)
+{
+    if (isSelected())
+        g.fillAll (juce::Colours::blue.withAlpha (0.3f));
 
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicPlotComponent.cpp"
+    g.setColour (juce::Colours::black);
+    g.setFont (height * 0.7f);
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
+    juce::String s = tree.getType().toString(); // tree.getProperty("caption").toString();
+    if (s.isEmpty()) s = "Root";
+
+    g.drawText (s, 4, 0, width - 4, height, juce::Justification::centredLeft, true);
+}
+
+void GuiTreeItem::itemOpennessChanged (bool isNowOpen)
+{
+    if (isNowOpen)
+    {
+        if (getNumSubItems() == 0)
+        {
+            for (const auto& child : tree)
+            {
+                // this leaks, need to find out why!
+                addSubItem (new GuiTreeItem (child));
+            }
+        }
+    }
+}
+
+void GuiTreeItem::itemSelectionChanged (bool isNowSelected)
+{
+    if (isNowSelected)
+    {
+        // update right panel to show the new selectedItem's properties!
+        DBG (tree.toXmlString());
+    }
+}
+
+}

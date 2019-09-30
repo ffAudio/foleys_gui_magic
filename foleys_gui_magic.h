@@ -76,6 +76,8 @@
 #include "Visualisers/foleys_MagicFilterPlot.h"
 #include "Visualisers/foleys_MagicPlotComponent.h"
 
+#include "Editor/foleys_PropertiesPanel.h"
+#include "Editor/foleys_TreeViewItem.h"
 #include "Editor/foleys_ToolBox.h"
 
 #include "General/foleys_MagicProcessorState.h"

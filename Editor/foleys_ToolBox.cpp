@@ -46,6 +46,13 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
     addAndMakeVisible (saveCSS);
     addAndMakeVisible (loadCSS);
 
+    addAndMakeVisible (treeView);
+
+    addAndMakeVisible (addNode);
+    addAndMakeVisible (removeNode);
+
+    addAndMakeVisible (propertiesPanel);
+
     saveXml.onClick = [&]
     {
         juce::FileChooser myChooser ("Save XML to file...", getLastLocation(), "*.xml");
@@ -67,41 +74,91 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
         {
             juce::File xmlFile (myChooser.getResult());
             juce::FileInputStream stream (xmlFile);
-            auto tree = juce::ValueTree::fromXml (stream.readEntireStreamAsString());
+            auto loadedTree = juce::ValueTree::fromXml (stream.readEntireStreamAsString());
 
-            if (tree.isValid() && tree.getType() == IDs::magic)
+            if (loadedTree.isValid() && loadedTree.getType() == IDs::magic)
+            {
+                tree = loadedTree;
                 builder.restoreGUI (tree);
+                treeView.setRootItem (new GuiTreeItem (tree));
+            }
 
             lastLocation = xmlFile;
         }
     };
 
+    addNode.setEnabled (false);
+    addNode.onClick = [&]
+    {
+        // Show popup with types of nodes to add to the ValueTree: div, slider, button, etc
+        // add new node as a child of the currently selected node
+    };
 
-    setBounds (100, 100, 300, 700);
+    removeNode.onClick = [&]
+    {
+        if (GuiTreeItem* selectedItem = static_cast<GuiTreeItem*>(treeView.getSelectedItem (0)))
+        {
+            selectedItem->getParentItem()->removeSubItem (selectedItem->getIndexInParent());
+            builder.restoreGUI (tree);
+        }
+    };
+
+    setBounds (100, 100, 420, 900);
+//    addToDesktop (juce::ComponentPeer::StyleFlags::windowIsResizable | juce::ComponentPeer::StyleFlags::windowHasTitleBar);
     addToDesktop (getLookAndFeel().getMenuWindowFlags());
 
     startTimer (100);
 
     setVisible (true);
+
+    tree = builderToControl.getGuiTree();
+    treeView.setRootItem (new GuiTreeItem (tree));
+    treeView.setRootItemVisible (false);
+
+    treeView.setMultiSelectEnabled (false);
+
+}
+
+ToolBox::~ToolBox()
+{
+    treeView.deleteRootItem();
 }
 
 void ToolBox::paint (juce::Graphics& g)
 {
-    g.fillAll (juce::Colours::darkgrey);
-    g.setColour (juce::Colours::silver);
-    g.drawRect (getLocalBounds().toFloat(), 2.0f);
-    g.drawFittedText ("foleys GUI Magic", getLocalBounds().withHeight (24), juce::Justification::centred, 1);
+    g.fillAll ({170, 169, 173});
 }
 
 void ToolBox::resized()
 {
-    auto bounds = getLocalBounds().reduced (2).withTop (24);
-    auto buttons = bounds.removeFromTop (24);
-    auto w = buttons.getWidth() / 4;
-    saveXml.setBounds (buttons.removeFromLeft (w));
-    loadXml.setBounds (buttons.removeFromLeft (w));
-    saveCSS.setBounds (buttons.removeFromLeft (w));
-    loadCSS.setBounds (buttons);
+    juce::FlexBox topBar;
+    topBar.items.add (juce::FlexItem (loadXml).withFlex (1.0f));
+    topBar.items.add (juce::FlexItem (saveXml).withFlex (1.0f));
+    topBar.items.add (juce::FlexItem (loadCSS).withFlex (1.0f));
+    topBar.items.add (juce::FlexItem (saveCSS).withFlex (1.0f));
+
+    juce::FlexBox leftPanel;
+    leftPanel.flexDirection = juce::FlexBox::Direction::column;
+    leftPanel.items.add (juce::FlexItem (topBar).withFlex (1.0f).withMaxHeight (24.0f));
+    leftPanel.items.add (juce::FlexItem (treeView).withFlex (1.0f));
+
+    juce::FlexBox bottomBar;
+    bottomBar.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
+    bottomBar.items.add (juce::FlexItem (addNode).withFlex (1.0f).withMaxHeight (20.0f).withMaxWidth (20.0f));
+    bottomBar.items.add (juce::FlexItem (removeNode).withFlex (1.0f).withMaxHeight (20.0f).withMaxWidth (20.0f));
+
+    leftPanel.items.add (juce::FlexItem (bottomBar).withFlex (1.0f).withMaxHeight (20.0f));
+
+
+    juce::FlexBox rightPanel;
+    rightPanel.items.add (juce::FlexItem (propertiesPanel).withFlex (1.0f));
+
+
+    juce::FlexBox fb;
+    fb.items.add (juce::FlexItem (leftPanel).withFlex (1.0f));
+    fb.items.add (juce::FlexItem (rightPanel).withFlex (1.0f));
+
+    fb.performLayout (getLocalBounds().reduced (2.0f));
 }
 
 void ToolBox::timerCallback ()
@@ -113,7 +170,7 @@ void ToolBox::timerCallback ()
     const auto height = parent->getHeight();
     if (pos != parentPos || height != parentHeight)
     {
-        const auto width = 200;
+        const auto width = 420;
         parentPos = pos;
         parentHeight = height;
         setBounds (parentPos.getX() - width, parentPos.getY(),
@@ -121,28 +178,30 @@ void ToolBox::timerCallback ()
     }
 }
 
-    juce::File ToolBox::getLastLocation() const
+juce::File ToolBox::getLastLocation() const
+{
+    if (lastLocation.exists())
+        return lastLocation;
+
+    auto start = juce::File::getSpecialLocation (juce::File::currentExecutableFile);
+    while (start.exists() && start.getFileName() != "Builds")
+        start = start.getParentDirectory();
+
+    if (start.getFileName() == "Builds")
     {
-        if (lastLocation.exists())
-            return lastLocation;
+        auto resources = start.getSiblingFile ("Resources");
+        if (resources.isDirectory())
+            return resources;
 
-        auto start = juce::File::getSpecialLocation (juce::File::currentExecutableFile);
-        while (start.exists() && start.getFileName() != "Builds")
-            start = start.getParentDirectory();
-
-        if (start.getFileName() == "Builds")
-        {
-            auto resources = start.getSiblingFile ("Resources");
-            if (resources.isDirectory())
-                return resources;
-
-            auto sources = start.getSiblingFile ("Sources");
-            if (sources.isDirectory())
-                return sources;
-        }
-
-        return juce::File::getSpecialLocation (juce::File::currentExecutableFile);
+        auto sources = start.getSiblingFile ("Sources");
+        if (sources.isDirectory())
+            return sources;
     }
+
+    return juce::File::getSpecialLocation (juce::File::currentExecutableFile);
+}
+
+
 
 
 } // namespace foleys

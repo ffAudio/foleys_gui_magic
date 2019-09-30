@@ -27,20 +27,22 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+namespace foleys
+{
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
+class PropertiesPanel  : public juce::Component
+{
+public:
+    PropertiesPanel ();
+    ~PropertiesPanel();
 
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
-#include "Editor/foleys_PropertiesPanel.cpp"
-#include "Editor/foleys_TreeViewItem.cpp"
-#include "Editor/foleys_ToolBox.cpp"
+    void paint (juce::Graphics& g) override;
 
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicPlotComponent.cpp"
+    void resized() override;
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesPanel)
+
+};
+
+} // namespace foleys

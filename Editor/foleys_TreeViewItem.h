@@ -27,20 +27,38 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+namespace foleys
+{
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
+class GuiTreeItem : public juce::TreeViewItem
+{
+public:
+    GuiTreeItem (const juce::ValueTree& ref) : tree (ref) {}
+    ~GuiTreeItem() override;
 
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
-#include "Editor/foleys_PropertiesPanel.cpp"
-#include "Editor/foleys_TreeViewItem.cpp"
-#include "Editor/foleys_ToolBox.cpp"
+    juce::String getUniqueName() const override
+    {
+        return tree.getType().toString();
+    }
 
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicPlotComponent.cpp"
+    bool mightContainSubItems() override
+    {
+        return tree.getNumChildren() > 0;
+    }
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
+    void paintItem (juce::Graphics& g, int width, int height) override;
+
+    void itemOpennessChanged (bool isNowOpen) override;
+    void itemSelectionChanged (bool isNowSelected) override;
+
+    juce::ValueTree& getTree () { return tree; }
+
+private:
+    juce::ValueTree tree;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GuiTreeItem)
+};
+
+
+
+} // namespace foleys
