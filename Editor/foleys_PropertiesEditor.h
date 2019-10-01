@@ -45,10 +45,32 @@ private:
 
     void updatePopupMenu();
 
+    class PropertiesListModel : public juce::ListBoxModel
+    {
+    public:
+        PropertiesListModel()=default;
 
-    juce::ComboBox  nodeSelect;
+        void setNodeToEdit (juce::ValueTree node);
 
-    juce::ValueTree style;
+        int getNumRows() override;
+
+        void paintListBoxItem (int rowNumber,
+                               juce::Graphics& g,
+                               int width, int height,
+                               bool rowIsSelected) override;
+    private:
+
+        juce::ValueTree styleItem;
+
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesListModel)
+    };
+
+    juce::ComboBox      nodeSelect;
+
+    PropertiesListModel propertiesModel;
+    juce::ListBox       propertiesList { {}, &propertiesModel };
+
+    juce::ValueTree     style;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesEditor)
 };
