@@ -82,6 +82,11 @@ public:
     void setColourTranslation (juce::Identifier type, std::vector<std::pair<juce::String, int>> mapping);
 
     /**
+     This method collects all names of colours, so the style editor can show a control to edit the colours
+     */
+    juce::StringArray getAllColourNames() const;
+
+    /**
      This will create a default GUI, in case of AudioProcessors from AudioProcessor::getParameterTree().
 
      @param keepExisting if set to true, it will not change an existing root div tree,

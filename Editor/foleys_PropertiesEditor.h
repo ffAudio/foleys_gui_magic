@@ -38,12 +38,29 @@ public:
     PropertiesEditor();
 
     void setStyle (juce::ValueTree style);
+    void setColourNames (juce::StringArray names);
 
     void resized() override;
 
 private:
 
     void updatePopupMenu();
+
+    class PropertiesItem : public juce::Component
+    {
+    public:
+        PropertiesItem();
+
+        void setProperty (const juce::String& name, const juce::Value& propertyValue);
+        void paint (juce::Graphics&) override;
+        void resized() override;
+
+    private:
+        juce::String name;
+        juce::Label  value;
+
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesItem)
+    };
 
     class PropertiesListModel : public juce::ListBoxModel
     {
@@ -52,15 +69,23 @@ private:
 
         void setNodeToEdit (juce::ValueTree node);
 
+        void setColourNames (juce::StringArray names);
+
         int getNumRows() override;
+
+        juce::Component* refreshComponentForRow (int rowNumber,
+                                                 bool isRowSelected,
+                                                 juce::Component *existingComponentToUpdate) override;
 
         void paintListBoxItem (int rowNumber,
                                juce::Graphics& g,
                                int width, int height,
-                               bool rowIsSelected) override;
+                               bool rowIsSelected) override {};
+
     private:
 
-        juce::ValueTree styleItem;
+        juce::ValueTree   styleItem;
+        juce::StringArray colourNames;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesListModel)
     };

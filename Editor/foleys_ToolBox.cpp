@@ -97,6 +97,7 @@ ToolBox::~ToolBox()
 void ToolBox::stateWasReloaded()
 {
     propertiesEditor.setStyle (builder.getStylesheet().getCurrentStyle());
+    propertiesEditor.setColourNames (builder.getAllColourNames());
 }
 
 void ToolBox::paint (juce::Graphics& g)

@@ -69,6 +69,11 @@ void PropertiesEditor::setStyle (juce::ValueTree styleToEdit)
     updatePopupMenu();
 }
 
+void PropertiesEditor::setColourNames (juce::StringArray names)
+{
+    propertiesModel.setColourNames (names);
+}
+
 void PropertiesEditor::updatePopupMenu()
 {
     nodeSelect.clear();
@@ -120,6 +125,12 @@ void PropertiesEditor::PropertiesListModel::setNodeToEdit (juce::ValueTree node)
     styleItem = node;
 }
 
+void PropertiesEditor::PropertiesListModel::setColourNames (juce::StringArray names)
+{
+    colourNames = names;
+    colourNames.sort (true);
+}
+
 int PropertiesEditor::PropertiesListModel::getNumRows()
 {
     if (styleItem.isValid())
@@ -128,32 +139,52 @@ int PropertiesEditor::PropertiesListModel::getNumRows()
     return 0;
 }
 
-void PropertiesEditor::PropertiesListModel::paintListBoxItem (int rowNumber,
-                                                              juce::Graphics& g,
-                                                              int width, int height,
-                                                              bool rowIsSelected)
+juce::Component* PropertiesEditor::PropertiesListModel::refreshComponentForRow (int rowNumber,
+                                                                                bool isRowSelected,
+                                                                                juce::Component *existingComponentToUpdate)
 {
-    juce::Graphics::ScopedSaveState state (g);
+    auto* component = dynamic_cast<PropertiesItem*>(existingComponentToUpdate);
+    if (existingComponentToUpdate != nullptr && component == nullptr)
+        delete existingComponentToUpdate;
 
-    auto bounds = juce::Rectangle<int> (0, 0, width, height);
-    g.setColour (juce::Colours::silver);
-    g.drawHorizontalLine (0, 0, width);
-    g.drawHorizontalLine (height - 1, 0, width);
+    if (component == nullptr)
+        component = new PropertiesItem();
 
-    g.setColour (juce::Colours::white);
-    bounds.reduce (3, 1);
-
-    if (styleItem.isValid() == false)
+    if (styleItem.isValid() && rowNumber < styleItem.getNumProperties())
     {
-        g.setFont (g.getCurrentFont().withStyle (juce::Font::italic));
-        g.drawFittedText (TRANS("not set"), bounds, juce::Justification::left, 1);
-        return;
+        const auto name = styleItem.getPropertyName (rowNumber);
+        component->setProperty (name.toString(), styleItem.getPropertyAsValue (name, nullptr));
+    }
+    else
+    {
+        component->setProperty ("undefined", juce::Value());
     }
 
-    const auto name = styleItem.getPropertyName (rowNumber);
-    const auto value = styleItem.getProperty (name).toString();
+    return component;
+}
 
-    g.drawFittedText (name + ": " + value, bounds, juce::Justification::left, 1);
+
+PropertiesEditor::PropertiesItem::PropertiesItem()
+{
+    value.setEditable (true);
+    addAndMakeVisible (value);
+}
+
+void PropertiesEditor::PropertiesItem::setProperty (const juce::String& nameToDisplay, const juce::Value& propertyValue)
+{
+    name = nameToDisplay;
+    value.getTextValue().referTo (propertyValue);
+}
+
+void PropertiesEditor::PropertiesItem::paint (juce::Graphics& g)
+{
+    g.setColour (juce::Colours::white);
+    g.drawFittedText (name, getLocalBounds().withWidth (getWidth() / 2), juce::Justification::left, 1);
+}
+
+void PropertiesEditor::PropertiesItem::resized()
+{
+    value.setBounds (getLocalBounds().withLeft (getWidth() / 2));
 }
 
 

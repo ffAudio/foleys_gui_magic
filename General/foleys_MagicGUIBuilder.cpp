@@ -143,15 +143,6 @@ void MagicBuilder::registerLookAndFeel (juce::String name, std::unique_ptr<juce:
     stylesheet.registerLookAndFeel (name, std::move (lookAndFeel));
 }
 
-void MagicBuilder::registerJUCELookAndFeels()
-{
-    stylesheet.registerLookAndFeel ("LookAndFeel_V1", std::make_unique<juce::LookAndFeel_V1>());
-    stylesheet.registerLookAndFeel ("LookAndFeel_V2", std::make_unique<juce::LookAndFeel_V2>());
-    stylesheet.registerLookAndFeel ("LookAndFeel_V3", std::make_unique<juce::LookAndFeel_V3>());
-    stylesheet.registerLookAndFeel ("LookAndFeel_V4", std::make_unique<juce::LookAndFeel_V4>());
-    stylesheet.registerLookAndFeel ("FoleysFinest", std::make_unique<LookAndFeel>());
-}
-
 void MagicBuilder::setColourTranslation (juce::Identifier type, std::vector<std::pair<juce::String, int>> mapping)
 {
     if (colourTranslations.find (type) != colourTranslations.cend())
@@ -163,6 +154,17 @@ void MagicBuilder::setColourTranslation (juce::Identifier type, std::vector<std:
     }
 
     colourTranslations [type] = mapping;
+}
+
+juce::StringArray MagicBuilder::getAllColourNames() const
+{
+    juce::StringArray names { IDs::backgroundColour.toString(), IDs::borderColour.toString() };
+
+    for (const auto& table : colourTranslations)
+        for (const auto& pair : table.second)
+            names.addIfNotAlreadyThere (pair.first);
+
+    return names;
 }
 
 void MagicBuilder::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
@@ -216,91 +218,6 @@ void MagicGUIBuilder<AppType>::registerFactory (juce::Identifier type, std::func
     factories [type] = factory;
 }
 
-template <>
-void MagicGUIBuilder<juce::AudioProcessor>::registerJUCEFactories()
-{
-    registerFactory (IDs::slider,
-                     [] (const juce::ValueTree& config, auto& app)
-                     {
-                         return std::make_unique<juce::Slider>(juce::Slider::RotaryHorizontalVerticalDrag, juce::Slider::TextBoxBelow);
-                     });
-
-    setColourTranslation (IDs::slider,
-    {
-        { "slider-background", juce::Slider::backgroundColourId },
-        { "slider-thumb", juce::Slider::thumbColourId },
-        { "slider-track", juce::Slider::trackColourId },
-        { "rotary-fill", juce::Slider::rotarySliderFillColourId },
-        { "rotary-outline", juce::Slider::rotarySliderOutlineColourId },
-        { "slider-text", juce::Slider::textBoxTextColourId },
-        { "slider-text-background", juce::Slider::textBoxBackgroundColourId },
-        { "slider-text-highlight", juce::Slider::textBoxHighlightColourId },
-        { "slider-text-outline", juce::Slider::textBoxOutlineColourId }
-    });
-
-    registerFactory (IDs::comboBox,
-                     [] (const juce::ValueTree& config, auto& app)
-                     {
-                         return std::make_unique<juce::ComboBox>();
-                     });
-
-    setColourTranslation (IDs::comboBox,
-                          {
-                              { "combo-background", juce::ComboBox::backgroundColourId },
-                              { "combo-text", juce::ComboBox::textColourId },
-                              { "combo-outline", juce::ComboBox::outlineColourId },
-                              { "combo-button", juce::ComboBox::buttonColourId },
-                              { "combo-arrow", juce::ComboBox::arrowColourId },
-                              { "combo-focused-outline", juce::ComboBox::focusedOutlineColourId }
-                          });
-
-    registerFactory (IDs::textButton,
-                     [] (const juce::ValueTree& config, auto& app)
-                     {
-                         return std::make_unique<juce::TextButton>();
-                     });
-
-    setColourTranslation (IDs::textButton,
-                          {
-                              { "button-color", juce::TextButton::buttonColourId },
-                              { "button-on-color", juce::TextButton::buttonOnColourId },
-                              { "button-off-text", juce::TextButton::textColourOffId },
-                              { "button-on-text", juce::TextButton::textColourOnId }
-                          });
-
-    registerFactory (IDs::toggleButton,
-                     [] (const juce::ValueTree& config, auto& app)
-                     {
-                         auto text = config.getProperty (IDs::caption, "Active");
-                         return std::make_unique<juce::ToggleButton>(text);
-                     });
-
-    setColourTranslation (IDs::toggleButton,
-                          {
-                              { "toggle-text", juce::ToggleButton::textColourId },
-                              { "toggle-tick", juce::ToggleButton::tickColourId },
-                              { "toggle-tick-disabled", juce::ToggleButton::tickDisabledColourId }
-                          });
-
-    registerFactory (IDs::plot,
-                     [&] (const juce::ValueTree& config, auto& app)
-                     {
-                         auto item = std::make_unique<MagicPlotComponent>();
-                         if (magicState && config.hasProperty (IDs::source))
-                         {
-                             auto* source = magicState->getPlotSource (config.getProperty (IDs::source).toString());
-                             item->setPlotSource (source);
-                         }
-                         return std::move (item);
-                     });
-
-    setColourTranslation (IDs::plot,
-                          {
-                              { "plot-color", MagicPlotComponent::plotColourId },
-                              { "plot-fill-color", MagicPlotComponent::plotFillColourId }
-                          });
-
-}
 
 template <class AppType>
 std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Component& component, const juce::ValueTree& node)

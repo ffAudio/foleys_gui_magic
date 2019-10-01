@@ -95,7 +95,6 @@ namespace IDs
 void Stylesheet::setStyle (const juce::ValueTree& node)
 {
     currentStyle = node;
-    DBG ("New style: " << currentStyle.toXmlString());
 }
 
 juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::ValueTree& node, bool inherit) const
@@ -160,8 +159,8 @@ juce::Image Stylesheet::getBackgroundImage (const juce::ValueTree& node) const
     const char* data = BinaryData::getNamedResource (name.toString().toRawUTF8(), dataSize);
     if (data != nullptr)
         return juce::ImageCache::getFromMemory (data, dataSize);
-
 #endif
+
     return {};
 }
 
