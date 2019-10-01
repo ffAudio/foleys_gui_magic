@@ -56,6 +56,8 @@ public:
 
     juce::Colour parseColour (const juce::String& name) const;
 
+    juce::ValueTree getCurrentStyle() const;
+
     /**
      With that method you can register your custom LookAndFeel class and apply it to different components.
      */

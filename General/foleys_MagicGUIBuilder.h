@@ -32,12 +32,12 @@
 namespace foleys
 {
 
-class MagicBuilder
+class MagicBuilder : private juce::ValueTree::Listener
 {
 public:
     MagicBuilder (juce::Component& parent);
 
-    virtual ~MagicBuilder() = default;
+    virtual ~MagicBuilder();
 
     void restoreGUI (const juce::ValueTree& gui);
 
@@ -100,6 +100,22 @@ protected:
     std::map<juce::Identifier, std::vector<std::pair<juce::String, int>>> colourTranslations;
 
 private:
+
+    void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
+                                   const juce::Identifier& property) override;
+
+    void valueTreeChildAdded (juce::ValueTree& parentTree,
+                              juce::ValueTree& childWhichHasBeenAdded) override;
+
+    void valueTreeChildRemoved (juce::ValueTree& parentTree,
+                                juce::ValueTree& childWhichHasBeenRemoved,
+                                int indexFromWhichChildWasRemoved) override;
+
+    void valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhoseChildrenHaveMoved,
+                                     int oldIndex, int newIndex) override;
+
+    void valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasChanged) override;
+
 
     juce::Component& parent;
 

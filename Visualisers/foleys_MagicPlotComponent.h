@@ -35,7 +35,7 @@ namespace foleys
 /**
  */
 class MagicPlotComponent  : public juce::Component,
-                            public juce::AsyncUpdater,
+                            private juce::AsyncUpdater,
                             private juce::ChangeListener
 {
 public:

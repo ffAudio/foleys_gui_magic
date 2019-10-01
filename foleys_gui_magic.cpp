@@ -37,6 +37,7 @@
 #include "Layout/foleys_Decorator.cpp"
 #include "Layout/foleys_Container.cpp"
 #include "Editor/foleys_ToolBox.cpp"
+#include "Editor/foleys_PropertiesEditor.cpp"
 
 #include "Visualisers/foleys_MagicFilterPlot.cpp"
 #include "Visualisers/foleys_MagicPlotComponent.cpp"

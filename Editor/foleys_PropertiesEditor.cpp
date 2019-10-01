@@ -27,50 +27,64 @@
  ==============================================================================
  */
 
-#pragma once
 
 namespace foleys
 {
 
-class MagicBuilder;
 
-class ToolBox  : public juce::Component,
-                 private juce::Timer
+PropertiesEditor::PropertiesEditor()
 {
-public:
-    ToolBox (juce::Component* parent, MagicBuilder& builder);
-    ~ToolBox();
+    addAndMakeVisible (nodeSelect);
+}
 
-    void paint (juce::Graphics& g) override;
+void PropertiesEditor::setStyle (juce::ValueTree styleToEdit)
+{
+    style = styleToEdit;
+    updatePopupMenu();
+}
 
-    void resized() override;
+void PropertiesEditor::updatePopupMenu()
+{
+    nodeSelect.clear();
+    auto* popup = nodeSelect.getRootMenu();
 
-    void timerCallback () override;
+    auto typesNode = style.getChildWithName (IDs::types);
+    if (typesNode.isValid())
+    {
+        juce::PopupMenu menu;
+        for (const auto& child : typesNode)
+            menu.addItem (child.getType().toString());
 
-    void stateWasReloaded();
+        popup->addSubMenu ("Types", menu);
+    }
 
-private:
+    auto nodesNode = style.getChildWithName (IDs::nodes);
+    if (nodesNode.isValid())
+    {
+        juce::PopupMenu menu;
+        for (const auto& child : nodesNode)
+            menu.addItem (child.getType().toString());
 
-    juce::File getLastLocation() const;
+        popup->addSubMenu ("Nodes", menu);
+    }
 
-    juce::Component::SafePointer<juce::Component> parent;
-    juce::Point<int> parentPos;
-    int              parentHeight = 0;
+    auto classesNode = style.getChildWithName (IDs::classes);
+    if (classesNode.isValid())
+    {
+        juce::PopupMenu menu;
+        for (const auto& child : classesNode)
+            menu.addItem (child.getType().toString());
 
-    MagicBuilder&    builder;
+        popup->addSubMenu ("Classes", menu);
+    }
 
-    juce::TextButton saveXml { TRANS ("Save") };
-    juce::TextButton loadXml { TRANS ("Load") };
-    juce::TextButton saveCSS { TRANS ("Save CSS") };
-    juce::TextButton loadCSS { TRANS ("Load CSS") };
+}
 
-    juce::File lastLocation;
+void PropertiesEditor::resized()
+{
+    auto bounds = getLocalBounds();
+    nodeSelect.setBounds (bounds.removeFromTop (24));
+}
 
-    PropertiesEditor propertiesEditor;
-
-    juce::ConcertinaPanel panel;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToolBox)
-};
 
 } // namespace foleys

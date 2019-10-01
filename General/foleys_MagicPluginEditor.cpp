@@ -71,6 +71,10 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const cha
 void MagicPluginEditor::restoreGUI (const juce::ValueTree& gui)
 {
     builder.restoreGUI (gui);
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    magicToolBox->stateWasReloaded();
+#endif
 }
 
 void MagicPluginEditor::restoreGUI (const char* data, const int dataSize)

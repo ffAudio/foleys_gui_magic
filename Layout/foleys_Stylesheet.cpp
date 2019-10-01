@@ -95,6 +95,7 @@ namespace IDs
 void Stylesheet::setStyle (const juce::ValueTree& node)
 {
     currentStyle = node;
+    DBG ("New style: " << currentStyle.toXmlString());
 }
 
 juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::ValueTree& node, bool inherit) const
@@ -188,6 +189,11 @@ juce::StringArray Stylesheet::getParameters (const juce::String& text) const
 {
     auto content = text.fromFirstOccurrenceOf ("(", false, true).upToFirstOccurrenceOf (")", false, true);
     return juce::StringArray::fromTokens (content, ",", {});
+}
+
+juce::ValueTree Stylesheet::getCurrentStyle() const
+{
+    return currentStyle;
 }
 
 void Stylesheet::registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel)

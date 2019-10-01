@@ -110,7 +110,7 @@ void LookAndFeel::drawRotarySlider (juce::Graphics& g, int x, int y, int width, 
     g.setColour (outline.brighter());
     g.drawEllipse (centre.getX() - knobRadius, centre.getY() - knobRadius, knobRadius * 2.0f, knobRadius * 2.0f, 2.0f);
 
-    if (slider.isEnabled())
+    if (slider.isEnabled() && arcRadius > 10.0f)
     {
         juce::Path valueArc;
         valueArc.addCentredArc (bounds.getCentreX(),

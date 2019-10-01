@@ -32,45 +32,25 @@
 namespace foleys
 {
 
-class MagicBuilder;
-
-class ToolBox  : public juce::Component,
-                 private juce::Timer
+class PropertiesEditor  : public juce::Component
 {
 public:
-    ToolBox (juce::Component* parent, MagicBuilder& builder);
-    ~ToolBox();
+    PropertiesEditor();
 
-    void paint (juce::Graphics& g) override;
+    void setStyle (juce::ValueTree style);
 
     void resized() override;
 
-    void timerCallback () override;
-
-    void stateWasReloaded();
-
 private:
 
-    juce::File getLastLocation() const;
+    void updatePopupMenu();
 
-    juce::Component::SafePointer<juce::Component> parent;
-    juce::Point<int> parentPos;
-    int              parentHeight = 0;
 
-    MagicBuilder&    builder;
+    juce::ComboBox  nodeSelect;
 
-    juce::TextButton saveXml { TRANS ("Save") };
-    juce::TextButton loadXml { TRANS ("Load") };
-    juce::TextButton saveCSS { TRANS ("Save CSS") };
-    juce::TextButton loadCSS { TRANS ("Load CSS") };
+    juce::ValueTree style;
 
-    juce::File lastLocation;
-
-    PropertiesEditor propertiesEditor;
-
-    juce::ConcertinaPanel panel;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToolBox)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesEditor)
 };
 
 } // namespace foleys

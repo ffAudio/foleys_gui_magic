@@ -76,6 +76,7 @@
 #include "Visualisers/foleys_MagicFilterPlot.h"
 #include "Visualisers/foleys_MagicPlotComponent.h"
 
+#include "Editor/foleys_PropertiesEditor.h"
 #include "Editor/foleys_ToolBox.h"
 
 #include "General/foleys_MagicProcessorState.h"

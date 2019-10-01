@@ -76,6 +76,9 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
         }
     };
 
+    panel.addPanel (-1, &propertiesEditor, false);
+    panel.setCustomPanelHeader (&propertiesEditor, new juce::Label ({}, "Style Editor"), true);
+    addAndMakeVisible (panel);
 
     setBounds (100, 100, 300, 700);
     addToDesktop (getLookAndFeel().getMenuWindowFlags());
@@ -83,6 +86,17 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
     startTimer (100);
 
     setVisible (true);
+
+    stateWasReloaded();
+}
+
+ToolBox::~ToolBox()
+{
+}
+
+void ToolBox::stateWasReloaded()
+{
+    propertiesEditor.setStyle (builder.getStylesheet().getCurrentStyle());
 }
 
 void ToolBox::paint (juce::Graphics& g)
@@ -90,6 +104,7 @@ void ToolBox::paint (juce::Graphics& g)
     g.fillAll (juce::Colours::darkgrey);
     g.setColour (juce::Colours::silver);
     g.drawRect (getLocalBounds().toFloat(), 2.0f);
+    g.setColour (juce::Colours::white);
     g.drawFittedText ("foleys GUI Magic", getLocalBounds().withHeight (24), juce::Justification::centred, 1);
 }
 
@@ -102,6 +117,8 @@ void ToolBox::resized()
     loadXml.setBounds (buttons.removeFromLeft (w));
     saveCSS.setBounds (buttons.removeFromLeft (w));
     loadCSS.setBounds (buttons);
+
+    panel.setBounds (bounds);
 }
 
 void ToolBox::timerCallback ()
@@ -121,28 +138,28 @@ void ToolBox::timerCallback ()
     }
 }
 
-    juce::File ToolBox::getLastLocation() const
+juce::File ToolBox::getLastLocation() const
+{
+    if (lastLocation.exists())
+        return lastLocation;
+
+    auto start = juce::File::getSpecialLocation (juce::File::currentExecutableFile);
+    while (start.exists() && start.getFileName() != "Builds")
+        start = start.getParentDirectory();
+
+    if (start.getFileName() == "Builds")
     {
-        if (lastLocation.exists())
-            return lastLocation;
+        auto resources = start.getSiblingFile ("Resources");
+        if (resources.isDirectory())
+            return resources;
 
-        auto start = juce::File::getSpecialLocation (juce::File::currentExecutableFile);
-        while (start.exists() && start.getFileName() != "Builds")
-            start = start.getParentDirectory();
-
-        if (start.getFileName() == "Builds")
-        {
-            auto resources = start.getSiblingFile ("Resources");
-            if (resources.isDirectory())
-                return resources;
-
-            auto sources = start.getSiblingFile ("Sources");
-            if (sources.isDirectory())
-                return sources;
-        }
-
-        return juce::File::getSpecialLocation (juce::File::currentExecutableFile);
+        auto sources = start.getSiblingFile ("Sources");
+        if (sources.isDirectory())
+            return sources;
     }
+
+    return juce::File::getSpecialLocation (juce::File::currentExecutableFile);
+}
 
 
 } // namespace foleys

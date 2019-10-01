@@ -72,6 +72,11 @@ MagicBuilder::MagicBuilder (juce::Component& parentToUse)
 {
 }
 
+MagicBuilder::~MagicBuilder()
+{
+    config.removeListener (this);
+}
+
 Stylesheet& MagicBuilder::getStylesheet()
 {
     return stylesheet;
@@ -115,6 +120,8 @@ void MagicBuilder::restoreGUI (const juce::ValueTree& gui)
     config = gui;
 
     updateAll();
+
+    config.addListener (this);
 }
 
 void MagicBuilder::updateComponents()
@@ -156,6 +163,31 @@ void MagicBuilder::setColourTranslation (juce::Identifier type, std::vector<std:
     }
 
     colourTranslations [type] = mapping;
+}
+
+void MagicBuilder::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
+{
+    updateAll();
+}
+
+void MagicBuilder::valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&)
+{
+    updateAll();
+}
+
+void MagicBuilder::valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int)
+{
+    updateAll();
+}
+
+void MagicBuilder::valueTreeChildOrderChanged (juce::ValueTree&, int, int)
+{
+    updateAll();
+}
+
+void MagicBuilder::valueTreeParentChanged (juce::ValueTree&)
+{
+    updateAll();
 }
 
 
