@@ -33,6 +33,7 @@ namespace foleys
 ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
   : parent (parentToUse),
     builder (builderToControl),
+    treeEditor (builderToControl),
     propertiesEditor (builderToControl)
 {
     setOpaque (true);
@@ -77,9 +78,13 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
         }
     };
 
-    panel.addPanel (-1, &propertiesEditor, false);
-    panel.setCustomPanelHeader (&propertiesEditor, new juce::Label ({}, "Style Editor"), true);
-    addAndMakeVisible (panel);
+    addAndMakeVisible (treeEditor);
+    addAndMakeVisible (resizer);
+    addAndMakeVisible (propertiesEditor);
+
+    resizeManager.setItemLayout (0, 1, -1.0, -0.6);
+    resizeManager.setItemLayout (1, 6, 6, 6);
+    resizeManager.setItemLayout (2, 1, -1.0, -0.4);
 
     setBounds (100, 100, 300, 700);
     addToDesktop (getLookAndFeel().getMenuWindowFlags());
@@ -119,7 +124,13 @@ void ToolBox::resized()
     saveCSS.setBounds (buttons.removeFromLeft (w));
     loadCSS.setBounds (buttons);
 
-    panel.setBounds (bounds);
+    juce::Component* comps[] = { &treeEditor, &resizer, &propertiesEditor };
+    resizeManager.layOutComponents (comps, 3,
+                                    bounds.getX(),
+                                    bounds.getY(),
+                                    bounds.getWidth(),
+                                    bounds.getHeight(),
+                                    true, true);
 }
 
 void ToolBox::timerCallback ()

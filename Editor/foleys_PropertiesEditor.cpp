@@ -153,7 +153,7 @@ void PropertiesEditor::resized()
     propertyAdd.setBounds (addPanel.removeFromRight (buttonHeight));
     propertySelect.setBounds (addPanel);
 
-    propertiesList.setBounds (bounds);
+    propertiesList.setBounds (bounds.reduced (0, 2));
 }
 
 void PropertiesEditor::valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,

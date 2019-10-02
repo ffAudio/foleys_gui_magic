@@ -32,6 +32,12 @@
 namespace foleys
 {
 
+/**
+ The MagicBuilder is responsible to recreate the GUI from a single ValueTree.
+ You can add your own factories to the builder to allow additional components.
+ There is a template available that allows for instance a specific AudioProcessor
+ to be supplied to components, that need it.
+ */
 class MagicBuilder : private juce::ValueTree::Listener
 {
 public:

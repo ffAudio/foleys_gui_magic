@@ -64,11 +64,13 @@ private:
     juce::TextButton saveCSS { TRANS ("Save CSS") };
     juce::TextButton loadCSS { TRANS ("Load CSS") };
 
-    juce::File lastLocation;
+    juce::File       lastLocation;
 
+    GUITreeEditor    treeEditor;
     PropertiesEditor propertiesEditor;
 
-    juce::ConcertinaPanel panel;
+    juce::StretchableLayoutManager    resizeManager;
+    juce::StretchableLayoutResizerBar resizer { &resizeManager, 1, false };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToolBox)
 };

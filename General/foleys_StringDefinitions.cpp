@@ -42,53 +42,53 @@ namespace IDs
     static juce::Identifier toggleButton { "ToggleButton" };
     static juce::Identifier comboBox     { "ComboBox" };
     static juce::Identifier plot         { "Plot" };
-    
+
     static juce::Identifier caption      { "caption" };
     static juce::Identifier lookAndFeel  { "lookAndFeel" };
     static juce::Identifier parameter    { "parameter" };
     static juce::Identifier source       { "source" };
-    
+
     static juce::Identifier name         { "name" };
     static juce::Identifier selected     { "selected" };
     static juce::Identifier id           { "id" };
     static juce::Identifier styleClass   { "class" };
-    
+
     static juce::Identifier backgroundColour  { "background-color" };
     static juce::Identifier borderColour      { "border-color" };
     static juce::Identifier border       { "border" };
     static juce::Identifier margin       { "margin" };
     static juce::Identifier padding      { "padding" };
-    
+
     static juce::Identifier display      { "display" };
     static juce::String     contents     { "contents" };
     static juce::String     flexbox      { "flexbox" };
-    
+
     static juce::String     root         { "root" };
 
     static juce::Identifier nodes     { "Nodes"   };
     static juce::Identifier classes   { "Classes" };
     static juce::Identifier types     { "Types"   };
-    
+
     static juce::Identifier backgroundImage     { "background-image" };
     static juce::String     linearGradient      { "linear-gradient" };
     static juce::String     radialGradient      { "radial-gradient" };
     static juce::String     repeatingLinearGradient { "repeating-linear-gradient" };
     static juce::String     repeatingRadialGradient { "repeating-radial-gradient" };
-    
+
     static juce::Identifier flexDirection       { "flex-direction" };
     static juce::String     flexDirRow          { "row" };
     static juce::String     flexDirRowReverse   { "row-reverse" };
     static juce::String     flexDirColumn       { "column" };
     static juce::String     flexDirColumnReverse { "column-reverse" };
-    
+
     static juce::Identifier flexWrap            { "flex-wrap" };
     static juce::String     flexNoWrap          { "nowrap" };
     static juce::String     flexWrapNormal      { "wrap" };
     static juce::String     flexWrapReverse     { "wrap-reverse" };
-    
+
     static juce::Identifier flexGrow            { "flex-grow" };
     static juce::Identifier flexShrink          { "flex-shrink" };
-    
+
     static juce::Identifier flexAlignContent    { "flex-align-content" };
     static juce::Identifier flexAlignItems      { "flex-align-items" };
     static juce::Identifier flexJustifyContent  { "flex-justify-content" };
@@ -101,7 +101,7 @@ namespace IDs
     static juce::String     flexSpaceBetween    { "space-between" };
     static juce::String     flexSpaceAround     { "space-around" };
     static juce::String     flexAuto            { "auto" };
-    
+
     static juce::Identifier minWidth    { "min-width" };
     static juce::Identifier maxWidth    { "max-width" };
     static juce::Identifier minHeight   { "min-height" };

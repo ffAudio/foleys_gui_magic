@@ -27,24 +27,54 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
 
-#include "General/foleys_StringDefinitions.cpp"
+namespace foleys
+{
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
-#include "General/foleys_JuceFactories.cpp"
+GUITreeEditor::GUITreeEditor (MagicBuilder& builderToEdit)
+  : builder (builderToEdit)
+{
+}
 
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
+void GUITreeEditor::paint (juce::Graphics& g)
+{
+    g.setColour (juce::Colours::silver);
+    g.drawRect (getLocalBounds(), 1);
+    g.setColour (juce::Colours::white);
+    g.drawFittedText (TRANS ("GUI tree"), 2, 2, getWidth() - 4, 20, juce::Justification::centred, 1);
+}
 
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
+void GUITreeEditor::resized()
+{
+    auto bounds = getLocalBounds().reduced (1);
+    bounds.removeFromTop (24);
+    treeView.setBounds (bounds);
+}
 
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicPlotComponent.cpp"
+void GUITreeEditor::valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
+                                              const juce::Identifier& property)
+{
+}
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
+void GUITreeEditor::valueTreeChildAdded (juce::ValueTree& parentTree,
+                                         juce::ValueTree& childWhichHasBeenAdded)
+{
+}
+
+void GUITreeEditor::valueTreeChildRemoved (juce::ValueTree& parentTree,
+                                           juce::ValueTree& childWhichHasBeenRemoved,
+                                           int indexFromWhichChildWasRemoved)
+{
+}
+
+void GUITreeEditor::valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhoseChildrenHaveMoved,
+                                                int oldIndex, int newIndex)
+{
+}
+
+void GUITreeEditor::valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasChanged)
+{
+}
+
+
+} // namespace foleys

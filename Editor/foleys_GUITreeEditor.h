@@ -27,24 +27,46 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+#pragma once
 
-#include "General/foleys_StringDefinitions.cpp"
+namespace foleys
+{
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
-#include "General/foleys_JuceFactories.cpp"
+class MagicBuilder;
 
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
+class GUITreeEditor  : public juce::Component,
+                       private juce::ValueTree::Listener
+{
+public:
+    GUITreeEditor (MagicBuilder& builder);
 
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
+    void paint (juce::Graphics&) override;
+    void resized() override;
 
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicPlotComponent.cpp"
+private:
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
+    void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
+                                   const juce::Identifier& property) override;
+
+    void valueTreeChildAdded (juce::ValueTree& parentTree,
+                              juce::ValueTree& childWhichHasBeenAdded) override;
+
+    void valueTreeChildRemoved (juce::ValueTree& parentTree,
+                                juce::ValueTree& childWhichHasBeenRemoved,
+                                int indexFromWhichChildWasRemoved) override;
+
+    void valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhoseChildrenHaveMoved,
+                                     int oldIndex, int newIndex) override;
+
+    void valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasChanged) override;
+
+
+    MagicBuilder&                       builder;
+
+    std::unique_ptr<juce::TreeViewItem> rootItem;
+    juce::TreeView                      treeView;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GUITreeEditor)
+};
+
+} // namespace foleys
