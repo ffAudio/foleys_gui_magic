@@ -40,6 +40,7 @@ public:
     void setStyle (juce::ValueTree style);
     void setColourNames (juce::StringArray names);
 
+    void paint (juce::Graphics&) override;
     void resized() override;
 
 private:
@@ -65,11 +66,9 @@ private:
     class PropertiesListModel : public juce::ListBoxModel
     {
     public:
-        PropertiesListModel()=default;
+        PropertiesListModel (PropertiesEditor& editor);
 
         void setNodeToEdit (juce::ValueTree node);
-
-        void setColourNames (juce::StringArray names);
 
         int getNumRows() override;
 
@@ -82,18 +81,25 @@ private:
                                int width, int height,
                                bool rowIsSelected) override {};
 
+        juce::ValueTree&  getCurrentStyleItem();
+
     private:
 
         juce::ValueTree   styleItem;
-        juce::StringArray colourNames;
+        PropertiesEditor& propertiesEditor;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesListModel)
     };
 
     juce::ComboBox      nodeSelect;
 
-    PropertiesListModel propertiesModel;
-    juce::ListBox       propertiesList { {}, &propertiesModel };
+    PropertiesListModel propertiesModel { *this };
+    juce::ListBox       propertiesList  { {}, &propertiesModel };
+
+    juce::ComboBox      propertySelect;
+    juce::TextButton    propertyAdd { "+" };
+
+    juce::StringArray   colourNames;
 
     juce::ValueTree     style;
 

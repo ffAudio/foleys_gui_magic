@@ -61,6 +61,24 @@ PropertiesEditor::PropertiesEditor()
 
         propertiesList.updateContent();
     };
+
+    propertySelect.setEditableText (true);
+
+    addAndMakeVisible (propertySelect);
+    addAndMakeVisible (propertyAdd);
+
+    propertyAdd.onClick = [&]
+    {
+        const auto name = propertySelect.getText();
+        if (name.isEmpty())
+            return;
+
+        auto styleItem = propertiesModel.getCurrentStyleItem();
+        auto oldValue = styleItem.getProperty (name, {});
+        styleItem.setProperty (name, oldValue, nullptr);
+        propertiesList.updateContent();
+    };
+
 }
 
 void PropertiesEditor::setStyle (juce::ValueTree styleToEdit)
@@ -71,7 +89,8 @@ void PropertiesEditor::setStyle (juce::ValueTree styleToEdit)
 
 void PropertiesEditor::setColourNames (juce::StringArray names)
 {
-    propertiesModel.setColourNames (names);
+    colourNames = names;
+    colourNames.sort (true);
 }
 
 void PropertiesEditor::updatePopupMenu()
@@ -111,13 +130,36 @@ void PropertiesEditor::updatePopupMenu()
 
         popup->addSubMenu ("Classes", menu);
     }
+
+    propertySelect.clear();
+    propertySelect.addItemList (colourNames, 1);
+}
+
+void PropertiesEditor::paint (juce::Graphics& g)
+{
+    g.setColour (juce::Colours::silver);
+    g.drawRect (getLocalBounds(), 1);
 }
 
 void PropertiesEditor::resized()
 {
-    auto bounds = getLocalBounds();
-    nodeSelect.setBounds (bounds.removeFromTop (24));
+    const auto buttonHeight = 24;
+    auto bounds = getLocalBounds().reduced (1);
+
+    nodeSelect.setBounds (bounds.removeFromTop (buttonHeight));
+
+    auto addPanel = bounds.removeFromBottom (buttonHeight);
+    propertyAdd.setBounds (addPanel.removeFromRight (buttonHeight));
+    propertySelect.setBounds (addPanel);
+
     propertiesList.setBounds (bounds);
+}
+
+//==============================================================================
+
+PropertiesEditor::PropertiesListModel::PropertiesListModel (PropertiesEditor& editor)
+  : propertiesEditor (editor)
+{
 }
 
 void PropertiesEditor::PropertiesListModel::setNodeToEdit (juce::ValueTree node)
@@ -125,10 +167,9 @@ void PropertiesEditor::PropertiesListModel::setNodeToEdit (juce::ValueTree node)
     styleItem = node;
 }
 
-void PropertiesEditor::PropertiesListModel::setColourNames (juce::StringArray names)
+juce::ValueTree& PropertiesEditor::PropertiesListModel::getCurrentStyleItem()
 {
-    colourNames = names;
-    colourNames.sort (true);
+    return styleItem;
 }
 
 int PropertiesEditor::PropertiesListModel::getNumRows()
@@ -163,6 +204,7 @@ juce::Component* PropertiesEditor::PropertiesListModel::refreshComponentForRow (
     return component;
 }
 
+//==============================================================================
 
 PropertiesEditor::PropertiesItem::PropertiesItem()
 {
