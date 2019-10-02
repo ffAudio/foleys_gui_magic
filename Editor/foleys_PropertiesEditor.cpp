@@ -85,6 +85,8 @@ void PropertiesEditor::setStyle (juce::ValueTree styleToEdit)
 {
     style = styleToEdit;
     updatePopupMenu();
+
+    style.addListener (this);
 }
 
 void PropertiesEditor::setColourNames (juce::StringArray names)
@@ -155,6 +157,30 @@ void PropertiesEditor::resized()
     propertiesList.setBounds (bounds);
 }
 
+void PropertiesEditor::valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
+                                                 const juce::Identifier& property)
+{
+    propertiesList.updateContent();
+}
+
+void PropertiesEditor::valueTreeChildAdded (juce::ValueTree& parentTree,
+                                            juce::ValueTree& childWhichHasBeenAdded)
+{
+    updatePopupMenu();
+}
+
+void PropertiesEditor::valueTreeChildRemoved (juce::ValueTree& parentTree,
+                                              juce::ValueTree& childWhichHasBeenRemoved,
+                                              int indexFromWhichChildWasRemoved)
+{
+    if (childWhichHasBeenRemoved == propertiesModel.getCurrentStyleItem())
+        propertiesModel.setNodeToEdit (juce::ValueTree());
+
+    updatePopupMenu();
+    propertiesList.updateContent();
+}
+
+
 //==============================================================================
 
 PropertiesEditor::PropertiesListModel::PropertiesListModel (PropertiesEditor& editor)
@@ -189,7 +215,7 @@ juce::Component* PropertiesEditor::PropertiesListModel::refreshComponentForRow (
         delete existingComponentToUpdate;
 
     if (component == nullptr)
-        component = new PropertiesItem();
+        component = new PropertiesItem (*this);
 
     if (styleItem.isValid() && rowNumber < styleItem.getNumProperties())
     {
@@ -206,10 +232,17 @@ juce::Component* PropertiesEditor::PropertiesListModel::refreshComponentForRow (
 
 //==============================================================================
 
-PropertiesEditor::PropertiesItem::PropertiesItem()
+PropertiesEditor::PropertiesItem::PropertiesItem (PropertiesListModel& model)
+  : propertiesModel (model)
 {
     value.setEditable (true);
     addAndMakeVisible (value);
+    addAndMakeVisible (remove);
+
+    remove.onClick =[&]
+    {
+        propertiesModel.getCurrentStyleItem().removeProperty (name, nullptr);
+    };
 }
 
 void PropertiesEditor::PropertiesItem::setProperty (const juce::String& nameToDisplay, const juce::Value& propertyValue)
@@ -220,13 +253,17 @@ void PropertiesEditor::PropertiesItem::setProperty (const juce::String& nameToDi
 
 void PropertiesEditor::PropertiesItem::paint (juce::Graphics& g)
 {
+    g.setColour (juce::Colours::silver);
+    g.drawHorizontalLine (getHeight()-1, 0, getWidth());
     g.setColour (juce::Colours::white);
     g.drawFittedText (name, getLocalBounds().withWidth (getWidth() / 2), juce::Justification::left, 1);
 }
 
 void PropertiesEditor::PropertiesItem::resized()
 {
-    value.setBounds (getLocalBounds().withLeft (getWidth() / 2));
+    auto bounds = getLocalBounds().withLeft (getWidth() / 2);
+    remove.setBounds (bounds.removeFromRight (getHeight()));
+    value.setBounds (bounds);
 }
 
 

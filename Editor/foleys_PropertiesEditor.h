@@ -32,7 +32,8 @@
 namespace foleys
 {
 
-class PropertiesEditor  : public juce::Component
+class PropertiesEditor  : public juce::Component,
+                          private juce::ValueTree::Listener
 {
 public:
     PropertiesEditor();
@@ -47,18 +48,23 @@ private:
 
     void updatePopupMenu();
 
+    class PropertiesListModel;
+
     class PropertiesItem : public juce::Component
     {
     public:
-        PropertiesItem();
+        PropertiesItem (PropertiesListModel& model);
 
         void setProperty (const juce::String& name, const juce::Value& propertyValue);
         void paint (juce::Graphics&) override;
         void resized() override;
 
     private:
-        juce::String name;
-        juce::Label  value;
+        PropertiesListModel& propertiesModel;
+
+        juce::String     name;
+        juce::Label      value;
+        juce::TextButton remove { "X" };
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesItem)
     };
@@ -90,6 +96,21 @@ private:
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesListModel)
     };
+
+    void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
+                                   const juce::Identifier& property) override;
+
+    void valueTreeChildAdded (juce::ValueTree& parentTree,
+                              juce::ValueTree& childWhichHasBeenAdded) override;
+
+    void valueTreeChildRemoved (juce::ValueTree& parentTree,
+                                juce::ValueTree& childWhichHasBeenRemoved,
+                                int indexFromWhichChildWasRemoved) override;
+
+    void valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhoseChildrenHaveMoved,
+                                     int oldIndex, int newIndex) override {}
+
+    void valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasChanged) override {}
 
     juce::ComboBox      nodeSelect;
 
