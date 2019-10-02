@@ -30,42 +30,6 @@
 namespace foleys
 {
 
-namespace IDs
-{
-    static juce::Identifier magic        { "magic" };
-    static juce::Identifier styles       { "Styles" };
-    static juce::Identifier style        { "Style" };
-    static juce::Identifier div          { "Div" };
-    static juce::Identifier slider       { "Slider" };
-    static juce::Identifier textButton   { "TextButton" };
-    static juce::Identifier toggleButton { "ToggleButton" };
-    static juce::Identifier comboBox     { "ComboBox" };
-    static juce::Identifier plot         { "Plot" };
-
-    static juce::Identifier caption      { "caption" };
-    static juce::Identifier lookAndFeel  { "lookAndFeel" };
-    static juce::Identifier parameter    { "parameter" };
-    static juce::Identifier source       { "source" };
-
-    static juce::Identifier name         { "name" };
-    static juce::Identifier selected     { "selected" };
-    static juce::Identifier id           { "id" };
-    static juce::Identifier styleClass   { "class" };
-
-    static juce::Identifier backgroundColour  { "background-color" };
-    static juce::Identifier borderColour      { "border-color" };
-    static juce::Identifier border       { "border" };
-    static juce::Identifier margin       { "margin" };
-    static juce::Identifier padding      { "padding" };
-
-    static juce::Identifier display      { "display" };
-    static juce::String     contents     { "contents" };
-    static juce::String     flexbox      { "flexbox" };
-
-    static juce::String     root         { "root" };
-
-}
-
 
 MagicBuilder::MagicBuilder (juce::Component& parentToUse)
   : parent (parentToUse)
@@ -165,6 +129,35 @@ juce::StringArray MagicBuilder::getAllColourNames() const
             names.addIfNotAlreadyThere (pair.first);
 
     return names;
+}
+
+juce::StringArray MagicBuilder::getAllLayoutPropertyNames() const
+{
+    return
+    {
+        IDs::lookAndFeel.toString(),
+        IDs::margin.toString(),
+        IDs::padding.toString(),
+        IDs::border.toString(),
+        IDs::backgroundImage.toString(),
+        IDs::caption.toString(),
+        IDs::display.toString(),
+        IDs::flexDirection.toString(),
+        IDs::flexGrow.toString(),
+        IDs::flexShrink.toString(),
+        IDs::flexWrap.toString(),
+        IDs::flexOrder.toString(),
+        IDs::flexAlignContent.toString(),
+        IDs::flexAlignItems.toString(),
+        IDs::flexJustifyContent.toString(),
+        IDs::flexAlignSelf.toString(),
+        IDs::minWidth.toString(),
+        IDs::maxWidth.toString(),
+        IDs::minHeight.toString(),
+        IDs::maxHeight.toString(),
+        IDs::width.toString(),
+        IDs::height.toString()
+    };
 }
 
 void MagicBuilder::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)

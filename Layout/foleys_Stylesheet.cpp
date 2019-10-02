@@ -45,52 +45,6 @@ namespace BinaryData
 namespace foleys
 {
 
-namespace IDs
-{
-    static juce::Identifier nodes     { "Nodes"   };
-    static juce::Identifier classes   { "Classes" };
-    static juce::Identifier types     { "Types"   };
-
-    static juce::Identifier backgroundImage     { "background-image" };
-    static juce::String     linearGradient      { "linear-gradient" };
-    static juce::String     radialGradient      { "radial-gradient" };
-    static juce::String     repeatingLinearGradient { "repeating-linear-gradient" };
-    static juce::String     repeatingRadialGradient { "repeating-radial-gradient" };
-
-    static juce::Identifier flexDirection       { "flex-direction" };
-    static juce::String     flexDirRow          { "row" };
-    static juce::String     flexDirRowReverse   { "row-reverse" };
-    static juce::String     flexDirColumn       { "column" };
-    static juce::String     flexDirColumnReverse { "column-reverse" };
-
-    static juce::Identifier flexWrap            { "flex-wrap" };
-    static juce::String     flexNoWrap          { "nowrap" };
-    static juce::String     flexWrapNormal      { "wrap" };
-    static juce::String     flexWrapReverse     { "wrap-reverse" };
-
-    static juce::Identifier flexGrow            { "flex-grow" };
-    static juce::Identifier flexShrink          { "flex-shrink" };
-
-    static juce::Identifier flexAlignContent    { "flex-align-content" };
-    static juce::Identifier flexAlignItems      { "flex-align-items" };
-    static juce::Identifier flexJustifyContent  { "flex-justify-content" };
-    static juce::Identifier flexAlignSelf       { "flex-align-self" };
-    static juce::Identifier flexOrder           { "flex-order" };
-    static juce::String     flexStretch         { "stretch" };
-    static juce::String     flexStart           { "start" };
-    static juce::String     flexEnd             { "end" };
-    static juce::String     flexCenter          { "center" };
-    static juce::String     flexSpaceBetween    { "space-between" };
-    static juce::String     flexSpaceAround     { "space-around" };
-    static juce::String     flexAuto            { "auto" };
-
-    static juce::Identifier minWidth    { "min-width" };
-    static juce::Identifier maxWidth    { "max-width" };
-    static juce::Identifier minHeight   { "min-height" };
-    static juce::Identifier maxHeight   { "max-height" };
-    static juce::Identifier width       { "width" };
-    static juce::Identifier height      { "height" };
-}
 
 void Stylesheet::setStyle (const juce::ValueTree& node)
 {

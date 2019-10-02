@@ -32,7 +32,8 @@ namespace foleys
 {
 
 
-PropertiesEditor::PropertiesEditor()
+PropertiesEditor::PropertiesEditor (MagicBuilder& builderToEdit)
+  : builder (builderToEdit)
 {
     addAndMakeVisible (nodeSelect);
     addAndMakeVisible (propertiesList);
@@ -89,12 +90,6 @@ void PropertiesEditor::setStyle (juce::ValueTree styleToEdit)
     style.addListener (this);
 }
 
-void PropertiesEditor::setColourNames (juce::StringArray names)
-{
-    colourNames = names;
-    colourNames.sort (true);
-}
-
 void PropertiesEditor::updatePopupMenu()
 {
     nodeSelect.clear();
@@ -134,7 +129,11 @@ void PropertiesEditor::updatePopupMenu()
     }
 
     propertySelect.clear();
-    propertySelect.addItemList (colourNames, 1);
+    propertySelect.addItemList (builder.getAllLayoutPropertyNames(), 1);
+
+    auto colourNames = builder.getAllColourNames();
+    colourNames.sort (true);
+    propertySelect.addItemList (colourNames, 1000);
 }
 
 void PropertiesEditor::paint (juce::Graphics& g)

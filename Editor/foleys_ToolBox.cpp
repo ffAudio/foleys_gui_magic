@@ -32,7 +32,8 @@ namespace foleys
 
 ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
   : parent (parentToUse),
-    builder (builderToControl)
+    builder (builderToControl),
+    propertiesEditor (builderToControl)
 {
     setOpaque (true);
 
@@ -97,7 +98,6 @@ ToolBox::~ToolBox()
 void ToolBox::stateWasReloaded()
 {
     propertiesEditor.setStyle (builder.getStylesheet().getCurrentStyle());
-    propertiesEditor.setColourNames (builder.getAllColourNames());
 }
 
 void ToolBox::paint (juce::Graphics& g)
@@ -131,7 +131,7 @@ void ToolBox::timerCallback ()
     const auto height = parent->getHeight();
     if (pos != parentPos || height != parentHeight)
     {
-        const auto width = 200;
+        const auto width = 260;
         parentPos = pos;
         parentHeight = height;
         setBounds (parentPos.getX() - width, parentPos.getY(),

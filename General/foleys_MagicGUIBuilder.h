@@ -82,6 +82,11 @@ public:
     void setColourTranslation (juce::Identifier type, std::vector<std::pair<juce::String, int>> mapping);
 
     /**
+     Returns all possible properties (except colour names) for the editor.
+     */
+    juce::StringArray getAllLayoutPropertyNames() const;
+
+    /**
      This method collects all names of colours, so the style editor can show a control to edit the colours
      */
     juce::StringArray getAllColourNames() const;
