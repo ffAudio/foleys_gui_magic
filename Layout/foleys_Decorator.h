@@ -67,7 +67,8 @@ public:
 
     juce::String        caption;
     juce::Justification justification = juce::Justification::centredTop;
-    float               captionSize = 20.0f;
+    float               captionSize   = 20.0f;
+    juce::Colour        captionColour = juce::Colours::silver;
 
     juce::FlexItem flexItem { juce::FlexItem (*this).withFlex (1.0f) };
 

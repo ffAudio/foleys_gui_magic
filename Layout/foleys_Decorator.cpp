@@ -80,6 +80,10 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
     if (! sizeVar.isVoid())
         captionSize = static_cast<float> (sizeVar);
 
+    auto ccVar = stylesheet.getProperty (IDs::captionColour, node);
+    if (! ccVar.isVoid())
+        captionColour = stylesheet.parseColour (ccVar.toString());
+
     auto placementVar = stylesheet.getProperty (IDs::captionPlacement, node);
     if (! placementVar.isVoid())
         justification = static_cast<float> (placementVar);
@@ -157,7 +161,7 @@ void Decorator::paint (juce::Graphics& g)
 
     if (caption.isNotEmpty())
     {
-        g.setColour (juce::Colours::silver);
+        g.setColour (captionColour);
         auto box = getLocalBounds().reduced (margin + padding);
         if (justification.getOnlyVerticalFlags() < int (juce::Justification::bottom))
             box.setHeight (captionSize);

@@ -122,7 +122,7 @@ void MagicBuilder::setColourTranslation (juce::Identifier type, std::vector<std:
 
 juce::StringArray MagicBuilder::getAllColourNames() const
 {
-    juce::StringArray names { IDs::backgroundColour.toString(), IDs::borderColour.toString() };
+    juce::StringArray names { IDs::backgroundColour.toString(), IDs::borderColour.toString(), IDs::captionColour.toString() };
 
     for (const auto& table : colourTranslations)
         for (const auto& pair : table.second)
