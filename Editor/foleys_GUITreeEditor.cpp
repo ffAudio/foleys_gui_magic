@@ -33,7 +33,6 @@ namespace foleys
 GUITreeEditor::GUITreeEditor (MagicBuilder& builderToEdit)
   : builder (builderToEdit)
 {
-    tree.addListener (this);
     treeView.setRootItemVisible (true);
     treeView.setMultiSelectEnabled (false);
 

@@ -72,7 +72,10 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
             auto tree = juce::ValueTree::fromXml (stream.readEntireStreamAsString());
 
             if (tree.isValid() && tree.getType() == IDs::magic)
+            {
                 builder.restoreGUI (tree);
+                stateWasReloaded();
+            }
 
             lastLocation = xmlFile;
         }
