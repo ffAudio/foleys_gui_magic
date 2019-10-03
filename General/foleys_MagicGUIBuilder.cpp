@@ -141,6 +141,8 @@ juce::StringArray MagicBuilder::getAllLayoutPropertyNames() const
         IDs::border.toString(),
         IDs::backgroundImage.toString(),
         IDs::caption.toString(),
+        IDs::captionSize.toString(),
+        IDs::captionPlacement.toString(),
         IDs::display.toString(),
         IDs::flexDirection.toString(),
         IDs::flexGrow.toString(),

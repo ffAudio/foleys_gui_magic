@@ -74,6 +74,16 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
     if (! paddingVar.isVoid())
         padding = static_cast<float> (paddingVar);
 
+    caption = node.getProperty (IDs::caption, juce::String());
+
+    auto sizeVar = stylesheet.getProperty (IDs::captionSize, node);
+    if (! sizeVar.isVoid())
+        captionSize = static_cast<float> (sizeVar);
+
+    auto placementVar = stylesheet.getProperty (IDs::captionPlacement, node);
+    if (! placementVar.isVoid())
+        justification = static_cast<float> (placementVar);
+
     backgroundImage = stylesheet.getBackgroundImage (node);
     backgroundFill  = stylesheet.getBackgroundGradient (node);
 
@@ -144,17 +154,49 @@ void Decorator::paint (juce::Graphics& g)
             g.drawRect (bounds, border);
         }
     }
+
+    if (caption.isNotEmpty())
+    {
+        g.setColour (juce::Colours::silver);
+        auto box = getLocalBounds().reduced (margin + padding);
+        if (justification.getOnlyVerticalFlags() < int (juce::Justification::bottom))
+            box.setHeight (captionSize);
+        else
+            box.setTop (box.getBottom() - captionSize);
+
+        g.drawFittedText (caption, box, justification.getOnlyHorizontalFlags(), 1);
+    }
 }
 
 juce::Rectangle<int> Decorator::getClientBounds() const
 {
-    return getLocalBounds().reduced (margin + padding);
+    auto box = getLocalBounds().reduced (margin + padding);
+    if (caption.isNotEmpty())
+    {
+        if (justification.getOnlyVerticalFlags() < int (juce::Justification::bottom))
+            box.removeFromTop (captionSize);
+        else
+            box.removeFromBottom (captionSize);
+    }
+
+    return box;
 }
 
 void Decorator::resized()
 {
-    if (component.get() != nullptr)
-        component->setBounds (getClientBounds());
+    if (component.get() == nullptr)
+        return;
+
+    auto box = getLocalBounds().reduced (margin + padding);
+    if (caption.isNotEmpty())
+    {
+        if (justification.getOnlyVerticalFlags() < int (juce::Justification::bottom))
+            box.removeFromTop (captionSize);
+        else
+            box.removeFromBottom (captionSize);
+    }
+
+    component->setBounds (box);
 }
 
 juce::Component* Decorator::getWrappedComponent()

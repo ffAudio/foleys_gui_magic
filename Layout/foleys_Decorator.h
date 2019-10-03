@@ -65,6 +65,10 @@ public:
     float border  = 0.0f;
     float radius  = 5.0f;
 
+    juce::String        caption;
+    juce::Justification justification = juce::Justification::centredTop;
+    float               captionSize = 20.0f;
+
     juce::FlexItem flexItem { juce::FlexItem (*this).withFlex (1.0f) };
 
 protected:

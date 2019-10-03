@@ -44,6 +44,8 @@ namespace IDs
     static juce::Identifier plot         { "Plot" };
 
     static juce::Identifier caption      { "caption" };
+    static juce::Identifier captionPlacement { "caption-placement" };
+    static juce::Identifier captionSize  { "caption-size" };
     static juce::Identifier lookAndFeel  { "lookAndFeel" };
     static juce::Identifier parameter    { "parameter" };
     static juce::Identifier source       { "source" };

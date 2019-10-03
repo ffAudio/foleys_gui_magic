@@ -283,9 +283,9 @@ juce::ValueTree Stylesheet::createDefaultStyle()
         } },
         { IDs::types, {}, {
             { "Slider", {{ IDs::border, 0 }} },
-            { "ToggleButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }} },
-            { "TextButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }} },
-            { "ComboBox", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }} }
+            { "ToggleButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }, { IDs::captionSize, 0 }} },
+            { "TextButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }, { IDs::captionSize, 0 }} },
+            { "ComboBox", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }, { IDs::captionSize, 0 }} }
         } }
     });
 
