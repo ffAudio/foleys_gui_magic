@@ -24,6 +24,8 @@ Daniel Walz
 Contributors
 -----------
 
+Yuri Witte
+
 TBC
 
 
