@@ -27,13 +27,37 @@
  ==============================================================================
  */
 
-
 namespace foleys
 {
 
 GUITreeEditor::GUITreeEditor (MagicBuilder& builderToEdit)
-  : builder (builderToEdit)
+  : builder (builderToEdit), tree (builderToEdit.getGuiTree())
 {
+    tree.addListener (this);
+    treeView.setRootItemVisible (true);
+    treeView.setMultiSelectEnabled (false);
+
+    addNode.setEnabled (false);
+    addNode.onClick = [&]
+    {
+        // Show popup with types of nodes to add to the ValueTree: div, slider, button, etc
+        // add new node as a child of the currently selected node
+    };
+
+    removeNode.onClick = [&]
+    {
+        if (GUITreeEditor::GuiTreeItem* selectedItem = static_cast<GUITreeEditor::GuiTreeItem*> (treeView.getSelectedItem (0)))
+        {
+            juce::ValueTree& tree = selectedItem->getTree();
+            tree.getParent().removeChild (tree, nullptr);
+        }
+    };
+
+    setValueTree (tree);
+
+    addAndMakeVisible (treeView);
+    addAndMakeVisible (addNode);
+    addAndMakeVisible (removeNode);
 }
 
 void GUITreeEditor::paint (juce::Graphics& g)
@@ -48,7 +72,22 @@ void GUITreeEditor::resized()
 {
     auto bounds = getLocalBounds().reduced (1);
     bounds.removeFromTop (24);
+
+    auto bottomBarBounds = bounds.removeFromBottom (24).reduced (10, 0);
+    removeNode.setBounds (bottomBarBounds.removeFromRight (24));
+    addNode   .setBounds (bottomBarBounds.removeFromRight (24));
+
     treeView.setBounds (bounds);
+}
+
+void GUITreeEditor::setValueTree (juce::ValueTree& refTree)
+{
+    tree = refTree.getOrCreateChildWithName (IDs::div, nullptr);
+    tree.addListener (this);
+
+    treeView.setRootItem (nullptr);
+    rootItem = std::make_unique<GUITreeEditor::GuiTreeItem> (*this, tree);
+    treeView.setRootItem (rootItem.get());
 }
 
 void GUITreeEditor::valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
@@ -74,6 +113,65 @@ void GUITreeEditor::valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhose
 
 void GUITreeEditor::valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasChanged)
 {
+}
+
+//==============================================================================
+
+GUITreeEditor::GuiTreeItem::GuiTreeItem (GUITreeEditor& refGuiTreeEditor, juce::ValueTree& refValueTree)
+  : guiTreeEditor (refGuiTreeEditor),
+    tree (refValueTree)
+{
+}
+
+juce::String GUITreeEditor::GuiTreeItem::getUniqueName() const
+{
+    const auto* parent = getParentItem();
+    auto name = (parent != nullptr) ? parent->getUniqueName() + "|" + tree.getType().toString()
+                                    : tree.getType().toString();
+    auto parentNode = tree.getParent();
+    if (parentNode.isValid())
+        name += "(" + juce::String (parentNode.indexOf (tree)) + ")";
+
+    return name;
+}
+
+bool GUITreeEditor::GuiTreeItem::mightContainSubItems()
+{
+    return tree.getNumChildren() > 0;
+}
+
+void GUITreeEditor::GuiTreeItem::paintItem (juce::Graphics& g, int width, int height)
+{
+    if (isSelected())
+        g.fillAll ({91, 103, 109});
+
+    g.setColour (juce::Colours::white);
+    g.setFont (height * 0.7f);
+
+    juce::String name = tree.getType().toString();
+
+    if (tree.hasProperty (IDs::id))
+        name += " (" + tree.getProperty (IDs::id).toString() + ")";
+
+    if (tree.hasProperty (IDs::caption))
+        name += ": " + tree.getProperty (IDs::caption).toString();
+
+    g.drawText (name, 4, 0, width - 4, height, juce::Justification::centredLeft, true);
+}
+
+void GUITreeEditor::GuiTreeItem::itemOpennessChanged (bool isNowOpen)
+{
+    if (isNowOpen && getNumSubItems() == 0)
+    {
+        for (auto child : tree)
+            addSubItem (new GuiTreeItem (guiTreeEditor, child));
+    }
+}
+
+void GUITreeEditor::GuiTreeItem::itemSelectionChanged (bool isNowSelected)
+{
+    if (isNowSelected && guiTreeEditor.onSelectionChanged != nullptr)
+        guiTreeEditor.onSelectionChanged (tree);
 }
 
 
