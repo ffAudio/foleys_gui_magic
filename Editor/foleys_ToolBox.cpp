@@ -110,7 +110,7 @@ ToolBox::~ToolBox()
 
 void ToolBox::stateWasReloaded()
 {
-    treeEditor.setValueTree (builder.getGuiTree());
+    treeEditor.updateTree();
     propertiesEditor.setStyle (builder.getStylesheet().getCurrentStyle());
 }
 
