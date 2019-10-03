@@ -42,6 +42,8 @@ public:
 
     void setStyle (juce::ValueTree style);
 
+    void setNodeToEdit (juce::ValueTree node);
+
     void paint (juce::Graphics&) override;
     void resized() override;
 

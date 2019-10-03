@@ -78,6 +78,11 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
         }
     };
 
+    treeEditor.onSelectionChanged = [&] (juce::ValueTree& ref)
+    {
+        propertiesEditor.setNodeToEdit (ref);
+    };
+
     addAndMakeVisible (treeEditor);
     addAndMakeVisible (resizer);
     addAndMakeVisible (propertiesEditor);
@@ -102,6 +107,7 @@ ToolBox::~ToolBox()
 
 void ToolBox::stateWasReloaded()
 {
+    treeEditor.setValueTree (builder.getGuiTree());
     propertiesEditor.setStyle (builder.getStylesheet().getCurrentStyle());
 }
 

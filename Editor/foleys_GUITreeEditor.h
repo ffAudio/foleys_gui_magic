@@ -43,7 +43,34 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
+    void setValueTree (juce::ValueTree& refTree);
+
+    std::function<void (juce::ValueTree&)> onSelectionChanged {nullptr};
+
 private:
+    class GuiTreeItem : public juce::TreeViewItem
+    {
+    public:
+        GuiTreeItem (GUITreeEditor& refGuiTreeEditor, juce::ValueTree& refValueTree);
+
+        juce::String getUniqueName() const override;
+
+        bool mightContainSubItems() override;
+
+        void paintItem (juce::Graphics& g, int width, int height) override;
+
+        void itemOpennessChanged (bool isNowOpen) override;
+        void itemSelectionChanged (bool isNowSelected) override;
+
+        juce::ValueTree& getTree () { return tree; }
+
+    private:
+        GUITreeEditor& guiTreeEditor;
+        juce::ValueTree tree;
+
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GuiTreeItem)
+    };
+
 
     void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
                                    const juce::Identifier& property) override;
@@ -61,10 +88,14 @@ private:
     void valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasChanged) override;
 
 
-    MagicBuilder&                       builder;
+    MagicBuilder&                builder;
+    juce::ValueTree              tree;
 
-    std::unique_ptr<juce::TreeViewItem> rootItem;
-    juce::TreeView                      treeView;
+    std::unique_ptr<GuiTreeItem> rootItem;
+    juce::TreeView               treeView;
+
+    juce::TextButton addNode    { TRANS ("+") };
+    juce::TextButton removeNode { TRANS ("X") };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GUITreeEditor)
 };
