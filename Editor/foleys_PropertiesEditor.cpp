@@ -92,7 +92,7 @@ void PropertiesEditor::setStyle (juce::ValueTree styleToEdit)
 
 void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
 {
-    nodeSelect.setText ({});
+    nodeSelect.setText (TRANS ("Editing node"));
 
     propertiesModel.setNodeToEdit (node);
     propertiesList.updateContent();

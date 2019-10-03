@@ -45,6 +45,8 @@ public:
 
     void setValueTree (juce::ValueTree& refTree);
 
+    void updateTree();
+
     std::function<void (juce::ValueTree&)> onSelectionChanged {nullptr};
 
 private:
@@ -65,7 +67,7 @@ private:
         juce::ValueTree& getTree () { return tree; }
 
     private:
-        GUITreeEditor& guiTreeEditor;
+        GUITreeEditor&  guiTreeEditor;
         juce::ValueTree tree;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GuiTreeItem)

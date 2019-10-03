@@ -53,6 +53,9 @@ void Stylesheet::setStyle (const juce::ValueTree& node)
 
 juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::ValueTree& node, bool inherit) const
 {
+    if (inherit && node.hasProperty (name))
+        return node.getProperty (name);
+
     if (inherit && node.hasProperty (IDs::id))
     {
         auto styleNode = currentStyle.getChildWithName (IDs::nodes);

@@ -31,7 +31,7 @@ namespace foleys
 {
 
 GUITreeEditor::GUITreeEditor (MagicBuilder& builderToEdit)
-  : builder (builderToEdit), tree (builderToEdit.getGuiTree())
+  : builder (builderToEdit)
 {
     tree.addListener (this);
     treeView.setRootItemVisible (true);
@@ -82,28 +82,45 @@ void GUITreeEditor::resized()
 
 void GUITreeEditor::setValueTree (juce::ValueTree& refTree)
 {
-    tree = refTree.getOrCreateChildWithName (IDs::div, nullptr);
+    auto restorer = treeView.getRootItem() != nullptr ? treeView.getOpennessState (true)
+                                                      : std::unique_ptr<juce::XmlElement>();
+
+    tree = refTree;
     tree.addListener (this);
 
     treeView.setRootItem (nullptr);
-    rootItem = std::make_unique<GUITreeEditor::GuiTreeItem> (*this, tree);
-    treeView.setRootItem (rootItem.get());
+    if (tree.isValid())
+    {
+        rootItem = std::make_unique<GUITreeEditor::GuiTreeItem> (*this, tree);
+        treeView.setRootItem (rootItem.get());
+    }
+
+    if (restorer.get() != nullptr)
+        treeView.restoreOpennessState (*restorer, true);
+}
+
+void GUITreeEditor::updateTree()
+{
+    setValueTree (tree);
 }
 
 void GUITreeEditor::valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
                                               const juce::Identifier& property)
 {
+    updateTree();
 }
 
 void GUITreeEditor::valueTreeChildAdded (juce::ValueTree& parentTree,
                                          juce::ValueTree& childWhichHasBeenAdded)
 {
+    updateTree();
 }
 
 void GUITreeEditor::valueTreeChildRemoved (juce::ValueTree& parentTree,
                                            juce::ValueTree& childWhichHasBeenRemoved,
                                            int indexFromWhichChildWasRemoved)
 {
+    updateTree();
 }
 
 void GUITreeEditor::valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhoseChildrenHaveMoved,
@@ -113,6 +130,7 @@ void GUITreeEditor::valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhose
 
 void GUITreeEditor::valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasChanged)
 {
+    updateTree();
 }
 
 //==============================================================================
