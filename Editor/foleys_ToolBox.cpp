@@ -62,6 +62,11 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
         }
     };
 
+    treeEditor.onSelectionChanged = [&] (juce::ValueTree& ref)
+    {
+        propertiesEditor.setNodeToEdit (ref);
+    };
+
     loadXml.onClick = [&]
     {
         juce::FileChooser myChooser ("Load from XML file...", getLastLocation(), "*.xml");
@@ -72,7 +77,13 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
             auto tree = juce::ValueTree::fromXml (stream.readEntireStreamAsString());
 
             if (tree.isValid() && tree.getType() == IDs::magic)
+            {
                 builder.restoreGUI (tree);
+                builder.updateAll();
+
+                treeEditor.setValueTree (tree);
+                propertiesEditor.setStyle (builder.getStylesheet().getCurrentStyle());
+            }
 
             lastLocation = xmlFile;
         }

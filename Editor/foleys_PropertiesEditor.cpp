@@ -90,6 +90,12 @@ void PropertiesEditor::setStyle (juce::ValueTree styleToEdit)
     style.addListener (this);
 }
 
+void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
+{
+    propertiesModel.setNodeToEdit (node);
+    propertiesList.updateContent();
+}
+
 void PropertiesEditor::updatePopupMenu()
 {
     nodeSelect.clear();
