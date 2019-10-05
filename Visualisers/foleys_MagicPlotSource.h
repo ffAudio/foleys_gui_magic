@@ -59,6 +59,17 @@ public:
      */
     virtual void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component)=0;
 
+    /**
+     This method is called by the MagicProcessorState to allow the plot computation to be set up
+     */
+    virtual void prepareToPlay (double sampleRate, int samplesPerBlockExpected)=0;
+
+    /**
+     If your plot needs background processing, return here a pointer to your TimeSliceClient,
+     and it will automatically be added to the common background thread.
+     */
+    virtual juce::TimeSliceClient* getBackgroundJob() { return nullptr; }
+
 private:
     JUCE_DECLARE_WEAK_REFERENCEABLE (MagicPlotSource)
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicPlotSource)

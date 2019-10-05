@@ -40,8 +40,11 @@ MagicFilterPlot::MagicFilterPlot()
     magnitudes.resize (frequencies.size());
 }
 
-void MagicFilterPlot::setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::Ptr coefficients, double sampleRate, float maxDBToDisplay)
+void MagicFilterPlot::setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::Ptr coefficients, float maxDBToDisplay)
 {
+    if (sampleRate < 20.0)
+        return;
+
     const juce::ScopedWriteLock writeLock (plotLock);
 
     maxDB = maxDBToDisplay;
@@ -77,6 +80,11 @@ void MagicFilterPlot::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds
 
     g.setColour (component.findColour (MagicPlotComponent::plotColourId));
     g.strokePath (path, juce::PathStrokeType (2.0f));
+}
+
+void MagicFilterPlot::prepareToPlay (double sampleRateToUse, int)
+{
+    sampleRate = sampleRateToUse;
 }
 
 } // namespace foleys

@@ -33,27 +33,20 @@ namespace foleys
 {
 
 /**
- This will plot the frequency responce for a juce IIR filter. To use it, add it to
- the MagicPluginState. It will automatically update each time you set new coefficients
- using setIIRCoefficients.
+ This will plot the magnitudes of the frequencies in a signal. The processing happens in a worker thread
+ to keep the audio thread free.
  */
-class MagicFilterPlot : public MagicPlotSource
+class MagicAnalyser : public MagicPlotSource
 {
 public:
 
-    MagicFilterPlot();
+    MagicAnalyser();
 
     /**
-     Set new coefficients to calculate the frequency response from.
+     Push new samples to the buffer, so a background worker can create a frequency plot
+     of it.
 
-     @param coefficients the coefficients to calculate the frequency response for
-     @param sampleRate is the sampleRate the processing is happening with
-     @param maxDB is the maximum level in dB, that the curve will display
-     */
-    void setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::Ptr coefficients, float maxDB);
-
-    /**
-     Does nothing in this class
+     @param buffer the buffer of new audio
      */
     void pushSamples (const juce::AudioBuffer<float>& buffer) override;
 
@@ -66,20 +59,58 @@ public:
      */
     void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component) override;
 
+    /**
+     This method is called by the MagicProcessorState to allow the plot computation to be set up
+     */
     void prepareToPlay (double sampleRate, int samplesPerBlockExpected) override;
 
+    /**
+     If your plot needs background processing, return here a pointer to your TimeSliceClient,
+     and it will automatically be added to the common background thread.
+     */
+    juce::TimeSliceClient* getBackgroundJob() override;
+
 private:
-    juce::ReadWriteLock     plotLock;
-    bool                    plotChanged = true;
-    juce::Path              path;
-    juce::Rectangle<float>  lastBounds;
 
-    std::vector<double>     frequencies;
-    std::vector<double>     magnitudes;
-    float                   maxDB      = 100.0f;
-    double                  sampleRate = 0.0;
+    float indexToX (float index, float minFreq) const;
+    float binToY (float bin, const juce::Rectangle<float> bounds) const;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicFilterPlot)
+    class AnalyserJob : public juce::TimeSliceClient
+    {
+    public:
+        AnalyserJob (MagicAnalyser& owner);
+        int useTimeSlice() override;
+
+        void pushSamples (const juce::AudioBuffer<float>& buffer, int channel=-1);
+
+        void setupAnalyser (int audioFifoSize);
+
+        const juce::AudioBuffer<float> getAnalyserData() const;
+
+        juce::dsp::FFT fft                            { 12 };
+
+    private:
+        MagicAnalyser& owner;
+
+        juce::AbstractFifo abstractFifo               { 48000 };
+        juce::AudioBuffer<float> audioFifo;
+
+        juce::dsp::WindowingFunction<float> windowing { size_t (fft.getSize()), juce::dsp::WindowingFunction<float>::hann, true };
+        juce::AudioBuffer<float> fftBuffer            { 1, fft.getSize() * 2 };
+
+        juce::AudioBuffer<float> averager             { 5, fft.getSize() / 2 };
+        int averagerPtr = 1;
+
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AnalyserJob)
+    };
+
+    double      sampleRate {};
+    juce::Path  path;
+
+    juce::CriticalSection pathCreationLock;
+    AnalyserJob analyserJob { *this };
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicAnalyser)
 };
 
 } // namespace foleys

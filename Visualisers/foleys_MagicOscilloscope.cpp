@@ -27,59 +27,25 @@
  ==============================================================================
  */
 
-#pragma once
 
 namespace foleys
 {
 
-/**
- This will plot the frequency responce for a juce IIR filter. To use it, add it to
- the MagicPluginState. It will automatically update each time you set new coefficients
- using setIIRCoefficients.
- */
-class MagicFilterPlot : public MagicPlotSource
+
+MagicOscilloscope::MagicOscilloscope()
 {
-public:
+    
+}
 
-    MagicFilterPlot();
+void MagicOscilloscope::pushSamples (const juce::AudioBuffer<float>& buffer)
+{
+    
+}
 
-    /**
-     Set new coefficients to calculate the frequency response from.
+void MagicOscilloscope::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component)
+{
+    
+}
 
-     @param coefficients the coefficients to calculate the frequency response for
-     @param sampleRate is the sampleRate the processing is happening with
-     @param maxDB is the maximum level in dB, that the curve will display
-     */
-    void setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::Ptr coefficients, float maxDB);
-
-    /**
-     Does nothing in this class
-     */
-    void pushSamples (const juce::AudioBuffer<float>& buffer) override;
-
-    /**
-     This is the callback that draws the frequency plot.
-
-     @param g the Graphics context to draw onto
-     @param bounds the bounds of the plot
-     @param component grants access to the plot component, e.g. to find the colours from it
-     */
-    void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component) override;
-
-    void prepareToPlay (double sampleRate, int samplesPerBlockExpected) override;
-
-private:
-    juce::ReadWriteLock     plotLock;
-    bool                    plotChanged = true;
-    juce::Path              path;
-    juce::Rectangle<float>  lastBounds;
-
-    std::vector<double>     frequencies;
-    std::vector<double>     magnitudes;
-    float                   maxDB      = 100.0f;
-    double                  sampleRate = 0.0;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicFilterPlot)
-};
 
 } // namespace foleys

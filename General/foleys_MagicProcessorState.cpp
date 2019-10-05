@@ -36,7 +36,11 @@ MagicProcessorState::MagicProcessorState (juce::AudioProcessor& processorToUse,
   : processor (processorToUse),
     state (stateToUse)
 {
+}
 
+MagicProcessorState::~MagicProcessorState()
+{
+    visualiserThread.stopThread (1000);
 }
 
 void MagicProcessorState::addLevelSource (const juce::Identifier& sourceID, std::unique_ptr<MagicLevelSource> source)
@@ -69,6 +73,12 @@ void MagicProcessorState::addPlotSource (const juce::Identifier& sourceID, std::
         return;
     }
 
+    if (auto* job = source->getBackgroundJob())
+    {
+        visualiserThread.addTimeSliceClient (job);
+        visualiserThread.startThread (5);
+    }
+
     plotSources [sourceID] = std::move (source);
 }
 
@@ -79,6 +89,12 @@ MagicPlotSource* MagicProcessorState::getPlotSource (const juce::Identifier& sou
         return nullptr;
 
     return it->second.get();
+}
+
+void MagicProcessorState::prepareToPlay (double sampleRate, int samplesPerBlockExpected)
+{
+    for (auto& plot : plotSources)
+        plot.second->prepareToPlay (sampleRate, samplesPerBlockExpected);
 }
 
 juce::AudioProcessor& MagicProcessorState::getProcessor()

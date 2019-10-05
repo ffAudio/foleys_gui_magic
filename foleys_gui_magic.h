@@ -74,6 +74,8 @@
 #include "Visualisers/foleys_MagicLevelSource.h"
 #include "Visualisers/foleys_MagicPlotSource.h"
 #include "Visualisers/foleys_MagicFilterPlot.h"
+#include "Visualisers/foleys_MagicAnalyser.h"
+#include "Visualisers/foleys_MagicOscilloscope.h"
 #include "Visualisers/foleys_MagicPlotComponent.h"
 
 #include "Editor/foleys_GUITreeEditor.h"

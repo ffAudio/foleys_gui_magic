@@ -38,6 +38,8 @@ public:
     MagicProcessorState (juce::AudioProcessor& processorToUse,
                          juce::AudioProcessorValueTreeState& stateToUse);
 
+    ~MagicProcessorState();
+
     /**
      Add a MagicLevelSource to measure the level at any point in your DSP. For instance you can have
      one MagicLevelSource at the beginning of your processing and one at the end to show the user
@@ -58,6 +60,12 @@ public:
      */
     MagicPlotSource* getPlotSource (const juce::Identifier& sourceID);
 
+    /**
+     Call this method in your prepareToPlay implementation, to allow th visualisers to be
+     properly setup
+     */
+    void prepareToPlay (double sampleRate, int samplesPerBlockExpected);
+
     juce::AudioProcessor& getProcessor();
     juce::AudioProcessorValueTreeState& getValueTreeState();
 
@@ -68,6 +76,8 @@ private:
 
     std::map<juce::Identifier, std::unique_ptr<MagicLevelSource>> levelSources;
     std::map<juce::Identifier, std::unique_ptr<MagicPlotSource>>  plotSources;
+
+    juce::TimeSliceThread visualiserThread { "Visualiser Thread" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicProcessorState)
 };

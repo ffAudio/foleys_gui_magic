@@ -45,6 +45,8 @@
 #include "Editor/foleys_PropertiesEditor.cpp"
 
 #include "Visualisers/foleys_MagicFilterPlot.cpp"
+#include "Visualisers/foleys_MagicAnalyser.cpp"
+#include "Visualisers/foleys_MagicOscilloscope.cpp"
 #include "Visualisers/foleys_MagicPlotComponent.cpp"
 
 #include "LookAndFeels/foleys_LookAndFeel.cpp"

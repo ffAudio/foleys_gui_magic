@@ -33,27 +33,17 @@ namespace foleys
 {
 
 /**
- This will plot the frequency responce for a juce IIR filter. To use it, add it to
- the MagicPluginState. It will automatically update each time you set new coefficients
- using setIIRCoefficients.
+ This class collects your samples in a circular buffer and allows the GUI to
+ draw it in the style of an oscilloscope
  */
-class MagicFilterPlot : public MagicPlotSource
+class MagicOscilloscope : public MagicPlotSource
 {
 public:
 
-    MagicFilterPlot();
+    MagicOscilloscope();
 
     /**
-     Set new coefficients to calculate the frequency response from.
-
-     @param coefficients the coefficients to calculate the frequency response for
-     @param sampleRate is the sampleRate the processing is happening with
-     @param maxDB is the maximum level in dB, that the curve will display
-     */
-    void setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::Ptr coefficients, float maxDB);
-
-    /**
-     Does nothing in this class
+     Push samples to a buffer to be visualised.
      */
     void pushSamples (const juce::AudioBuffer<float>& buffer) override;
 
@@ -66,20 +56,12 @@ public:
      */
     void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component) override;
 
-    void prepareToPlay (double sampleRate, int samplesPerBlockExpected) override;
-
 private:
     juce::ReadWriteLock     plotLock;
     bool                    plotChanged = true;
     juce::Path              path;
-    juce::Rectangle<float>  lastBounds;
 
-    std::vector<double>     frequencies;
-    std::vector<double>     magnitudes;
-    float                   maxDB      = 100.0f;
-    double                  sampleRate = 0.0;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicFilterPlot)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicOscilloscope)
 };
 
 } // namespace foleys
