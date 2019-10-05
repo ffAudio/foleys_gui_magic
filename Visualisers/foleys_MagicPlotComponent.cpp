@@ -36,6 +36,8 @@ MagicPlotComponent::MagicPlotComponent()
 {
     setColour (plotColourId, juce::Colours::orange);
     setColour (plotFillColourId, juce::Colours::orange.withAlpha (0.5f));
+    setColour (plotInactiveColourId, juce::Colours::orange.darker());
+    setColour (plotInactiveFillColourId, juce::Colours::orange.darker().withAlpha (0.5f));
 
     setOpaque (false);
     setInterceptsMouseClicks (false, false);

@@ -43,7 +43,9 @@ public:
     enum ColourIds
     {
         plotColourId = 0x2001000,
-        plotFillColourId
+        plotInactiveColourId,
+        plotFillColourId,
+        plotInactiveFillColourId
     };
 
     MagicPlotComponent();

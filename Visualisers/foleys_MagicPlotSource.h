@@ -60,6 +60,12 @@ public:
     virtual void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component)=0;
 
     /**
+     You can add an active state to your plot to allow to paint in different colours
+     */
+    virtual bool isActive() const { return active; }
+    virtual void setActive (bool shouldBeActive) { active = shouldBeActive; }
+
+    /**
      This method is called by the MagicProcessorState to allow the plot computation to be set up
      */
     virtual void prepareToPlay (double sampleRate, int samplesPerBlockExpected)=0;
@@ -71,6 +77,8 @@ public:
     virtual juce::TimeSliceClient* getBackgroundJob() { return nullptr; }
 
 private:
+    bool active = true;
+
     JUCE_DECLARE_WEAK_REFERENCEABLE (MagicPlotSource)
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicPlotSource)
 };

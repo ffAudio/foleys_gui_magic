@@ -57,7 +57,7 @@ void MagicAnalyser::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, 
     for (int i = 0; i < data.getNumSamples(); ++i)
         path.lineTo (bounds.getX() + factor * indexToX (i, minFreq), binToY (fftData [i], bounds));
 
-    g.setColour (component.findColour (MagicPlotComponent::plotColourId));
+    g.setColour (component.findColour (isActive() ? MagicPlotComponent::plotColourId : MagicPlotComponent::plotInactiveColourId));
     g.strokePath (path, juce::PathStrokeType (2.0f));
 }
 
