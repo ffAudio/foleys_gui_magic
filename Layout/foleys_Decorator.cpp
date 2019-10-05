@@ -30,26 +30,24 @@
 namespace foleys
 {
 
-Decorator::Decorator()
+Decorator::Decorator (MagicBuilder& builder, juce::ValueTree node, std::unique_ptr<juce::Component> wrapped)
+  : magicBuilder (builder),
+    configNode (node),
+    component (std::move (wrapped))
 {
     setOpaque (margin == 0 && radius == 0);
-}
-
-Decorator::Decorator (std::unique_ptr<juce::Component> wrapped)
-  : component (std::move (wrapped))
-{
-    setOpaque (margin == 0 && radius == 0);
+    setInterceptsMouseClicks (false, true);
 
     if (component.get() != nullptr)
         addAndMakeVisible (component.get());
 }
 
-void Decorator::setEditable (bool shouldEdit)
+void Decorator::setEditMode (bool shouldEdit)
 {
     setInterceptsMouseClicks (shouldEdit, true);
 
     if (component.get() != nullptr)
-        component->setInterceptsMouseClicks (!shouldEdit, true);
+        component->setInterceptsMouseClicks (!shouldEdit, !shouldEdit);
 }
 
 void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTree& node)
@@ -201,6 +199,19 @@ void Decorator::resized()
     }
 
     component->setBounds (box);
+}
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+void Decorator::paintOverChildren (juce::Graphics& g)
+{
+    if (magicBuilder.isEditModeOn() && magicBuilder.getSelectedNode() == configNode)
+        g.fillAll (juce::Colours::orange.withAlpha (0.5f));
+}
+#endif
+
+void Decorator::mouseDown (const juce::MouseEvent& event)
+{
+    magicBuilder.setSelectedNode (configNode);
 }
 
 juce::Component* Decorator::getWrappedComponent()

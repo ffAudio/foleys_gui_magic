@@ -41,9 +41,11 @@ public:
         FlexBox
     };
 
-    Container() = default;
+    Container (MagicBuilder& builder, juce::ValueTree node);
 
     void addChildItem (std::unique_ptr<Decorator> child);
+
+    void setEditMode (bool shouldEdit) override;
 
     void resized() override;
 

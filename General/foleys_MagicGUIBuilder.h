@@ -47,8 +47,14 @@ public:
 
     void restoreGUI (const juce::ValueTree& gui);
 
+    /**
+     Grant access to the stylesheet to look up visual and layout properties
+     */
     Stylesheet& getStylesheet();
 
+    /**
+     Grants access to the main XML, that holds all information.
+     */
     juce::ValueTree& getGuiTree();
 
     void updateAll();
@@ -105,6 +111,17 @@ public:
      */
     virtual void createDefaultGUITree (bool keepExisting) = 0;
 
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    /**
+     This method sets the GUI in edit mode, that allows to drag the components around.
+     */
+    void setEditMode (bool shouldEdit);
+    bool isEditModeOn() const;
+
+    void setSelectedNode (const juce::ValueTree& node);
+    const juce::ValueTree& getSelectedNode() const;
+#endif
+
 protected:
 
     virtual std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node) = 0;
@@ -136,6 +153,9 @@ private:
     juce::Component& parent;
 
     std::unique_ptr<Decorator> root;
+
+    bool editMode = false;
+    juce::ValueTree selectedNode;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicBuilder)
 };
@@ -184,7 +204,7 @@ protected:
 
 private:
 
-    AppType&         app;
+    AppType& app;
 
     MagicProcessorState* magicState;
 

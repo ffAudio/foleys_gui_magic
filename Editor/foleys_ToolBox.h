@@ -41,6 +41,9 @@ public:
     ToolBox (juce::Component* parent, MagicBuilder& builder);
     ~ToolBox();
 
+    void loadDialog();
+    void saveDialog();
+
     void paint (juce::Graphics& g) override;
 
     void resized() override;
@@ -48,6 +51,8 @@ public:
     void timerCallback () override;
 
     void stateWasReloaded();
+
+    void setSelectedNode (const juce::ValueTree& node);
 
 private:
 
@@ -59,10 +64,8 @@ private:
 
     MagicBuilder&    builder;
 
-    juce::TextButton saveXml { TRANS ("Save") };
-    juce::TextButton loadXml { TRANS ("Load") };
-    juce::TextButton saveCSS { TRANS ("Save CSS") };
-    juce::TextButton loadCSS { TRANS ("Load CSS") };
+    juce::TextButton fileMenu   { TRANS ("File...") };
+    juce::TextButton editSwitch { TRANS ("Edit") };
 
     juce::File       lastLocation;
 

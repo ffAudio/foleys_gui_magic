@@ -38,52 +38,29 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
 {
     setOpaque (true);
 
-    saveXml.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
-    loadXml.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
-    saveCSS.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
-    loadCSS.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
+    fileMenu.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
+    editSwitch.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
 
-    addAndMakeVisible (saveXml);
-    addAndMakeVisible (loadXml);
-    addAndMakeVisible (saveCSS);
-    addAndMakeVisible (loadCSS);
+    addAndMakeVisible (fileMenu);
+    addAndMakeVisible (editSwitch);
 
-    saveXml.onClick = [&]
+    fileMenu.onClick = [&]
     {
-        juce::FileChooser myChooser ("Save XML to file...", getLastLocation(), "*.xml");
-        if (myChooser.browseForFileToSave (true))
-        {
-            juce::File xmlFile (myChooser.getResult());
-            juce::FileOutputStream stream (xmlFile);
-            stream.setPosition (0);
-            stream.truncate();
-            stream.writeString (builder.getGuiTree().toXmlString());
-            lastLocation = xmlFile;
-        }
+        juce::PopupMenu file;
+        file.addItem ("Load XML", [&] { loadDialog(); });
+        file.addItem ("Save XML", [&] { saveDialog(); });
+        file.show();
     };
 
-    loadXml.onClick = [&]
+    editSwitch.setClickingTogglesState (true);
+    editSwitch.onStateChange = [&]
     {
-        juce::FileChooser myChooser ("Load from XML file...", getLastLocation(), "*.xml");
-        if (myChooser.browseForFileToOpen())
-        {
-            juce::File xmlFile (myChooser.getResult());
-            juce::FileInputStream stream (xmlFile);
-            auto tree = juce::ValueTree::fromXml (stream.readEntireStreamAsString());
-
-            if (tree.isValid() && tree.getType() == IDs::magic)
-            {
-                builder.restoreGUI (tree);
-                stateWasReloaded();
-            }
-
-            lastLocation = xmlFile;
-        }
+        builder.setEditMode (editSwitch.getToggleState());
     };
 
     treeEditor.onSelectionChanged = [&] (juce::ValueTree& ref)
     {
-        propertiesEditor.setNodeToEdit (ref);
+        setSelectedNode (ref);
     };
 
     addAndMakeVisible (treeEditor);
@@ -108,10 +85,49 @@ ToolBox::~ToolBox()
 {
 }
 
+void ToolBox::loadDialog()
+{
+    juce::FileChooser myChooser ("Load from XML file...", getLastLocation(), "*.xml");
+    if (myChooser.browseForFileToOpen())
+    {
+        juce::File xmlFile (myChooser.getResult());
+        juce::FileInputStream stream (xmlFile);
+        auto tree = juce::ValueTree::fromXml (stream.readEntireStreamAsString());
+
+        if (tree.isValid() && tree.getType() == IDs::magic)
+        {
+            builder.restoreGUI (tree);
+            stateWasReloaded();
+        }
+
+        lastLocation = xmlFile;
+    }
+}
+
+void ToolBox::saveDialog()
+{
+    juce::FileChooser myChooser ("Save XML to file...", getLastLocation(), "*.xml");
+    if (myChooser.browseForFileToSave (true))
+    {
+        juce::File xmlFile (myChooser.getResult());
+        juce::FileOutputStream stream (xmlFile);
+        stream.setPosition (0);
+        stream.truncate();
+        stream.writeString (builder.getGuiTree().toXmlString());
+        lastLocation = xmlFile;
+    }
+}
+
 void ToolBox::stateWasReloaded()
 {
     treeEditor.updateTree();
     propertiesEditor.setStyle (builder.getStylesheet().getCurrentStyle());
+}
+
+void ToolBox::setSelectedNode (const juce::ValueTree& node)
+{
+    propertiesEditor.setNodeToEdit (node);
+    builder.setSelectedNode (node);
 }
 
 void ToolBox::paint (juce::Graphics& g)
@@ -120,7 +136,7 @@ void ToolBox::paint (juce::Graphics& g)
     g.setColour (juce::Colours::silver);
     g.drawRect (getLocalBounds().toFloat(), 2.0f);
     g.setColour (juce::Colours::white);
-    g.drawFittedText ("foleys GUI Magic", getLocalBounds().withHeight (24), juce::Justification::centred, 1);
+    g.drawFittedText ("foleys GUI magic", getLocalBounds().withHeight (24), juce::Justification::centred, 1);
 }
 
 void ToolBox::resized()
@@ -128,10 +144,8 @@ void ToolBox::resized()
     auto bounds = getLocalBounds().reduced (2).withTop (24);
     auto buttons = bounds.removeFromTop (24);
     auto w = buttons.getWidth() / 4;
-    saveXml.setBounds (buttons.removeFromLeft (w));
-    loadXml.setBounds (buttons.removeFromLeft (w));
-    saveCSS.setBounds (buttons.removeFromLeft (w));
-    loadCSS.setBounds (buttons);
+    fileMenu.setBounds (buttons.removeFromLeft (w));
+    editSwitch.setBounds (buttons.removeFromLeft (w));
 
     juce::Component* comps[] = { &treeEditor, &resizer, &propertiesEditor };
     resizeManager.layOutComponents (comps, 3,

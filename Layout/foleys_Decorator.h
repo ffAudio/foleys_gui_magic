@@ -32,6 +32,8 @@
 namespace foleys
 {
 
+class MagicBuilder;
+
 /**
  The Decorator class will draw borders and descriptions around widgets, if defined.
  It also owns the Component and the Attachment, in case the Component is connected
@@ -40,13 +42,12 @@ namespace foleys
 class Decorator : public juce::Component
 {
 public:
-    Decorator();
-    Decorator (std::unique_ptr<juce::Component> wrapped);
+    Decorator (MagicBuilder& builder, juce::ValueTree node, std::unique_ptr<juce::Component> wrapped = {});
 
     /**
      This method sets the GUI in edit mode, that allows to drag the components around.
      */
-    void setEditable (bool shouldEdit);
+    virtual void setEditMode (bool shouldEdit);
 
     void configureDecorator (Stylesheet& stylesheet, const juce::ValueTree& node);
 
@@ -54,6 +55,10 @@ public:
 
     void paint (juce::Graphics& g) override;
     void resized() override;
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    void paintOverChildren (juce::Graphics& g) override;
+#endif
 
     juce::Component* getWrappedComponent();
 
@@ -72,11 +77,16 @@ public:
 
     juce::FlexItem flexItem { juce::FlexItem (*this).withFlex (1.0f) };
 
+    void mouseDown (const juce::MouseEvent& event) override;
+
 protected:
 
     juce::Rectangle<int> getClientBounds() const;
 
 private:
+
+    MagicBuilder&               magicBuilder;
+    juce::ValueTree             configNode;
 
     std::unique_ptr<juce::Component> component;
 

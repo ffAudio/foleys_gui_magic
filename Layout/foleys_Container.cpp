@@ -30,10 +30,23 @@
 namespace foleys
 {
 
+Container::Container (MagicBuilder& builder, juce::ValueTree node)
+  : Decorator (builder, node)
+{
+}
+
 void Container::addChildItem (std::unique_ptr<Decorator> child)
 {
     children.push_back (std::move (child));
     addAndMakeVisible (child.get());
+}
+
+void Container::setEditMode (bool shouldEdit)
+{
+    for (auto& child : children)
+        child->setEditMode (shouldEdit);
+
+    Decorator::setEditMode (shouldEdit);
 }
 
 void Container::resized()

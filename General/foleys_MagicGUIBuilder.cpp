@@ -135,6 +135,8 @@ juce::StringArray MagicBuilder::getAllLayoutPropertyNames() const
 {
     return
     {
+        IDs::id.toString(),
+        IDs::styleClass.toString(),
         IDs::lookAndFeel.toString(),
         IDs::margin.toString(),
         IDs::padding.toString(),
@@ -161,6 +163,37 @@ juce::StringArray MagicBuilder::getAllLayoutPropertyNames() const
         IDs::height.toString()
     };
 }
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+void MagicBuilder::setEditMode (bool shouldEdit)
+{
+    editMode = shouldEdit;
+
+    if (root.get() != nullptr)
+        root->setEditMode (shouldEdit);
+
+    if (shouldEdit == false)
+        setSelectedNode (juce::ValueTree());
+
+    parent.repaint();
+}
+
+bool MagicBuilder::isEditModeOn() const
+{
+    return editMode;
+}
+
+void MagicBuilder::setSelectedNode (const juce::ValueTree& node)
+{
+    selectedNode = node;
+    parent.repaint();
+}
+
+const juce::ValueTree& MagicBuilder::getSelectedNode() const
+{
+    return selectedNode;
+}
+#endif
 
 void MagicBuilder::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
 {
@@ -219,7 +252,7 @@ std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Componen
 {
     if (node.getType() == IDs::div)
     {
-        auto item = std::make_unique<Container>();
+        auto item = std::make_unique<Container>(*this, node);
         for (auto childNode : node)
         {
             item->addChildItem (restoreNode (*item, childNode));
@@ -249,7 +282,7 @@ std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Componen
         DBG ("No factory for: " << node.getType().toString());
     }
 
-    auto item = std::make_unique<Decorator> (factory ? factory (node, app) : nullptr);
+    auto item = std::make_unique<Decorator> (*this, node, factory ? factory (node, app) : nullptr);
     component.addAndMakeVisible (item.get());
 
     item->configureDecorator (stylesheet, node);

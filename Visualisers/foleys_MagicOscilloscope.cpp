@@ -34,17 +34,17 @@ namespace foleys
 
 MagicOscilloscope::MagicOscilloscope()
 {
-    
+
 }
 
 void MagicOscilloscope::pushSamples (const juce::AudioBuffer<float>& buffer)
 {
-    
+
 }
 
 void MagicOscilloscope::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component)
 {
-    
+
 }
 
 
