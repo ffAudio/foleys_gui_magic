@@ -40,7 +40,12 @@ class MagicAnalyser : public MagicPlotSource
 {
 public:
 
-    MagicAnalyser();
+    /**
+     Creates a MagicAnalyser, that will calculate a frequency plot (FFT) each time new samples occur.
+
+     @param channel lets you select the channel to analyse. -1 means summing all together (the default)
+     */
+    MagicAnalyser (int channel=-1);
 
     /**
      Push new samples to the buffer, so a background worker can create a frequency plot
@@ -81,7 +86,7 @@ private:
         AnalyserJob (MagicAnalyser& owner);
         int useTimeSlice() override;
 
-        void pushSamples (const juce::AudioBuffer<float>& buffer, int channel=-1);
+        void pushSamples (const juce::AudioBuffer<float>& buffer, int channel);
 
         void setupAnalyser (int audioFifoSize);
 
@@ -106,6 +111,8 @@ private:
 
     double      sampleRate {};
     juce::Path  path;
+
+    int         channel = -1;
 
     juce::CriticalSection pathCreationLock;
     AnalyserJob analyserJob { *this };

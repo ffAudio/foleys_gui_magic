@@ -32,13 +32,14 @@ namespace foleys
 {
 
 
-MagicAnalyser::MagicAnalyser()
+MagicAnalyser::MagicAnalyser (int channelToAnalyse)
+  : channel (channelToAnalyse)
 {
 }
 
 void MagicAnalyser::pushSamples (const juce::AudioBuffer<float>& buffer)
 {
-    analyserJob.pushSamples (buffer);
+    analyserJob.pushSamples (buffer, channel);
 }
 
 void MagicAnalyser::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component)
@@ -97,6 +98,9 @@ void MagicAnalyser::AnalyserJob::setupAnalyser (int audioFifoSize)
 {
     audioFifo.setSize (1, audioFifoSize);
     abstractFifo.setTotalSize (audioFifoSize);
+
+    audioFifo.clear();
+    averager.clear();
 }
 
 void MagicAnalyser::AnalyserJob::pushSamples (const juce::AudioBuffer<float>& buffer, int channel)

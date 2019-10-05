@@ -121,7 +121,9 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     setColourTranslation (IDs::plot,
                           {
                               { "plot-color", MagicPlotComponent::plotColourId },
-                              { "plot-fill-color", MagicPlotComponent::plotFillColourId }
+                              { "plot-fill-color", MagicPlotComponent::plotFillColourId },
+                              { "plot-inactive-color", MagicPlotComponent::plotInactiveColourId },
+                              { "plot-inactive-fill-color", MagicPlotComponent::plotInactiveFillColourId }
                           });
 
 }
