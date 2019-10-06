@@ -72,6 +72,12 @@ namespace IDs
     static juce::Identifier classes   { "Classes" };
     static juce::Identifier types     { "Types"   };
 
+    static juce::String dragSelected  { "selected" };
+    static juce::String dragParameter { "parameter:" };
+    static juce::String dragSource    { "source:" };
+    static juce::String dragPlot      { "plot:" };
+
+
     static juce::Identifier backgroundImage     { "background-image" };
     static juce::String     linearGradient      { "linear-gradient" };
     static juce::String     radialGradient      { "radial-gradient" };

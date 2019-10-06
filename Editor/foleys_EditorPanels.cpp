@@ -27,55 +27,59 @@
  ==============================================================================
  */
 
-#pragma once
-
 namespace foleys
 {
 
-class MagicBuilder;
 
-class ToolBox  : public juce::Component,
-                 private juce::Timer
+EditorPanels::EditorPanels (MagicBuilder& builderToControl)
+  : builder (builderToControl),
+    treeEditor (builderToControl),
+    propertiesEditor (builderToControl)
 {
-public:
-    ToolBox (juce::Component* parent, MagicBuilder& builder);
-    ~ToolBox();
+    treeEditor.onSelectionChanged = [&] (juce::ValueTree& ref)
+    {
+        setSelectedNode (ref);
+    };
 
-    void loadDialog();
-    void saveDialog();
+    addAndMakeVisible (treeEditor);
+    addAndMakeVisible (resizer);
+    addAndMakeVisible (propertiesEditor);
 
-    void paint (juce::Graphics& g) override;
+    resizeManager.setItemLayout (0, 1, -1.0, -0.6);
+    resizeManager.setItemLayout (1, 6, 6, 6);
+    resizeManager.setItemLayout (2, 1, -1.0, -0.4);
+}
 
-    void resized() override;
+void EditorPanels::setSelectedNode (const juce::ValueTree& node)
+{
+    treeEditor.setSelectedNode (node);
+    propertiesEditor.setNodeToEdit (node);
+    builder.setSelectedNode (node);
+}
 
-    void timerCallback () override;
+void EditorPanels::stateWasReloaded()
+{
+    treeEditor.updateTree();
+    propertiesEditor.setStyle (builder.getStylesheet().getCurrentStyle());
+}
 
-    void setSelectedNode (const juce::ValueTree& node);
+void EditorPanels::paint (juce::Graphics& g)
+{
+    g.fillAll (EditorColours::background);
+}
 
-    void stateWasReloaded();
+void EditorPanels::resized()
+{
+    auto bounds = getLocalBounds();
 
-    bool keyPressed (const juce::KeyPress& key) override;
+    juce::Component* comps[] = { &treeEditor, &resizer, &propertiesEditor };
+    resizeManager.layOutComponents (comps, 3,
+                                    bounds.getX(),
+                                    bounds.getY(),
+                                    bounds.getWidth(),
+                                    bounds.getHeight(),
+                                    true, true);
+}
 
-private:
-
-    juce::File getLastLocation() const;
-
-    juce::Component::SafePointer<juce::Component> parent;
-    juce::Point<int>    parentPos;
-    int                 parentHeight = 0;
-
-    MagicBuilder&       builder;
-    juce::UndoManager&  undo;
-
-    juce::TextButton    fileMenu   { TRANS ("File...") };
-    juce::TextButton    undoButton { TRANS ("Undo") };
-    juce::TextButton    editSwitch { TRANS ("Edit") };
-
-    juce::File          lastLocation;
-
-    EditorPanels        editorPanels;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToolBox)
-};
 
 } // namespace foleys

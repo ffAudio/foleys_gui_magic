@@ -52,6 +52,7 @@
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 
 #include "Editor/foleys_ToolBox.cpp"
+#include "Editor/foleys_EditorPanels.cpp"
 #include "Editor/foleys_GUITreeEditor.cpp"
 #include "Editor/foleys_PropertiesEditor.cpp"
 

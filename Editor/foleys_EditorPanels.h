@@ -33,49 +33,30 @@ namespace foleys
 {
 
 class MagicBuilder;
+class ToolBox;
 
-class ToolBox  : public juce::Component,
-                 private juce::Timer
+class EditorPanels  : public juce::Component
 {
 public:
-    ToolBox (juce::Component* parent, MagicBuilder& builder);
-    ~ToolBox();
+    EditorPanels (MagicBuilder& builder);
 
-    void loadDialog();
-    void saveDialog();
+    void setSelectedNode (const juce::ValueTree& node);
+    void stateWasReloaded();
 
     void paint (juce::Graphics& g) override;
 
     void resized() override;
 
-    void timerCallback () override;
-
-    void setSelectedNode (const juce::ValueTree& node);
-
-    void stateWasReloaded();
-
-    bool keyPressed (const juce::KeyPress& key) override;
-
 private:
-
-    juce::File getLastLocation() const;
-
-    juce::Component::SafePointer<juce::Component> parent;
-    juce::Point<int>    parentPos;
-    int                 parentHeight = 0;
-
     MagicBuilder&       builder;
-    juce::UndoManager&  undo;
 
-    juce::TextButton    fileMenu   { TRANS ("File...") };
-    juce::TextButton    undoButton { TRANS ("Undo") };
-    juce::TextButton    editSwitch { TRANS ("Edit") };
+    GUITreeEditor       treeEditor;
+    PropertiesEditor    propertiesEditor;
 
-    juce::File          lastLocation;
+    juce::StretchableLayoutManager    resizeManager;
+    juce::StretchableLayoutResizerBar resizer { &resizeManager, 1, false };
 
-    EditorPanels        editorPanels;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToolBox)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EditorPanels)
 };
 
 } // namespace foleys

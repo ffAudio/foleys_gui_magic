@@ -42,8 +42,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
   : parent (parentToUse),
     builder (builderToControl),
     undo (builder.getUndoManager()),
-    treeEditor (builderToControl),
-    propertiesEditor (builderToControl)
+    editorPanels (builder)
 {
     EditorColours::background = juce::Colours::darkgrey;
     EditorColours::outline = juce::Colours::silver;
@@ -81,18 +80,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
         builder.setEditMode (editSwitch.getToggleState());
     };
 
-    treeEditor.onSelectionChanged = [&] (juce::ValueTree& ref)
-    {
-        setSelectedNode (ref);
-    };
-
-    addAndMakeVisible (treeEditor);
-    addAndMakeVisible (resizer);
-    addAndMakeVisible (propertiesEditor);
-
-    resizeManager.setItemLayout (0, 1, -1.0, -0.6);
-    resizeManager.setItemLayout (1, 6, 6, 6);
-    resizeManager.setItemLayout (2, 1, -1.0, -0.4);
+    addAndMakeVisible (editorPanels);
 
     setBounds (100, 100, 300, 700);
     addToDesktop (getLookAndFeel().getMenuWindowFlags());
@@ -141,17 +129,14 @@ void ToolBox::saveDialog()
     }
 }
 
-void ToolBox::stateWasReloaded()
-{
-    treeEditor.updateTree();
-    propertiesEditor.setStyle (builder.getStylesheet().getCurrentStyle());
-}
-
 void ToolBox::setSelectedNode (const juce::ValueTree& node)
 {
-    treeEditor.setSelectedNode (node);
-    propertiesEditor.setNodeToEdit (node);
-    builder.setSelectedNode (node);
+    editorPanels.setSelectedNode (node);
+}
+
+void ToolBox::stateWasReloaded()
+{
+    editorPanels.stateWasReloaded();
 }
 
 void ToolBox::paint (juce::Graphics& g)
@@ -172,13 +157,7 @@ void ToolBox::resized()
     undoButton.setBounds (buttons.removeFromLeft (w));
     editSwitch.setBounds (buttons.removeFromLeft (w));
 
-    juce::Component* comps[] = { &treeEditor, &resizer, &propertiesEditor };
-    resizeManager.layOutComponents (comps, 3,
-                                    bounds.getX(),
-                                    bounds.getY(),
-                                    bounds.getWidth(),
-                                    bounds.getHeight(),
-                                    true, true);
+    editorPanels.setBounds (bounds);
 }
 
 bool ToolBox::keyPressed (const juce::KeyPress& key)
