@@ -49,6 +49,8 @@ public:
 
     void resized() override;
 
+    bool isContainer() const override { return true; }
+
     juce::FlexBox flexBox;
 
     Layout layout = Layout::FlexBox;

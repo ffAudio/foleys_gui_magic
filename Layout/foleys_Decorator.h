@@ -40,6 +40,9 @@ class MagicBuilder;
  to an AudioProcessorValueTreeState.
  */
 class Decorator : public juce::Component
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+                , public juce::DragAndDropTarget
+#endif
 {
 public:
     Decorator (MagicBuilder& builder, juce::ValueTree node, std::unique_ptr<juce::Component> wrapped = {});
@@ -55,6 +58,8 @@ public:
 
     void paint (juce::Graphics& g) override;
     void resized() override;
+
+    virtual bool isContainer() const { return false; }
 
     juce::Component* getWrappedComponent();
 
@@ -76,6 +81,11 @@ public:
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     void paintOverChildren (juce::Graphics& g) override;
     void mouseDown (const juce::MouseEvent& event) override;
+
+    void mouseDrag (const juce::MouseEvent& event) override;
+
+    bool isInterestedInDragSource (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails) override;
+    void itemDropped (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails) override;
 #endif
 
 protected:

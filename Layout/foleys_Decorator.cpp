@@ -217,6 +217,29 @@ void Decorator::mouseDown (const juce::MouseEvent& event)
 {
     magicBuilder.setSelectedNode (configNode);
 }
+
+void Decorator::mouseDrag (const juce::MouseEvent& event)
+{
+    if (event.mouseWasDraggedSinceMouseDown())
+    {
+        auto* container = juce::DragAndDropContainer::findParentDragContainerFor (this);
+        container->startDragging (configNode.toXmlString(), this);
+    }
+}
+
+bool Decorator::isInterestedInDragSource (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails)
+{
+    return true;
+}
+
+void Decorator::itemDropped (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails)
+{
+    auto dragged = magicBuilder.getSelectedNode();
+    if (dragged.isValid() == false)
+        return;
+
+    magicBuilder.draggedItemOnto (dragged, configNode);
+}
 #endif
 
 

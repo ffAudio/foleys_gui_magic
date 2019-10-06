@@ -210,6 +210,24 @@ const juce::ValueTree& MagicBuilder::getSelectedNode() const
     return selectedNode;
 }
 
+void MagicBuilder::draggedItemOnto (juce::ValueTree dragged, juce::ValueTree target)
+{
+    undo.beginNewTransaction();
+
+    auto targetParent  = target.getParent();
+    auto draggedParent = dragged.getParent();
+
+    if (draggedParent.isValid())
+        draggedParent.removeChild (dragged, &undo);
+
+    if (targetParent.isValid() == false)
+        return;
+
+    auto index = targetParent.indexOf (target);
+
+    targetParent.addChild (dragged, index, &undo);
+}
+
 juce::UndoManager& MagicBuilder::getUndoManager()
 {
     return undo;
