@@ -42,13 +42,17 @@
 #include "Layout/foleys_Decorator.cpp"
 #include "Layout/foleys_Container.cpp"
 
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
-
 #include "Visualisers/foleys_MagicFilterPlot.cpp"
 #include "Visualisers/foleys_MagicAnalyser.cpp"
 #include "Visualisers/foleys_MagicOscilloscope.cpp"
 #include "Visualisers/foleys_MagicPlotComponent.cpp"
 
 #include "LookAndFeels/foleys_LookAndFeel.cpp"
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+
+#include "Editor/foleys_ToolBox.cpp"
+#include "Editor/foleys_GUITreeEditor.cpp"
+#include "Editor/foleys_PropertiesEditor.cpp"
+
+#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE

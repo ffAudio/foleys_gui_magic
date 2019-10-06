@@ -30,12 +30,25 @@
 namespace foleys
 {
 
+namespace EditorColours
+{
+    static juce::Colour background;
+    static juce::Colour outline;
+    static juce::Colour text;
+    static juce::Colour selectedBackground;
+}
+
 ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
   : parent (parentToUse),
     builder (builderToControl),
     treeEditor (builderToControl),
     propertiesEditor (builderToControl)
 {
+    EditorColours::background = juce::Colours::darkgrey;
+    EditorColours::outline = juce::Colours::silver;
+    EditorColours::text = juce::Colours::white;
+    EditorColours::selectedBackground = juce::Colours::darkorange;
+
     setOpaque (true);
 
     fileMenu.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
@@ -53,6 +66,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
     };
 
     editSwitch.setClickingTogglesState (true);
+    editSwitch.setColour (juce::TextButton::buttonOnColourId, EditorColours::selectedBackground);
     editSwitch.onStateChange = [&]
     {
         builder.setEditMode (editSwitch.getToggleState());
@@ -133,10 +147,10 @@ void ToolBox::setSelectedNode (const juce::ValueTree& node)
 
 void ToolBox::paint (juce::Graphics& g)
 {
-    g.fillAll (juce::Colours::darkgrey);
-    g.setColour (juce::Colours::silver);
+    g.fillAll (EditorColours::background);
+    g.setColour (EditorColours::outline);
     g.drawRect (getLocalBounds().toFloat(), 2.0f);
-    g.setColour (juce::Colours::white);
+    g.setColour (EditorColours::text);
     g.drawFittedText ("foleys GUI magic", getLocalBounds().withHeight (24), juce::Justification::centred, 1);
 }
 

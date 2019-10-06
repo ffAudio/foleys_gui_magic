@@ -101,6 +101,11 @@ void MagicBuilder::updateComponents()
 
     auto rootNode = config.getOrCreateChildWithName (IDs::div, &undo);
     root = restoreNode (parent, rootNode);
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    if (root.get() != nullptr)
+        root->setEditMode (editMode);
+#endif
 }
 
 void MagicBuilder::updateLayout()

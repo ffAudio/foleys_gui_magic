@@ -201,22 +201,23 @@ void Decorator::resized()
     component->setBounds (box);
 }
 
+juce::Component* Decorator::getWrappedComponent()
+{
+    return component.get();
+}
+
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 void Decorator::paintOverChildren (juce::Graphics& g)
 {
     if (magicBuilder.isEditModeOn() && magicBuilder.getSelectedNode() == configNode)
         g.fillAll (juce::Colours::orange.withAlpha (0.5f));
 }
-#endif
 
 void Decorator::mouseDown (const juce::MouseEvent& event)
 {
     magicBuilder.setSelectedNode (configNode);
 }
+#endif
 
-juce::Component* Decorator::getWrappedComponent()
-{
-    return component.get();
-}
 
 }

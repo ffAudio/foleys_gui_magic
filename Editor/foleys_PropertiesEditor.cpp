@@ -146,7 +146,7 @@ void PropertiesEditor::updatePopupMenu()
 
 void PropertiesEditor::paint (juce::Graphics& g)
 {
-    g.setColour (juce::Colours::silver);
+    g.setColour (EditorColours::outline);
     g.drawRect (getLocalBounds(), 1);
 }
 
@@ -260,9 +260,9 @@ void PropertiesEditor::PropertiesItem::setProperty (const juce::String& nameToDi
 
 void PropertiesEditor::PropertiesItem::paint (juce::Graphics& g)
 {
-    g.setColour (juce::Colours::silver);
+    g.setColour (EditorColours::outline);
     g.drawHorizontalLine (getHeight()-1, 0, getWidth());
-    g.setColour (juce::Colours::white);
+    g.setColour (EditorColours::text);
     g.drawFittedText (name, getLocalBounds().withWidth (getWidth() / 2), juce::Justification::left, 1);
 }
 

@@ -56,10 +56,6 @@ public:
     void paint (juce::Graphics& g) override;
     void resized() override;
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-    void paintOverChildren (juce::Graphics& g) override;
-#endif
-
     juce::Component* getWrappedComponent();
 
     juce::Colour backgroundColour { juce::Colours::darkgrey };
@@ -77,7 +73,10 @@ public:
 
     juce::FlexItem flexItem { juce::FlexItem (*this).withFlex (1.0f) };
 
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    void paintOverChildren (juce::Graphics& g) override;
     void mouseDown (const juce::MouseEvent& event) override;
+#endif
 
 protected:
 

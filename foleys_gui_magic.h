@@ -78,9 +78,13 @@
 #include "Visualisers/foleys_MagicOscilloscope.h"
 #include "Visualisers/foleys_MagicPlotComponent.h"
 
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+
 #include "Editor/foleys_GUITreeEditor.h"
 #include "Editor/foleys_PropertiesEditor.h"
 #include "Editor/foleys_ToolBox.h"
+
+#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 
 #include "General/foleys_MagicProcessorState.h"
 #include "General/foleys_MagicGUIBuilder.h"

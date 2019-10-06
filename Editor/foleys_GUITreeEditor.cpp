@@ -61,9 +61,9 @@ GUITreeEditor::GUITreeEditor (MagicBuilder& builderToEdit)
 
 void GUITreeEditor::paint (juce::Graphics& g)
 {
-    g.setColour (juce::Colours::silver);
+    g.setColour (EditorColours::outline);
     g.drawRect (getLocalBounds(), 1);
-    g.setColour (juce::Colours::white);
+    g.setColour (EditorColours::text);
     g.drawFittedText (TRANS ("GUI tree"), 2, 2, getWidth() - 4, 20, juce::Justification::centred, 1);
 }
 
@@ -188,9 +188,9 @@ bool GUITreeEditor::GuiTreeItem::mightContainSubItems()
 void GUITreeEditor::GuiTreeItem::paintItem (juce::Graphics& g, int width, int height)
 {
     if (isSelected())
-        g.fillAll ({91, 103, 109});
+        g.fillAll (EditorColours::selectedBackground.withAlpha (0.5f));
 
-    g.setColour (juce::Colours::white);
+    g.setColour (EditorColours::text);
     g.setFont (height * 0.7f);
 
     juce::String name = tree.getType().toString();
