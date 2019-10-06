@@ -34,6 +34,9 @@ namespace foleys
 MagicBuilder::MagicBuilder (juce::Component& parentToUse)
   : parent (parentToUse)
 {
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    magicToolBox = std::make_unique<ToolBox>(parent.getTopLevelComponent(), *this);
+#endif
 }
 
 MagicBuilder::~MagicBuilder()
@@ -84,6 +87,10 @@ void MagicBuilder::restoreGUI (const juce::ValueTree& gui)
     config = gui;
 
     updateAll();
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    magicToolBox->stateWasReloaded();
+#endif
 
     config.addListener (this);
 }
@@ -185,8 +192,12 @@ bool MagicBuilder::isEditModeOn() const
 
 void MagicBuilder::setSelectedNode (const juce::ValueTree& node)
 {
-    selectedNode = node;
-    parent.repaint();
+    if (selectedNode != node)
+    {
+        selectedNode = node;
+        magicToolBox->setSelectedNode (selectedNode);
+        parent.repaint();
+    }
 }
 
 const juce::ValueTree& MagicBuilder::getSelectedNode() const

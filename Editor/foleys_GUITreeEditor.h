@@ -47,6 +47,8 @@ public:
 
     void updateTree();
 
+    void setSelectedNode (const juce::ValueTree& node);
+
     std::function<void (juce::ValueTree&)> onSelectionChanged {nullptr};
 
 private:

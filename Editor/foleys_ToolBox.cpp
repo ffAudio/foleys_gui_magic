@@ -126,6 +126,7 @@ void ToolBox::stateWasReloaded()
 
 void ToolBox::setSelectedNode (const juce::ValueTree& node)
 {
+    treeEditor.setSelectedNode (node);
     propertiesEditor.setNodeToEdit (node);
     builder.setSelectedNode (node);
 }

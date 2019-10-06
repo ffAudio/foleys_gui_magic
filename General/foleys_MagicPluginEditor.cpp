@@ -44,10 +44,6 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse)
     builder.updateAll();
 
     setSize (600, 400);
-
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-    magicToolBox = std::make_unique<ToolBox>(getTopLevelComponent(), builder);
-#endif
 }
 
 MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const char* data, const int dataSize)
@@ -62,19 +58,11 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const cha
     setResizable (true, true);
 
     setSize (600, 400);
-
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-    magicToolBox = std::make_unique<ToolBox>(getTopLevelComponent(), builder);
-#endif
 }
 
 void MagicPluginEditor::restoreGUI (const juce::ValueTree& gui)
 {
     builder.restoreGUI (gui);
-
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-    magicToolBox->stateWasReloaded();
-#endif
 }
 
 void MagicPluginEditor::restoreGUI (const char* data, const int dataSize)

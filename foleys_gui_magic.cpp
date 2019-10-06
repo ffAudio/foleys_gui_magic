@@ -29,6 +29,8 @@
 
 #include "foleys_gui_magic.h"
 
+#include <stack>
+
 #include "General/foleys_StringDefinitions.cpp"
 
 #include "General/foleys_MagicGUIBuilder.cpp"

@@ -104,6 +104,33 @@ void GUITreeEditor::updateTree()
     setValueTree (guiNode);
 }
 
+void GUITreeEditor::setSelectedNode (const juce::ValueTree& node)
+{
+    if (rootItem.get() == nullptr || node.isAChildOf (tree) == false)
+        return;
+
+    std::stack<int> path;
+    auto probe = node;
+    while (probe != tree)
+    {
+        auto parent = probe.getParent();
+        path.push (parent.indexOf (probe));
+        probe = parent;
+    }
+
+    juce::TreeViewItem* itemToSelect = rootItem.get();
+    while (path.empty() ==  false)
+    {
+        itemToSelect->setOpen (true);
+        auto* childItem = itemToSelect->getSubItem (path.top());
+        path.pop();
+        itemToSelect = childItem;
+    }
+
+    itemToSelect->setSelected (true, true, juce::dontSendNotification);
+    treeView.scrollToKeepItemVisible (itemToSelect);
+}
+
 void GUITreeEditor::valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
                                               const juce::Identifier& property)
 {
