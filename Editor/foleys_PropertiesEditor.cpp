@@ -229,7 +229,7 @@ juce::Component* PropertiesEditor::PropertiesListModel::refreshComponentForRow (
     if (styleItem.isValid() && rowNumber < styleItem.getNumProperties())
     {
         const auto name = styleItem.getPropertyName (rowNumber);
-        component->setProperty (name.toString(), styleItem.getPropertyAsValue (name, &undo));
+        component->setProperty (name.toString(), styleItem.getPropertyAsValue (name, &undo, true));
     }
     else
     {
