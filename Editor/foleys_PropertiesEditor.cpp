@@ -33,7 +33,8 @@ namespace foleys
 
 
 PropertiesEditor::PropertiesEditor (MagicBuilder& builderToEdit)
-  : builder (builderToEdit)
+  : builder (builderToEdit),
+    undo (builder.getUndoManager())
 {
     addAndMakeVisible (nodeSelect);
     addAndMakeVisible (propertiesList);
@@ -76,7 +77,7 @@ PropertiesEditor::PropertiesEditor (MagicBuilder& builderToEdit)
 
         auto styleItem = propertiesModel.getCurrentStyleItem();
         auto oldValue = styleItem.getProperty (name, {});
-        styleItem.setProperty (name, oldValue, nullptr);
+        styleItem.setProperty (name, oldValue, &undo);
         propertiesList.updateContent();
     };
 
@@ -191,7 +192,8 @@ void PropertiesEditor::valueTreeChildRemoved (juce::ValueTree& parentTree,
 //==============================================================================
 
 PropertiesEditor::PropertiesListModel::PropertiesListModel (PropertiesEditor& editor)
-  : propertiesEditor (editor)
+  : propertiesEditor (editor),
+    undo (propertiesEditor.undo)
 {
 }
 
@@ -227,7 +229,7 @@ juce::Component* PropertiesEditor::PropertiesListModel::refreshComponentForRow (
     if (styleItem.isValid() && rowNumber < styleItem.getNumProperties())
     {
         const auto name = styleItem.getPropertyName (rowNumber);
-        component->setProperty (name.toString(), styleItem.getPropertyAsValue (name, nullptr));
+        component->setProperty (name.toString(), styleItem.getPropertyAsValue (name, &undo));
     }
     else
     {
@@ -248,7 +250,7 @@ PropertiesEditor::PropertiesItem::PropertiesItem (PropertiesListModel& model)
 
     remove.onClick =[&]
     {
-        propertiesModel.getCurrentStyleItem().removeProperty (name, nullptr);
+        propertiesModel.getCurrentStyleItem().removeProperty (name, &propertiesModel.undo);
     };
 }
 

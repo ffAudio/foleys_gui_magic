@@ -93,6 +93,8 @@ private:
 
 
     MagicBuilder&                builder;
+    juce::UndoManager&           undo;
+
     juce::ValueTree              tree;
 
     std::unique_ptr<GuiTreeItem> rootItem;

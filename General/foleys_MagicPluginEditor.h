@@ -35,7 +35,7 @@ namespace foleys
 /**
  This is a generic AudioProcessorEditor, that is completely
  defined and styled by drag and drop. There is an XML representation,
- that is baked into the project using the BinaryData of Projucer.
+ that can be baked into the project using the BinaryData of Projucer.
  */
 class MagicPluginEditor  : public juce::AudioProcessorEditor,
                            public juce::DragAndDropContainer

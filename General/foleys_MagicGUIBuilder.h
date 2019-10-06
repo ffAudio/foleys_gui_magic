@@ -111,6 +111,7 @@ public:
      */
     virtual void createDefaultGUITree (bool keepExisting) = 0;
 
+
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     /**
      This method sets the GUI in edit mode, that allows to drag the components around.
@@ -120,6 +121,8 @@ public:
 
     void setSelectedNode (const juce::ValueTree& node);
     const juce::ValueTree& getSelectedNode() const;
+
+    juce::UndoManager& getUndoManager();
 #endif
 
 protected:

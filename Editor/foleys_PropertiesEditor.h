@@ -92,10 +92,11 @@ private:
 
         juce::ValueTree&  getCurrentStyleItem();
 
-    private:
+        PropertiesEditor&   propertiesEditor;
+        juce::UndoManager&  undo;
 
-        juce::ValueTree   styleItem;
-        PropertiesEditor& propertiesEditor;
+    private:
+        juce::ValueTree     styleItem;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesListModel)
     };
@@ -117,6 +118,7 @@ private:
 
 
     MagicBuilder&       builder;
+    juce::UndoManager&  undo;
 
     juce::ComboBox      nodeSelect;
 

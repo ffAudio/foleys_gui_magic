@@ -31,7 +31,8 @@ namespace foleys
 {
 
 GUITreeEditor::GUITreeEditor (MagicBuilder& builderToEdit)
-  : builder (builderToEdit)
+  : builder (builderToEdit),
+    undo (builder.getUndoManager())
 {
     treeView.setRootItemVisible (true);
     treeView.setMultiSelectEnabled (false);
@@ -48,7 +49,7 @@ GUITreeEditor::GUITreeEditor (MagicBuilder& builderToEdit)
         if (GUITreeEditor::GuiTreeItem* selectedItem = static_cast<GUITreeEditor::GuiTreeItem*> (treeView.getSelectedItem (0)))
         {
             juce::ValueTree& tree = selectedItem->getTree();
-            tree.getParent().removeChild (tree, nullptr);
+            tree.getParent().removeChild (tree, &undo);
         }
     };
 

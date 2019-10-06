@@ -54,23 +54,27 @@ public:
 
     void setSelectedNode (const juce::ValueTree& node);
 
+    bool keyPressed (const juce::KeyPress& key) override;
+
 private:
 
     juce::File getLastLocation() const;
 
     juce::Component::SafePointer<juce::Component> parent;
-    juce::Point<int> parentPos;
-    int              parentHeight = 0;
+    juce::Point<int>    parentPos;
+    int                 parentHeight = 0;
 
-    MagicBuilder&    builder;
+    MagicBuilder&       builder;
+    juce::UndoManager&  undo;
 
-    juce::TextButton fileMenu   { TRANS ("File...") };
-    juce::TextButton editSwitch { TRANS ("Edit") };
+    juce::TextButton    fileMenu   { TRANS ("File...") };
+    juce::TextButton    undoButton { TRANS ("Undo") };
+    juce::TextButton    editSwitch { TRANS ("Edit") };
 
-    juce::File       lastLocation;
+    juce::File          lastLocation;
 
-    GUITreeEditor    treeEditor;
-    PropertiesEditor propertiesEditor;
+    GUITreeEditor       treeEditor;
+    PropertiesEditor    propertiesEditor;
 
     juce::StretchableLayoutManager    resizeManager;
     juce::StretchableLayoutResizerBar resizer { &resizeManager, 1, false };

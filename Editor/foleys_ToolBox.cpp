@@ -41,6 +41,7 @@ namespace EditorColours
 ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
   : parent (parentToUse),
     builder (builderToControl),
+    undo (builder.getUndoManager()),
     treeEditor (builderToControl),
     propertiesEditor (builderToControl)
 {
@@ -50,11 +51,14 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
     EditorColours::selectedBackground = juce::Colours::darkorange;
 
     setOpaque (true);
+    setWantsKeyboardFocus (true);
 
     fileMenu.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
+    undoButton.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
     editSwitch.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
 
     addAndMakeVisible (fileMenu);
+    addAndMakeVisible (undoButton);
     addAndMakeVisible (editSwitch);
 
     fileMenu.onClick = [&]
@@ -63,6 +67,11 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
         file.addItem ("Load XML", [&] { loadDialog(); });
         file.addItem ("Save XML", [&] { saveDialog(); });
         file.show();
+    };
+
+    undoButton.onClick = [&]
+    {
+        undo.undo();
     };
 
     editSwitch.setClickingTogglesState (true);
@@ -160,6 +169,7 @@ void ToolBox::resized()
     auto buttons = bounds.removeFromTop (24);
     auto w = buttons.getWidth() / 4;
     fileMenu.setBounds (buttons.removeFromLeft (w));
+    undoButton.setBounds (buttons.removeFromLeft (w));
     editSwitch.setBounds (buttons.removeFromLeft (w));
 
     juce::Component* comps[] = { &treeEditor, &resizer, &propertiesEditor };
@@ -169,6 +179,21 @@ void ToolBox::resized()
                                     bounds.getWidth(),
                                     bounds.getHeight(),
                                     true, true);
+}
+
+bool ToolBox::keyPressed (const juce::KeyPress& key)
+{
+    if (key.isKeyCode ('Z') && key.getModifiers().isCommandDown())
+    {
+        if (key.getModifiers().isShiftDown())
+            undo.redo();
+        else
+            undo.undo();
+
+        return true;
+    }
+
+    return false;
 }
 
 void ToolBox::timerCallback ()

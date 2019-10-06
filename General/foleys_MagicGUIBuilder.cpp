@@ -209,6 +209,12 @@ const juce::ValueTree& MagicBuilder::getSelectedNode() const
 {
     return selectedNode;
 }
+
+juce::UndoManager& MagicBuilder::getUndoManager()
+{
+    return undo;
+}
+
 #endif
 
 void MagicBuilder::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
