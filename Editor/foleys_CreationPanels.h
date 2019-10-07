@@ -27,34 +27,56 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+#pragma once
 
-#include <stack>
+namespace foleys
+{
 
-#include "General/foleys_StringDefinitions.cpp"
+class MagicBuilder;
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
-#include "General/foleys_JuceFactories.cpp"
+class CreationPanels  : public juce::Component
+{
+public:
+    CreationPanels (MagicBuilder& builder);
 
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
+    void paint (juce::Graphics& g) override;
 
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicAnalyser.cpp"
-#include "Visualisers/foleys_MagicOscilloscope.cpp"
-#include "Visualisers/foleys_MagicPlotComponent.cpp"
+    void resized() override;
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
+    void update();
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+private:
 
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_EditorPanels.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
-#include "Editor/foleys_CreationPanels.cpp"
+    void setConcertinaHeaderFor (juce::String name, juce::Component& component);
 
-#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+
+    MagicBuilder&           builder;
+
+    class PaletteListModel : public juce::ListBoxModel
+    {
+    public:
+        PaletteListModel() = default;
+
+        void setFactoryNames (juce::StringArray names);
+
+        int getNumRows() override;
+        void paintListBoxItem (int rowNumber, juce::Graphics &g, int width, int height, bool rowIsSelected) override;
+        juce::var getDragSourceDescription (const juce::SparseSet<int> &rowsToDescribe) override;
+
+    private:
+        juce::StringArray factoryNames;
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PaletteListModel)
+    };
+
+    PaletteListModel        paletteModel;
+    juce::ListBox           palette { {}, &paletteModel };
+
+    juce::Component         parameters;
+    juce::Component         sources;
+
+    juce::ConcertinaPanel   concertina;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CreationPanels)
+};
+
+} // namespace foleys

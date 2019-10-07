@@ -35,6 +35,7 @@ namespace foleys
 class MagicBuilder;
 
 class ToolBox  : public juce::Component,
+                 public juce::DragAndDropContainer,
                  private juce::Timer
 {
 public:
@@ -69,11 +70,15 @@ private:
 
     juce::TextButton    fileMenu   { TRANS ("File...") };
     juce::TextButton    undoButton { TRANS ("Undo") };
+    juce::TextButton    propButton { TRANS ("Prop.") };
+    juce::TextButton    createButton { TRANS ("Create") };
+
     juce::TextButton    editSwitch { TRANS ("Edit") };
 
     juce::File          lastLocation;
 
-    EditorPanels        editorPanels;
+    EditorPanels        editorPanels   { builder };
+    CreationPanels      creationPanels { builder };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToolBox)
 };

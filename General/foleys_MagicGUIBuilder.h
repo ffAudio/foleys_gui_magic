@@ -104,12 +104,22 @@ public:
     juce::StringArray getAllColourNames() const;
 
     /**
+     This resets the GUI to show a single empty container
+     */
+    void clearGUI();
+
+    /**
      This will create a default GUI, in case of AudioProcessors from AudioProcessor::getParameterTree().
 
      @param keepExisting if set to true, it will not change an existing root div tree,
                          if set to false, it will replace any existing data.
      */
     virtual void createDefaultGUITree (bool keepExisting) = 0;
+
+    /**
+     returns the names of all registered factories
+     */
+    virtual juce::StringArray getFactoryNames() const = 0;
 
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
@@ -199,7 +209,7 @@ public:
      parameterTree() from the AudioProcessor. It does nothing, if magicState is not provided
      (e.g. if the project is not an audio plugin).
      */
-    void createDefaultGUITree (bool keepExisting);
+    void createDefaultGUITree (bool keepExisting) override;
 
     void createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree);
 
@@ -207,9 +217,14 @@ public:
 
     void registerJUCEFactories();
 
+    /**
+     returns the names of all registered factories
+     */
+    juce::StringArray getFactoryNames() const override;
+
 protected:
 
-    std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node);
+    std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node) override;
 
 private:
 

@@ -57,7 +57,7 @@ void EditorPanels::setSelectedNode (const juce::ValueTree& node)
     builder.setSelectedNode (node);
 }
 
-void EditorPanels::stateWasReloaded()
+void EditorPanels::update()
 {
     treeEditor.updateTree();
     propertiesEditor.setStyle (builder.getStylesheet().getCurrentStyle());

@@ -242,6 +242,10 @@ void Decorator::itemDropped (const juce::DragAndDropTarget::SourceDetails &dragS
 
         magicBuilder.draggedItemOnto (dragged, configNode);
     }
+
+    auto node = juce::ValueTree::fromXml (dragSourceDetails.description.toString());
+    if (node.isValid())
+        magicBuilder.draggedItemOnto (node, configNode);
 }
 #endif
 

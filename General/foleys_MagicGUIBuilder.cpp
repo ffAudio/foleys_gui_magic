@@ -35,7 +35,10 @@ MagicBuilder::MagicBuilder (juce::Component& parentToUse)
   : parent (parentToUse)
 {
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-    magicToolBox = std::make_unique<ToolBox>(parent.getTopLevelComponent(), *this);
+    juce::MessageManager::callAsync ([&]
+                                     {
+                                         magicToolBox = std::make_unique<ToolBox>(parent.getTopLevelComponent(), *this);
+                                     });
 #endif
 }
 
@@ -79,6 +82,13 @@ void MagicBuilder::updateStylesheet()
     }
 }
 
+void MagicBuilder::clearGUI()
+{
+    auto guiNode = config.getOrCreateChildWithName (IDs::div, &undo);
+    guiNode.removeAllChildren (&undo);
+    guiNode.removeAllProperties (&undo);
+}
+
 void MagicBuilder::restoreGUI (const juce::ValueTree& gui)
 {
     if (gui.isValid() == false)
@@ -89,7 +99,8 @@ void MagicBuilder::restoreGUI (const juce::ValueTree& gui)
     updateAll();
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-    magicToolBox->stateWasReloaded();
+    if (magicToolBox.get() != nullptr)
+        magicToolBox->stateWasReloaded();
 #endif
 
     config.addListener (this);
@@ -200,7 +211,9 @@ void MagicBuilder::setSelectedNode (const juce::ValueTree& node)
     if (selectedNode != node)
     {
         selectedNode = node;
-        magicToolBox->setSelectedNode (selectedNode);
+        if (magicToolBox.get() != nullptr)
+            magicToolBox->setSelectedNode (selectedNode);
+
         parent.repaint();
     }
 }
@@ -216,16 +229,18 @@ void MagicBuilder::draggedItemOnto (juce::ValueTree dragged, juce::ValueTree tar
 
     auto targetParent  = target.getParent();
     auto draggedParent = dragged.getParent();
+    int  index = -1;
 
     if (draggedParent.isValid())
         draggedParent.removeChild (dragged, &undo);
 
-    if (targetParent.isValid() == false)
-        return;
+    if (targetParent.isValid() != false)
+        index = targetParent.indexOf (target);
 
-    auto index = targetParent.indexOf (target);
-
-    targetParent.addChild (dragged, index, &undo);
+    if (target.getType() == IDs::div)
+        target.addChild (dragged, index, &undo);
+    else
+        targetParent.addChild (dragged, index, &undo);
 }
 
 juce::UndoManager& MagicBuilder::getUndoManager()
@@ -286,6 +301,17 @@ void MagicGUIBuilder<AppType>::registerFactory (juce::Identifier type, std::func
     factories [type] = factory;
 }
 
+template <class AppType>
+juce::StringArray MagicGUIBuilder<AppType>::getFactoryNames() const
+{
+    juce::StringArray names { IDs::div.toString() };
+
+    names.ensureStorageAllocated (int (factories.size()));
+    for (const auto& f : factories)
+        names.add (f.first.toString());
+
+    return names;
+}
 
 template <class AppType>
 std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Component& component, const juce::ValueTree& node)

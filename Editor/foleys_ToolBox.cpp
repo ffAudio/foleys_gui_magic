@@ -41,10 +41,9 @@ namespace EditorColours
 ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
   : parent (parentToUse),
     builder (builderToControl),
-    undo (builder.getUndoManager()),
-    editorPanels (builder)
+    undo (builder.getUndoManager())
 {
-    EditorColours::background = juce::Colours::darkgrey;
+    EditorColours::background = findColour (juce::ResizableWindow::backgroundColourId);
     EditorColours::outline = juce::Colours::silver;
     EditorColours::text = juce::Colours::white;
     EditorColours::selectedBackground = juce::Colours::darkorange;
@@ -54,10 +53,14 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
 
     fileMenu.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
     undoButton.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
+    createButton.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
+    propButton.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
     editSwitch.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
 
     addAndMakeVisible (fileMenu);
     addAndMakeVisible (undoButton);
+    addAndMakeVisible (createButton);
+    addAndMakeVisible (propButton);
     addAndMakeVisible (editSwitch);
 
     fileMenu.onClick = [&]
@@ -65,6 +68,9 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
         juce::PopupMenu file;
         file.addItem ("Load XML", [&] { loadDialog(); });
         file.addItem ("Save XML", [&] { saveDialog(); });
+        file.addSeparator();
+        file.addItem ("Clear",    [&] { builder.clearGUI(); });
+        file.addItem ("Default",  [&] { builder.createDefaultGUITree (false); });
         file.show();
     };
 
@@ -73,6 +79,25 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
         undo.undo();
     };
 
+    createButton.onClick = [&]
+    {
+        editorPanels.setVisible (false);
+        creationPanels.setVisible (true);
+    };
+
+    propButton.onClick = [&]
+    {
+        editorPanels.setVisible (true);
+        creationPanels.setVisible (false);
+    };
+
+    propButton.setClickingTogglesState (true);
+    propButton.setRadioGroupId (100);
+
+    createButton.setClickingTogglesState (true);
+    createButton.setRadioGroupId (100);
+    createButton.setToggleState (true, juce::dontSendNotification);
+
     editSwitch.setClickingTogglesState (true);
     editSwitch.setColour (juce::TextButton::buttonOnColourId, EditorColours::selectedBackground);
     editSwitch.onStateChange = [&]
@@ -80,7 +105,8 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
         builder.setEditMode (editSwitch.getToggleState());
     };
 
-    addAndMakeVisible (editorPanels);
+    addAndMakeVisible (creationPanels);
+    addChildComponent (editorPanels);
 
     setBounds (100, 100, 300, 700);
     addToDesktop (getLookAndFeel().getMenuWindowFlags());
@@ -136,7 +162,8 @@ void ToolBox::setSelectedNode (const juce::ValueTree& node)
 
 void ToolBox::stateWasReloaded()
 {
-    editorPanels.stateWasReloaded();
+    creationPanels.update();
+    editorPanels.update();
 }
 
 void ToolBox::paint (juce::Graphics& g)
@@ -152,11 +179,14 @@ void ToolBox::resized()
 {
     auto bounds = getLocalBounds().reduced (2).withTop (24);
     auto buttons = bounds.removeFromTop (24);
-    auto w = buttons.getWidth() / 4;
+    auto w = buttons.getWidth() / 5;
     fileMenu.setBounds (buttons.removeFromLeft (w));
     undoButton.setBounds (buttons.removeFromLeft (w));
+    createButton.setBounds (buttons.removeFromLeft (w));
+    propButton.setBounds (buttons.removeFromLeft (w));
     editSwitch.setBounds (buttons.removeFromLeft (w));
 
+    creationPanels.setBounds (bounds);
     editorPanels.setBounds (bounds);
 }
 

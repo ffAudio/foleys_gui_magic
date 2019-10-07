@@ -33,7 +33,6 @@ namespace foleys
 {
 
 class MagicBuilder;
-class ToolBox;
 
 class EditorPanels  : public juce::Component
 {
@@ -41,7 +40,7 @@ public:
     EditorPanels (MagicBuilder& builder);
 
     void setSelectedNode (const juce::ValueTree& node);
-    void stateWasReloaded();
+    void update();
 
     void paint (juce::Graphics& g) override;
 
