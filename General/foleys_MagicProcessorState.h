@@ -52,7 +52,7 @@ public:
      Add a MagicPlotSource to generate a plot for visualisation. There are some plots ready made
      like the MagicFilterPlot to show an IIR frequency response plot.
      */
-    void addPlotSource (const juce::Identifier& sourceID, std::unique_ptr<MagicPlotSource> source);
+    MagicPlotSource* addPlotSource (const juce::Identifier& sourceID, std::unique_ptr<MagicPlotSource> source);
 
     /**
      Use this to lookup a MagicPlotSource. Since they can only be added and never removed, it makes

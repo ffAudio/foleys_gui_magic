@@ -139,6 +139,8 @@ void PropertiesEditor::updatePopupMenu()
 
     propertySelect.clear();
     propertySelect.addItemList (builder.getAllLayoutPropertyNames(), 1);
+    propertySelect.addItem (IDs::source.toString(), 900);
+    propertySelect.addItem (IDs::parameter.toString(), 901);
 
     auto colourNames = builder.getAllColourNames();
     colourNames.sort (true);

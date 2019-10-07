@@ -112,8 +112,12 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                          auto item = std::make_unique<MagicPlotComponent>();
                          if (magicState && config.hasProperty (IDs::source))
                          {
-                             auto* source = magicState->getPlotSource (config.getProperty (IDs::source).toString());
-                             item->setPlotSource (source);
+                             auto sourceID = config.getProperty (IDs::source).toString();
+                             if (sourceID.isNotEmpty())
+                             {
+                                 auto* source = magicState->getPlotSource (sourceID);
+                                 item->setPlotSource (source);
+                             }
                          }
                          return std::move (item);
                      });

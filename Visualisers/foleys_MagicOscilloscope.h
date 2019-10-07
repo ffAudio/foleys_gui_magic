@@ -40,7 +40,12 @@ class MagicOscilloscope : public MagicPlotSource
 {
 public:
 
-    MagicOscilloscope();
+    /**
+     Create an oscilloscope adapter to push samples into for later display in the GUI.
+
+     @param channel lets you select the channel to analyse. -1 means summing all together (the default)
+     */
+    MagicOscilloscope (int channel=-1);
 
     /**
      Push samples to a buffer to be visualised.
@@ -56,10 +61,16 @@ public:
      */
     void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component) override;
 
+    void prepareToPlay (double sampleRate, int samplesPerBlockExpected) override;
+
 private:
-    juce::ReadWriteLock     plotLock;
-    bool                    plotChanged = true;
-    juce::Path              path;
+    int                      channel = -1;
+    double                   sampleRate = 0.0;
+
+    juce::AudioBuffer<float> samples;
+    std::atomic<int>         writePosition;
+
+    juce::Path               path;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicOscilloscope)
 };

@@ -237,7 +237,7 @@ juce::File ToolBox::getLastLocation() const
         if (resources.isDirectory())
             return resources;
 
-        auto sources = start.getSiblingFile ("Sources");
+        auto sources = start.getSiblingFile ("Source");
         if (sources.isDirectory())
             return sources;
     }

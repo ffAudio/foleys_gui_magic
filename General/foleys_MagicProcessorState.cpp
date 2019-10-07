@@ -64,13 +64,14 @@ MagicLevelSource* MagicProcessorState::getLevelSource (const juce::Identifier& s
     return it->second.get();
 }
 
-void MagicProcessorState::addPlotSource (const juce::Identifier& sourceID, std::unique_ptr<MagicPlotSource> source)
+MagicPlotSource* MagicProcessorState::addPlotSource (const juce::Identifier& sourceID, std::unique_ptr<MagicPlotSource> source)
 {
-    if (plotSources.find (sourceID) != plotSources.cend())
+    const auto& present = plotSources.find (sourceID);
+    if (present != plotSources.cend())
     {
         // You tried to add two MagicPlotSources with the same sourceID
         jassertfalse;
-        return;
+        return present->second.get();
     }
 
     if (auto* job = source->getBackgroundJob())
@@ -79,7 +80,9 @@ void MagicProcessorState::addPlotSource (const juce::Identifier& sourceID, std::
         visualiserThread.startThread (5);
     }
 
+    auto* pointer = source.get();
     plotSources [sourceID] = std::move (source);
+    return pointer;
 }
 
 MagicPlotSource* MagicProcessorState::getPlotSource (const juce::Identifier& sourceID)
