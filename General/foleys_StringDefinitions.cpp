@@ -36,7 +36,7 @@ namespace IDs
     static juce::Identifier magic        { "magic" };
     static juce::Identifier styles       { "Styles" };
     static juce::Identifier style        { "Style" };
-    static juce::Identifier div          { "Div" };
+    static juce::Identifier view         { "View" };
     static juce::Identifier slider       { "Slider" };
     static juce::Identifier textButton   { "TextButton" };
     static juce::Identifier toggleButton { "ToggleButton" };

@@ -86,7 +86,7 @@ void MagicBuilder::updateStylesheet()
 
 void MagicBuilder::clearGUI()
 {
-    auto guiNode = config.getOrCreateChildWithName (IDs::div, &undo);
+    auto guiNode = config.getOrCreateChildWithName (IDs::view, &undo);
     guiNode.removeAllChildren (&undo);
     guiNode.removeAllProperties (&undo);
 }
@@ -110,7 +110,7 @@ void MagicBuilder::updateComponents()
 {
     createDefaultGUITree (true);
 
-    auto rootNode = config.getOrCreateChildWithName (IDs::div, &undo);
+    auto rootNode = config.getOrCreateChildWithName (IDs::view, &undo);
     root = restoreNode (parent, rootNode);
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
@@ -237,7 +237,7 @@ void MagicBuilder::draggedItemOnto (juce::ValueTree dragged, juce::ValueTree tar
     if (targetParent.isValid() != false)
         index = targetParent.indexOf (target);
 
-    if (target.getType() == IDs::div)
+    if (target.getType() == IDs::view)
         target.addChild (dragged, index, &undo);
     else
         targetParent.addChild (dragged, index, &undo);
@@ -304,7 +304,7 @@ void MagicGUIBuilder<AppType>::registerFactory (juce::Identifier type, std::func
 template <class AppType>
 juce::StringArray MagicGUIBuilder<AppType>::getFactoryNames() const
 {
-    juce::StringArray names { IDs::div.toString() };
+    juce::StringArray names { IDs::view.toString() };
 
     names.ensureStorageAllocated (int (factories.size()));
     for (const auto& f : factories)
@@ -316,7 +316,7 @@ juce::StringArray MagicGUIBuilder<AppType>::getFactoryNames() const
 template <class AppType>
 std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Component& component, const juce::ValueTree& node)
 {
-    if (node.getType() == IDs::div)
+    if (node.getType() == IDs::view)
     {
         auto item = std::make_unique<Container>(*this, node);
         for (auto childNode : node)
@@ -381,7 +381,7 @@ void MagicGUIBuilder<juce::AudioProcessor>::createDefaultFromParameters (juce::V
 {
     for (const auto& sub : tree.getSubgroups (false))
     {
-        auto child = juce::ValueTree (IDs::div);
+        auto child = juce::ValueTree (IDs::view);
         child.setProperty (IDs::caption, sub->getName(), nullptr);
         child.setProperty (IDs::styleClass, "group", nullptr);
         createDefaultFromParameters (child, *sub);
@@ -407,10 +407,10 @@ void MagicGUIBuilder<juce::AudioProcessor>::createDefaultFromParameters (juce::V
 template <>
 void MagicGUIBuilder<juce::AudioProcessor>::createDefaultGUITree (bool keepExisting)
 {
-    if (keepExisting && config.getChildWithName (IDs::div).isValid())
+    if (keepExisting && config.getChildWithName (IDs::view).isValid())
         return;
 
-    auto rootNode = config.getOrCreateChildWithName (IDs::div, &undo);
+    auto rootNode = config.getOrCreateChildWithName (IDs::view, &undo);
     rootNode.setProperty (IDs::id, IDs::root, &undo);
 
     if (magicState != nullptr)
