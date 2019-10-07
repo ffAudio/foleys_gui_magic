@@ -62,6 +62,8 @@ void MagicBuilder::updateAll()
     updateStylesheet();
     updateComponents();
     updateLayout();
+
+    config.addListener (this);
 }
 
 void MagicBuilder::updateStylesheet()
@@ -102,8 +104,6 @@ void MagicBuilder::restoreGUI (const juce::ValueTree& gui)
     if (magicToolBox.get() != nullptr)
         magicToolBox->stateWasReloaded();
 #endif
-
-    config.addListener (this);
 }
 
 void MagicBuilder::updateComponents()
