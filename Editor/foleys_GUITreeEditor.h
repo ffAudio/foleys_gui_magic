@@ -102,9 +102,6 @@ private:
     std::unique_ptr<GuiTreeItem> rootItem;
     juce::TreeView               treeView;
 
-    juce::TextButton addNode    { TRANS ("+") };
-    juce::TextButton removeNode { TRANS ("X") };
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GUITreeEditor)
 };
 

@@ -37,27 +37,9 @@ GUITreeEditor::GUITreeEditor (MagicBuilder& builderToEdit)
     treeView.setRootItemVisible (true);
     treeView.setMultiSelectEnabled (false);
 
-    addNode.setEnabled (false);
-    addNode.onClick = [&]
-    {
-        // Show popup with types of nodes to add to the ValueTree: div, slider, button, etc
-        // add new node as a child of the currently selected node
-    };
-
-    removeNode.onClick = [&]
-    {
-        if (GUITreeEditor::GuiTreeItem* selectedItem = static_cast<GUITreeEditor::GuiTreeItem*> (treeView.getSelectedItem (0)))
-        {
-            juce::ValueTree& tree = selectedItem->getTree();
-            tree.getParent().removeChild (tree, &undo);
-        }
-    };
-
     setValueTree (tree);
 
     addAndMakeVisible (treeView);
-    addAndMakeVisible (addNode);
-    addAndMakeVisible (removeNode);
 }
 
 void GUITreeEditor::paint (juce::Graphics& g)
@@ -72,10 +54,6 @@ void GUITreeEditor::resized()
 {
     auto bounds = getLocalBounds().reduced (1);
     bounds.removeFromTop (24);
-
-    auto bottomBarBounds = bounds.removeFromBottom (24).reduced (10, 0);
-    removeNode.setBounds (bottomBarBounds.removeFromRight (24));
-    addNode   .setBounds (bottomBarBounds.removeFromRight (24));
 
     treeView.setBounds (bounds);
 }

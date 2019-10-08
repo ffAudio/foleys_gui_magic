@@ -164,6 +164,19 @@ void ToolBox::resized()
 
 bool ToolBox::keyPressed (const juce::KeyPress& key)
 {
+    if (key.isKeyCode (juce::KeyPress::backspaceKey) || key.isKeyCode (juce::KeyPress::deleteKey))
+    {
+        auto selected = builder.getSelectedNode();
+        if (selected.isValid())
+        {
+            auto parent = selected.getParent();
+            if (parent.isValid())
+                parent.removeChild (selected, &undo);
+        }
+
+        return true;
+    }
+
     if (key.isKeyCode ('Z') && key.getModifiers().isCommandDown())
     {
         if (key.getModifiers().isShiftDown())
