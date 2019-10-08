@@ -36,6 +36,7 @@ class MagicBuilder;
 
 class ToolBox  : public juce::Component,
                  public juce::DragAndDropContainer,
+                 public juce::KeyListener,
                  private juce::Timer
 {
 public:
@@ -56,6 +57,7 @@ public:
     void stateWasReloaded();
 
     bool keyPressed (const juce::KeyPress& key) override;
+    bool keyPressed (const juce::KeyPress& key, juce::Component* originalComponent) override;
 
 private:
 

@@ -92,10 +92,14 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
     setVisible (true);
 
     stateWasReloaded();
+
+    parent->addKeyListener (this);
 }
 
 ToolBox::~ToolBox()
 {
+    if (parent != nullptr)
+        parent->removeKeyListener (this);
 }
 
 void ToolBox::loadDialog()
@@ -160,6 +164,11 @@ void ToolBox::resized()
     editSwitch.setBounds (buttons.removeFromLeft (w));
 
     editorPanels.setBounds (bounds);
+}
+
+bool ToolBox::keyPressed (const juce::KeyPress& key, juce::Component* originalComponent)
+{
+    return keyPressed (key);
 }
 
 bool ToolBox::keyPressed (const juce::KeyPress& key)
