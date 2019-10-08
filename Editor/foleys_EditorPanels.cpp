@@ -34,7 +34,8 @@ namespace foleys
 EditorPanels::EditorPanels (MagicBuilder& builderToControl)
   : builder (builderToControl),
     treeEditor (builderToControl),
-    propertiesEditor (builderToControl)
+    propertiesEditor (builderToControl),
+    palette (builderToControl)
 {
     treeEditor.onSelectionChanged = [&] (juce::ValueTree& ref)
     {
@@ -42,12 +43,16 @@ EditorPanels::EditorPanels (MagicBuilder& builderToControl)
     };
 
     addAndMakeVisible (treeEditor);
-    addAndMakeVisible (resizer);
+    addAndMakeVisible (resizer1);
     addAndMakeVisible (propertiesEditor);
+    addAndMakeVisible (resizer3);
+    addAndMakeVisible (palette);
 
-    resizeManager.setItemLayout (0, 1, -1.0, -0.6);
+    resizeManager.setItemLayout (0, 1, -1.0, -0.4);
     resizeManager.setItemLayout (1, 6, 6, 6);
-    resizeManager.setItemLayout (2, 1, -1.0, -0.4);
+    resizeManager.setItemLayout (2, 1, -1.0, -0.3);
+    resizeManager.setItemLayout (3, 6, 6, 6);
+    resizeManager.setItemLayout (4, 1, -1.0, -0.3);
 }
 
 void EditorPanels::setSelectedNode (const juce::ValueTree& node)
@@ -61,6 +66,7 @@ void EditorPanels::update()
 {
     treeEditor.updateTree();
     propertiesEditor.setStyle (builder.getStylesheet().getCurrentStyle());
+    palette.update();
 }
 
 void EditorPanels::paint (juce::Graphics& g)
@@ -72,8 +78,15 @@ void EditorPanels::resized()
 {
     auto bounds = getLocalBounds();
 
-    juce::Component* comps[] = { &treeEditor, &resizer, &propertiesEditor };
-    resizeManager.layOutComponents (comps, 3,
+    juce::Component* comps[] = {
+        &treeEditor,
+        &resizer1,
+        &propertiesEditor,
+        &resizer3,
+        &palette
+    };
+
+    resizeManager.layOutComponents (comps, 5,
                                     bounds.getX(),
                                     bounds.getY(),
                                     bounds.getWidth(),

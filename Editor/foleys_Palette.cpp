@@ -32,51 +32,54 @@
 namespace foleys
 {
 
-class MagicBuilder;
 
-class CreationPanels  : public juce::Component
+Palette::Palette (MagicBuilder& builderToUse)
+  : builder (builderToUse)
 {
-public:
-    CreationPanels (MagicBuilder& builder);
+    addAndMakeVisible (paletteList);
 
-    void paint (juce::Graphics& g) override;
+    update();
+}
 
-    void resized() override;
+void Palette::paint (juce::Graphics& g)
+{
+    g.fillAll (EditorColours::background);
+}
 
-    void update();
+void Palette::resized()
+{
+    paletteList.setBounds (getLocalBounds());
+}
 
-private:
+void Palette::update()
+{
+    paletteModel.setFactoryNames (builder.getFactoryNames());
+    paletteList.updateContent();
+}
 
-    void setConcertinaHeaderFor (juce::String name, juce::Component& component);
+//==============================================================================
 
+void Palette::PaletteListModel::setFactoryNames (juce::StringArray names)
+{
+    factoryNames = names;
+}
 
-    MagicBuilder&           builder;
+int Palette::PaletteListModel::getNumRows()
+{
+    return factoryNames.size();
+}
 
-    class PaletteListModel : public juce::ListBoxModel
-    {
-    public:
-        PaletteListModel() = default;
+void Palette::PaletteListModel::paintListBoxItem (int rowNumber, juce::Graphics &g, int width, int height, bool rowIsSelected)
+{
+    g.fillAll (rowIsSelected ? EditorColours::selectedBackground.withAlpha (0.5f) : EditorColours::background);
+    g.setColour (EditorColours::text);
+    g.drawFittedText (factoryNames [rowNumber], 0, 0, width, height, juce::Justification::left, 1);
+}
 
-        void setFactoryNames (juce::StringArray names);
+juce::var Palette::PaletteListModel::getDragSourceDescription (const juce::SparseSet<int> &rowsToDescribe)
+{
+    return juce::ValueTree {factoryNames [rowsToDescribe [0]]}.toXmlString();
+}
 
-        int getNumRows() override;
-        void paintListBoxItem (int rowNumber, juce::Graphics &g, int width, int height, bool rowIsSelected) override;
-        juce::var getDragSourceDescription (const juce::SparseSet<int> &rowsToDescribe) override;
-
-    private:
-        juce::StringArray factoryNames;
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PaletteListModel)
-    };
-
-    PaletteListModel        paletteModel;
-    juce::ListBox           palette { {}, &paletteModel };
-
-    juce::Component         parameters;
-    juce::Component         sources;
-
-    juce::ConcertinaPanel   concertina;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CreationPanels)
-};
 
 } // namespace foleys

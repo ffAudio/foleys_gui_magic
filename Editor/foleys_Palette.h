@@ -34,30 +34,41 @@ namespace foleys
 
 class MagicBuilder;
 
-class EditorPanels  : public juce::Component
+class Palette  : public juce::Component
 {
 public:
-    EditorPanels (MagicBuilder& builder);
-
-    void setSelectedNode (const juce::ValueTree& node);
-    void update();
+    Palette (MagicBuilder& builder);
 
     void paint (juce::Graphics& g) override;
 
     void resized() override;
 
+    void update();
+
 private:
-    MagicBuilder&       builder;
 
-    GUITreeEditor       treeEditor;
-    PropertiesEditor    propertiesEditor;
-    Palette             palette;
+    MagicBuilder&           builder;
 
-    juce::StretchableLayoutManager    resizeManager;
-    juce::StretchableLayoutResizerBar resizer1 { &resizeManager, 1, false };
-    juce::StretchableLayoutResizerBar resizer3 { &resizeManager, 3, false };
+    class PaletteListModel : public juce::ListBoxModel
+    {
+    public:
+        PaletteListModel() = default;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EditorPanels)
+        void setFactoryNames (juce::StringArray names);
+
+        int getNumRows() override;
+        void paintListBoxItem (int rowNumber, juce::Graphics &g, int width, int height, bool rowIsSelected) override;
+        juce::var getDragSourceDescription (const juce::SparseSet<int> &rowsToDescribe) override;
+
+    private:
+        juce::StringArray factoryNames;
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PaletteListModel)
+    };
+
+    PaletteListModel        paletteModel;
+    juce::ListBox           paletteList { {}, &paletteModel };
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Palette)
 };
 
 } // namespace foleys

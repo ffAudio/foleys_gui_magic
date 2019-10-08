@@ -55,6 +55,6 @@
 #include "Editor/foleys_EditorPanels.cpp"
 #include "Editor/foleys_GUITreeEditor.cpp"
 #include "Editor/foleys_PropertiesEditor.cpp"
-#include "Editor/foleys_CreationPanels.cpp"
+#include "Editor/foleys_Palette.cpp"
 
 #endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE

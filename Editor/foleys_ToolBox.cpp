@@ -53,14 +53,10 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
 
     fileMenu.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
     undoButton.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
-    createButton.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
-    propButton.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
     editSwitch.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
 
     addAndMakeVisible (fileMenu);
     addAndMakeVisible (undoButton);
-    addAndMakeVisible (createButton);
-    addAndMakeVisible (propButton);
     addAndMakeVisible (editSwitch);
 
     fileMenu.onClick = [&]
@@ -79,25 +75,6 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
         undo.undo();
     };
 
-    createButton.onClick = [&]
-    {
-        editorPanels.setVisible (false);
-        creationPanels.setVisible (true);
-    };
-
-    propButton.onClick = [&]
-    {
-        editorPanels.setVisible (true);
-        creationPanels.setVisible (false);
-    };
-
-    propButton.setClickingTogglesState (true);
-    propButton.setRadioGroupId (100);
-
-    createButton.setClickingTogglesState (true);
-    createButton.setRadioGroupId (100);
-    createButton.setToggleState (true, juce::dontSendNotification);
-
     editSwitch.setClickingTogglesState (true);
     editSwitch.setColour (juce::TextButton::buttonOnColourId, EditorColours::selectedBackground);
     editSwitch.onStateChange = [&]
@@ -105,8 +82,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
         builder.setEditMode (editSwitch.getToggleState());
     };
 
-    addAndMakeVisible (creationPanels);
-    addChildComponent (editorPanels);
+    addAndMakeVisible (editorPanels);
 
     setBounds (100, 100, 300, 700);
     addToDesktop (getLookAndFeel().getMenuWindowFlags());
@@ -162,7 +138,6 @@ void ToolBox::setSelectedNode (const juce::ValueTree& node)
 
 void ToolBox::stateWasReloaded()
 {
-    creationPanels.update();
     editorPanels.update();
 }
 
@@ -179,14 +154,11 @@ void ToolBox::resized()
 {
     auto bounds = getLocalBounds().reduced (2).withTop (24);
     auto buttons = bounds.removeFromTop (24);
-    auto w = buttons.getWidth() / 5;
+    auto w = buttons.getWidth() / 4;
     fileMenu.setBounds (buttons.removeFromLeft (w));
     undoButton.setBounds (buttons.removeFromLeft (w));
-    createButton.setBounds (buttons.removeFromLeft (w));
-    propButton.setBounds (buttons.removeFromLeft (w));
     editSwitch.setBounds (buttons.removeFromLeft (w));
 
-    creationPanels.setBounds (bounds);
     editorPanels.setBounds (bounds);
 }
 
