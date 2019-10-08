@@ -37,11 +37,6 @@ EditorPanels::EditorPanels (MagicBuilder& builderToControl)
     propertiesEditor (builderToControl),
     palette (builderToControl)
 {
-    treeEditor.onSelectionChanged = [&] (juce::ValueTree& ref)
-    {
-        setSelectedNode (ref);
-    };
-
     addAndMakeVisible (treeEditor);
     addAndMakeVisible (resizer1);
     addAndMakeVisible (propertiesEditor);

@@ -132,7 +132,7 @@ public:
     void setSelectedNode (const juce::ValueTree& node);
     const juce::ValueTree& getSelectedNode() const;
 
-    void draggedItemOnto (juce::ValueTree dropped, juce::ValueTree target);
+    void draggedItemOnto (juce::ValueTree dropped, juce::ValueTree target, int index=-1);
 
     juce::UndoManager& getUndoManager();
 #endif

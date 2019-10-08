@@ -49,13 +49,11 @@ public:
 
     void setSelectedNode (const juce::ValueTree& node);
 
-    std::function<void (juce::ValueTree&)> onSelectionChanged {nullptr};
-
 private:
     class GuiTreeItem : public juce::TreeViewItem
     {
     public:
-        GuiTreeItem (GUITreeEditor& refGuiTreeEditor, juce::ValueTree& refValueTree);
+        GuiTreeItem (MagicBuilder& builder, juce::ValueTree& refValueTree);
 
         juce::String getUniqueName() const override;
 
@@ -66,11 +64,15 @@ private:
         void itemOpennessChanged (bool isNowOpen) override;
         void itemSelectionChanged (bool isNowSelected) override;
 
-        juce::ValueTree& getTree () { return tree; }
+        juce::var getDragSourceDescription() override;
+        bool isInterestedInDragSource (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails) override;
+        void itemDropped (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails, int index) override;
+
+        juce::ValueTree& getTree () { return itemNode; }
 
     private:
-        GUITreeEditor&  guiTreeEditor;
-        juce::ValueTree tree;
+        MagicBuilder&   builder;
+        juce::ValueTree itemNode;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GuiTreeItem)
     };

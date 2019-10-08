@@ -91,7 +91,7 @@ void GUITreeEditor::setValueTree (juce::ValueTree& refTree)
     treeView.setRootItem (nullptr);
     if (tree.isValid())
     {
-        rootItem = std::make_unique<GUITreeEditor::GuiTreeItem> (*this, tree);
+        rootItem = std::make_unique<GUITreeEditor::GuiTreeItem> (builder, tree);
         treeView.setRootItem (rootItem.get());
     }
 
@@ -163,27 +163,27 @@ void GUITreeEditor::valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasC
 
 //==============================================================================
 
-GUITreeEditor::GuiTreeItem::GuiTreeItem (GUITreeEditor& refGuiTreeEditor, juce::ValueTree& refValueTree)
-  : guiTreeEditor (refGuiTreeEditor),
-    tree (refValueTree)
+GUITreeEditor::GuiTreeItem::GuiTreeItem (MagicBuilder& builderToUse, juce::ValueTree& refValueTree)
+  : builder (builderToUse),
+    itemNode (refValueTree)
 {
 }
 
 juce::String GUITreeEditor::GuiTreeItem::getUniqueName() const
 {
     const auto* parent = getParentItem();
-    auto name = (parent != nullptr) ? parent->getUniqueName() + "|" + tree.getType().toString()
-                                    : tree.getType().toString();
-    auto parentNode = tree.getParent();
+    auto name = (parent != nullptr) ? parent->getUniqueName() + "|" + itemNode.getType().toString()
+                                    : itemNode.getType().toString();
+    auto parentNode = itemNode.getParent();
     if (parentNode.isValid())
-        name += "(" + juce::String (parentNode.indexOf (tree)) + ")";
+        name += "(" + juce::String (parentNode.indexOf (itemNode)) + ")";
 
     return name;
 }
 
 bool GUITreeEditor::GuiTreeItem::mightContainSubItems()
 {
-    return tree.getNumChildren() > 0;
+    return itemNode.getNumChildren() > 0;
 }
 
 void GUITreeEditor::GuiTreeItem::paintItem (juce::Graphics& g, int width, int height)
@@ -194,13 +194,13 @@ void GUITreeEditor::GuiTreeItem::paintItem (juce::Graphics& g, int width, int he
     g.setColour (EditorColours::text);
     g.setFont (height * 0.7f);
 
-    juce::String name = tree.getType().toString();
+    juce::String name = itemNode.getType().toString();
 
-    if (tree.hasProperty (IDs::id))
-        name += " (" + tree.getProperty (IDs::id).toString() + ")";
+    if (itemNode.hasProperty (IDs::id))
+        name += " (" + itemNode.getProperty (IDs::id).toString() + ")";
 
-    if (tree.hasProperty (IDs::caption))
-        name += ": " + tree.getProperty (IDs::caption).toString();
+    if (itemNode.hasProperty (IDs::caption))
+        name += ": " + itemNode.getProperty (IDs::caption).toString();
 
     g.drawText (name, 4, 0, width - 4, height, juce::Justification::centredLeft, true);
 }
@@ -209,15 +209,43 @@ void GUITreeEditor::GuiTreeItem::itemOpennessChanged (bool isNowOpen)
 {
     if (isNowOpen && getNumSubItems() == 0)
     {
-        for (auto child : tree)
-            addSubItem (new GuiTreeItem (guiTreeEditor, child));
+        for (auto child : itemNode)
+            addSubItem (new GuiTreeItem (builder, child));
     }
 }
 
 void GUITreeEditor::GuiTreeItem::itemSelectionChanged (bool isNowSelected)
 {
-    if (isNowSelected && guiTreeEditor.onSelectionChanged != nullptr)
-        guiTreeEditor.onSelectionChanged (tree);
+    if (isNowSelected)
+        builder.setSelectedNode (itemNode);
+}
+
+juce::var GUITreeEditor::GuiTreeItem::getDragSourceDescription()
+{
+    return IDs::dragSelected;
+}
+
+bool GUITreeEditor::GuiTreeItem::isInterestedInDragSource (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails)
+{
+    return itemNode.getType() == IDs::view;
+}
+
+void GUITreeEditor::GuiTreeItem::itemDropped (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails, int index)
+{
+    const auto text = dragSourceDetails.description.toString();
+    if (text == IDs::dragSelected)
+    {
+        auto selected = builder.getSelectedNode();
+        builder.draggedItemOnto (selected, itemNode, index);
+        return;
+    }
+
+    const auto node = juce::ValueTree::fromXml (text);
+    if (node.isValid())
+    {
+        builder.draggedItemOnto (node, itemNode, index);
+        return;
+    }
 }
 
 

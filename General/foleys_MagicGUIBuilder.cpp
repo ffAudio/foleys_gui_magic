@@ -223,18 +223,17 @@ const juce::ValueTree& MagicBuilder::getSelectedNode() const
     return selectedNode;
 }
 
-void MagicBuilder::draggedItemOnto (juce::ValueTree dragged, juce::ValueTree target)
+void MagicBuilder::draggedItemOnto (juce::ValueTree dragged, juce::ValueTree target, int index)
 {
     undo.beginNewTransaction();
 
     auto targetParent  = target.getParent();
     auto draggedParent = dragged.getParent();
-    int  index = -1;
 
     if (draggedParent.isValid())
         draggedParent.removeChild (dragged, &undo);
 
-    if (targetParent.isValid() != false)
+    if (targetParent.isValid() != false && index < 0)
         index = targetParent.indexOf (target);
 
     if (target.getType() == IDs::view)
