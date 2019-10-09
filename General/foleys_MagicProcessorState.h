@@ -61,6 +61,16 @@ public:
     MagicPlotSource* getPlotSource (const juce::Identifier& sourceID);
 
     /**
+     Returns the IDs of AudioProcessorParameters for selection
+     */
+    juce::StringArray getParameterNames() const;
+
+    /**
+     Returns the IDs of MagicPlotSources for selection
+     */
+    juce::StringArray getPlotSourcesNames() const;
+
+    /**
      Call this method in your prepareToPlay implementation, to allow th visualisers to be
      properly setup
      */

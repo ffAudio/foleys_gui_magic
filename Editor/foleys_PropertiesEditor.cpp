@@ -48,17 +48,17 @@ PropertiesEditor::PropertiesEditor (MagicBuilder& builderToEdit)
         if (index >= 3000)
         {
             auto node = style.getChildWithName (IDs::classes).getChild (index - 3000);
-            propertiesModel.setNodeToEdit (node);
+            styleItem = node;
         }
         else if (index >= 2000)
         {
             auto node = style.getChildWithName (IDs::nodes).getChild (index - 2000);
-            propertiesModel.setNodeToEdit (node);
+            styleItem = node;
         }
         else if (index >= 1000)
         {
             auto node = style.getChildWithName (IDs::types).getChild (index - 1000);
-            propertiesModel.setNodeToEdit (node);
+            styleItem = node;
         }
 
         propertiesList.updateContent();
@@ -75,7 +75,6 @@ PropertiesEditor::PropertiesEditor (MagicBuilder& builderToEdit)
         if (name.isEmpty())
             return;
 
-        auto styleItem = propertiesModel.getCurrentStyleItem();
         auto oldValue = styleItem.getProperty (name, {});
         styleItem.setProperty (name, oldValue, &undo);
         propertiesList.updateContent();
@@ -93,10 +92,16 @@ void PropertiesEditor::setStyle (juce::ValueTree styleToEdit)
 
 void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
 {
-    nodeSelect.setText (TRANS ("Editing node"));
-
-    propertiesModel.setNodeToEdit (node);
+    styleItem = node;
     propertiesList.updateContent();
+    updatePopupMenu();
+
+    nodeSelect.setText (TRANS ("Editing node"));
+}
+
+juce::ValueTree& PropertiesEditor::getNodeToEdit()
+{
+    return styleItem;
 }
 
 void PropertiesEditor::updatePopupMenu()
@@ -167,6 +172,11 @@ void PropertiesEditor::resized()
     propertiesList.setBounds (bounds.reduced (0, 2));
 }
 
+MagicBuilder& PropertiesEditor::getMagicBuilder()
+{
+    return builder;
+}
+
 void PropertiesEditor::valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
                                                  const juce::Identifier& property)
 {
@@ -183,11 +193,8 @@ void PropertiesEditor::valueTreeChildRemoved (juce::ValueTree& parentTree,
                                               juce::ValueTree& childWhichHasBeenRemoved,
                                               int indexFromWhichChildWasRemoved)
 {
-    if (childWhichHasBeenRemoved == propertiesModel.getCurrentStyleItem())
-        propertiesModel.setNodeToEdit (juce::ValueTree());
-
-    updatePopupMenu();
-    propertiesList.updateContent();
+    if (childWhichHasBeenRemoved == styleItem)
+        setNodeToEdit ({});
 }
 
 
@@ -199,18 +206,10 @@ PropertiesEditor::PropertiesListModel::PropertiesListModel (PropertiesEditor& ed
 {
 }
 
-void PropertiesEditor::PropertiesListModel::setNodeToEdit (juce::ValueTree node)
-{
-    styleItem = node;
-}
-
-juce::ValueTree& PropertiesEditor::PropertiesListModel::getCurrentStyleItem()
-{
-    return styleItem;
-}
-
 int PropertiesEditor::PropertiesListModel::getNumRows()
 {
+    auto styleItem = propertiesEditor.getNodeToEdit();
+
     if (styleItem.isValid())
         return styleItem.getNumProperties();
 
@@ -226,8 +225,9 @@ juce::Component* PropertiesEditor::PropertiesListModel::refreshComponentForRow (
         delete existingComponentToUpdate;
 
     if (component == nullptr)
-        component = new PropertiesItem (*this);
+        component = new PropertiesItem (propertiesEditor);
 
+    auto styleItem = propertiesEditor.getNodeToEdit();
     if (styleItem.isValid() && rowNumber < styleItem.getNumProperties())
     {
         const auto name = styleItem.getPropertyName (rowNumber);
@@ -243,23 +243,59 @@ juce::Component* PropertiesEditor::PropertiesListModel::refreshComponentForRow (
 
 //==============================================================================
 
-PropertiesEditor::PropertiesItem::PropertiesItem (PropertiesListModel& model)
-  : propertiesModel (model)
+PropertiesEditor::PropertiesItem::PropertiesItem (PropertiesEditor& editor)
+  : propertiesEditor (editor)
 {
     value.setEditable (true);
     addAndMakeVisible (value);
+    addChildComponent (valueSelect);
     addAndMakeVisible (remove);
+
+    valueSelect.onChange = [&]
+    {
+        auto styleItem = propertiesEditor.getNodeToEdit();
+        if (styleItem.isValid())
+            styleItem.setProperty (name, valueSelect.getText(), &propertiesEditor.undo);
+    };
 
     remove.onClick =[&]
     {
-        propertiesModel.getCurrentStyleItem().removeProperty (name, &propertiesModel.undo);
+        auto styleItem = propertiesEditor.getNodeToEdit();
+        if (styleItem.isValid())
+            styleItem.removeProperty (name, &propertiesEditor.undo);
     };
 }
 
 void PropertiesEditor::PropertiesItem::setProperty (const juce::String& nameToDisplay, const juce::Value& propertyValue)
 {
+    auto& builder = propertiesEditor.getMagicBuilder();
     name = nameToDisplay;
-    value.getTextValue().referTo (propertyValue);
+
+    juce::StringArray choices;
+    valueSelect.clear();
+
+    if (name == IDs::source.toString())
+        choices = builder.getPlotSourcesNames();
+    else if (name == IDs::parameter.toString())
+        choices = builder.getParameterNames();
+
+    if (choices.isEmpty())
+    {
+        value.setVisible (true);
+        valueSelect.setVisible (false);
+        value.getTextValue().referTo (propertyValue);
+    }
+    else
+    {
+        auto index = choices.indexOf (propertyValue.getValue().toString());
+        value.setVisible (false);
+        valueSelect.setVisible (true);
+        valueSelect.addItemList (choices, 1);
+        if (index>= 0)
+            valueSelect.setSelectedId (index + 1);
+    }
+
+    repaint();
 }
 
 void PropertiesEditor::PropertiesItem::paint (juce::Graphics& g)
@@ -275,6 +311,7 @@ void PropertiesEditor::PropertiesItem::resized()
     auto bounds = getLocalBounds().withLeft (getWidth() / 2);
     remove.setBounds (bounds.removeFromRight (getHeight()));
     value.setBounds (bounds);
+    valueSelect.setBounds (bounds);
 }
 
 

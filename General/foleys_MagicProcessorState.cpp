@@ -94,6 +94,25 @@ MagicPlotSource* MagicProcessorState::getPlotSource (const juce::Identifier& sou
     return it->second.get();
 }
 
+juce::StringArray MagicProcessorState::getParameterNames() const
+{
+    juce::StringArray names;
+    for (const auto* p : processor.getParameters())
+        if (const auto* withID = dynamic_cast<const juce::AudioProcessorParameterWithID*>(p))
+            names.add (withID->paramID);
+
+    return names;
+}
+
+juce::StringArray MagicProcessorState::getPlotSourcesNames() const
+{
+    juce::StringArray names;
+    for (const auto& p : plotSources)
+        names.add (p.first.toString());
+
+    return names;
+}
+
 void MagicProcessorState::prepareToPlay (double sampleRate, int samplesPerBlockExpected)
 {
     for (auto& plot : plotSources)

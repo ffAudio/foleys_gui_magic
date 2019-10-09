@@ -43,9 +43,12 @@ public:
     void setStyle (juce::ValueTree style);
 
     void setNodeToEdit (juce::ValueTree node);
+    juce::ValueTree& getNodeToEdit();
 
     void paint (juce::Graphics&) override;
     void resized() override;
+
+    MagicBuilder& getMagicBuilder();
 
 private:
 
@@ -56,17 +59,18 @@ private:
     class PropertiesItem : public juce::Component
     {
     public:
-        PropertiesItem (PropertiesListModel& model);
+        PropertiesItem (PropertiesEditor& editor);
 
         void setProperty (const juce::String& name, const juce::Value& propertyValue);
         void paint (juce::Graphics&) override;
         void resized() override;
 
     private:
-        PropertiesListModel& propertiesModel;
+        PropertiesEditor& propertiesEditor;
 
         juce::String     name;
         juce::Label      value;
+        juce::ComboBox   valueSelect;
         juce::TextButton remove { "X" };
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesItem)
@@ -76,8 +80,6 @@ private:
     {
     public:
         PropertiesListModel (PropertiesEditor& editor);
-
-        void setNodeToEdit (juce::ValueTree node);
 
         int getNumRows() override;
 
@@ -96,8 +98,6 @@ private:
         juce::UndoManager&  undo;
 
     private:
-        juce::ValueTree     styleItem;
-
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesListModel)
     };
 
@@ -129,6 +129,7 @@ private:
     juce::TextButton    propertyAdd { "+" };
 
     juce::ValueTree     style;
+    juce::ValueTree     styleItem;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesEditor)
 };

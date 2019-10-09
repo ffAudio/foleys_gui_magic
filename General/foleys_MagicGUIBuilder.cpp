@@ -313,6 +313,25 @@ juce::StringArray MagicGUIBuilder<AppType>::getFactoryNames() const
 }
 
 template <class AppType>
+juce::StringArray MagicGUIBuilder<AppType>::getParameterNames() const
+{
+    if (magicState == nullptr)
+        return {};
+
+    return magicState->getParameterNames();
+}
+
+template <class AppType>
+juce::StringArray MagicGUIBuilder<AppType>::getPlotSourcesNames() const
+{
+    if (magicState == nullptr)
+        return {};
+
+    return magicState->getPlotSourcesNames();
+}
+
+
+template <class AppType>
 std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Component& component, const juce::ValueTree& node)
 {
     if (node.getType() == IDs::view)

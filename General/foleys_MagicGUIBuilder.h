@@ -121,6 +121,16 @@ public:
      */
     virtual juce::StringArray getFactoryNames() const = 0;
 
+    /**
+     Returns the IDs of AudioProcessorParameters for selection
+     */
+    virtual juce::StringArray getParameterNames() const = 0;
+
+    /**
+     Returns the IDs of MagicPlotSources for selection
+     */
+    virtual juce::StringArray getPlotSourcesNames() const = 0;
+
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     /**
@@ -221,6 +231,17 @@ public:
      returns the names of all registered factories
      */
     juce::StringArray getFactoryNames() const override;
+
+    /**
+     Returns the IDs of AudioProcessorParameters for selection
+     */
+    juce::StringArray getParameterNames() const override;
+
+    /**
+     Returns the IDs of MagicPlotSources for selection
+     */
+    juce::StringArray getPlotSourcesNames() const override;
+
 
 protected:
 
