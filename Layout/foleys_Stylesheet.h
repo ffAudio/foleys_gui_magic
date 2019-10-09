@@ -32,12 +32,21 @@
 namespace foleys
 {
 
+/**
+ The Stylesheet class represents all style information. It is organised in
+ types, which corresponds to the Components created, classes that can be
+ referenced by any node, and nodes referenced by id.
+ */
 class Stylesheet
 {
 public:
 
     Stylesheet() = default;
 
+    /**
+     The Stylesheet node in the XML can contain several Styles to select from.
+     Use this method to select a style.
+     */
     void setStyle (const juce::ValueTree& node);
 
     /**
@@ -48,18 +57,40 @@ public:
      */
     juce::var getProperty (const juce::Identifier& name, const juce::ValueTree& node, bool inherit=true) const;
 
+    /**
+     Return the LookAndFeel for the node. Make sure never to remove a LookAndFeel, especially
+     as long as the ComponentTree is still referencing any of them.
+
+     @param node is the node in the GUI DOM
+     */
     juce::LookAndFeel* getLookAndFeel (const juce::ValueTree& node) const;
 
+    /**
+     Finds a background image for the given node. Note that this will only return anything
+     useful, if you have added any actual images into the BinaryData and have enabled the
+     FOLEYS_ENABLE_BINARY_DATA setting in the module page.
+
+     @param node is the node in the GUI DOM
+     */
     juce::Image getBackgroundImage (const juce::ValueTree& node) const;
 
     juce::Array<juce::Colour> getBackgroundGradient (const juce::ValueTree& node) const;
 
+    /**
+     This is a slightly more intelligent colour lookup than the JUCE one, as it allows to
+     use colour names, as well as 6 digit colour tuples (JUCE will use red as alpha in that case)
+
+     @param name a string representing the colour, can be an actual name or a RGB tuple or ARGB tuple.
+     */
     juce::Colour parseColour (const juce::String& name) const;
 
     juce::ValueTree getCurrentStyle() const;
 
     /**
      With that method you can register your custom LookAndFeel class and apply it to different components.
+
+     @param name the name the LookAndFeel can be referenced in the GUI editor
+     @param lookAndFeel is an actual LookAndFeel instance, that is owned by the Stylesheet
      */
     void registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel);
 
@@ -67,6 +98,9 @@ public:
 
     void configureFlexBoxItem (juce::FlexItem& item, const juce::ValueTree& node) const;
 
+    /**
+     This creates a default stylesheet from scratch, to allow the default GUI to look sensible.
+     */
     static juce::ValueTree createDefaultStyle();
 
 

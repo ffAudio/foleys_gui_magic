@@ -32,6 +32,11 @@
 namespace foleys
 {
 
+/**
+ The Container is a Decorator, that can hold multiple Components.
+ In the editor it is seen as "View". With the setting "display"
+ the layout strategy can be chosen.
+ */
 class Container : public Decorator
 {
 public:
@@ -45,6 +50,11 @@ public:
 
     void addChildItem (std::unique_ptr<Decorator> child);
 
+    /**
+     This switches this node and all it's descendents in the edit
+     mode, which means, the components don't react, but instead you
+     can move them around.
+     */
     void setEditMode (bool shouldEdit) override;
 
     void resized() override;

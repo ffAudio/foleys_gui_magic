@@ -52,8 +52,15 @@ public:
      */
     virtual void setEditMode (bool shouldEdit);
 
+    /**
+     This will get the necessary information from the stylesheet, using inheritance
+     of nodes if needed, to set the margins/borders etc. for the Decorator.
+     */
     void configureDecorator (Stylesheet& stylesheet, const juce::ValueTree& node);
 
+    /**
+     This will try to connect the Component with the supplied parameter of that name.
+     */
     void connectToState (const juce::String& paramID, juce::AudioProcessorValueTreeState& state);
 
     void paint (juce::Graphics& g) override;
@@ -61,6 +68,9 @@ public:
 
     virtual bool isContainer() const { return false; }
 
+    /**
+     Allows accessing the Component inside that Decorator. Don't keep this pointer!
+     */
     juce::Component* getWrappedComponent();
 
     juce::Colour backgroundColour { juce::Colours::darkgrey };
