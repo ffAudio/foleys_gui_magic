@@ -32,9 +32,19 @@
 namespace foleys
 {
 
+/**
+ The MagicProcessorState is the docking station for the MagicPluginEditor.
+ It grants access to the processor itself and the AudioProcessorValueTreeState.
+ It is also the place, where the data for the visualisers is sent to, which are
+ MagicPlotSources and MagicLevelSources.
+ */
 class MagicProcessorState
 {
 public:
+    /**
+     Create a MagicProcessorState to let the generated GUI communicate with the
+     processor and it's internals.
+     */
     MagicProcessorState (juce::AudioProcessor& processorToUse,
                          juce::AudioProcessorValueTreeState& stateToUse);
 

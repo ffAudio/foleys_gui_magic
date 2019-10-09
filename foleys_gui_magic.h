@@ -59,6 +59,25 @@
 #define FOLEYS_ENABLE_BINARY_DATA 0
 #endif
 
+/** Config: FOLEYS_REGISTER_JUCE_COMPONENTS
+            This lets the MagicPluginEditor register the JUCE Components and foleys additional Components.
+            If you want to save memory, you can set this off and register manually only the
+            Components you need
+ */
+#ifndef FOLEYS_REGISTER_JUCE_COMPONENTS
+#define FOLEYS_REGISTER_JUCE_COMPONENTS 1
+#endif
+
+/** Config: FOLEYS_REGISTER_JUCE_LOOKANDFEELS
+            This lets the MagicPluginEditor register the JUCE LookAndFeels and foleys additional LookAndFeels.
+            If you want to save memory, you can set this off and register manually only the
+            LookAndFeels you need
+ */
+#ifndef FOLEYS_REGISTER_JUCE_LOOKANDFEELS
+#define FOLEYS_REGISTER_JUCE_LOOKANDFEELS 1
+#endif
+
+
 #include <juce_core/juce_core.h>
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_audio_processors/juce_audio_processors.h>

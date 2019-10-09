@@ -36,8 +36,13 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse)
   : juce::AudioProcessorEditor (stateToUse.getProcessor()),
     processorState (stateToUse)
 {
+#if FOLEYS_REGISTER_JUCE_COMPONENTS
     builder.registerJUCEFactories();
+#endif
+
+#if FOLEYS_REGISTER_JUCE_LOOKANDFEELS
     builder.registerJUCELookAndFeels();
+#endif
 
     setResizable (true, true);
 
@@ -50,8 +55,13 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const cha
   : juce::AudioProcessorEditor (stateToUse.getProcessor()),
     processorState (stateToUse)
 {
+#if FOLEYS_REGISTER_JUCE_COMPONENTS
     builder.registerJUCEFactories();
+#endif
+    
+#if FOLEYS_REGISTER_JUCE_LOOKANDFEELS
     builder.registerJUCELookAndFeels();
+#endif
 
     restoreGUI (data, dataSize);
 
