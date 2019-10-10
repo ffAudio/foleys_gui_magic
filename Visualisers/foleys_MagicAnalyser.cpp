@@ -76,7 +76,7 @@ juce::TimeSliceClient* MagicAnalyser::getBackgroundJob()
 float MagicAnalyser::indexToX (float index, float minFreq) const
 {
     const auto freq = (sampleRate * index) / analyserJob.fft.getSize();
-    return (freq > 0.01f) ? std::log (freq / minFreq) / std::log (2.0f) : 0.0f;
+    return (freq > 0.01f) ? std::log2 (freq / minFreq) : 0.0f;
 }
 
 float MagicAnalyser::binToY (float bin, const juce::Rectangle<float> bounds) const
