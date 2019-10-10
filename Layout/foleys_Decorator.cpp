@@ -94,6 +94,21 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
             component->setLookAndFeel (lookAndFeel);
 }
 
+void Decorator::configureComponent (Stylesheet& stylesheet, const juce::ValueTree& node)
+{
+    if (component.get() == nullptr)
+        return;
+
+    const auto properties = magicBuilder.getSettableProperties (node.getType());
+    for (const auto& p : properties)
+    {
+        auto value = stylesheet.getProperty (p.name, node);
+        if (value.isVoid())
+            value = p.defaultValue;
+        p.setter (component.get(), value, p.options);
+    }
+}
+
 void Decorator::connectToState (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)
 {
     if (auto* slider = dynamic_cast<juce::Slider*>(component.get()))

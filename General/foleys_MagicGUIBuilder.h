@@ -32,6 +32,15 @@
 namespace foleys
 {
 
+struct SettableProperty
+{
+    using OptionsType=std::vector<std::pair<juce::String, juce::var>>;
+    juce::Identifier                                                     name;
+    OptionsType                                                          options;
+    std::function<void(juce::Component*, juce::var, const OptionsType&)> setter;
+    juce::String                                                         defaultValue;
+};
+
 /**
  The MagicBuilder is responsible to recreate the GUI from a single ValueTree.
  You can add your own factories to the builder to allow additional components.
@@ -131,6 +140,9 @@ public:
      */
     virtual juce::StringArray getPlotSourcesNames() const = 0;
 
+    void addSettableProperty (juce::Identifier type, SettableProperty property);
+    std::vector<SettableProperty> getSettableProperties (juce::Identifier type) const;
+
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     /**
@@ -181,6 +193,8 @@ private:
 
     bool editMode = false;
     juce::ValueTree selectedNode;
+
+    std::map<juce::Identifier, std::vector<SettableProperty>> settableProperties;
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     std::unique_ptr<ToolBox> magicToolBox;

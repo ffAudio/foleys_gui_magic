@@ -62,6 +62,62 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
         { "slider-text-outline", juce::Slider::textBoxOutlineColourId }
     });
 
+    addSettableProperty (IDs::slider,
+    {
+        "slider-type",
+        {
+            { "linear-horizontal", juce::Slider::LinearHorizontal },
+            { "linear-vertical",   juce::Slider::LinearVertical },
+            { "rotary",            juce::Slider::RotaryHorizontalVerticalDrag },
+            { "inc-dec-buttons",   juce::Slider::IncDecButtons }
+        },
+        [] (juce::Component* component, juce::var value, const SettableProperty::OptionsType& options)
+        {
+            if (auto* slider = dynamic_cast<juce::Slider*>(component))
+            {
+                for (auto& o : options)
+                {
+                    if (value == o.first)
+                    {
+                        slider->setSliderStyle (juce::Slider::SliderStyle ( int(o.second)));
+                        break;
+                    }
+                }
+            }
+        },
+        "rotary"
+    });
+
+    addSettableProperty (IDs::slider,
+                         {
+                             "slider-textbox",
+                             {
+                                 { "no-textbox",    juce::Slider::NoTextBox },
+                                 { "textbox-left",  juce::Slider::TextBoxLeft },
+                                 { "textbox-right", juce::Slider::TextBoxRight },
+                                 { "textbox-above", juce::Slider::TextBoxAbove },
+                                 { "textbox-below", juce::Slider::TextBoxBelow }
+                             },
+                             [] (juce::Component* component, juce::var value, const SettableProperty::OptionsType& options)
+                             {
+                                 if (auto* slider = dynamic_cast<juce::Slider*>(component))
+                                 {
+                                     for (auto& o : options)
+                                     {
+                                         if (value == o.first)
+                                         {
+                                             slider->setTextBoxStyle (juce::Slider::TextEntryBoxPosition (int (o.second)),
+                                                                      false, slider->getTextBoxWidth(), slider->getTextBoxHeight());
+                                             break;
+                                         }
+                                     }
+                                 }
+                             },
+                             "textbox-below"
+                         });
+
+    //==============================================================================
+
     registerFactory (IDs::comboBox,
                      [] (const juce::ValueTree& config, auto& app)
                      {
@@ -78,6 +134,8 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                               { "combo-focused-outline", juce::ComboBox::focusedOutlineColourId }
                           });
 
+    //==============================================================================
+
     registerFactory (IDs::textButton,
                      [] (const juce::ValueTree& config, auto& app)
                      {
@@ -92,6 +150,8 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                               { "button-on-text", juce::TextButton::textColourOnId }
                           });
 
+    //==============================================================================
+
     registerFactory (IDs::toggleButton,
                      [] (const juce::ValueTree& config, auto& app)
                      {
@@ -105,6 +165,8 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                               { "toggle-tick", juce::ToggleButton::tickColourId },
                               { "toggle-tick-disabled", juce::ToggleButton::tickDisabledColourId }
                           });
+
+    //==============================================================================
 
     registerFactory (IDs::plot,
                      [&] (const juce::ValueTree& config, auto& app)
