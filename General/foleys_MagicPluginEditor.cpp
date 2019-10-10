@@ -44,11 +44,9 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse)
     builder.registerJUCELookAndFeels();
 #endif
 
-    setResizable (true, true);
-
     builder.updateAll();
 
-    setSize (600, 400);
+    updateSize();
 }
 
 MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const char* data, const int dataSize)
@@ -65,9 +63,18 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const cha
 
     restoreGUI (data, dataSize);
 
+    updateSize();
+}
+
+void MagicPluginEditor::updateSize()
+{
+    int width = 600;
+    int height = 400;
+
     setResizable (true, true);
 
-    setSize (600, 400);
+    processorState.getLastEditorSize (width, height);
+    setSize (width, height);
 }
 
 void MagicPluginEditor::restoreGUI (const juce::ValueTree& gui)
@@ -90,6 +97,8 @@ void MagicPluginEditor::paint (juce::Graphics& g)
 void MagicPluginEditor::resized()
 {
     builder.updateLayout();
+
+    processorState.setLastEditorSize (getWidth(), getHeight());
 }
 
 } // namespace foleys

@@ -86,6 +86,31 @@ public:
      */
     void prepareToPlay (double sampleRate, int samplesPerBlockExpected);
 
+    /**
+     Allows the editor to set its last size to resore next time
+     */
+    void setLastEditorSize (int  width, int  height);
+    bool getLastEditorSize (int& width, int& height);
+
+    /**
+     This method will serialise the plugin state from AudioProcessorValueTreeState for
+     the host to save in the session
+
+     @param destData is the memory block to fill
+     */
+    void getStateInformation (juce::MemoryBlock& destData);
+
+    /**
+     This method restores the plugin state using the AudioProcessorValueTreeState.
+     If you supply a pointer to the editor (using getActiveEditor()) the last size
+     is automatically restored.
+
+     @param data is a pointer to the original data
+     @param sizeInBytes is the length of the data
+     @param editor is an optional pointer to the editor to apply the last size to
+     */
+    void setStateInformation (const void* data, int sizeInBytes, juce::AudioProcessorEditor* editor = nullptr);
+
     juce::AudioProcessor& getProcessor();
     juce::AudioProcessorValueTreeState& getValueTreeState();
 

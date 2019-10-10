@@ -124,6 +124,53 @@ juce::AudioProcessor& MagicProcessorState::getProcessor()
     return processor;
 }
 
+void MagicProcessorState::setLastEditorSize (int  width, int  height)
+{
+    if (state.state.isValid() == false)
+        return;
+
+    auto sizeNode = state.state.getOrCreateChildWithName (IDs::lastSize, nullptr);
+    sizeNode.setProperty (IDs::width,  width,  nullptr);
+    sizeNode.setProperty (IDs::height, height, nullptr);
+}
+
+bool MagicProcessorState::getLastEditorSize (int& width, int& height)
+{
+    if (state.state.isValid() == false)
+        return false;
+
+    auto sizeNode = state.state.getOrCreateChildWithName (IDs::lastSize, nullptr);
+    if (sizeNode.hasProperty (IDs::width) == false || sizeNode.hasProperty (IDs::height) == false)
+        return false;
+
+    width  = sizeNode.getProperty (IDs::width);
+    height = sizeNode.getProperty (IDs::height);
+    return true;
+}
+
+void MagicProcessorState::getStateInformation (juce::MemoryBlock& destData)
+{
+    juce::MemoryOutputStream stream(destData, false);
+    state.state.writeToStream (stream);
+}
+
+void MagicProcessorState::setStateInformation (const void* data, int sizeInBytes, juce::AudioProcessorEditor* editor)
+{
+    auto tree = juce::ValueTree::readFromData (data, size_t (sizeInBytes));
+    if (tree.isValid() == false)
+        return;
+
+    state.state = tree;
+
+    if (editor)
+    {
+        int width, height;
+
+        if (getLastEditorSize (width, height))
+            editor->setSize (width, height);
+    }
+}
+
 juce::AudioProcessorValueTreeState& MagicProcessorState::getValueTreeState()
 {
     return state;

@@ -117,6 +117,8 @@ namespace IDs
     static juce::Identifier maxHeight   { "max-height" };
     static juce::Identifier width       { "width" };
     static juce::Identifier height      { "height" };
+
+    static juce::Identifier lastSize    { "last-size" };
 }
 
 } // namespace foleys

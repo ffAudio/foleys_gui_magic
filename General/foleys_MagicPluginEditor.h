@@ -75,6 +75,9 @@ public:
     void resized() override;
 
 private:
+
+    void updateSize();
+
     MagicProcessorState& processorState;
 
     MagicGUIBuilder<juce::AudioProcessor> builder { *this, processorState.getProcessor(), &processorState };
