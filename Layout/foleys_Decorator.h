@@ -59,6 +59,12 @@ public:
     void configureDecorator (Stylesheet& stylesheet, const juce::ValueTree& node);
 
     /**
+     This will get the necessary information from the stylesheet, using inheritance
+     of nodes if needed, to set specific properties for the wrapped component.
+     */
+    void configureComponent (Stylesheet& stylesheet, const juce::ValueTree& node);
+
+    /**
      This will try to connect the Component with the supplied parameter of that name.
      */
     void connectToState (const juce::String& paramID, juce::AudioProcessorValueTreeState& state);

@@ -187,6 +187,25 @@ juce::StringArray MagicBuilder::getAllLayoutPropertyNames() const
     };
 }
 
+void MagicBuilder::addSettableProperty (juce::Identifier type, SettableProperty property)
+{
+    const auto& it = settableProperties.find (type);
+    if (it == settableProperties.end())
+        settableProperties [type] = { property };
+    else
+        it->second.push_back (property);
+}
+
+std::vector<SettableProperty> MagicBuilder::getSettableProperties (juce::Identifier type) const
+{
+    const auto& it = settableProperties.find (type);
+    if (it != settableProperties.end())
+        return it->second;
+
+    return {};
+}
+
+
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 void MagicBuilder::setEditMode (bool shouldEdit)
 {
@@ -370,6 +389,8 @@ std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Componen
     component.addAndMakeVisible (item.get());
 
     item->configureDecorator (stylesheet, node);
+
+    item->configureComponent (stylesheet, node);
 
     stylesheet.configureFlexBoxItem (item->flexItem, node);
 
