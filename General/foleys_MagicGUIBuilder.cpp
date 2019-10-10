@@ -399,9 +399,10 @@ void MagicGUIBuilder<juce::AudioProcessor>::createDefaultFromParameters (juce::V
 {
     for (const auto& sub : tree.getSubgroups (false))
     {
-        auto child = juce::ValueTree (IDs::view);
-        child.setProperty (IDs::caption, sub->getName(), nullptr);
-        child.setProperty (IDs::styleClass, "group", nullptr);
+        auto child = juce::ValueTree (IDs::view, {
+            {IDs::caption, sub->getName()},
+            {IDs::styleClass, "group"}});
+
         createDefaultFromParameters (child, *sub);
         node.appendChild (child, nullptr);
     }
@@ -431,8 +432,42 @@ void MagicGUIBuilder<juce::AudioProcessor>::createDefaultGUITree (bool keepExist
     auto rootNode = config.getOrCreateChildWithName (IDs::view, &undo);
     rootNode.setProperty (IDs::id, IDs::root, &undo);
 
+    auto current = rootNode;
+
     if (magicState != nullptr)
-        createDefaultFromParameters (rootNode, magicState->getProcessor().getParameterTree());
+    {
+        auto plotNames = magicState->getPlotSourcesNames();
+
+        if (plotNames.isEmpty() == false)
+        {
+            juce::StringArray colours { "orange", "blue", "red", "silver", "green", "cyan", "brown", "white" };
+            int nextColour = 0;
+
+            auto child = juce::ValueTree (IDs::view, {
+                { IDs::id, "plot-view" },
+                { IDs::styleClass, "plot-view" }});
+
+            for (auto plotName : plotNames)
+            {
+                child.appendChild ({IDs::plot, {
+                    { IDs::source, plotName },
+                    { "plot-color", colours [nextColour++] }}}, nullptr);
+
+                if (nextColour >= colours.size())
+                    nextColour = 0;
+            }
+
+            current.appendChild (child, nullptr);
+
+            juce::ValueTree parameters { IDs::view, {
+                { IDs::styleClass, "parameters nomargin" }}};
+
+            current.appendChild (parameters, nullptr);
+            current = parameters;
+        }
+
+        createDefaultFromParameters (current, magicState->getProcessor().getParameterTree());
+    }
 }
 
 

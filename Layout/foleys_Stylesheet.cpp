@@ -279,7 +279,19 @@ juce::ValueTree Stylesheet::createDefaultStyle()
     {
         { IDs::nodes, {} },
         { IDs::classes, {}, {
-            { "group", {{ IDs::border, 2 }, { IDs::flexDirection, IDs::flexDirColumn }} }
+            { "plot-view", {
+                { IDs::border, 2 },
+                { IDs::backgroundColour, "black" },
+                { IDs::borderColour, "silver" }} },
+            { "nomargin", {
+                { IDs::margin, 0 },
+                { IDs::padding, 0 },
+                { IDs::border, 0 }} },
+            { "group", {
+                { IDs::margin, 5 },
+                { IDs::padding, 5 },
+                { IDs::border, 2 },
+                { IDs::flexDirection, IDs::flexDirColumn }} }
         } },
         { IDs::types, {}, {
             { "Slider", {{ IDs::border, 0 }} },
