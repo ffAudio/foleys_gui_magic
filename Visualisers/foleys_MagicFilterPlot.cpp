@@ -57,6 +57,31 @@ void MagicFilterPlot::setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::P
     sendChangeMessage();
 }
 
+void MagicFilterPlot::setIIRCoefficients (float gain, std::vector<juce::dsp::IIR::Coefficients<float>::Ptr> coefficients, float maxDBToDisplay)
+{
+    if (sampleRate < 20.0)
+        return;
+
+    const juce::ScopedWriteLock writeLock (plotLock);
+
+    std::vector<double> buffer (frequencies.size(), 0.0);
+
+    maxDB = maxDBToDisplay;
+    std::fill (magnitudes.begin(), magnitudes.end(), gain);
+
+    for (auto ptr : coefficients)
+    {
+        ptr->getMagnitudeForFrequencyArray (frequencies.data(),
+                                            buffer.data(),
+                                            frequencies.size(),
+                                            sampleRate);
+        juce::FloatVectorOperations::multiply (magnitudes.data(), buffer.data(), int (magnitudes.size()));
+    }
+
+    plotChanged = true;
+    sendChangeMessage();
+}
+
 void MagicFilterPlot::pushSamples (const juce::AudioBuffer<float>&){}
 
 void MagicFilterPlot::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component)
