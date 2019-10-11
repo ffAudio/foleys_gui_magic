@@ -53,6 +53,16 @@ public:
     void setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::Ptr coefficients, float maxDB);
 
     /**
+     Set new coefficients to calculate the frequency response from.
+
+     @param gain the overall added gain
+     @param coefficients a vector of coefficients to sum up (multiply) to calculate the frequency response for
+     @param sampleRate is the sampleRate the processing is happening with
+     @param maxDB is the maximum level in dB, that the curve will display
+     */
+    void setIIRCoefficients (float gain, std::vector<juce::dsp::IIR::Coefficients<float>::Ptr> coefficients, float maxDB);
+
+    /**
      Does nothing in this class
      */
     void pushSamples (const juce::AudioBuffer<float>& buffer) override;
