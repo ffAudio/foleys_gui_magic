@@ -30,13 +30,6 @@
 namespace foleys
 {
 
-namespace EditorColours
-{
-    static juce::Colour background;
-    static juce::Colour outline;
-    static juce::Colour text;
-    static juce::Colour selectedBackground;
-}
 
 ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
   : parent (parentToUse),
@@ -46,6 +39,8 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
     EditorColours::background = findColour (juce::ResizableWindow::backgroundColourId);
     EditorColours::outline = juce::Colours::silver;
     EditorColours::text = juce::Colours::white;
+    EditorColours::disabledText = juce::Colours::grey;
+    EditorColours::removeButton = juce::Colours::darkred;
     EditorColours::selectedBackground = juce::Colours::darkorange;
 
     setOpaque (true);
@@ -130,7 +125,7 @@ void ToolBox::saveDialog()
         juce::FileOutputStream stream (xmlFile);
         stream.setPosition (0);
         stream.truncate();
-        stream.writeString (builder.getGuiTree().toXmlString());
+        stream.writeString (builder.getConfigTree().toXmlString());
         lastLocation = xmlFile;
     }
 }

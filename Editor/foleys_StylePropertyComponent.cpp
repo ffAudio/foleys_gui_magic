@@ -32,61 +32,59 @@
 namespace foleys
 {
 
-class MagicBuilder;
 
-class PropertiesEditor  : public juce::Component,
-                          private juce::ValueTree::Listener
+StylePropertyComponent::StylePropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse)
+  : juce::PropertyComponent (propertyToUse.toString()),
+    builder (builderToUse),
+    property (propertyToUse),
+    node (nodeToUse)
 {
-public:
-    PropertiesEditor (MagicBuilder& builder);
+    addAndMakeVisible (remove);
 
-    void setStyle (juce::ValueTree style);
+    remove.setColour (juce::TextButton::buttonColourId, EditorColours::removeButton);
+    remove.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
+    remove.onClick = [&]
+    {
+        node.removeProperty (property, undo);
+        refresh();
+    };
+}
 
-    void setNodeToEdit (juce::ValueTree node);
-    juce::ValueTree& getNodeToEdit();
+void StylePropertyComponent::paint (juce::Graphics& g)
+{
+    g.fillAll (EditorColours::background);
+    auto b = getLocalBounds().withWidth (getWidth() / 2);
+    g.setColour (inherited ? EditorColours::disabledText : EditorColours::text);
+    g.drawFittedText (property.toString(), b, juce::Justification::left, 1);
+}
 
-    void addNodeProperties (bool shouldBeOpen=true);
-    void addDecoratorProperties (bool shouldBeOpen=true);
-    void addTypeProperties (juce::Identifier type, bool shouldBeOpen=true);
-    void addFlexItemProperties (bool shouldBeOpen=true);
-    void addFlexContainerProperties (bool shouldBeOpen=true);
+void StylePropertyComponent::resized()
+{
+    auto b = getLocalBounds().withLeft (getWidth() / 2);
+    remove.setBounds (b.removeFromRight (getHeight()));
+    editor->setBounds (b);
+}
 
-    void paint (juce::Graphics&) override;
-    void resized() override;
+void StylePropertyComponent::setTooltipForNode (juce::ValueTree& definedHere)
+{
+    if (definedHere == node)
+    {
+        setTooltip ({});
+        remove.setEnabled (true);
+        return;
+    }
 
-    MagicBuilder& getMagicBuilder();
+    const auto& s = builder.getStylesheet();
+    if (s.isClassNode (definedHere))
+        setTooltip ("Class: " + definedHere.getType().toString());
+    else if (s.isTypeNode (definedHere))
+        setTooltip ("Type: " + definedHere.getType().toString());
+    else if (s.isIdNode (definedHere))
+        setTooltip ("Node: " + definedHere.getType().toString());
+    else
+        setTooltip (definedHere.getType().toString());
 
-private:
-
-    void updatePopupMenu();
-
-    void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
-                                   const juce::Identifier& property) override;
-
-    void valueTreeChildAdded (juce::ValueTree& parentTree,
-                              juce::ValueTree& childWhichHasBeenAdded) override;
-
-    void valueTreeChildRemoved (juce::ValueTree& parentTree,
-                                juce::ValueTree& childWhichHasBeenRemoved,
-                                int indexFromWhichChildWasRemoved) override;
-
-    void valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhoseChildrenHaveMoved,
-                                     int oldIndex, int newIndex) override {}
-
-    void valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasChanged) override {}
-
-
-    MagicBuilder&       builder;
-    juce::UndoManager&  undo;
-
-    juce::ComboBox      nodeSelect;
-
-    juce::PropertyPanel properties;
-
-    juce::ValueTree     style;
-    juce::ValueTree     styleItem;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesEditor)
-};
+    remove.setEnabled (false);
+}
 
 } // namespace foleys

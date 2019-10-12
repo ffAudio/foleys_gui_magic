@@ -56,7 +56,7 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const cha
 #if FOLEYS_REGISTER_JUCE_COMPONENTS
     builder.registerJUCEFactories();
 #endif
-    
+
 #if FOLEYS_REGISTER_JUCE_LOOKANDFEELS
     builder.registerJUCELookAndFeels();
 #endif

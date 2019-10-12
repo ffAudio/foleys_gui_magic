@@ -51,17 +51,27 @@ void Stylesheet::setStyle (const juce::ValueTree& node)
     currentStyle = node;
 }
 
-juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::ValueTree& node, bool inherit) const
+juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::ValueTree& node, bool inherit, juce::ValueTree* definedHere) const
 {
     if (inherit && node.hasProperty (name))
+    {
+        if (definedHere)
+            *definedHere = node;
+
         return node.getProperty (name);
+    }
 
     if (inherit && node.hasProperty (IDs::id))
     {
         auto styleNode = currentStyle.getChildWithName (IDs::nodes);
         auto idNode = styleNode.getChildWithName (node.getProperty (IDs::id).toString());
         if (idNode.hasProperty (name))
+        {
+            if (definedHere)
+                *definedHere = idNode;
+
             return idNode.getProperty (name);
+        }
     }
 
     auto classNames = node.getProperty (IDs::styleClass, {}).toString();
@@ -70,19 +80,29 @@ juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::Val
         auto classesNode = currentStyle.getChildWithName (IDs::classes);
         auto classNode = classesNode.getChildWithName (className);
         if (classNode.hasProperty (name))
+        {
+            if (definedHere)
+                *definedHere = classNode;
+
             return classNode.getProperty (name);
+        }
     }
 
     if (inherit)
     {
         auto typeNode = currentStyle.getChildWithName (IDs::types).getChildWithName (node.getType());
         if (typeNode.isValid() && typeNode.hasProperty (name))
+        {
+            if (definedHere)
+                *definedHere = typeNode;
+
             return typeNode.getProperty (name);
+        }
     }
 
     auto parent = node.getParent();
     if (parent.isValid() && parent.getType() != IDs::magic)
-        return getProperty (name, parent, false);
+        return getProperty (name, parent, false, definedHere);
 
     return {};
 }
@@ -273,6 +293,33 @@ void Stylesheet::configureFlexBoxItem (juce::FlexItem& item, const juce::ValueTr
         item.alignSelf = juce::FlexItem::AlignSelf::stretch;
 }
 
+bool Stylesheet::isClassNode (const juce::ValueTree& node) const
+{
+    auto testParent = currentStyle.getChildWithName (IDs::classes);
+    if (testParent.isValid())
+        return node.isAChildOf (testParent);
+
+    return false;
+}
+
+bool Stylesheet::isTypeNode (const juce::ValueTree& node) const
+{
+    auto testParent = currentStyle.getChildWithName (IDs::types);
+    if (testParent.isValid())
+        return node.isAChildOf (testParent);
+
+    return false;
+}
+
+bool Stylesheet::isIdNode (const juce::ValueTree& node) const
+{
+    auto testParent = currentStyle.getChildWithName (IDs::nodes);
+    if (testParent.isValid())
+        return node.isAChildOf (testParent);
+
+    return false;
+}
+
 juce::ValueTree Stylesheet::createDefaultStyle()
 {
     juce::ValueTree style (IDs::style, {{ IDs::name, "default" }},
@@ -303,6 +350,17 @@ juce::ValueTree Stylesheet::createDefaultStyle()
     });
 
     return style;
+}
+
+juce::StringArray Stylesheet::getAllClassesNames() const
+{
+    juce::StringArray names;
+    auto classesNode = currentStyle.getChildWithName (IDs::classes);
+    if (classesNode.isValid())
+        for (const auto& child : classesNode)
+            names.add (child.getType().toString());
+
+    return names;
 }
 
 

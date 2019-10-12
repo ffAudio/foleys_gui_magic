@@ -64,7 +64,12 @@ public:
     /**
      Grants access to the main XML, that holds all information.
      */
-    juce::ValueTree& getGuiTree();
+    juce::ValueTree& getConfigTree();
+
+    /**
+     Grants access to the GUI root node.
+     */
+    juce::ValueTree getGuiRootNode();
 
     void updateAll();
 
@@ -106,6 +111,11 @@ public:
      Returns all possible properties (except colour names) for the editor.
      */
     juce::StringArray getAllLayoutPropertyNames() const;
+
+    /**
+     This method returns the names of colours for a certain Component type
+     */
+    juce::StringArray getColourNames (juce::Identifier type) const;
 
     /**
      This method collects all names of colours, so the style editor can show a control to edit the colours

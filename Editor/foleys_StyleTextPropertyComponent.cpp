@@ -32,61 +32,46 @@
 namespace foleys
 {
 
-class MagicBuilder;
 
-class PropertiesEditor  : public juce::Component,
-                          private juce::ValueTree::Listener
+StyleTextPropertyComponent::StyleTextPropertyComponent (MagicBuilder& builderToUse,
+                                                        juce::Identifier propertyToUse,
+                                                        juce::ValueTree& nodeToUse)
+  : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse)
 {
-public:
-    PropertiesEditor (MagicBuilder& builder);
+    auto label = std::make_unique<juce::Label>();
+    label->setEditable (true);
 
-    void setStyle (juce::ValueTree style);
+    addAndMakeVisible (label.get());
 
-    void setNodeToEdit (juce::ValueTree node);
-    juce::ValueTree& getNodeToEdit();
+    label->onTextChange = [&]
+    {
+        if (auto* label = dynamic_cast<juce::Label*>(editor.get()))
+            node.setProperty (property, label->getText(), &builder.getUndoManager());
 
-    void addNodeProperties (bool shouldBeOpen=true);
-    void addDecoratorProperties (bool shouldBeOpen=true);
-    void addTypeProperties (juce::Identifier type, bool shouldBeOpen=true);
-    void addFlexItemProperties (bool shouldBeOpen=true);
-    void addFlexContainerProperties (bool shouldBeOpen=true);
+        refresh();
+    };
 
-    void paint (juce::Graphics&) override;
-    void resized() override;
+    editor = std::move (label);
+}
 
-    MagicBuilder& getMagicBuilder();
+void StyleTextPropertyComponent::refresh()
+{
+    if (auto* label = dynamic_cast<juce::Label*>(editor.get()))
+    {
+        juce::ValueTree defined;
+        auto value = builder.getStylesheet().getProperty (property, node, true, &defined);
 
-private:
+        inherited = (defined != node);
+        setTooltipForNode (defined);
 
-    void updatePopupMenu();
+        if (defined == node)
+            label->getTextValue().referTo (node.getPropertyAsValue (property, &builder.getUndoManager()));
+        else
+            label->setText (value.toString(), juce::dontSendNotification);
+    }
 
-    void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
-                                   const juce::Identifier& property) override;
+    repaint();
+}
 
-    void valueTreeChildAdded (juce::ValueTree& parentTree,
-                              juce::ValueTree& childWhichHasBeenAdded) override;
-
-    void valueTreeChildRemoved (juce::ValueTree& parentTree,
-                                juce::ValueTree& childWhichHasBeenRemoved,
-                                int indexFromWhichChildWasRemoved) override;
-
-    void valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhoseChildrenHaveMoved,
-                                     int oldIndex, int newIndex) override {}
-
-    void valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasChanged) override {}
-
-
-    MagicBuilder&       builder;
-    juce::UndoManager&  undo;
-
-    juce::ComboBox      nodeSelect;
-
-    juce::PropertyPanel properties;
-
-    juce::ValueTree     style;
-    juce::ValueTree     styleItem;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesEditor)
-};
 
 } // namespace foleys
