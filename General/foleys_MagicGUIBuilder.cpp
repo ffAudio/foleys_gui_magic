@@ -52,9 +52,14 @@ Stylesheet& MagicBuilder::getStylesheet()
     return stylesheet;
 }
 
-juce::ValueTree& MagicBuilder::getGuiTree()
+juce::ValueTree& MagicBuilder::getConfigTree()
 {
     return config;
+}
+
+juce::ValueTree MagicBuilder::getGuiRootNode()
+{
+    return config.getChildWithName (IDs::view);
 }
 
 void MagicBuilder::updateAll()
@@ -141,6 +146,18 @@ void MagicBuilder::setColourTranslation (juce::Identifier type, std::vector<std:
     }
 
     colourTranslations [type] = mapping;
+}
+
+juce::StringArray MagicBuilder::getColourNames (juce::Identifier type) const
+{
+    juce::StringArray names;
+
+    const auto& it = colourTranslations.find (type);
+    if (it != colourTranslations.end())
+        for (const auto& pair : it->second)
+            names.addIfNotAlreadyThere (pair.first);
+
+    return names;
 }
 
 juce::StringArray MagicBuilder::getAllColourNames() const

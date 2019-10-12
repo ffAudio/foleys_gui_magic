@@ -57,4 +57,8 @@
 #include "Editor/foleys_PropertiesEditor.cpp"
 #include "Editor/foleys_Palette.cpp"
 
+#include "Editor/foleys_StylePropertyComponent.cpp"
+#include "Editor/foleys_StyleTextPropertyComponent.cpp"
+#include "Editor/foleys_StyleChoicePropertyComponent.cpp"
+
 #endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE

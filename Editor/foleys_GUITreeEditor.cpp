@@ -79,7 +79,7 @@ void GUITreeEditor::setValueTree (juce::ValueTree& refTree)
 
 void GUITreeEditor::updateTree()
 {
-    auto guiNode = builder.getGuiTree().getChildWithName (IDs::view);
+    auto guiNode = builder.getConfigTree().getChildWithName (IDs::view);
     setValueTree (guiNode);
 }
 

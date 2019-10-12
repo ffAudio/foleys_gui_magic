@@ -77,8 +77,9 @@ private:
 
     juce::File          lastLocation;
 
-    EditorPanels        editorPanels   { builder };
+    EditorPanels        editorPanels { builder };
 
+    juce::TooltipWindow tooltip      { this };
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToolBox)
 };
 

@@ -55,7 +55,7 @@ public:
      @param name the name of the property.
      @param node is the node in the DOM. This is used for inheritance by traversing upwards.
      */
-    juce::var getProperty (const juce::Identifier& name, const juce::ValueTree& node, bool inherit=true) const;
+    juce::var getProperty (const juce::Identifier& name, const juce::ValueTree& node, bool inherit=true, juce::ValueTree* definedHere=nullptr) const;
 
     /**
      Return the LookAndFeel for the node. Make sure never to remove a LookAndFeel, especially
@@ -103,6 +103,11 @@ public:
      */
     static juce::ValueTree createDefaultStyle();
 
+    juce::StringArray getAllClassesNames() const;
+
+    bool isClassNode (const juce::ValueTree& node) const;
+    bool isTypeNode (const juce::ValueTree& node) const;
+    bool isIdNode (const juce::ValueTree& node) const;
 
 private:
 

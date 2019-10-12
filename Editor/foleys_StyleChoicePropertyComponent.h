@@ -32,61 +32,25 @@
 namespace foleys
 {
 
-class MagicBuilder;
-
-class PropertiesEditor  : public juce::Component,
-                          private juce::ValueTree::Listener
+class StyleChoicePropertyComponent  : public StylePropertyComponent,
+                                      private juce::Value::Listener
 {
 public:
-    PropertiesEditor (MagicBuilder& builder);
+    StyleChoicePropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse, juce::StringArray choices);
 
-    void setStyle (juce::ValueTree style);
-
-    void setNodeToEdit (juce::ValueTree node);
-    juce::ValueTree& getNodeToEdit();
-
-    void addNodeProperties (bool shouldBeOpen=true);
-    void addDecoratorProperties (bool shouldBeOpen=true);
-    void addTypeProperties (juce::Identifier type, bool shouldBeOpen=true);
-    void addFlexItemProperties (bool shouldBeOpen=true);
-    void addFlexContainerProperties (bool shouldBeOpen=true);
-
-    void paint (juce::Graphics&) override;
-    void resized() override;
-
-    MagicBuilder& getMagicBuilder();
+    void refresh() override;
 
 private:
 
-    void updatePopupMenu();
+    void valueChanged (juce::Value& value) override;
 
-    void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
-                                   const juce::Identifier& property) override;
+    juce::StringArray choices;
+    juce::Value       proxy;
 
-    void valueTreeChildAdded (juce::ValueTree& parentTree,
-                              juce::ValueTree& childWhichHasBeenAdded) override;
+    bool              updating = false;
 
-    void valueTreeChildRemoved (juce::ValueTree& parentTree,
-                                juce::ValueTree& childWhichHasBeenRemoved,
-                                int indexFromWhichChildWasRemoved) override;
-
-    void valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhoseChildrenHaveMoved,
-                                     int oldIndex, int newIndex) override {}
-
-    void valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasChanged) override {}
-
-
-    MagicBuilder&       builder;
-    juce::UndoManager&  undo;
-
-    juce::ComboBox      nodeSelect;
-
-    juce::PropertyPanel properties;
-
-    juce::ValueTree     style;
-    juce::ValueTree     styleItem;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StyleChoicePropertyComponent)
 };
+
 
 } // namespace foleys

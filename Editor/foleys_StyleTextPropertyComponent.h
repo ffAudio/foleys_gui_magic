@@ -32,61 +32,17 @@
 namespace foleys
 {
 
-class MagicBuilder;
-
-class PropertiesEditor  : public juce::Component,
-                          private juce::ValueTree::Listener
+class StyleTextPropertyComponent  : public StylePropertyComponent
 {
 public:
-    PropertiesEditor (MagicBuilder& builder);
+    StyleTextPropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse);
 
-    void setStyle (juce::ValueTree style);
-
-    void setNodeToEdit (juce::ValueTree node);
-    juce::ValueTree& getNodeToEdit();
-
-    void addNodeProperties (bool shouldBeOpen=true);
-    void addDecoratorProperties (bool shouldBeOpen=true);
-    void addTypeProperties (juce::Identifier type, bool shouldBeOpen=true);
-    void addFlexItemProperties (bool shouldBeOpen=true);
-    void addFlexContainerProperties (bool shouldBeOpen=true);
-
-    void paint (juce::Graphics&) override;
-    void resized() override;
-
-    MagicBuilder& getMagicBuilder();
+    void refresh() override;
 
 private:
 
-    void updatePopupMenu();
-
-    void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
-                                   const juce::Identifier& property) override;
-
-    void valueTreeChildAdded (juce::ValueTree& parentTree,
-                              juce::ValueTree& childWhichHasBeenAdded) override;
-
-    void valueTreeChildRemoved (juce::ValueTree& parentTree,
-                                juce::ValueTree& childWhichHasBeenRemoved,
-                                int indexFromWhichChildWasRemoved) override;
-
-    void valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhoseChildrenHaveMoved,
-                                     int oldIndex, int newIndex) override {}
-
-    void valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasChanged) override {}
-
-
-    MagicBuilder&       builder;
-    juce::UndoManager&  undo;
-
-    juce::ComboBox      nodeSelect;
-
-    juce::PropertyPanel properties;
-
-    juce::ValueTree     style;
-    juce::ValueTree     styleItem;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StyleTextPropertyComponent)
 };
+
 
 } // namespace foleys

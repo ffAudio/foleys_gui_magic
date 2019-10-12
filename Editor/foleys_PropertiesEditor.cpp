@@ -37,7 +37,7 @@ PropertiesEditor::PropertiesEditor (MagicBuilder& builderToEdit)
     undo (builder.getUndoManager())
 {
     addAndMakeVisible (nodeSelect);
-    addAndMakeVisible (propertiesList);
+    addAndMakeVisible (properties);
 
     nodeSelect.onChange = [&]()
     {
@@ -48,38 +48,20 @@ PropertiesEditor::PropertiesEditor (MagicBuilder& builderToEdit)
         if (index >= 3000)
         {
             auto node = style.getChildWithName (IDs::classes).getChild (index - 3000);
-            styleItem = node;
+            setNodeToEdit (node);
         }
         else if (index >= 2000)
         {
             auto node = style.getChildWithName (IDs::nodes).getChild (index - 2000);
-            styleItem = node;
+            setNodeToEdit (node);
         }
         else if (index >= 1000)
         {
             auto node = style.getChildWithName (IDs::types).getChild (index - 1000);
-            styleItem = node;
+            setNodeToEdit (node);
         }
 
-        propertiesList.updateContent();
     };
-
-    propertySelect.setEditableText (true);
-
-    addAndMakeVisible (propertySelect);
-    addAndMakeVisible (propertyAdd);
-
-    propertyAdd.onClick = [&]
-    {
-        const auto name = propertySelect.getText();
-        if (name.isEmpty())
-            return;
-
-        auto oldValue = styleItem.getProperty (name, {});
-        styleItem.setProperty (name, oldValue, &undo);
-        propertiesList.updateContent();
-    };
-
 }
 
 void PropertiesEditor::setStyle (juce::ValueTree styleToEdit)
@@ -93,16 +75,110 @@ void PropertiesEditor::setStyle (juce::ValueTree styleToEdit)
 void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
 {
     styleItem = node;
-    propertiesList.updateContent();
-    updatePopupMenu();
 
-    nodeSelect.setText (TRANS ("Editing node"));
+    properties.clear();
+
+    if (styleItem.isValid() == false)
+    {
+        nodeSelect.setText (TRANS ("Nothing selected"));
+        return;
+    }
+
+    addNodeProperties();
+
+    addDecoratorProperties();
+
+    if (builder.getStylesheet().isClassNode (styleItem))
+    {
+        for (auto factoryName : builder.getFactoryNames())
+            addTypeProperties (factoryName, false);
+    }
+    else
+    {
+        addTypeProperties (styleItem.getType());
+    }
+
+    if (styleItem.getType() == IDs::view)
+        addFlexContainerProperties();
+
+    addFlexItemProperties();
+
+    if (styleItem == builder.getGuiRootNode() || styleItem.isAChildOf (builder.getGuiRootNode()))
+        nodeSelect.setText (TRANS ("Editing node"));
 }
 
 juce::ValueTree& PropertiesEditor::getNodeToEdit()
 {
     return styleItem;
 }
+
+//==============================================================================
+
+void PropertiesEditor::addNodeProperties (bool shouldBeOpen)
+{
+    juce::Array<juce::PropertyComponent*> array;
+
+    array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::id, &undo, true), IDs::id.toString(), 64, false, true));
+
+    auto classNames = builder.getStylesheet().getAllClassesNames();
+    // FIXME add class choice
+
+    properties.addSection ("Node", array, shouldBeOpen);
+}
+
+void PropertiesEditor::addDecoratorProperties (bool shouldBeOpen)
+{
+    juce::Array<juce::PropertyComponent*> array;
+
+    properties.addSection ("Decorator", array, shouldBeOpen);
+}
+
+void PropertiesEditor::addTypeProperties (juce::Identifier type, bool shouldBeOpen)
+{
+    juce::Array<juce::PropertyComponent*> array;
+
+    for (auto p : builder.getSettableProperties (type))
+    {
+        juce::StringArray       choices;
+        juce::Array<juce::var>  values;
+
+        for (auto o : p.options)
+            choices.add (o.first);
+
+        array.add (new StyleChoicePropertyComponent (builder, p.name, styleItem, choices));
+    }
+
+    for (auto colour : builder.getColourNames (type))
+    {
+        array.add (new StyleTextPropertyComponent (builder, colour, styleItem));
+    }
+
+    properties.addSection (type.toString(), array, shouldBeOpen);
+}
+
+void PropertiesEditor::addFlexItemProperties (bool shouldBeOpen)
+{
+    juce::Array<juce::PropertyComponent*> array;
+
+    array.add (new StyleChoicePropertyComponent (builder, IDs::flexAlignSelf, styleItem, { IDs::flexStretch, IDs::flexStart, IDs::flexEnd, IDs::flexCenter, IDs::flexAuto }));
+
+    properties.addSection ("Flex-Item", array, shouldBeOpen);
+}
+
+void PropertiesEditor::addFlexContainerProperties (bool shouldBeOpen)
+{
+    juce::Array<juce::PropertyComponent*> array;
+
+    array.add (new StyleChoicePropertyComponent (builder, IDs::flexDirection, styleItem, { IDs::flexDirRow, IDs::flexDirRowReverse, IDs::flexDirColumn, IDs::flexDirColumnReverse }));
+    array.add (new StyleChoicePropertyComponent (builder, IDs::flexWrap, styleItem, { IDs::flexNoWrap, IDs::flexWrapNormal, IDs::flexWrapReverse }));
+    array.add (new StyleChoicePropertyComponent (builder, IDs::flexAlignContent, styleItem, { IDs::flexStretch, IDs::flexStart, IDs::flexEnd, IDs::flexCenter, IDs::flexSpaceAround, IDs::flexSpaceBetween }));
+    array.add (new StyleChoicePropertyComponent (builder, IDs::flexAlignItems, styleItem, { IDs::flexStretch, IDs::flexStart, IDs::flexEnd, IDs::flexCenter }));
+    array.add (new StyleChoicePropertyComponent (builder, IDs::flexJustifyContent, styleItem, { IDs::flexStart, IDs::flexEnd, IDs::flexCenter, IDs::flexSpaceAround, IDs::flexSpaceBetween }));
+
+    properties.addSection ("Flex-Container", array, shouldBeOpen);
+}
+
+//==============================================================================
 
 void PropertiesEditor::updatePopupMenu()
 {
@@ -142,14 +218,6 @@ void PropertiesEditor::updatePopupMenu()
         popup->addSubMenu ("Classes", menu);
     }
 
-    propertySelect.clear();
-    propertySelect.addItemList (builder.getAllLayoutPropertyNames(), 1);
-    propertySelect.addItem (IDs::source.toString(), 900);
-    propertySelect.addItem (IDs::parameter.toString(), 901);
-
-    auto colourNames = builder.getAllColourNames();
-    colourNames.sort (true);
-    propertySelect.addItemList (colourNames, 1000);
 }
 
 void PropertiesEditor::paint (juce::Graphics& g)
@@ -165,11 +233,7 @@ void PropertiesEditor::resized()
 
     nodeSelect.setBounds (bounds.removeFromTop (buttonHeight));
 
-    auto addPanel = bounds.removeFromBottom (buttonHeight);
-    propertyAdd.setBounds (addPanel.removeFromRight (buttonHeight));
-    propertySelect.setBounds (addPanel);
-
-    propertiesList.setBounds (bounds.reduced (0, 2));
+    properties.setBounds (bounds.reduced (0, 2));
 }
 
 MagicBuilder& PropertiesEditor::getMagicBuilder()
@@ -180,7 +244,6 @@ MagicBuilder& PropertiesEditor::getMagicBuilder()
 void PropertiesEditor::valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
                                                  const juce::Identifier& property)
 {
-    propertiesList.updateContent();
 }
 
 void PropertiesEditor::valueTreeChildAdded (juce::ValueTree& parentTree,
@@ -195,123 +258,6 @@ void PropertiesEditor::valueTreeChildRemoved (juce::ValueTree& parentTree,
 {
     if (childWhichHasBeenRemoved == styleItem)
         setNodeToEdit ({});
-}
-
-
-//==============================================================================
-
-PropertiesEditor::PropertiesListModel::PropertiesListModel (PropertiesEditor& editor)
-  : propertiesEditor (editor),
-    undo (propertiesEditor.undo)
-{
-}
-
-int PropertiesEditor::PropertiesListModel::getNumRows()
-{
-    auto styleItem = propertiesEditor.getNodeToEdit();
-
-    if (styleItem.isValid())
-        return styleItem.getNumProperties();
-
-    return 0;
-}
-
-juce::Component* PropertiesEditor::PropertiesListModel::refreshComponentForRow (int rowNumber,
-                                                                                bool isRowSelected,
-                                                                                juce::Component *existingComponentToUpdate)
-{
-    auto* component = dynamic_cast<PropertiesItem*>(existingComponentToUpdate);
-    if (existingComponentToUpdate != nullptr && component == nullptr)
-        delete existingComponentToUpdate;
-
-    if (component == nullptr)
-        component = new PropertiesItem (propertiesEditor);
-
-    auto styleItem = propertiesEditor.getNodeToEdit();
-    if (styleItem.isValid() && rowNumber < styleItem.getNumProperties())
-    {
-        const auto name = styleItem.getPropertyName (rowNumber);
-        component->setProperty (name.toString(), styleItem.getPropertyAsValue (name, &undo, true));
-    }
-    else
-    {
-        component->setProperty ("undefined", juce::Value());
-    }
-
-    return component;
-}
-
-//==============================================================================
-
-PropertiesEditor::PropertiesItem::PropertiesItem (PropertiesEditor& editor)
-  : propertiesEditor (editor)
-{
-    value.setEditable (true);
-    addAndMakeVisible (value);
-    addChildComponent (valueSelect);
-    addAndMakeVisible (remove);
-
-    valueSelect.onChange = [&]
-    {
-        auto styleItem = propertiesEditor.getNodeToEdit();
-        if (styleItem.isValid())
-            styleItem.setProperty (name, valueSelect.getText(), &propertiesEditor.undo);
-    };
-
-    remove.onClick =[&]
-    {
-        auto styleItem = propertiesEditor.getNodeToEdit();
-        if (styleItem.isValid())
-            styleItem.removeProperty (name, &propertiesEditor.undo);
-    };
-}
-
-void PropertiesEditor::PropertiesItem::setProperty (const juce::String& nameToDisplay, const juce::Value& propertyValue)
-{
-    auto& builder = propertiesEditor.getMagicBuilder();
-    name = nameToDisplay;
-
-    juce::StringArray choices;
-    valueSelect.clear();
-
-    if (name == IDs::source.toString())
-        choices = builder.getPlotSourcesNames();
-    else if (name == IDs::parameter.toString())
-        choices = builder.getParameterNames();
-
-    if (choices.isEmpty())
-    {
-        value.setVisible (true);
-        valueSelect.setVisible (false);
-        value.getTextValue().referTo (propertyValue);
-    }
-    else
-    {
-        auto index = choices.indexOf (propertyValue.getValue().toString());
-        value.setVisible (false);
-        valueSelect.setVisible (true);
-        valueSelect.addItemList (choices, 1);
-        if (index>= 0)
-            valueSelect.setSelectedId (index + 1);
-    }
-
-    repaint();
-}
-
-void PropertiesEditor::PropertiesItem::paint (juce::Graphics& g)
-{
-    g.setColour (EditorColours::outline);
-    g.drawHorizontalLine (getHeight()-1, 0, getWidth());
-    g.setColour (EditorColours::text);
-    g.drawFittedText (name, getLocalBounds().withWidth (getWidth() / 2), juce::Justification::left, 1);
-}
-
-void PropertiesEditor::PropertiesItem::resized()
-{
-    auto bounds = getLocalBounds().withLeft (getWidth() / 2);
-    remove.setBounds (bounds.removeFromRight (getHeight()));
-    value.setBounds (bounds);
-    valueSelect.setBounds (bounds);
 }
 
 
