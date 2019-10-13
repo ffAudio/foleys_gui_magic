@@ -71,9 +71,22 @@ int Palette::PaletteListModel::getNumRows()
 
 void Palette::PaletteListModel::paintListBoxItem (int rowNumber, juce::Graphics &g, int width, int height, bool rowIsSelected)
 {
-    g.fillAll (rowIsSelected ? EditorColours::selectedBackground.withAlpha (0.5f) : EditorColours::background);
+    juce::Rectangle<float> b (1, 1, width - 2, height - 2);
+
+    const auto r = b.getHeight() / 2;
+    g.fillAll (EditorColours::background);
+
+    if (rowIsSelected)
+    {
+        g.setColour (EditorColours::selectedBackground.withAlpha (0.5f));
+        g.fillRoundedRectangle (b, r);
+    }
+
+    g.setColour (EditorColours::outline);
+    g.drawRoundedRectangle (b, r, 1);
+
     g.setColour (EditorColours::text);
-    g.drawFittedText (factoryNames [rowNumber], 0, 0, width, height, juce::Justification::left, 1);
+    g.drawFittedText (factoryNames [rowNumber], r, 0, width - 2 * r, height, juce::Justification::left, 1);
 }
 
 juce::var Palette::PaletteListModel::getDragSourceDescription (const juce::SparseSet<int> &rowsToDescribe)
