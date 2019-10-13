@@ -47,7 +47,7 @@ public:
 
     void addNodeProperties (bool shouldBeOpen=true);
     void addDecoratorProperties (bool shouldBeOpen=true);
-    void addTypeProperties (juce::Identifier type, bool shouldBeOpen=true);
+    void addTypeProperties (juce::Identifier type, juce::Array<juce::PropertyComponent*> additional, bool shouldBeOpen=true);
     void addFlexItemProperties (bool shouldBeOpen=true);
     void addFlexContainerProperties (bool shouldBeOpen=true);
 

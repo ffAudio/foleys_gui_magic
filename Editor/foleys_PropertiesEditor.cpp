@@ -86,16 +86,25 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
 
     addNodeProperties();
 
-    addDecoratorProperties();
+    addDecoratorProperties (false);
 
     if (builder.getStylesheet().isClassNode (styleItem))
     {
         for (auto factoryName : builder.getFactoryNames())
-            addTypeProperties (factoryName, false);
+            addTypeProperties (factoryName, {}, false);
     }
     else
     {
-        addTypeProperties (styleItem.getType());
+        juce::Array<juce::PropertyComponent*> additional;
+        if (styleItem.getType() == IDs::plot)
+            additional.add (new StyleChoicePropertyComponent (builder, IDs::source, styleItem, builder.getPlotSourcesNames()));
+        else if (styleItem.getType() == IDs::slider ||
+                 styleItem.getType() == IDs::comboBox ||
+                 styleItem.getType() == IDs::textButton ||
+                 styleItem.getType() == IDs::toggleButton)
+            additional.add (new StyleChoicePropertyComponent (builder, IDs::parameter, styleItem, builder.getParameterNames()));
+
+        addTypeProperties (styleItem.getType(), additional);
     }
 
     if (styleItem.getType() == IDs::view)
@@ -142,9 +151,11 @@ void PropertiesEditor::addDecoratorProperties (bool shouldBeOpen)
     properties.addSection ("Decorator", array, shouldBeOpen);
 }
 
-void PropertiesEditor::addTypeProperties (juce::Identifier type, bool shouldBeOpen)
+void PropertiesEditor::addTypeProperties (juce::Identifier type, juce::Array<juce::PropertyComponent*> additional, bool shouldBeOpen)
 {
     juce::Array<juce::PropertyComponent*> array;
+
+    array.addArray (additional);
 
     for (auto p : builder.getSettableProperties (type))
     {
