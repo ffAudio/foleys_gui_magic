@@ -129,6 +129,15 @@ void PropertiesEditor::addNodeProperties (bool shouldBeOpen)
 void PropertiesEditor::addDecoratorProperties (bool shouldBeOpen)
 {
     juce::Array<juce::PropertyComponent*> array;
+    array.add (new StyleTextPropertyComponent (builder, IDs::caption, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::captionSize, styleItem));
+    array.add (new StyleColourPropertyComponent (builder, IDs::captionColour, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::margin, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::padding, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::border, styleItem));
+    array.add (new StyleColourPropertyComponent (builder, IDs::borderColour, styleItem));
+    array.add (new StyleColourPropertyComponent (builder, IDs::backgroundColour, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::backgroundImage, styleItem));
 
     properties.addSection ("Decorator", array, shouldBeOpen);
 }
@@ -150,7 +159,7 @@ void PropertiesEditor::addTypeProperties (juce::Identifier type, bool shouldBeOp
 
     for (auto colour : builder.getColourNames (type))
     {
-        array.add (new StyleTextPropertyComponent (builder, colour, styleItem));
+        array.add (new StyleColourPropertyComponent (builder, colour, styleItem));
     }
 
     properties.addSection (type.toString(), array, shouldBeOpen);
@@ -160,6 +169,15 @@ void PropertiesEditor::addFlexItemProperties (bool shouldBeOpen)
 {
     juce::Array<juce::PropertyComponent*> array;
 
+    array.add (new StyleTextPropertyComponent (builder, IDs::width, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::height, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::minWidth, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::minHeight, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::maxWidth, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::maxHeight, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::flexGrow, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::flexShrink, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::flexOrder, styleItem));
     array.add (new StyleChoicePropertyComponent (builder, IDs::flexAlignSelf, styleItem, { IDs::flexStretch, IDs::flexStart, IDs::flexEnd, IDs::flexCenter, IDs::flexAuto }));
 
     properties.addSection ("Flex-Item", array, shouldBeOpen);
