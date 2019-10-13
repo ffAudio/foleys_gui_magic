@@ -138,6 +138,7 @@ void PropertiesEditor::addNodeProperties (bool shouldBeOpen, const juce::Identif
     array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::id, &undo, true), IDs::id.toString(), 64, false, true));
 
     auto classNames = builder.getStylesheet().getAllClassesNames();
+    array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::styleClass, &undo, true), IDs::styleClass.toString(), 256, false, true));
     // FIXME add class choice
     array.add (new StyleTextPropertyComponent (builder, IDs::styleClass, styleItem));
 
