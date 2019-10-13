@@ -52,15 +52,19 @@ StylePropertyComponent::StylePropertyComponent (MagicBuilder& builderToUse, juce
 
 void StylePropertyComponent::paint (juce::Graphics& g)
 {
+    auto b = getLocalBounds().reduced (1).withWidth (getWidth() / 2);
+
     g.fillAll (EditorColours::background);
-    auto b = getLocalBounds().withWidth (getWidth() / 2);
+    g.setColour (EditorColours::outline);
+    g.drawHorizontalLine (0, 0, getRight());
+    g.drawHorizontalLine (getBottom() - 1, 0, getRight());
     g.setColour (inherited ? EditorColours::disabledText : EditorColours::text);
     g.drawFittedText (property.toString(), b, juce::Justification::left, 1);
 }
 
 void StylePropertyComponent::resized()
 {
-    auto b = getLocalBounds().withLeft (getWidth() / 2);
+    auto b = getLocalBounds().reduced (1).withLeft (getWidth() / 2);
     remove.setBounds (b.removeFromRight (getHeight()));
     editor->setBounds (b);
 }
