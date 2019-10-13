@@ -72,9 +72,11 @@ void PropertiesEditor::setStyle (juce::ValueTree styleToEdit)
     style.addListener (this);
 }
 
-void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
+void PropertiesEditor::setNodeToEdit (juce::ValueTree node, const juce::Identifier& propToScrollTo)
 {
     styleItem = node;
+
+    const auto& stylesheet = builder.getStylesheet();
 
     properties.clear();
 
@@ -84,14 +86,14 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
         return;
     }
 
-    addNodeProperties();
+    addNodeProperties (true, propToScrollTo);
 
-    addDecoratorProperties (false);
+    addDecoratorProperties (false, propToScrollTo);
 
-    if (builder.getStylesheet().isClassNode (styleItem))
+    if (stylesheet.isClassNode (styleItem))
     {
         for (auto factoryName : builder.getFactoryNames())
-            addTypeProperties (factoryName, {}, false);
+            addTypeProperties (factoryName, {}, false, propToScrollTo);
     }
     else
     {
@@ -104,16 +106,22 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
                  styleItem.getType() == IDs::toggleButton)
             additional.add (new StyleChoicePropertyComponent (builder, IDs::parameter, styleItem, builder.getParameterNames()));
 
-        addTypeProperties (styleItem.getType(), additional);
+        addTypeProperties (styleItem.getType(), additional, true, propToScrollTo);
     }
 
-    if (styleItem.getType() == IDs::view)
-        addFlexContainerProperties();
+    if (styleItem.getType() == IDs::view || stylesheet.isClassNode (styleItem))
+        addFlexContainerProperties (false, propToScrollTo);
 
-    addFlexItemProperties();
+    addFlexItemProperties (false, propToScrollTo);
 
-    if (styleItem == builder.getGuiRootNode() || styleItem.isAChildOf (builder.getGuiRootNode()))
-        nodeSelect.setText (TRANS ("Editing node"));
+    if (stylesheet.isClassNode (styleItem))
+        nodeSelect.setText (TRANS ("Class: ") + styleItem.getType().toString(), juce::dontSendNotification);
+    else if (stylesheet.isTypeNode (styleItem))
+        nodeSelect.setText (TRANS ("Type: ") + styleItem.getType().toString(), juce::dontSendNotification);
+    else if (stylesheet.isIdNode (styleItem))
+        nodeSelect.setText (TRANS ("Node: ") + styleItem.getType().toString(), juce::dontSendNotification);
+    else
+        nodeSelect.setText (TRANS ("Editing node"), juce::dontSendNotification);
 }
 
 juce::ValueTree& PropertiesEditor::getNodeToEdit()
@@ -123,7 +131,7 @@ juce::ValueTree& PropertiesEditor::getNodeToEdit()
 
 //==============================================================================
 
-void PropertiesEditor::addNodeProperties (bool shouldBeOpen)
+void PropertiesEditor::addNodeProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo)
 {
     juce::Array<juce::PropertyComponent*> array;
 
@@ -131,12 +139,24 @@ void PropertiesEditor::addNodeProperties (bool shouldBeOpen)
 
     auto classNames = builder.getStylesheet().getAllClassesNames();
     // FIXME add class choice
+    array.add (new StyleTextPropertyComponent (builder, IDs::styleClass, styleItem));
 
     properties.addSection ("Node", array, shouldBeOpen);
 }
 
-void PropertiesEditor::addDecoratorProperties (bool shouldBeOpen)
+void PropertiesEditor::addDecoratorProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo)
 {
+    if (propToScrollTo == IDs::caption ||
+        propToScrollTo == IDs::captionSize ||
+        propToScrollTo == IDs::captionColour ||
+        propToScrollTo == IDs::margin ||
+        propToScrollTo == IDs::padding ||
+        propToScrollTo == IDs::border ||
+        propToScrollTo == IDs::borderColour ||
+        propToScrollTo == IDs::backgroundColour ||
+        propToScrollTo == IDs::backgroundImage)
+        shouldBeOpen = true;
+
     juce::Array<juce::PropertyComponent*> array;
     array.add (new StyleTextPropertyComponent (builder, IDs::caption, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::captionSize, styleItem));
@@ -151,7 +171,7 @@ void PropertiesEditor::addDecoratorProperties (bool shouldBeOpen)
     properties.addSection ("Decorator", array, shouldBeOpen);
 }
 
-void PropertiesEditor::addTypeProperties (juce::Identifier type, juce::Array<juce::PropertyComponent*> additional, bool shouldBeOpen)
+void PropertiesEditor::addTypeProperties (juce::Identifier type, juce::Array<juce::PropertyComponent*> additional, bool shouldBeOpen, const juce::Identifier& propToScrollTo)
 {
     juce::Array<juce::PropertyComponent*> array;
 
@@ -166,6 +186,9 @@ void PropertiesEditor::addTypeProperties (juce::Identifier type, juce::Array<juc
             choices.add (o.first);
 
         array.add (new StyleChoicePropertyComponent (builder, p.name, styleItem, choices));
+
+        if (p.name == propToScrollTo)
+            shouldBeOpen = true;
     }
 
     for (auto colour : builder.getColourNames (type))
@@ -176,8 +199,20 @@ void PropertiesEditor::addTypeProperties (juce::Identifier type, juce::Array<juc
     properties.addSection (type.toString(), array, shouldBeOpen);
 }
 
-void PropertiesEditor::addFlexItemProperties (bool shouldBeOpen)
+void PropertiesEditor::addFlexItemProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo)
 {
+    if (propToScrollTo == IDs::width ||
+        propToScrollTo == IDs::height ||
+        propToScrollTo == IDs::minWidth ||
+        propToScrollTo == IDs::minHeight ||
+        propToScrollTo == IDs::maxWidth ||
+        propToScrollTo == IDs::maxHeight ||
+        propToScrollTo == IDs::flexGrow ||
+        propToScrollTo == IDs::flexShrink ||
+        propToScrollTo == IDs::flexOrder ||
+        propToScrollTo == IDs::flexAlignSelf)
+        shouldBeOpen = true;
+
     juce::Array<juce::PropertyComponent*> array;
 
     array.add (new StyleTextPropertyComponent (builder, IDs::width, styleItem));
@@ -194,8 +229,15 @@ void PropertiesEditor::addFlexItemProperties (bool shouldBeOpen)
     properties.addSection ("Flex-Item", array, shouldBeOpen);
 }
 
-void PropertiesEditor::addFlexContainerProperties (bool shouldBeOpen)
+void PropertiesEditor::addFlexContainerProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo)
 {
+    if (propToScrollTo == IDs::flexDirection ||
+        propToScrollTo == IDs::flexWrap ||
+        propToScrollTo == IDs::flexAlignContent ||
+        propToScrollTo == IDs::flexAlignItems ||
+        propToScrollTo == IDs::flexJustifyContent)
+        shouldBeOpen = true;
+
     juce::Array<juce::PropertyComponent*> array;
 
     array.add (new StyleChoicePropertyComponent (builder, IDs::flexDirection, styleItem, { IDs::flexDirRow, IDs::flexDirRowReverse, IDs::flexDirColumn, IDs::flexDirColumnReverse }));

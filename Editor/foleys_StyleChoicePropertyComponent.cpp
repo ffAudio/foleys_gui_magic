@@ -60,15 +60,11 @@ StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicBuilder& builde
 
 void StyleChoicePropertyComponent::refresh()
 {
+    auto value = lookupValue();
+
     if (auto* combo = dynamic_cast<juce::ComboBox*>(editor.get()))
     {
-        juce::ValueTree defined;
-        auto value = builder.getStylesheet().getProperty (property, node, true, &defined);
-
-        inherited = (defined != node);
-        setTooltipForNode (defined);
-
-        if (defined == node)
+        if (node == inheritedFrom)
             proxy.referTo (node.getPropertyAsValue (property, &builder.getUndoManager()));
         else
             combo->setText (value.toString(), juce::dontSendNotification);

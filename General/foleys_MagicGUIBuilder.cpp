@@ -278,6 +278,16 @@ void MagicBuilder::draggedItemOnto (juce::ValueTree dragged, juce::ValueTree tar
         targetParent.addChild (dragged, index, &undo);
 }
 
+ToolBox& MagicBuilder::getMagicToolBox()
+{
+    // The magicToolBox should always be present!
+    // This method wouldn't be included, if
+    // FOLEYS_SHOW_GUI_EDITOR_PALLETTE was 0
+    jassert (magicToolBox.get() != nullptr);
+
+    return *magicToolBox;
+}
+
 juce::UndoManager& MagicBuilder::getUndoManager()
 {
     return undo;

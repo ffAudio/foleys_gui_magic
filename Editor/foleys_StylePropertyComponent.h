@@ -40,19 +40,20 @@ public:
     void paint (juce::Graphics& g) override;
     void resized() override;
 
+    void mouseDoubleClick (const juce::MouseEvent& event) override;
+
 protected:
 
-    void setTooltipForNode (juce::ValueTree& definedHere);
+    juce::var lookupValue();
 
     MagicBuilder&       builder;
     juce::Identifier    property;
     juce::ValueTree     node;
+    juce::ValueTree     inheritedFrom;
     juce::UndoManager*  undo=nullptr;
 
     std::unique_ptr<juce::Component> editor;
     juce::TextButton    remove { "X" };
-
-    bool        inherited = false;
 
 private:
 

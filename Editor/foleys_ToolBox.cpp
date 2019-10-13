@@ -77,7 +77,17 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
         builder.setEditMode (editSwitch.getToggleState());
     };
 
-    addAndMakeVisible (editorPanels);
+    addAndMakeVisible (treeEditor);
+    addAndMakeVisible (resizer1);
+    addAndMakeVisible (propertiesEditor);
+    addAndMakeVisible (resizer3);
+    addAndMakeVisible (palette);
+
+    resizeManager.setItemLayout (0, 1, -1.0, -0.4);
+    resizeManager.setItemLayout (1, 6, 6, 6);
+    resizeManager.setItemLayout (2, 1, -1.0, -0.3);
+    resizeManager.setItemLayout (3, 6, 6, 6);
+    resizeManager.setItemLayout (4, 1, -1.0, -0.3);
 
     setBounds (100, 100, 300, 700);
     addToDesktop (getLookAndFeel().getMenuWindowFlags());
@@ -132,12 +142,21 @@ void ToolBox::saveDialog()
 
 void ToolBox::setSelectedNode (const juce::ValueTree& node)
 {
-    editorPanels.setSelectedNode (node);
+    treeEditor.setSelectedNode (node);
+    propertiesEditor.setNodeToEdit (node);
+    builder.setSelectedNode (node);
+}
+
+void ToolBox::setNodeToEdit (juce::ValueTree node, const juce::Identifier& propToScrollTo)
+{
+    propertiesEditor.setNodeToEdit (node, propToScrollTo);
 }
 
 void ToolBox::stateWasReloaded()
 {
-    editorPanels.update();
+    treeEditor.updateTree();
+    propertiesEditor.setStyle (builder.getStylesheet().getCurrentStyle());
+    palette.update();
 }
 
 void ToolBox::paint (juce::Graphics& g)
@@ -158,7 +177,20 @@ void ToolBox::resized()
     undoButton.setBounds (buttons.removeFromLeft (w));
     editSwitch.setBounds (buttons.removeFromLeft (w));
 
-    editorPanels.setBounds (bounds);
+    juce::Component* comps[] = {
+        &treeEditor,
+        &resizer1,
+        &propertiesEditor,
+        &resizer3,
+        &palette
+    };
+
+    resizeManager.layOutComponents (comps, 5,
+                                    bounds.getX(),
+                                    bounds.getY(),
+                                    bounds.getWidth(),
+                                    bounds.getHeight(),
+                                    true, true);
 }
 
 bool ToolBox::keyPressed (const juce::KeyPress& key, juce::Component* originalComponent)

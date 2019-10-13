@@ -50,6 +50,28 @@ StylePropertyComponent::StylePropertyComponent (MagicBuilder& builderToUse, juce
     };
 }
 
+juce::var StylePropertyComponent::lookupValue()
+{
+    auto value = builder.getStylesheet().getProperty (property, node, true, &inheritedFrom);
+
+    const auto& s = builder.getStylesheet();
+
+    if (node == inheritedFrom)
+        setTooltip ({});
+    else if (s.isClassNode (inheritedFrom))
+        setTooltip ("Class: " + inheritedFrom.getType().toString() + " (double-click)");
+    else if (s.isTypeNode (inheritedFrom))
+        setTooltip ("Type: " + inheritedFrom.getType().toString() + " (double-click)");
+    else if (s.isIdNode (inheritedFrom))
+        setTooltip ("Node: " + inheritedFrom.getType().toString() + " (double-click)");
+    else
+        setTooltip (inheritedFrom.getType().toString() + " (double-click)");
+
+    remove.setEnabled (node == inheritedFrom);
+
+    return value;
+}
+
 void StylePropertyComponent::paint (juce::Graphics& g)
 {
     auto b = getLocalBounds().reduced (1).withWidth (getWidth() / 2);
@@ -58,7 +80,7 @@ void StylePropertyComponent::paint (juce::Graphics& g)
     g.setColour (EditorColours::outline);
     g.drawHorizontalLine (0, 0, getRight());
     g.drawHorizontalLine (getBottom() - 1, 0, getRight());
-    g.setColour (inherited ? EditorColours::disabledText : EditorColours::text);
+    g.setColour (node == inheritedFrom ? EditorColours::text : EditorColours::disabledText);
     g.drawFittedText (property.toString(), b, juce::Justification::left, 1);
 }
 
@@ -69,26 +91,10 @@ void StylePropertyComponent::resized()
     editor->setBounds (b);
 }
 
-void StylePropertyComponent::setTooltipForNode (juce::ValueTree& definedHere)
+void StylePropertyComponent::mouseDoubleClick (const juce::MouseEvent& event)
 {
-    if (definedHere == node)
-    {
-        setTooltip ({});
-        remove.setEnabled (true);
-        return;
-    }
-
-    const auto& s = builder.getStylesheet();
-    if (s.isClassNode (definedHere))
-        setTooltip ("Class: " + definedHere.getType().toString());
-    else if (s.isTypeNode (definedHere))
-        setTooltip ("Type: " + definedHere.getType().toString());
-    else if (s.isIdNode (definedHere))
-        setTooltip ("Node: " + definedHere.getType().toString());
-    else
-        setTooltip (definedHere.getType().toString());
-
-    remove.setEnabled (false);
+    builder.getMagicToolBox().setNodeToEdit (inheritedFrom, property);
 }
+
 
 } // namespace foleys

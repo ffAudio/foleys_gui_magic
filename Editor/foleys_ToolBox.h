@@ -53,6 +53,7 @@ public:
     void timerCallback () override;
 
     void setSelectedNode (const juce::ValueTree& node);
+    void setNodeToEdit (juce::ValueTree node, const juce::Identifier& propToScrollTo=juce::Identifier());
 
     void stateWasReloaded();
 
@@ -77,7 +78,13 @@ private:
 
     juce::File          lastLocation;
 
-    EditorPanels        editorPanels { builder };
+    GUITreeEditor       treeEditor          { builder };
+    PropertiesEditor    propertiesEditor    { builder };
+    Palette             palette             { builder };
+
+    juce::StretchableLayoutManager    resizeManager;
+    juce::StretchableLayoutResizerBar resizer1 { &resizeManager, 1, false };
+    juce::StretchableLayoutResizerBar resizer3 { &resizeManager, 3, false };
 
     juce::TooltipWindow tooltip      { this };
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToolBox)
