@@ -166,6 +166,7 @@ public:
 
     void draggedItemOnto (juce::ValueTree dropped, juce::ValueTree target, int index=-1);
 
+    ToolBox& getMagicToolBox();
     juce::UndoManager& getUndoManager();
 #endif
 

@@ -57,15 +57,11 @@ StyleColourPropertyComponent::StyleColourPropertyComponent (MagicBuilder& builde
 
 void StyleColourPropertyComponent::refresh()
 {
+    auto value = lookupValue();
+
     if (auto* label = dynamic_cast<juce::Label*>(editor.get()))
     {
-        juce::ValueTree defined;
-        auto value = builder.getStylesheet().getProperty (property, node, true, &defined);
-
-        inherited = (defined != node);
-        setTooltipForNode (defined);
-
-        if (defined == node)
+        if (node == inheritedFrom)
             label->getTextValue().referTo (node.getPropertyAsValue (property, &builder.getUndoManager()));
         else
             label->setText (value.toString(), juce::dontSendNotification);

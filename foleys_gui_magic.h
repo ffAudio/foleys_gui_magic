@@ -117,7 +117,6 @@ namespace EditorColours
 #include "Editor/foleys_GUITreeEditor.h"
 #include "Editor/foleys_PropertiesEditor.h"
 #include "Editor/foleys_Palette.h"
-#include "Editor/foleys_EditorPanels.h"
 #include "Editor/foleys_ToolBox.h"
 
 #endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
