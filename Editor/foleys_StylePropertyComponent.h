@@ -50,7 +50,6 @@ protected:
     juce::Identifier    property;
     juce::ValueTree     node;
     juce::ValueTree     inheritedFrom;
-    juce::UndoManager*  undo=nullptr;
 
     std::unique_ptr<juce::Component> editor;
     juce::TextButton    remove { "X" };

@@ -105,6 +105,8 @@ public:
 
     juce::StringArray getAllClassesNames() const;
 
+    juce::StringArray getLookAndFeelNames() const;
+
     bool isClassNode (const juce::ValueTree& node) const;
     bool isTypeNode (const juce::ValueTree& node) const;
     bool isIdNode (const juce::ValueTree& node) const;

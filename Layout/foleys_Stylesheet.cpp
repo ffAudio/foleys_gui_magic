@@ -125,6 +125,15 @@ juce::LookAndFeel* Stylesheet::getLookAndFeel (const juce::ValueTree& node) cons
     return nullptr;
 }
 
+juce::StringArray Stylesheet::getLookAndFeelNames() const
+{
+    juce::StringArray names;
+    for (const auto& it : lookAndFeels)
+        names.add (it.first);
+
+    return names;
+}
+
 juce::Image Stylesheet::getBackgroundImage (const juce::ValueTree& node) const
 {
 #if FOLEYS_ENABLE_BINARY_DATA

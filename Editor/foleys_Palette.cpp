@@ -87,6 +87,8 @@ void Palette::PaletteListModel::paintListBoxItem (int rowNumber, juce::Graphics 
 
     g.setColour (EditorColours::text);
     g.drawFittedText (factoryNames [rowNumber], r, 0, width - 2 * r, height, juce::Justification::left, 1);
+    g.setColour (EditorColours::disabledText);
+    g.drawFittedText (TRANS ("drag me"), r, 0, width - 2 * r, height, juce::Justification::right, 1);
 }
 
 juce::var Palette::PaletteListModel::getDragSourceDescription (const juce::SparseSet<int> &rowsToDescribe)

@@ -45,7 +45,7 @@ StylePropertyComponent::StylePropertyComponent (MagicBuilder& builderToUse, juce
     remove.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
     remove.onClick = [&]
     {
-        node.removeProperty (property, undo);
+        node.removeProperty (property, &builder.getUndoManager());
         refresh();
     };
 }
@@ -56,7 +56,7 @@ juce::var StylePropertyComponent::lookupValue()
 
     const auto& s = builder.getStylesheet();
 
-    if (node == inheritedFrom)
+    if (node == inheritedFrom || inheritedFrom.isValid() == false)
         setTooltip ({});
     else if (s.isClassNode (inheritedFrom))
         setTooltip ("Class: " + inheritedFrom.getType().toString() + " (double-click)");
@@ -93,7 +93,8 @@ void StylePropertyComponent::resized()
 
 void StylePropertyComponent::mouseDoubleClick (const juce::MouseEvent& event)
 {
-    builder.getMagicToolBox().setNodeToEdit (inheritedFrom, property);
+    if (inheritedFrom.isValid())
+        builder.getMagicToolBox().setNodeToEdit (inheritedFrom, property);
 }
 
 

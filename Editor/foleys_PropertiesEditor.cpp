@@ -154,6 +154,7 @@ void PropertiesEditor::addDecoratorProperties (bool shouldBeOpen, const juce::Id
         propToScrollTo == IDs::border ||
         propToScrollTo == IDs::borderColour ||
         propToScrollTo == IDs::backgroundColour ||
+        propToScrollTo == IDs::lookAndFeel ||
         propToScrollTo == IDs::backgroundImage)
         shouldBeOpen = true;
 
@@ -166,6 +167,7 @@ void PropertiesEditor::addDecoratorProperties (bool shouldBeOpen, const juce::Id
     array.add (new StyleTextPropertyComponent (builder, IDs::border, styleItem));
     array.add (new StyleColourPropertyComponent (builder, IDs::borderColour, styleItem));
     array.add (new StyleColourPropertyComponent (builder, IDs::backgroundColour, styleItem));
+    array.add (new StyleChoicePropertyComponent (builder, IDs::lookAndFeel, styleItem, builder.getStylesheet().getLookAndFeelNames()));
     array.add (new StyleTextPropertyComponent (builder, IDs::backgroundImage, styleItem));
 
     properties.addSection ("Decorator", array, shouldBeOpen);
