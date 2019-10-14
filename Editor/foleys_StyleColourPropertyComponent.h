@@ -44,6 +44,10 @@ private:
 
     void valueChanged (juce::Value& value) override;
 
+    void setColourDisplay (juce::Colour colour);
+
+    void getLookAndFeelColourFallback();
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StyleColourPropertyComponent)
 };
 

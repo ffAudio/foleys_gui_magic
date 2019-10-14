@@ -62,17 +62,23 @@ void StyleColourPropertyComponent::refresh()
     if (auto* label = dynamic_cast<juce::Label*>(editor.get()))
     {
         if (node == inheritedFrom)
+        {
             label->getTextValue().referTo (node.getPropertyAsValue (property, &builder.getUndoManager()));
+        }
         else
+        {
+            if (value.isVoid())
+                getLookAndFeelColourFallback();
+
             label->setText (value.toString(), juce::dontSendNotification);
+        }
     }
 
     repaint();
 }
-
-void StyleColourPropertyComponent::valueChanged (juce::Value& value)
+    
+void StyleColourPropertyComponent::setColourDisplay (juce::Colour colour)
 {
-    auto colour = builder.getStylesheet().parseColour (value.getValue().toString());
     if (colour.isTransparent())
     {
         editor->setColour (juce::Label::backgroundColourId, EditorColours::background);
@@ -83,6 +89,25 @@ void StyleColourPropertyComponent::valueChanged (juce::Value& value)
         editor->setColour (juce::Label::backgroundColourId, colour);
         editor->setColour (juce::Label::textColourId, colour.contrasting());
     }
+}
+
+void StyleColourPropertyComponent::getLookAndFeelColourFallback()
+{
+    const auto& stylesheet = builder.getStylesheet();
+    juce::Colour colour;
+
+    if (auto* lookandfeel = stylesheet.getLookAndFeel (node))
+    {
+        auto id = builder.findColourId (node.getType(), property);
+        if (id >= 0)
+            setColourDisplay (lookandfeel->findColour (id));
+    }
+}
+
+void StyleColourPropertyComponent::valueChanged (juce::Value& value)
+{
+    auto colour = builder.getStylesheet().parseColour (value.getValue().toString());
+    setColourDisplay (colour);
 }
 
 

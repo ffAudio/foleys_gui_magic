@@ -148,6 +148,31 @@ void MagicBuilder::setColourTranslation (juce::Identifier type, std::vector<std:
     colourTranslations [type] = mapping;
 }
 
+int MagicBuilder::findColourId (juce::Identifier type, juce::Identifier name)
+{
+    const auto& map = colourTranslations.find (type);
+    if (map == colourTranslations.end())
+        return -1;
+
+    for (const auto& pair : map->second)
+        if (pair.first == name.toString())
+            return pair.second;
+
+    return -1;
+}
+
+int MagicBuilder::findColourId (juce::Identifier name)
+{
+    for (const auto& map : colourTranslations)
+    {
+        auto id = findColourId (map.first, name);
+        if (id >= 0)
+            return id;
+    }
+
+    return -1;
+}
+
 juce::StringArray MagicBuilder::getColourNames (juce::Identifier type) const
 {
     juce::StringArray names;

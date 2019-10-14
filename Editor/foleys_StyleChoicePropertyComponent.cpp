@@ -88,7 +88,17 @@ void StyleChoicePropertyComponent::valueChanged (juce::Value& value)
             combo->setSelectedId (id, juce::sendNotificationSync);
     }
 
-    refresh();
+    if (property == IDs::lookAndFeel)
+    {
+        // this hack is needed, since the changing will have to trigger all colours a refresh
+        // to fetch fallback colours
+        if (auto* panel = findParentComponentOfClass<juce::PropertyPanel>())
+            panel->refreshAll();
+    }
+    else
+    {
+        refresh();
+    }
 }
 
 

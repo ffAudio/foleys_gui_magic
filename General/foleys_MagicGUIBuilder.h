@@ -108,6 +108,16 @@ public:
     void setColourTranslation (juce::Identifier type, std::vector<std::pair<juce::String, int>> mapping);
 
     /**
+     Looks up the ColourId for a given type
+     */
+    int findColourId (juce::Identifier type, juce::Identifier name);
+
+    /**
+     Looks up the ColourId in all types. Finds only the first hit, if the names are not unique.
+     */
+    int findColourId (juce::Identifier name);
+
+    /**
      Returns all possible properties (except colour names) for the editor.
      */
     juce::StringArray getAllLayoutPropertyNames() const;
