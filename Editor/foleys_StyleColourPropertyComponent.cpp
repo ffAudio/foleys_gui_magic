@@ -76,7 +76,7 @@ void StyleColourPropertyComponent::refresh()
 
     repaint();
 }
-    
+
 void StyleColourPropertyComponent::setColourDisplay (juce::Colour colour)
 {
     if (colour.isTransparent())

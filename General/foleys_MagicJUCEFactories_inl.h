@@ -27,17 +27,10 @@
  ==============================================================================
  */
 
+#pragma once
+
 namespace foleys
 {
-
-void MagicBuilder::registerJUCELookAndFeels()
-{
-    stylesheet.registerLookAndFeel ("LookAndFeel_V1", std::make_unique<juce::LookAndFeel_V1>());
-    stylesheet.registerLookAndFeel ("LookAndFeel_V2", std::make_unique<juce::LookAndFeel_V2>());
-    stylesheet.registerLookAndFeel ("LookAndFeel_V3", std::make_unique<juce::LookAndFeel_V3>());
-    stylesheet.registerLookAndFeel ("LookAndFeel_V4", std::make_unique<juce::LookAndFeel_V4>());
-    stylesheet.registerLookAndFeel ("FoleysFinest", std::make_unique<LookAndFeel>());
-}
 
 
 template <typename AppType>

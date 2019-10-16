@@ -50,11 +50,19 @@ struct SettableProperty
 class MagicBuilder : private juce::ValueTree::Listener
 {
 public:
-    MagicBuilder (juce::Component& parent);
+    MagicBuilder();
 
     virtual ~MagicBuilder();
 
-    void restoreGUI (const juce::ValueTree& gui);
+    /**
+     Allows to set the GUI definition when reloading
+     */
+    void setConfigTree (const juce::ValueTree& config);
+
+    /**
+     This triggers the rebuild of the GUI with setting the parent component
+     */
+    void restoreGUI (juce::Component& parent);
 
     /**
      Grant access to the stylesheet to look up visual and layout properties
@@ -102,6 +110,12 @@ public:
     void registerJUCELookAndFeels();
 
     /**
+     Calling this method will register the bundled JUCE factories to give already access to
+     many JUCE Components.
+     */
+    virtual void registerJUCEFactories() {}
+
+    /**
      For each factory you can register a translation table, which will forward the colours from the
      Stylesheet to the Components.
      */
@@ -146,6 +160,11 @@ public:
     virtual void createDefaultGUITree (bool keepExisting) = 0;
 
     /**
+     This creates a hierarchical DOM according to the parameters defined in an AudioProcessor
+     */
+    void createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree);
+
+    /**
      returns the names of all registered factories
      */
     virtual juce::StringArray getFactoryNames() const = 0;
@@ -165,6 +184,8 @@ public:
 
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    void attachToolboxToWindow (juce::Component& window);
+
     /**
      This method sets the GUI in edit mode, that allows to drag the components around.
      */
@@ -192,23 +213,24 @@ protected:
 
 private:
 
-    void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
-                                   const juce::Identifier& property) override;
+    void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override
+    { updateAll(); }
 
-    void valueTreeChildAdded (juce::ValueTree& parentTree,
-                              juce::ValueTree& childWhichHasBeenAdded) override;
+    void valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&) override
+    { updateAll(); }
 
-    void valueTreeChildRemoved (juce::ValueTree& parentTree,
-                                juce::ValueTree& childWhichHasBeenRemoved,
-                                int indexFromWhichChildWasRemoved) override;
+    void valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int) override
+    { updateAll(); }
 
-    void valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhoseChildrenHaveMoved,
-                                     int oldIndex, int newIndex) override;
+    void valueTreeChildOrderChanged (juce::ValueTree&, int, int) override
+    { updateAll(); }
 
-    void valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasChanged) override;
+    void valueTreeParentChanged (juce::ValueTree&) override
+    { updateAll(); }
 
+    //==============================================================================
 
-    juce::Component& parent;
+    juce::Component::SafePointer<juce::Component> parent;
 
     std::unique_ptr<Decorator> root;
 
@@ -247,7 +269,14 @@ public:
      @param magicState  an optional pointer to the MagicProcessorState. This is only useful
                         for AudioProcessors, but will allow automatic connection of parameters.
      */
-    MagicGUIBuilder (juce::Component& parent, AppType& app, MagicProcessorState* magicState);
+    MagicGUIBuilder (AppType& appToUse, MagicProcessorState* magicStateToUse);
+
+    /**
+     Calling this method will register the bundled JUCE factories to give already access to
+     many JUCE Components.
+     */
+    void registerJUCEFactories() override;
+
 
     /**
      This method creates a default DOM from the MagicProcessorState. It will read the
@@ -256,11 +285,8 @@ public:
      */
     void createDefaultGUITree (bool keepExisting) override;
 
-    void createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree);
 
     void registerFactory (juce::Identifier type, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&, AppType&)> factory);
-
-    void registerJUCEFactories();
 
     /**
      returns the names of all registered factories
