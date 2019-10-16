@@ -31,12 +31,9 @@
 
 #include <stack>
 
-#include "General/foleys_StringDefinitions.cpp"
-
 #include "General/foleys_MagicGUIBuilder.cpp"
 #include "General/foleys_MagicPluginEditor.cpp"
 #include "General/foleys_MagicProcessorState.cpp"
-#include "General/foleys_JuceFactories.cpp"
 
 #include "Layout/foleys_Stylesheet.cpp"
 #include "Layout/foleys_Decorator.cpp"

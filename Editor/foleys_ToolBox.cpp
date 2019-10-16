@@ -118,7 +118,7 @@ void ToolBox::loadDialog()
 
         if (tree.isValid() && tree.getType() == IDs::magic)
         {
-            builder.restoreGUI (tree);
+            builder.setConfigTree (tree);
             stateWasReloaded();
         }
 

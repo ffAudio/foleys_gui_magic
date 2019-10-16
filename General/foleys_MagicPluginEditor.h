@@ -41,16 +41,16 @@ class MagicPluginEditor  : public juce::AudioProcessorEditor,
                            public juce::DragAndDropContainer
 {
 public:
-    MagicPluginEditor (MagicProcessorState& processorState);
+    MagicPluginEditor (MagicProcessorState& processorState, std::unique_ptr<MagicBuilder> builder = {});
 
-    MagicPluginEditor (MagicProcessorState& processorState, const char* data, const int dataSize);
+    MagicPluginEditor (MagicProcessorState& processorState, const char* data, const int dataSize, std::unique_ptr<MagicBuilder> builder = {});
 
     /**
      Setup a GUI from a previously stored ValueTree
 
      @param gui the ValueTree that defines the GUI of the editor
      */
-    void restoreGUI (const juce::ValueTree& gui);
+    void setConfigTree (const juce::ValueTree& gui);
 
     /**
      Setup a GUI from a previously stored ValueTree. This is the
@@ -68,19 +68,20 @@ public:
      @param data points to the binary data of the XML file
      @param dataSize the number of bytes
      */
-    void restoreGUI (const char* data, const int dataSize);
+    void setConfigTree (const char* data, const int dataSize);
 
     void paint (juce::Graphics& g) override;
 
     void resized() override;
 
 private:
+    std::unique_ptr<MagicBuilder> createBuilderInstance();
 
     void updateSize();
 
     MagicProcessorState& processorState;
 
-    MagicGUIBuilder<juce::AudioProcessor> builder { *this, processorState.getProcessor(), &processorState };
+    std::unique_ptr<MagicBuilder> builder;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicPluginEditor)
 };

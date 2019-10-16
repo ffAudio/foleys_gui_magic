@@ -32,38 +32,51 @@
 namespace foleys
 {
 
-MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse)
+MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, std::unique_ptr<MagicBuilder> builderToUse)
   : juce::AudioProcessorEditor (stateToUse.getProcessor()),
     processorState (stateToUse)
 {
-#if FOLEYS_REGISTER_JUCE_COMPONENTS
-    builder.registerJUCEFactories();
-#endif
+    if (builderToUse.get() != nullptr)
+        builder = std::move (builderToUse);
+    else
+        builder = createBuilderInstance();
 
-#if FOLEYS_REGISTER_JUCE_LOOKANDFEELS
-    builder.registerJUCELookAndFeels();
-#endif
+    builder->restoreGUI (*this);
 
-    builder.updateAll();
+    builder->updateAll();
 
     updateSize();
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    builder->attachToolboxToWindow (*this);
+#endif
 }
 
-MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const char* data, const int dataSize)
+MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const char* data, const int dataSize, std::unique_ptr<MagicBuilder> builderToUse)
   : juce::AudioProcessorEditor (stateToUse.getProcessor()),
     processorState (stateToUse)
 {
-#if FOLEYS_REGISTER_JUCE_COMPONENTS
-    builder.registerJUCEFactories();
-#endif
+    if (builderToUse.get() != nullptr)
+        builder = std::move (builderToUse);
+    else
+        builder = createBuilderInstance();
 
-#if FOLEYS_REGISTER_JUCE_LOOKANDFEELS
-    builder.registerJUCELookAndFeels();
-#endif
-
-    restoreGUI (data, dataSize);
+    setConfigTree (data, dataSize);
 
     updateSize();
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    builder->attachToolboxToWindow (*this);
+#endif
+}
+
+std::unique_ptr<MagicBuilder> MagicPluginEditor::createBuilderInstance()
+{
+    auto newBuilder = std::make_unique<MagicGUIBuilder<juce::AudioProcessor>>(processorState.getProcessor(), &processorState);
+    newBuilder->registerJUCEFactories();
+    newBuilder->registerJUCELookAndFeels();
+
+    return newBuilder;
 }
 
 void MagicPluginEditor::updateSize()
@@ -77,16 +90,17 @@ void MagicPluginEditor::updateSize()
     setSize (width, height);
 }
 
-void MagicPluginEditor::restoreGUI (const juce::ValueTree& gui)
+void MagicPluginEditor::setConfigTree (const juce::ValueTree& gui)
 {
-    builder.restoreGUI (gui);
+    builder->setConfigTree (gui);
+    builder->restoreGUI (*this);
 }
 
-void MagicPluginEditor::restoreGUI (const char* data, const int dataSize)
+void MagicPluginEditor::setConfigTree (const char* data, const int dataSize)
 {
     juce::String text (data, dataSize);
     auto gui = juce::ValueTree::fromXml (text);
-    restoreGUI (gui);
+    setConfigTree (gui);
 }
 
 void MagicPluginEditor::paint (juce::Graphics& g)
@@ -96,7 +110,7 @@ void MagicPluginEditor::paint (juce::Graphics& g)
 
 void MagicPluginEditor::resized()
 {
-    builder.updateLayout();
+    builder->updateLayout();
 
     processorState.setLastEditorSize (getWidth(), getHeight());
 }
