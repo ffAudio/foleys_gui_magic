@@ -34,11 +34,11 @@ namespace foleys
 
 struct SettableProperty
 {
-    using OptionsType=std::vector<std::pair<juce::String, juce::var>>;
-    juce::Identifier                                                     name;
-    OptionsType                                                          options;
-    std::function<void(juce::Component*, juce::var, const OptionsType&)> setter;
-    juce::String                                                         defaultValue;
+    using OptionsVector=std::vector<std::pair<juce::String, juce::var>>;
+    juce::Identifier                                                       name;
+    OptionsVector                                                          options;
+    std::function<void(juce::Component*, juce::var, const OptionsVector&)> setter;
+    juce::String                                                           defaultValue;
 };
 
 /**

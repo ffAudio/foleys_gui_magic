@@ -89,35 +89,6 @@ void MagicGUIBuilder<AppType>::createDefaultGUITree (bool keepExisting)
     }
 }
 
-//template<class AppType>
-//void MagicGUIBuilder<AppType>::createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree)
-//{
-//    for (const auto& sub : tree.getSubgroups (false))
-//    {
-//        auto child = juce::ValueTree (IDs::view, {
-//            {IDs::caption, sub->getName()},
-//            {IDs::styleClass, "group"}});
-//
-//        createDefaultFromParameters (child, *sub);
-//        node.appendChild (child, nullptr);
-//    }
-//
-//    for (const auto& param : tree.getParameters (false))
-//    {
-//        auto child = juce::ValueTree (IDs::slider);
-//        if (dynamic_cast<juce::AudioParameterChoice*>(param) != nullptr)
-//            child = juce::ValueTree (IDs::comboBox);
-//        else if (dynamic_cast<juce::AudioParameterBool*>(param) != nullptr)
-//            child = juce::ValueTree (IDs::toggleButton);
-//
-//        child.setProperty (IDs::caption, param->getName (64), nullptr);
-//        if (const auto* parameterWithID = dynamic_cast<juce::AudioProcessorParameterWithID*>(param))
-//            child.setProperty (IDs::parameter, parameterWithID->paramID, nullptr);
-//
-//        node.appendChild (child, nullptr);
-//    }
-//}
-
 template<class AppType>
 void MagicGUIBuilder<AppType>::registerFactory (juce::Identifier type, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&, AppType&)> factory)
 {

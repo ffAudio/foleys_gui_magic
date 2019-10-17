@@ -338,7 +338,9 @@ juce::ValueTree Stylesheet::createDefaultStyle()
             { "plot-view", {
                 { IDs::border, 2 },
                 { IDs::backgroundColour, "black" },
-                { IDs::borderColour, "silver" }} },
+                { IDs::borderColour, "silver" },
+                { IDs::display, IDs::contents }
+            } },
             { "nomargin", {
                 { IDs::margin, 0 },
                 { IDs::padding, 0 },

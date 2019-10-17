@@ -90,6 +90,8 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node, const juce::Identifi
 
     addDecoratorProperties (false, propToScrollTo);
 
+    juce::Array<juce::PropertyComponent*> additional;
+
     if (stylesheet.isClassNode (styleItem))
     {
         for (auto factoryName : builder.getFactoryNames())
@@ -97,7 +99,6 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node, const juce::Identifi
     }
     else
     {
-        juce::Array<juce::PropertyComponent*> additional;
         if (styleItem.getType() == IDs::plot)
             additional.add (new StyleChoicePropertyComponent (builder, IDs::source, styleItem, builder.getPlotSourcesNames()));
         else if (styleItem.getType() == IDs::slider ||
@@ -110,7 +111,7 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node, const juce::Identifi
     }
 
     if (styleItem.getType() == IDs::view || stylesheet.isClassNode (styleItem))
-        addFlexContainerProperties (false, propToScrollTo);
+        addContainerProperties (false, propToScrollTo);
 
     addFlexItemProperties (false, propToScrollTo);
 
@@ -231,9 +232,10 @@ void PropertiesEditor::addFlexItemProperties (bool shouldBeOpen, const juce::Ide
     properties.addSection ("Flex-Item", array, shouldBeOpen);
 }
 
-void PropertiesEditor::addFlexContainerProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo)
+void PropertiesEditor::addContainerProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo)
 {
-    if (propToScrollTo == IDs::flexDirection ||
+    if (propToScrollTo == IDs::display ||
+        propToScrollTo == IDs::flexDirection ||
         propToScrollTo == IDs::flexWrap ||
         propToScrollTo == IDs::flexAlignContent ||
         propToScrollTo == IDs::flexAlignItems ||
@@ -241,6 +243,8 @@ void PropertiesEditor::addFlexContainerProperties (bool shouldBeOpen, const juce
         shouldBeOpen = true;
 
     juce::Array<juce::PropertyComponent*> array;
+
+    array.add (new StyleChoicePropertyComponent (builder, IDs::display, styleItem, { IDs::contents, IDs::flexbox }));
 
     array.add (new StyleChoicePropertyComponent (builder, IDs::flexDirection, styleItem, { IDs::flexDirRow, IDs::flexDirRowReverse, IDs::flexDirColumn, IDs::flexDirColumnReverse }));
     array.add (new StyleChoicePropertyComponent (builder, IDs::flexWrap, styleItem, { IDs::flexNoWrap, IDs::flexWrapNormal, IDs::flexWrapReverse }));
