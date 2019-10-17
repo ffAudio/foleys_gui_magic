@@ -32,13 +32,17 @@
 namespace foleys
 {
 
+/**
+ A SettableProperty is a value that can be selected by the designer and will be
+ set for the Component each time the ValueTree is loaded.
+ */
 struct SettableProperty
 {
-    using OptionsVector=std::vector<std::pair<juce::String, juce::var>>;
-    juce::Identifier                                                       name;
-    OptionsVector                                                          options;
-    std::function<void(juce::Component*, juce::var, const OptionsVector&)> setter;
-    juce::String                                                           defaultValue;
+    using OptionsMap=std::map<juce::String, juce::var>;
+    juce::Identifier                                                    name;
+    OptionsMap                                                          options;
+    std::function<void(juce::Component*, juce::var, const OptionsMap&)> setter;
+    juce::String                                                        defaultValue;
 };
 
 /**

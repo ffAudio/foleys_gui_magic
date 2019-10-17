@@ -64,7 +64,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
             { "rotary",            juce::Slider::RotaryHorizontalVerticalDrag },
             { "inc-dec-buttons",   juce::Slider::IncDecButtons }
         },
-        [] (juce::Component* component, juce::var value, const SettableProperty::OptionsVector& options)
+        [] (juce::Component* component, juce::var value, const auto& options)
         {
             if (auto* slider = dynamic_cast<juce::Slider*>(component))
             {
@@ -91,7 +91,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                                  { "textbox-above", juce::Slider::TextBoxAbove },
                                  { "textbox-below", juce::Slider::TextBoxBelow }
                              },
-                             [] (juce::Component* component, juce::var value, const SettableProperty::OptionsVector& options)
+                             [] (juce::Component* component, juce::var value, const auto& options)
                              {
                                  if (auto* slider = dynamic_cast<juce::Slider*>(component))
                                  {
