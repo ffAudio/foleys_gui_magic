@@ -99,13 +99,11 @@ void Decorator::configureComponent (Stylesheet& stylesheet, const juce::ValueTre
     if (component.get() == nullptr)
         return;
 
-    const auto properties = magicBuilder.getSettableProperties (node.getType());
-    for (const auto& p : properties)
+    for (const auto& p : magicBuilder.getSettableProperties (node.getType()))
     {
-        auto value = stylesheet.getProperty (p.name, node);
-        if (value.isVoid())
-            value = p.defaultValue;
-        p.setter (component.get(), value, p.options);
+        auto value = stylesheet.getProperty (p->name, node);
+        if (value.isVoid() == false)
+            p->set (component.get(), value);
     }
 }
 

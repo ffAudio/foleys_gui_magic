@@ -186,17 +186,24 @@ void PropertiesEditor::addTypeProperties (juce::Identifier type, juce::Array<juc
 
     array.addArray (additional);
 
-    for (auto p : builder.getSettableProperties (type))
+    for (const auto& p : builder.getSettableProperties (type))
     {
-        juce::StringArray       choices;
-        juce::Array<juce::var>  values;
+        if (const auto* choice = dynamic_cast<const SettableChoiceProperty*>(p.get()))
+        {
+            juce::StringArray       choices;
+            juce::Array<juce::var>  values;
 
-        for (auto o : p.options)
-            choices.add (o.first);
+            for (auto o : choice->options)
+                choices.add (o.name.toString());
 
-        array.add (new StyleChoicePropertyComponent (builder, p.name, styleItem, choices));
+            array.add (new StyleChoicePropertyComponent (builder, p->name, styleItem, choices));
+        }
+        else if (const auto* text = dynamic_cast<const SettableTextProperty*>(p.get()))
+        {
+            array.add (new StyleTextPropertyComponent (builder, p->name, styleItem));
+        }
 
-        if (p.name == propToScrollTo)
+        if (p->name == propToScrollTo)
             shouldBeOpen = true;
     }
 

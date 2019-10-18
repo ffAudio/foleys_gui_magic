@@ -239,22 +239,26 @@ juce::StringArray MagicBuilder::getAllLayoutPropertyNames() const
     };
 }
 
-void MagicBuilder::addSettableProperty (juce::Identifier type, SettableProperty property)
+void MagicBuilder::addSettableProperty (juce::Identifier type, std::unique_ptr<SettableProperty> property)
 {
     const auto& it = settableProperties.find (type);
     if (it == settableProperties.end())
-        settableProperties [type] = { property };
+    {
+        std::vector<std::unique_ptr<SettableProperty>> v;
+        v.push_back (std::move (property));
+        settableProperties.emplace (std::make_pair (type, std::move (v)));
+    }
     else
-        it->second.push_back (property);
+        it->second.push_back (std::move (property));
 }
 
-std::vector<SettableProperty> MagicBuilder::getSettableProperties (juce::Identifier type) const
+const std::vector<std::unique_ptr<SettableProperty>>& MagicBuilder::getSettableProperties (juce::Identifier type) const
 {
     const auto& it = settableProperties.find (type);
     if (it != settableProperties.end())
         return it->second;
 
-    return {};
+    return emptyPropertyList;
 }
 
 void MagicBuilder::createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree)

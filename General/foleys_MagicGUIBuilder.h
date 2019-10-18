@@ -38,11 +38,47 @@ namespace foleys
  */
 struct SettableProperty
 {
-    using OptionsMap=std::map<juce::String, juce::var>;
-    juce::Identifier                                                    name;
-    OptionsMap                                                          options;
-    std::function<void(juce::Component*, juce::var, const OptionsMap&)> setter;
-    juce::String                                                        defaultValue;
+    SettableProperty (const juce::Identifier& n)
+    : name (n) {}
+    virtual ~SettableProperty() = default;
+
+    virtual void set (juce::Component*, juce::var) const = 0;
+    juce::Identifier name;
+};
+
+struct SettableChoiceProperty : public SettableProperty
+{
+    SettableChoiceProperty (const juce::Identifier& n, juce::NamedValueSet m, std::function<void(juce::Component*, juce::var, const juce::NamedValueSet&)> s, juce::String d)
+    : SettableProperty (n), options (m), setter (s), defaultValue (d) {}
+
+    void set (juce::Component* c, juce::var v) const override
+    {
+        if (setter)
+        {
+            if (v.isVoid())
+                setter (c, defaultValue, options);
+            else
+                setter (c, v, options);
+        }
+    }
+
+    juce::NamedValueSet                                                          options;
+    std::function<void(juce::Component*, juce::var, const juce::NamedValueSet&)> setter;
+    juce::String                                                                 defaultValue;
+};
+
+struct SettableTextProperty : public SettableProperty
+{
+    SettableTextProperty (const juce::Identifier& n, std::function<void(juce::Component*, juce::var)> s)
+    : SettableProperty (n), setter (s) {}
+
+    void set (juce::Component* c, juce::var v) const override
+    {
+        if (setter && v.isVoid() == false)
+            setter (c, v);
+    }
+
+    std::function<void(juce::Component*, juce::var)> setter;
 };
 
 /**
@@ -183,8 +219,8 @@ public:
      */
     virtual juce::StringArray getPlotSourcesNames() const = 0;
 
-    void addSettableProperty (juce::Identifier type, SettableProperty property);
-    std::vector<SettableProperty> getSettableProperties (juce::Identifier type) const;
+    void addSettableProperty (juce::Identifier type, std::unique_ptr<SettableProperty> property);
+    const std::vector<std::unique_ptr<SettableProperty>>& getSettableProperties (juce::Identifier type) const;
 
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
@@ -241,7 +277,8 @@ private:
     bool editMode = false;
     juce::ValueTree selectedNode;
 
-    std::map<juce::Identifier, std::vector<SettableProperty>> settableProperties;
+    std::map<juce::Identifier, std::vector<std::unique_ptr<SettableProperty>>> settableProperties;
+    const std::vector<std::unique_ptr<SettableProperty>> emptyPropertyList;
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     std::unique_ptr<ToolBox> magicToolBox;

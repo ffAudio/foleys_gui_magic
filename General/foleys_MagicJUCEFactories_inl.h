@@ -56,58 +56,50 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     });
 
     addSettableProperty (IDs::slider,
-    {
-        "slider-type",
-        {
-            { "linear-horizontal", juce::Slider::LinearHorizontal },
-            { "linear-vertical",   juce::Slider::LinearVertical },
-            { "rotary",            juce::Slider::RotaryHorizontalVerticalDrag },
-            { "inc-dec-buttons",   juce::Slider::IncDecButtons }
-        },
-        [] (juce::Component* component, juce::var value, const auto& options)
-        {
-            if (auto* slider = dynamic_cast<juce::Slider*>(component))
-            {
-                for (auto& o : options)
-                {
-                    if (value == o.first)
-                    {
-                        slider->setSliderStyle (juce::Slider::SliderStyle ( int(o.second)));
-                        break;
-                    }
-                }
-            }
-        },
-        "rotary"
-    });
+                         std::make_unique<SettableChoiceProperty>
+                         (
+                          "slider-type",
+                          juce::NamedValueSet {
+                              { "linear-horizontal", juce::Slider::LinearHorizontal },
+                              { "linear-vertical",   juce::Slider::LinearVertical },
+                              { "rotary",            juce::Slider::RotaryHorizontalVerticalDrag },
+                              { "inc-dec-buttons",   juce::Slider::IncDecButtons }
+                          },
+                          [] (juce::Component* component, juce::var value, const juce::NamedValueSet& options)
+                          {
+                              if (auto* slider = dynamic_cast<juce::Slider*>(component))
+                              {
+                                  const auto& v = options [value.toString()];
+                                  if (v.isVoid() == false)
+                                      slider->setSliderStyle (juce::Slider::SliderStyle ( int (v)));
+                              }
+                          },
+                          "rotary"
+                          ));
 
     addSettableProperty (IDs::slider,
-                         {
-                             "slider-textbox",
-                             {
-                                 { "no-textbox",    juce::Slider::NoTextBox },
-                                 { "textbox-left",  juce::Slider::TextBoxLeft },
-                                 { "textbox-right", juce::Slider::TextBoxRight },
-                                 { "textbox-above", juce::Slider::TextBoxAbove },
-                                 { "textbox-below", juce::Slider::TextBoxBelow }
-                             },
-                             [] (juce::Component* component, juce::var value, const auto& options)
-                             {
-                                 if (auto* slider = dynamic_cast<juce::Slider*>(component))
-                                 {
-                                     for (auto& o : options)
-                                     {
-                                         if (value == o.first)
-                                         {
-                                             slider->setTextBoxStyle (juce::Slider::TextEntryBoxPosition (int (o.second)),
-                                                                      false, slider->getTextBoxWidth(), slider->getTextBoxHeight());
-                                             break;
-                                         }
-                                     }
-                                 }
-                             },
-                             "textbox-below"
-                         });
+                         std::make_unique<SettableChoiceProperty>
+                         (
+                          "slider-textbox",
+                          juce::NamedValueSet {
+                              { "no-textbox",    juce::Slider::NoTextBox },
+                              { "textbox-left",  juce::Slider::TextBoxLeft },
+                              { "textbox-right", juce::Slider::TextBoxRight },
+                              { "textbox-above", juce::Slider::TextBoxAbove },
+                              { "textbox-below", juce::Slider::TextBoxBelow }
+                          },
+                          [] (juce::Component* component, juce::var value, const juce::NamedValueSet& options)
+                          {
+                              if (auto* slider = dynamic_cast<juce::Slider*>(component))
+                              {
+                                  const auto& v = options [value.toString()];
+                                  if (v.isVoid() == false)
+                                      slider->setTextBoxStyle (juce::Slider::TextEntryBoxPosition (int (v)),
+                                                               false, slider->getTextBoxWidth(), slider->getTextBoxHeight());
+                              }
+                          },
+                          "textbox-below"
+                          ));
 
     //==============================================================================
 
@@ -142,6 +134,16 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                               { "button-off-text", juce::TextButton::textColourOffId },
                               { "button-on-text", juce::TextButton::textColourOnId }
                           });
+
+    addSettableProperty (IDs::textButton,
+                         std::make_unique<SettableTextProperty>
+                         (
+                          "text",
+                          [] (juce::Component* component, juce::var value)
+                          {
+                              if (auto* button = dynamic_cast<juce::TextButton*>(component))
+                                  button->setButtonText (value.toString());
+                          }));
 
     //==============================================================================
 
@@ -217,31 +219,29 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                           });
 
     addSettableProperty (IDs::xyDragComponent,
-                         {
-                             "xy-crosshair",
-                             {
-                                 { "no-crosshair",          0x00 },
-                                 { "crosshair-vertical",    0x01 },
-                                 { "crosshair-horizontal",  0x02 },
-                                 { "crosshair",             0x03 }
-                             },
-                             [] (juce::Component* component, juce::var value, const auto& options)
-                             {
-                                 if (auto* xydrag = dynamic_cast<XYDragComponent*>(component))
-                                 {
-                                     for (auto& o : options)
-                                     {
-                                         if (value == o.first)
-                                         {
-                                             int bits = o.second;
-                                             xydrag->setCrossHair (bits & 0x01, bits & 0x02);
-                                             break;
-                                         }
-                                     }
-                                 }
-                             },
-                             "crosshair"
-                         });
+                         std::make_unique<SettableChoiceProperty>
+                         (
+                          "xy-crosshair",
+                          juce::NamedValueSet {
+                              { "no-crosshair",          0x00 },
+                              { "crosshair-vertical",    0x01 },
+                              { "crosshair-horizontal",  0x02 },
+                              { "crosshair",             0x03 }
+                          },
+                          [] (juce::Component* component, juce::var value, const auto& options)
+                          {
+                              if (auto* xydrag = dynamic_cast<XYDragComponent*>(component))
+                              {
+                                  const auto& v = options [value.toString()];
+                                  if (v.isVoid() == false)
+                                  {
+                                      int bits = v;
+                                      xydrag->setCrossHair (bits & 0x01, bits & 0x02);
+                                  }
+                              }
+                          },
+                          "crosshair"
+                          ));
 
 }
 
