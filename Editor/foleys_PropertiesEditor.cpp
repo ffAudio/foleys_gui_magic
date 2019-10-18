@@ -106,6 +106,11 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node, const juce::Identifi
                  styleItem.getType() == IDs::textButton ||
                  styleItem.getType() == IDs::toggleButton)
             additional.add (new StyleChoicePropertyComponent (builder, IDs::parameter, styleItem, builder.getParameterNames()));
+        else if (styleItem.getType() == IDs::xyDragComponent)
+        {
+            additional.add (new StyleChoicePropertyComponent (builder, IDs::parameterX, styleItem, builder.getParameterNames()));
+            additional.add (new StyleChoicePropertyComponent (builder, IDs::parameterY, styleItem, builder.getParameterNames()));
+        }
 
         addTypeProperties (styleItem.getType(), additional, true, propToScrollTo);
     }

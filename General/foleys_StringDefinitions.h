@@ -43,6 +43,7 @@ namespace IDs
     static juce::Identifier toggleButton { "ToggleButton" };
     static juce::Identifier comboBox     { "ComboBox" };
     static juce::Identifier plot         { "Plot" };
+    static juce::Identifier xyDragComponent { "XYDragComponent" };
 
     static juce::Identifier caption      { "caption" };
     static juce::Identifier captionPlacement { "caption-placement" };
@@ -50,6 +51,8 @@ namespace IDs
     static juce::Identifier captionSize  { "caption-size" };
     static juce::Identifier lookAndFeel  { "lookAndFeel" };
     static juce::Identifier parameter    { "parameter" };
+    static juce::Identifier parameterX   { "parameter-x" };
+    static juce::Identifier parameterY   { "parameter-y" };
     static juce::Identifier source       { "source" };
 
     static juce::Identifier name         { "name" };

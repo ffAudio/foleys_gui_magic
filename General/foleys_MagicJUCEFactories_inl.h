@@ -185,6 +185,64 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                               { "plot-inactive-fill-color", MagicPlotComponent::plotInactiveFillColourId }
                           });
 
+    //==============================================================================
+
+    registerFactory (IDs::xyDragComponent,
+                     [&] (const juce::ValueTree& config, auto& app)
+                     {
+                         if (magicState == nullptr)
+                             return std::unique_ptr<XYDragComponent>();
+
+                         auto item = std::make_unique<XYDragComponent>(magicState->getValueTreeState());
+
+                         auto paramX = config.getProperty (IDs::parameterX).toString();
+                         if (paramX.isNotEmpty())
+                             item->setParameterX (paramX);
+
+                         auto paramY = config.getProperty (IDs::parameterY).toString();
+                         if (paramY.isNotEmpty())
+                             item->setParameterY (paramY);
+
+                         return std::move (item);
+                     });
+
+    setColourTranslation (IDs::xyDragComponent,
+                          {
+                              { "xy-drag-handle",      XYDragComponent::xyDotColourId },
+                              { "xy-drag-handle-over", XYDragComponent::xyDotOverColourId },
+                              { "xy-horizontal",       XYDragComponent::xyHorizontalColourId },
+                              { "xy-horizontal-over",  XYDragComponent::xyHorizontalOverColourId },
+                              { "xy-vertical",         XYDragComponent::xyVerticalColourId },
+                              { "xy-vertical-over",    XYDragComponent::xyVerticalOverColourId }
+                          });
+
+    addSettableProperty (IDs::xyDragComponent,
+                         {
+                             "xy-crosshair",
+                             {
+                                 { "no-crosshair",          0x00 },
+                                 { "crosshair-vertical",    0x01 },
+                                 { "crosshair-horizontal",  0x02 },
+                                 { "crosshair",             0x03 }
+                             },
+                             [] (juce::Component* component, juce::var value, const auto& options)
+                             {
+                                 if (auto* xydrag = dynamic_cast<XYDragComponent*>(component))
+                                 {
+                                     for (auto& o : options)
+                                     {
+                                         if (value == o.first)
+                                         {
+                                             int bits = o.second;
+                                             xydrag->setCrossHair (bits & 0x01, bits & 0x02);
+                                             break;
+                                         }
+                                     }
+                                 }
+                             },
+                             "crosshair"
+                         });
+
 }
 
 } // namespace foleys

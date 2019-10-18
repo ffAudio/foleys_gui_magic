@@ -34,37 +34,57 @@ namespace foleys
 
 /**
  */
-class MagicPlotComponent  : public juce::Component,
-                            private juce::AsyncUpdater,
-                            private juce::ChangeListener
+class XYDragComponent  : public juce::Component
 {
 public:
 
     enum ColourIds
     {
-        plotColourId = 0x2001000,
-        plotInactiveColourId,
-        plotFillColourId,
-        plotInactiveFillColourId
+        xyDotColourId = 0x2002000,
+        xyDotOverColourId,
+        xyHorizontalColourId,
+        xyHorizontalOverColourId,
+        xyVerticalColourId,
+        xyVerticalOverColourId
     };
 
-    MagicPlotComponent();
-    ~MagicPlotComponent();
+    XYDragComponent (juce::AudioProcessorValueTreeState& state);
 
-    void setPlotSource (MagicPlotSource* source);
+    void setCrossHair (bool horizontal, bool vertical);
 
     void paint (juce::Graphics& g) override;
 
-    void changeListenerCallback (juce::ChangeBroadcaster *source) override;
-    void handleAsyncUpdate() override;
+    void setParameterX (const juce::String& paramID);
+    void setParameterY (const juce::String& paramID);
 
-    bool hitTest (int, int) override
-    { return false; }
+    bool hitTest (int x, int y) override;
+    void mouseDown (const juce::MouseEvent&) override;
+    void mouseMove (const juce::MouseEvent&) override;
+    void mouseDrag (const juce::MouseEvent&) override;
+    void mouseUp (const juce::MouseEvent&) override;
+    void mouseEnter (const juce::MouseEvent&) override;
+    void mouseExit (const juce::MouseEvent&) override;
 
 private:
-    juce::WeakReference<MagicPlotSource> plotSource;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicPlotComponent)
+    void updateWhichToDrag (juce::Point<float> p);
+
+    int getXposition() const;
+    int getYposition() const;
+
+    bool mouseOverDot = false;
+    bool mouseOverX   = false;
+    bool mouseOverY   = false;
+
+    bool wantsHorizontalDrag = true;
+    bool wantsVerticalDrag = true;
+
+    ParameterAttachment<float> xAttachment;
+    ParameterAttachment<float> yAttachment;
+
+    static float radius;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (XYDragComponent)
 };
 
 } // namespace foleys

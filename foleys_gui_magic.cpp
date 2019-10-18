@@ -43,6 +43,7 @@
 #include "Visualisers/foleys_MagicAnalyser.cpp"
 #include "Visualisers/foleys_MagicOscilloscope.cpp"
 #include "Visualisers/foleys_MagicPlotComponent.cpp"
+#include "Visualisers/foleys_XYDragComponent.cpp"
 
 #include "LookAndFeels/foleys_LookAndFeel.cpp"
 

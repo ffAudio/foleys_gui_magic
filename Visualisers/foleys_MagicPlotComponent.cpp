@@ -40,7 +40,6 @@ MagicPlotComponent::MagicPlotComponent()
     setColour (plotInactiveFillColourId, juce::Colours::orange.darker().withAlpha (0.5f));
 
     setOpaque (false);
-    setInterceptsMouseClicks (false, false);
 }
 
 MagicPlotComponent::~MagicPlotComponent()

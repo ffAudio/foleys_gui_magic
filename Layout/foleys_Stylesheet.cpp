@@ -357,6 +357,7 @@ juce::ValueTree Stylesheet::createDefaultStyle()
             { "TextButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }, { IDs::captionSize, 0 }} },
             { "ComboBox", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }, { IDs::captionSize, 0 }} },
             { "Plot", {{ IDs::border, 0 }, { IDs::margin, 0 }, { IDs::padding, 0 }, { IDs::backgroundColour, "00000000" }} },
+            { "XYDragComponent", {{ IDs::border, 0 }, { IDs::margin, 0 }, { IDs::padding, 0 }, { IDs::backgroundColour, "00000000" }} }
         } }
     });
 
