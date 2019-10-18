@@ -68,6 +68,8 @@
 
 #include "General/foleys_StringDefinitions.h"
 
+#include "Helpers/foleys_ParameterAttachment.h"
+
 #include "Layout/foleys_Stylesheet.h"
 #include "Layout/foleys_Decorator.h"
 #include "Layout/foleys_Container.h"
@@ -80,6 +82,7 @@
 #include "Visualisers/foleys_MagicAnalyser.h"
 #include "Visualisers/foleys_MagicOscilloscope.h"
 #include "Visualisers/foleys_MagicPlotComponent.h"
+#include "Visualisers/foleys_XYDragComponent.h"
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 

@@ -49,7 +49,7 @@ public:
     void addDecoratorProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo=juce::Identifier());
     void addTypeProperties (juce::Identifier type, juce::Array<juce::PropertyComponent*> additional, bool shouldBeOpen, const juce::Identifier& propToScrollTo=juce::Identifier());
     void addFlexItemProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo=juce::Identifier());
-    void addFlexContainerProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo=juce::Identifier());
+    void addContainerProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo=juce::Identifier());
 
     void paint (juce::Graphics&) override;
     void resized() override;
