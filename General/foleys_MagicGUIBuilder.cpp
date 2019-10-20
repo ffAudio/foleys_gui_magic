@@ -206,39 +206,6 @@ juce::StringArray MagicBuilder::getAllColourNames() const
     return names;
 }
 
-juce::StringArray MagicBuilder::getAllLayoutPropertyNames() const
-{
-    return
-    {
-        IDs::id.toString(),
-        IDs::styleClass.toString(),
-        IDs::lookAndFeel.toString(),
-        IDs::margin.toString(),
-        IDs::padding.toString(),
-        IDs::border.toString(),
-        IDs::backgroundImage.toString(),
-        IDs::caption.toString(),
-        IDs::captionSize.toString(),
-        IDs::captionPlacement.toString(),
-        IDs::display.toString(),
-        IDs::flexDirection.toString(),
-        IDs::flexGrow.toString(),
-        IDs::flexShrink.toString(),
-        IDs::flexWrap.toString(),
-        IDs::flexOrder.toString(),
-        IDs::flexAlignContent.toString(),
-        IDs::flexAlignItems.toString(),
-        IDs::flexJustifyContent.toString(),
-        IDs::flexAlignSelf.toString(),
-        IDs::minWidth.toString(),
-        IDs::maxWidth.toString(),
-        IDs::minHeight.toString(),
-        IDs::maxHeight.toString(),
-        IDs::width.toString(),
-        IDs::height.toString()
-    };
-}
-
 void MagicBuilder::addSettableProperty (juce::Identifier type, std::unique_ptr<SettableProperty> property)
 {
     settableProperties [type].push_back (std::move (property));

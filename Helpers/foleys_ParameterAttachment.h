@@ -42,7 +42,7 @@ public:
       : state (stateToUse)
     {
     }
-    
+
     virtual ~ParameterAttachment()
     {
         detachFromParameter();

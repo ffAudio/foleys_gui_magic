@@ -68,6 +68,7 @@ namespace IDs
     static juce::Identifier padding      { "padding" };
 
     static juce::Identifier display      { "display" };
+    static juce::Identifier throttle     { "throttle" };
     static juce::String     contents     { "contents" };
     static juce::String     flexbox      { "flexbox" };
 

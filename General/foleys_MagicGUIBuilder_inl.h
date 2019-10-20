@@ -157,6 +157,10 @@ std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Componen
             stylesheet.configureFlexBox (item->flexBox, node);
         }
 
+        auto throttle = stylesheet.getProperty (IDs::throttle, node).toString();
+        if (throttle.isNotEmpty())
+            item->setMaxFPSrate (throttle.getIntValue());
+
         component.addAndMakeVisible (item.get());
         return item;
     }

@@ -64,7 +64,7 @@ class ButtonAttacher  : public ButtonType
 public:
 
     ButtonAttacher() = default;
-    
+
     void attachToParameter (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)
     {
         if (auto* button = dynamic_cast<juce::Button*>(this))
@@ -73,9 +73,9 @@ public:
             attachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(state, paramID, *button);
         }
     }
-    
+
 private:
-    
+
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> attachment;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ButtonAttacher)
 };

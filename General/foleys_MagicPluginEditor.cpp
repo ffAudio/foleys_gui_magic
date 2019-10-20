@@ -36,6 +36,10 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, std::uniq
   : juce::AudioProcessorEditor (stateToUse.getProcessor()),
     processorState (stateToUse)
 {
+#if JUCE_MODULE_AVAILABLE_juce_opengl
+    oglContext.attachTo (*this);
+#endif
+
     if (builderToUse.get() != nullptr)
         builder = std::move (builderToUse);
     else
@@ -56,6 +60,10 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const cha
   : juce::AudioProcessorEditor (stateToUse.getProcessor()),
     processorState (stateToUse)
 {
+#if JUCE_MODULE_AVAILABLE_juce_opengl
+    oglContext.attachTo (*this);
+#endif
+
     if (builderToUse.get() != nullptr)
         builder = std::move (builderToUse);
     else
@@ -67,6 +75,13 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const cha
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     builder->attachToolboxToWindow (*this);
+#endif
+}
+
+MagicPluginEditor::~MagicPluginEditor()
+{
+#if JUCE_MODULE_AVAILABLE_juce_opengl
+    oglContext.detach();
 #endif
 }
 

@@ -223,6 +223,7 @@ void PropertiesEditor::addFlexItemProperties (bool shouldBeOpen, const juce::Ide
 void PropertiesEditor::addContainerProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo)
 {
     if (propToScrollTo == IDs::display ||
+        propToScrollTo == IDs::throttle ||
         propToScrollTo == IDs::flexDirection ||
         propToScrollTo == IDs::flexWrap ||
         propToScrollTo == IDs::flexAlignContent ||
@@ -233,6 +234,7 @@ void PropertiesEditor::addContainerProperties (bool shouldBeOpen, const juce::Id
     juce::Array<juce::PropertyComponent*> array;
 
     array.add (new StyleChoicePropertyComponent (builder, IDs::display, styleItem, { IDs::contents, IDs::flexbox }));
+    array.add (new StyleTextPropertyComponent (builder, IDs::throttle, styleItem));
 
     array.add (new StyleChoicePropertyComponent (builder, IDs::flexDirection, styleItem, { IDs::flexDirRow, IDs::flexDirRowReverse, IDs::flexDirColumn, IDs::flexDirColumnReverse }));
     array.add (new StyleChoicePropertyComponent (builder, IDs::flexWrap, styleItem, { IDs::flexNoWrap, IDs::flexWrapNormal, IDs::flexWrapReverse }));

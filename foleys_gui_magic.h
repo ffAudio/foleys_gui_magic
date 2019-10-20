@@ -66,6 +66,10 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_dsp/juce_dsp.h>
 
+#if JUCE_MODULE_AVAILABLE_juce_opengl
+#include <juce_opengl/juce_opengl.h>
+#endif
+
 #if JUCE_MODULE_AVAILABLE_juce_gui_extra
 #include <juce_gui_extra/juce_gui_extra.h>
 #endif

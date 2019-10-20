@@ -124,11 +124,6 @@ public:
     int findColourId (juce::Identifier name);
 
     /**
-     Returns all possible properties (except colour names) for the editor.
-     */
-    juce::StringArray getAllLayoutPropertyNames() const;
-
-    /**
      This method returns the names of colours for a certain Component type
      */
     juce::StringArray getColourNames (juce::Identifier type) const;
