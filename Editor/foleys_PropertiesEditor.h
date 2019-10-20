@@ -61,7 +61,7 @@ private:
     void updatePopupMenu();
 
     void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
-                                   const juce::Identifier& property) override;
+                                   const juce::Identifier& property) override {}
 
     void valueTreeChildAdded (juce::ValueTree& parentTree,
                               juce::ValueTree& childWhichHasBeenAdded) override;

@@ -39,7 +39,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     registerFactory (IDs::slider,
                      [] (const juce::ValueTree& config, auto& app)
                      {
-                         return std::make_unique<juce::Slider>(juce::Slider::RotaryHorizontalVerticalDrag, juce::Slider::TextBoxBelow);
+                         return std::make_unique<AttachableSlider>();
                      });
 
     setColourTranslation (IDs::slider,
@@ -57,37 +57,54 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
 
     addSettableProperty (IDs::slider,
                          std::make_unique<SettableChoiceProperty>
+                         (IDs::parameter,
+                          [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
+                          {
+                              if (magicState == nullptr)
+                                  return;
+
+                              if (auto* slider = dynamic_cast<AttachableSlider*>(component))
+                                  slider->attachToParameter (value.toString(), magicState->getValueTreeState());
+                          },
+                          juce::String(),
+                          SettableProperty::Parameter));
+
+    addSettableProperty (IDs::slider,
+                         std::make_unique<SettableChoiceProperty>
                          (
                           "slider-type",
+                          [] (juce::Component* component, juce::var value, const juce::NamedValueSet& options)
+                          {
+                              if (auto* slider = dynamic_cast<AttachableSlider*>(component))
+                              {
+                                  const auto name = value.toString();
+                                  if (name.isEmpty())
+                                      return;
+
+                                  if (name == "auto")
+                                      slider->setAutoOrientation (true);
+                                  else
+                                  {
+                                      slider->setAutoOrientation (false);
+                                      const auto& v = options [name];
+                                      if (v.isVoid() == false)
+                                          slider->setSliderStyle (juce::Slider::SliderStyle ( int (v)));
+                                  }
+                              }
+                          },
+                          "auto",
                           juce::NamedValueSet {
                               { "linear-horizontal", juce::Slider::LinearHorizontal },
                               { "linear-vertical",   juce::Slider::LinearVertical },
                               { "rotary",            juce::Slider::RotaryHorizontalVerticalDrag },
-                              { "inc-dec-buttons",   juce::Slider::IncDecButtons }
-                          },
-                          [] (juce::Component* component, juce::var value, const juce::NamedValueSet& options)
-                          {
-                              if (auto* slider = dynamic_cast<juce::Slider*>(component))
-                              {
-                                  const auto& v = options [value.toString()];
-                                  if (v.isVoid() == false)
-                                      slider->setSliderStyle (juce::Slider::SliderStyle ( int (v)));
-                              }
-                          },
-                          "rotary"
-                          ));
+                              { "inc-dec-buttons",   juce::Slider::IncDecButtons },
+                              { "auto",              0 }
+                          }));
 
     addSettableProperty (IDs::slider,
                          std::make_unique<SettableChoiceProperty>
                          (
                           "slider-textbox",
-                          juce::NamedValueSet {
-                              { "no-textbox",    juce::Slider::NoTextBox },
-                              { "textbox-left",  juce::Slider::TextBoxLeft },
-                              { "textbox-right", juce::Slider::TextBoxRight },
-                              { "textbox-above", juce::Slider::TextBoxAbove },
-                              { "textbox-below", juce::Slider::TextBoxBelow }
-                          },
                           [] (juce::Component* component, juce::var value, const juce::NamedValueSet& options)
                           {
                               if (auto* slider = dynamic_cast<juce::Slider*>(component))
@@ -98,15 +115,21 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                                                                false, slider->getTextBoxWidth(), slider->getTextBoxHeight());
                               }
                           },
-                          "textbox-below"
-                          ));
+                          "textbox-below",
+                          juce::NamedValueSet {
+                              { "no-textbox",    juce::Slider::NoTextBox },
+                              { "textbox-left",  juce::Slider::TextBoxLeft },
+                              { "textbox-right", juce::Slider::TextBoxRight },
+                              { "textbox-above", juce::Slider::TextBoxAbove },
+                              { "textbox-below", juce::Slider::TextBoxBelow }
+                          }));
 
     //==============================================================================
 
     registerFactory (IDs::comboBox,
                      [] (const juce::ValueTree& config, auto& app)
                      {
-                         return std::make_unique<juce::ComboBox>();
+                         return std::make_unique<AttachableComboBox>();
                      });
 
     setColourTranslation (IDs::comboBox,
@@ -119,12 +142,26 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                               { "combo-focused-outline", juce::ComboBox::focusedOutlineColourId }
                           });
 
+    addSettableProperty (IDs::comboBox,
+                         std::make_unique<SettableChoiceProperty>
+                         (IDs::parameter,
+                          [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
+                          {
+                              if (magicState == nullptr)
+                                  return;
+
+                              if (auto* combo = dynamic_cast<AttachableComboBox*>(component))
+                                  combo->attachToParameter (value.toString(), magicState->getValueTreeState());
+                          },
+                          juce::String(),
+                          SettableProperty::Parameter));
+
     //==============================================================================
 
     registerFactory (IDs::textButton,
                      [] (const juce::ValueTree& config, auto& app)
                      {
-                         return std::make_unique<juce::TextButton>();
+                         return std::make_unique<AttachableTextButton>();
                      });
 
     setColourTranslation (IDs::textButton,
@@ -145,13 +182,26 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                                   button->setButtonText (value.toString());
                           }));
 
+    addSettableProperty (IDs::textButton,
+                         std::make_unique<SettableChoiceProperty>
+                         (IDs::parameter,
+                          [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
+                          {
+                              if (magicState == nullptr)
+                                  return;
+
+                              if (auto* button = dynamic_cast<AttachableTextButton*>(component))
+                                  button->attachToParameter (value.toString(), magicState->getValueTreeState());
+                          },
+                          juce::String(),
+                          SettableProperty::Parameter));
+
     //==============================================================================
 
     registerFactory (IDs::toggleButton,
                      [] (const juce::ValueTree& config, auto& app)
                      {
-                         auto text = config.getProperty (IDs::caption, "Active");
-                         return std::make_unique<juce::ToggleButton>(text);
+                         return std::make_unique<AttachableToggleButton>();
                      });
 
     setColourTranslation (IDs::toggleButton,
@@ -160,6 +210,50 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                               { "toggle-tick", juce::ToggleButton::tickColourId },
                               { "toggle-tick-disabled", juce::ToggleButton::tickDisabledColourId }
                           });
+
+    addSettableProperty (IDs::toggleButton,
+                         std::make_unique<SettableTextProperty>
+                         (
+                          "text",
+                          [] (juce::Component* component, juce::var value)
+                          {
+                              if (auto* button = dynamic_cast<juce::ToggleButton*>(component))
+                                  button->setButtonText (value.toString());
+                          }));
+
+    addSettableProperty (IDs::toggleButton,
+                         std::make_unique<SettableChoiceProperty>
+                         (IDs::parameter,
+                          [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
+                          {
+                              if (magicState == nullptr)
+                                  return;
+
+                              if (auto* button = dynamic_cast<AttachableToggleButton*>(component))
+                                  button->attachToParameter (value.toString(), magicState->getValueTreeState());
+                          },
+                          juce::String(),
+                          SettableProperty::Parameter));
+
+    //==============================================================================
+
+#if JUCE_MODULE_AVAILABLE_juce_gui_extra
+    registerFactory (IDs::webBrowser,
+                     [] (const juce::ValueTree& config, auto& app)
+                     {
+                         return std::make_unique<juce::WebBrowserComponent>();
+                     });
+
+    addSettableProperty (IDs::webBrowser,
+                         std::make_unique<SettableTextProperty>
+                         (
+                          "url",
+                          [] (juce::Component* component, juce::var value)
+                          {
+                              if (auto* browser = dynamic_cast<juce::WebBrowserComponent*>(component))
+                                  browser->goToURL (value.toString());
+                          }));
+#endif
 
     //==============================================================================
 
@@ -186,6 +280,20 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                               { "plot-inactive-color", MagicPlotComponent::plotInactiveColourId },
                               { "plot-inactive-fill-color", MagicPlotComponent::plotInactiveFillColourId }
                           });
+
+    addSettableProperty (IDs::plot,
+                         std::make_unique<SettableChoiceProperty>
+                         (IDs::source,
+                          [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
+                          {
+                              if (magicState == nullptr)
+                                  return;
+
+                              if (auto* plotComponent = dynamic_cast<MagicPlotComponent*>(component))
+                                  plotComponent->setPlotSource (magicState->getPlotSource (value.toString()));
+                          },
+                          juce::String(),
+                          SettableProperty::PlotSource));
 
     //==============================================================================
 
@@ -220,19 +328,39 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
 
     addSettableProperty (IDs::xyDragComponent,
                          std::make_unique<SettableChoiceProperty>
+                         (IDs::parameterX,
+                          [] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
+                          {
+                              if (auto* xydrag = dynamic_cast<XYDragComponent*>(component))
+                                  xydrag->setParameterX (value.toString());
+                          },
+                          juce::String(),
+                          SettableProperty::Parameter));
+
+    addSettableProperty (IDs::xyDragComponent,
+                         std::make_unique<SettableChoiceProperty>
+                         (IDs::parameterY,
+                          [] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
+                          {
+                              if (auto* xydrag = dynamic_cast<XYDragComponent*>(component))
+                                  xydrag->setParameterY (value.toString());
+                          },
+                          juce::String(),
+                          SettableProperty::Parameter));
+
+    addSettableProperty (IDs::xyDragComponent,
+                         std::make_unique<SettableChoiceProperty>
                          (
                           "xy-crosshair",
-                          juce::NamedValueSet {
-                              { "no-crosshair",          0x00 },
-                              { "crosshair-vertical",    0x01 },
-                              { "crosshair-horizontal",  0x02 },
-                              { "crosshair",             0x03 }
-                          },
                           [] (juce::Component* component, juce::var value, const auto& options)
                           {
                               if (auto* xydrag = dynamic_cast<XYDragComponent*>(component))
                               {
-                                  const auto& v = options [value.toString()];
+                                  const auto name = value.toString();
+                                  if (name.isEmpty())
+                                      return;
+
+                                  const auto& v = options [name];
                                   if (v.isVoid() == false)
                                   {
                                       int bits = v;
@@ -240,8 +368,13 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                                   }
                               }
                           },
-                          "crosshair"
-                          ));
+                          "crosshair",
+                          juce::NamedValueSet {
+                              { "no-crosshair", 0x00 },
+                              { "vertical",     0x01 },
+                              { "horizontal",   0x02 },
+                              { "crosshair",    0x03 }
+                          }));
 
 }
 

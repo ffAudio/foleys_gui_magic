@@ -99,19 +99,6 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node, const juce::Identifi
     }
     else
     {
-        if (styleItem.getType() == IDs::plot)
-            additional.add (new StyleChoicePropertyComponent (builder, IDs::source, styleItem, builder.getPlotSourcesNames()));
-        else if (styleItem.getType() == IDs::slider ||
-                 styleItem.getType() == IDs::comboBox ||
-                 styleItem.getType() == IDs::textButton ||
-                 styleItem.getType() == IDs::toggleButton)
-            additional.add (new StyleChoicePropertyComponent (builder, IDs::parameter, styleItem, builder.getParameterNames()));
-        else if (styleItem.getType() == IDs::xyDragComponent)
-        {
-            additional.add (new StyleChoicePropertyComponent (builder, IDs::parameterX, styleItem, builder.getParameterNames()));
-            additional.add (new StyleChoicePropertyComponent (builder, IDs::parameterY, styleItem, builder.getParameterNames()));
-        }
-
         addTypeProperties (styleItem.getType(), additional, true, propToScrollTo);
     }
 
@@ -188,20 +175,8 @@ void PropertiesEditor::addTypeProperties (juce::Identifier type, juce::Array<juc
 
     for (const auto& p : builder.getSettableProperties (type))
     {
-        if (const auto* choice = dynamic_cast<const SettableChoiceProperty*>(p.get()))
-        {
-            juce::StringArray       choices;
-            juce::Array<juce::var>  values;
-
-            for (auto o : choice->options)
-                choices.add (o.name.toString());
-
-            array.add (new StyleChoicePropertyComponent (builder, p->name, styleItem, choices));
-        }
-        else if (const auto* text = dynamic_cast<const SettableTextProperty*>(p.get()))
-        {
-            array.add (new StyleTextPropertyComponent (builder, p->name, styleItem));
-        }
+        if (auto* component = StylePropertyComponent::createComponent (builder, *p, styleItem))
+            array.add (component);
 
         if (p->name == propToScrollTo)
             shouldBeOpen = true;
@@ -329,11 +304,6 @@ void PropertiesEditor::resized()
 MagicBuilder& PropertiesEditor::getMagicBuilder()
 {
     return builder;
-}
-
-void PropertiesEditor::valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
-                                                 const juce::Identifier& property)
-{
 }
 
 void PropertiesEditor::valueTreeChildAdded (juce::ValueTree& parentTree,

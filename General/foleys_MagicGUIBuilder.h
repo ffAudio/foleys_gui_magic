@@ -32,54 +32,6 @@
 namespace foleys
 {
 
-/**
- A SettableProperty is a value that can be selected by the designer and will be
- set for the Component each time the ValueTree is loaded.
- */
-struct SettableProperty
-{
-    SettableProperty (const juce::Identifier& n)
-    : name (n) {}
-    virtual ~SettableProperty() = default;
-
-    virtual void set (juce::Component*, juce::var) const = 0;
-    juce::Identifier name;
-};
-
-struct SettableChoiceProperty : public SettableProperty
-{
-    SettableChoiceProperty (const juce::Identifier& n, juce::NamedValueSet m, std::function<void(juce::Component*, juce::var, const juce::NamedValueSet&)> s, juce::String d)
-    : SettableProperty (n), options (m), setter (s), defaultValue (d) {}
-
-    void set (juce::Component* c, juce::var v) const override
-    {
-        if (setter)
-        {
-            if (v.isVoid())
-                setter (c, defaultValue, options);
-            else
-                setter (c, v, options);
-        }
-    }
-
-    juce::NamedValueSet                                                          options;
-    std::function<void(juce::Component*, juce::var, const juce::NamedValueSet&)> setter;
-    juce::String                                                                 defaultValue;
-};
-
-struct SettableTextProperty : public SettableProperty
-{
-    SettableTextProperty (const juce::Identifier& n, std::function<void(juce::Component*, juce::var)> s)
-    : SettableProperty (n), setter (s) {}
-
-    void set (juce::Component* c, juce::var v) const override
-    {
-        if (setter && v.isVoid() == false)
-            setter (c, v);
-    }
-
-    std::function<void(juce::Component*, juce::var)> setter;
-};
 
 /**
  The MagicBuilder is responsible to recreate the GUI from a single ValueTree.

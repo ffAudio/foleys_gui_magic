@@ -66,7 +66,12 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_dsp/juce_dsp.h>
 
+#if JUCE_MODULE_AVAILABLE_juce_gui_extra
+#include <juce_gui_extra/juce_gui_extra.h>
+#endif
+
 #include "General/foleys_StringDefinitions.h"
+#include "General/foleys_SettableProperties.h"
 
 #include "Helpers/foleys_ParameterAttachment.h"
 
@@ -81,8 +86,11 @@
 #include "Visualisers/foleys_MagicFilterPlot.h"
 #include "Visualisers/foleys_MagicAnalyser.h"
 #include "Visualisers/foleys_MagicOscilloscope.h"
-#include "Visualisers/foleys_MagicPlotComponent.h"
-#include "Visualisers/foleys_XYDragComponent.h"
+
+#include "Widgets/foleys_AttachableSlider.h"
+#include "Widgets/foleys_AttachableComponent.h"
+#include "Widgets/foleys_MagicPlotComponent.h"
+#include "Widgets/foleys_XYDragComponent.h"
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 

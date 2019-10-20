@@ -44,6 +44,7 @@ namespace IDs
     static juce::Identifier comboBox     { "ComboBox" };
     static juce::Identifier plot         { "Plot" };
     static juce::Identifier xyDragComponent { "XYDragComponent" };
+    static juce::Identifier webBrowser   { "WebBrowserComponent" };
 
     static juce::Identifier caption      { "caption" };
     static juce::Identifier captionPlacement { "caption-placement" };

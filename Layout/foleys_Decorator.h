@@ -64,11 +64,6 @@ public:
      */
     void configureComponent (Stylesheet& stylesheet, const juce::ValueTree& node);
 
-    /**
-     This will try to connect the Component with the supplied parameter of that name.
-     */
-    void connectToState (const juce::String& paramID, juce::AudioProcessorValueTreeState& state);
-
     void paint (juce::Graphics& g) override;
     void resized() override;
 
@@ -117,10 +112,6 @@ private:
 
     juce::Image                 backgroundImage;
     juce::Array<juce::Colour>   backgroundFill;
-
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachment;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> buttonAttachment;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> comboboxAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Decorator)
 };

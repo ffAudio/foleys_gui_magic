@@ -352,8 +352,8 @@ juce::ValueTree Stylesheet::createDefaultStyle()
                 { IDs::flexDirection, IDs::flexDirColumn }} }
         } },
         { IDs::types, {}, {
-            { "Slider", {{ IDs::border, 0 }} },
-            { "ToggleButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }, { IDs::captionSize, 0 }} },
+            { "Slider", {{ IDs::border, 0 }, { "slider-textbox", "textbox-below" }} },
+            { "ToggleButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }, { IDs::captionSize, 0 }, { "text", "Active" }} },
             { "TextButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }, { IDs::captionSize, 0 }} },
             { "ComboBox", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }, { IDs::captionSize, 0 }} },
             { "Plot", {{ IDs::border, 0 }, { IDs::margin, 0 }, { IDs::padding, 0 }, { IDs::backgroundColour, "00000000" }} },

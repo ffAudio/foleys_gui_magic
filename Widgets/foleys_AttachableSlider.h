@@ -27,38 +27,31 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+#pragma once
 
-#include <stack>
+namespace foleys
+{
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
+/**
+ */
+class AttachableSlider  : public juce::Slider
+{
+public:
 
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
+    AttachableSlider();
 
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicAnalyser.cpp"
-#include "Visualisers/foleys_MagicOscilloscope.cpp"
+    void attachToParameter (const juce::String& paramID, juce::AudioProcessorValueTreeState& state);
+    void setAutoOrientation (bool shouldAutoOrient);
 
-#include "Widgets/foleys_AttachableSlider.cpp"
-#include "Widgets/foleys_MagicPlotComponent.cpp"
-#include "Widgets/foleys_XYDragComponent.cpp"
+    void resized() override;
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
+private:
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    bool autoOrientation = true;
 
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
-#include "Editor/foleys_Palette.cpp"
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachment;
 
-#include "Editor/foleys_StylePropertyComponent.cpp"
-#include "Editor/foleys_StyleTextPropertyComponent.cpp"
-#include "Editor/foleys_StyleColourPropertyComponent.cpp"
-#include "Editor/foleys_StyleChoicePropertyComponent.cpp"
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AttachableSlider)
+};
 
-#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+} // namespace foleys

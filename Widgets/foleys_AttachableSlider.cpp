@@ -27,38 +27,44 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+#pragma once
 
-#include <stack>
+namespace foleys
+{
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
 
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
+AttachableSlider::AttachableSlider()
+{
+}
 
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicAnalyser.cpp"
-#include "Visualisers/foleys_MagicOscilloscope.cpp"
+void AttachableSlider::attachToParameter (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)
+{
+    attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(state, paramID, *this);
+}
 
-#include "Widgets/foleys_AttachableSlider.cpp"
-#include "Widgets/foleys_MagicPlotComponent.cpp"
-#include "Widgets/foleys_XYDragComponent.cpp"
+void AttachableSlider::setAutoOrientation (bool shouldAutoOrient)
+{
+    autoOrientation = shouldAutoOrient;
+    resized();
+}
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
+void AttachableSlider::resized()
+{
+    if (autoOrientation)
+    {
+        const auto w = getWidth();
+        const auto h = getHeight();
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+        if (w > 2 * h)
+            setSliderStyle (juce::Slider::LinearHorizontal);
+        else if (h > 2 * w)
+            setSliderStyle (juce::Slider::LinearVertical);
+        else
+            setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    }
 
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
-#include "Editor/foleys_Palette.cpp"
+    juce::Slider::resized();
+}
 
-#include "Editor/foleys_StylePropertyComponent.cpp"
-#include "Editor/foleys_StyleTextPropertyComponent.cpp"
-#include "Editor/foleys_StyleColourPropertyComponent.cpp"
-#include "Editor/foleys_StyleChoicePropertyComponent.cpp"
 
-#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+} // namespace foleys

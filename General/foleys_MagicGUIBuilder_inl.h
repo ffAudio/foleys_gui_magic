@@ -188,13 +188,6 @@ std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Componen
         }
     }
 
-    if (magicState != nullptr)
-    {
-        auto parameter = node.getProperty (IDs::parameter, juce::String()).toString();
-        if (parameter.isNotEmpty())
-            item->connectToState (parameter, magicState->getValueTreeState());
-    }
-
     return item;
 }
 

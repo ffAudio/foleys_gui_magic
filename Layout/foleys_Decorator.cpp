@@ -107,26 +107,6 @@ void Decorator::configureComponent (Stylesheet& stylesheet, const juce::ValueTre
     }
 }
 
-void Decorator::connectToState (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)
-{
-    if (auto* slider = dynamic_cast<juce::Slider*>(component.get()))
-    {
-        sliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(state, paramID, *slider);
-    }
-    else if (auto* combo = dynamic_cast<juce::ComboBox*>(component.get()))
-    {
-        if (auto* parameter = state.getParameter (paramID))
-            combo->addItemList (parameter->getAllValueStrings(), 1);
-
-        comboboxAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(state, paramID, *combo);
-    }
-    else if (auto* button = dynamic_cast<juce::Button*>(component.get()))
-    {
-        button->setClickingTogglesState (true);
-        buttonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(state, paramID, *button);
-    }
-}
-
 void Decorator::paint (juce::Graphics& g)
 {
     juce::Graphics::ScopedSaveState stateSave (g);

@@ -32,15 +32,19 @@
 namespace foleys
 {
 
+struct SettableProperty;
+
 class StylePropertyComponent  : public juce::PropertyComponent
 {
 public:
-    StylePropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse);
+    StylePropertyComponent (MagicBuilder& builder, juce::Identifier property, juce::ValueTree& node);
 
     void paint (juce::Graphics& g) override;
     void resized() override;
 
     void mouseDoubleClick (const juce::MouseEvent& event) override;
+
+    static StylePropertyComponent* createComponent (MagicBuilder& builder, SettableProperty& property, juce::ValueTree& node);
 
 protected:
 
