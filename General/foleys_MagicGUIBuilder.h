@@ -32,18 +32,6 @@
 namespace foleys
 {
 
-/**
- A SettableProperty is a value that can be selected by the designer and will be
- set for the Component each time the ValueTree is loaded.
- */
-struct SettableProperty
-{
-    using OptionsMap=std::map<juce::String, juce::var>;
-    juce::Identifier                                                    name;
-    OptionsMap                                                          options;
-    std::function<void(juce::Component*, juce::var, const OptionsMap&)> setter;
-    juce::String                                                        defaultValue;
-};
 
 /**
  The MagicBuilder is responsible to recreate the GUI from a single ValueTree.
@@ -136,11 +124,6 @@ public:
     int findColourId (juce::Identifier name);
 
     /**
-     Returns all possible properties (except colour names) for the editor.
-     */
-    juce::StringArray getAllLayoutPropertyNames() const;
-
-    /**
      This method returns the names of colours for a certain Component type
      */
     juce::StringArray getColourNames (juce::Identifier type) const;
@@ -183,8 +166,8 @@ public:
      */
     virtual juce::StringArray getPlotSourcesNames() const = 0;
 
-    void addSettableProperty (juce::Identifier type, SettableProperty property);
-    std::vector<SettableProperty> getSettableProperties (juce::Identifier type) const;
+    void addSettableProperty (juce::Identifier type, std::unique_ptr<SettableProperty> property);
+    const std::vector<std::unique_ptr<SettableProperty>>& getSettableProperties (juce::Identifier type) const;
 
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
@@ -241,7 +224,8 @@ private:
     bool editMode = false;
     juce::ValueTree selectedNode;
 
-    std::map<juce::Identifier, std::vector<SettableProperty>> settableProperties;
+    std::map<juce::Identifier, std::vector<std::unique_ptr<SettableProperty>>> settableProperties;
+    const std::vector<std::unique_ptr<SettableProperty>> emptyPropertyList;
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     std::unique_ptr<ToolBox> magicToolBox;

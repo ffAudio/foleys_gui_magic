@@ -50,13 +50,15 @@ void MagicAnalyser::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, 
     path.clear();
     path.preallocateSpace (8 + data.getNumSamples() * 3);
 
-    juce::ScopedLock lockedForReading (pathCreationLock);
-    const auto* fftData = data.getReadPointer (0);
-    const auto  factor  = bounds.getWidth() / 10.0f;
+    {
+        juce::ScopedLock lockedForReading (pathCreationLock);
+        const auto* fftData = data.getReadPointer (0);
+        const auto  factor  = bounds.getWidth() / 10.0f;
 
-    path.startNewSubPath (bounds.getX() + factor * indexToX (0, minFreq), binToY (fftData [0], bounds));
-    for (int i = 0; i < data.getNumSamples(); ++i)
-        path.lineTo (bounds.getX() + factor * indexToX (i, minFreq), binToY (fftData [i], bounds));
+        path.startNewSubPath (bounds.getX() + factor * indexToX (0, minFreq), binToY (fftData [0], bounds));
+        for (int i = 0; i < data.getNumSamples(); ++i)
+            path.lineTo (bounds.getX() + factor * indexToX (i, minFreq), binToY (fftData [i], bounds));
+    }
 
     g.setColour (component.findColour (isActive() ? MagicPlotComponent::plotColourId : MagicPlotComponent::plotInactiveColourId));
     g.strokePath (path, juce::PathStrokeType (2.0f));

@@ -99,19 +99,6 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node, const juce::Identifi
     }
     else
     {
-        if (styleItem.getType() == IDs::plot)
-            additional.add (new StyleChoicePropertyComponent (builder, IDs::source, styleItem, builder.getPlotSourcesNames()));
-        else if (styleItem.getType() == IDs::slider ||
-                 styleItem.getType() == IDs::comboBox ||
-                 styleItem.getType() == IDs::textButton ||
-                 styleItem.getType() == IDs::toggleButton)
-            additional.add (new StyleChoicePropertyComponent (builder, IDs::parameter, styleItem, builder.getParameterNames()));
-        else if (styleItem.getType() == IDs::xyDragComponent)
-        {
-            additional.add (new StyleChoicePropertyComponent (builder, IDs::parameterX, styleItem, builder.getParameterNames()));
-            additional.add (new StyleChoicePropertyComponent (builder, IDs::parameterY, styleItem, builder.getParameterNames()));
-        }
-
         addTypeProperties (styleItem.getType(), additional, true, propToScrollTo);
     }
 
@@ -186,17 +173,12 @@ void PropertiesEditor::addTypeProperties (juce::Identifier type, juce::Array<juc
 
     array.addArray (additional);
 
-    for (auto p : builder.getSettableProperties (type))
+    for (const auto& p : builder.getSettableProperties (type))
     {
-        juce::StringArray       choices;
-        juce::Array<juce::var>  values;
+        if (auto* component = StylePropertyComponent::createComponent (builder, *p, styleItem))
+            array.add (component);
 
-        for (auto o : p.options)
-            choices.add (o.first);
-
-        array.add (new StyleChoicePropertyComponent (builder, p.name, styleItem, choices));
-
-        if (p.name == propToScrollTo)
+        if (p->name == propToScrollTo)
             shouldBeOpen = true;
     }
 
@@ -241,6 +223,7 @@ void PropertiesEditor::addFlexItemProperties (bool shouldBeOpen, const juce::Ide
 void PropertiesEditor::addContainerProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo)
 {
     if (propToScrollTo == IDs::display ||
+        propToScrollTo == IDs::throttle ||
         propToScrollTo == IDs::flexDirection ||
         propToScrollTo == IDs::flexWrap ||
         propToScrollTo == IDs::flexAlignContent ||
@@ -251,6 +234,7 @@ void PropertiesEditor::addContainerProperties (bool shouldBeOpen, const juce::Id
     juce::Array<juce::PropertyComponent*> array;
 
     array.add (new StyleChoicePropertyComponent (builder, IDs::display, styleItem, { IDs::contents, IDs::flexbox }));
+    array.add (new StyleTextPropertyComponent (builder, IDs::throttle, styleItem));
 
     array.add (new StyleChoicePropertyComponent (builder, IDs::flexDirection, styleItem, { IDs::flexDirRow, IDs::flexDirRowReverse, IDs::flexDirColumn, IDs::flexDirColumnReverse }));
     array.add (new StyleChoicePropertyComponent (builder, IDs::flexWrap, styleItem, { IDs::flexNoWrap, IDs::flexWrapNormal, IDs::flexWrapReverse }));
@@ -322,11 +306,6 @@ void PropertiesEditor::resized()
 MagicBuilder& PropertiesEditor::getMagicBuilder()
 {
     return builder;
-}
-
-void PropertiesEditor::valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
-                                                 const juce::Identifier& property)
-{
 }
 
 void PropertiesEditor::valueTreeChildAdded (juce::ValueTree& parentTree,

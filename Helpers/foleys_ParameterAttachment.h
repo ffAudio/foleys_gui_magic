@@ -33,8 +33,6 @@ namespace foleys
 {
 
 
-
-
 template<typename ValueType>
 class ParameterAttachment : private juce::AudioProcessorValueTreeState::Listener,
                             private juce::AsyncUpdater
@@ -44,7 +42,7 @@ public:
       : state (stateToUse)
     {
     }
-    
+
     virtual ~ParameterAttachment()
     {
         detachFromParameter();
@@ -60,13 +58,15 @@ public:
         if (parameter)
             return parameter->getNormalisableRange().convertTo0to1 (value.load());
 
-        return {};
+        return value.load();
     }
 
-    void setNormalisedValue (ValueType value)
+    void setNormalisedValue (ValueType newValue)
     {
         if (parameter)
-            parameter->setValueNotifyingHost (value);
+            parameter->setValueNotifyingHost (newValue);
+        else
+            parameterChanged (paramID, juce::jlimit (0.0f, 1.0f, newValue));
     }
 
     void attachToParameter (const juce::String& parameterID)

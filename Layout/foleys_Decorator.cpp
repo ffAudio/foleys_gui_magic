@@ -99,33 +99,11 @@ void Decorator::configureComponent (Stylesheet& stylesheet, const juce::ValueTre
     if (component.get() == nullptr)
         return;
 
-    const auto properties = magicBuilder.getSettableProperties (node.getType());
-    for (const auto& p : properties)
+    for (const auto& p : magicBuilder.getSettableProperties (node.getType()))
     {
-        auto value = stylesheet.getProperty (p.name, node);
-        if (value.isVoid())
-            value = p.defaultValue;
-        p.setter (component.get(), value, p.options);
-    }
-}
-
-void Decorator::connectToState (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)
-{
-    if (auto* slider = dynamic_cast<juce::Slider*>(component.get()))
-    {
-        sliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(state, paramID, *slider);
-    }
-    else if (auto* combo = dynamic_cast<juce::ComboBox*>(component.get()))
-    {
-        if (auto* parameter = state.getParameter (paramID))
-            combo->addItemList (parameter->getAllValueStrings(), 1);
-
-        comboboxAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(state, paramID, *combo);
-    }
-    else if (auto* button = dynamic_cast<juce::Button*>(component.get()))
-    {
-        button->setClickingTogglesState (true);
-        buttonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(state, paramID, *button);
+        auto value = stylesheet.getProperty (p->name, node);
+        if (value.isVoid() == false)
+            p->set (component.get(), value);
     }
 }
 

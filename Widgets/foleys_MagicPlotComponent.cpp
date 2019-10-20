@@ -74,7 +74,8 @@ void MagicPlotComponent::changeListenerCallback (juce::ChangeBroadcaster *source
 
 void MagicPlotComponent::handleAsyncUpdate()
 {
-    repaint();
+    if (auto* container = findParentComponentOfClass<Container>())
+        container->setChildNeedsRepaint();
 }
 
 

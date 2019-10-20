@@ -45,6 +45,8 @@ public:
 
     MagicPluginEditor (MagicProcessorState& processorState, const char* data, const int dataSize, std::unique_ptr<MagicBuilder> builder = {});
 
+    ~MagicPluginEditor() override;
+
     /**
      Setup a GUI from a previously stored ValueTree
 
@@ -78,6 +80,10 @@ private:
     std::unique_ptr<MagicBuilder> createBuilderInstance();
 
     void updateSize();
+
+#if JUCE_MODULE_AVAILABLE_juce_opengl
+    juce::OpenGLContext oglContext;
+#endif
 
     MagicProcessorState& processorState;
 

@@ -27,38 +27,64 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+#pragma once
 
-#include <stack>
+namespace foleys
+{
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
+/**
+ */
+class XYDragComponent  : public juce::Component
+{
+public:
 
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
+    enum ColourIds
+    {
+        xyDotColourId = 0x2002000,
+        xyDotOverColourId,
+        xyHorizontalColourId,
+        xyHorizontalOverColourId,
+        xyVerticalColourId,
+        xyVerticalOverColourId
+    };
 
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicAnalyser.cpp"
-#include "Visualisers/foleys_MagicOscilloscope.cpp"
+    XYDragComponent (juce::AudioProcessorValueTreeState& state);
 
-#include "Widgets/foleys_AttachableSlider.cpp"
-#include "Widgets/foleys_MagicPlotComponent.cpp"
-#include "Widgets/foleys_XYDragComponent.cpp"
+    void setCrossHair (bool horizontal, bool vertical);
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
+    void paint (juce::Graphics& g) override;
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    void setParameterX (const juce::String& paramID);
+    void setParameterY (const juce::String& paramID);
 
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
-#include "Editor/foleys_Palette.cpp"
+    bool hitTest (int x, int y) override;
+    void mouseDown (const juce::MouseEvent&) override;
+    void mouseMove (const juce::MouseEvent&) override;
+    void mouseDrag (const juce::MouseEvent&) override;
+    void mouseUp (const juce::MouseEvent&) override;
+    void mouseEnter (const juce::MouseEvent&) override;
+    void mouseExit (const juce::MouseEvent&) override;
 
-#include "Editor/foleys_StylePropertyComponent.cpp"
-#include "Editor/foleys_StyleTextPropertyComponent.cpp"
-#include "Editor/foleys_StyleColourPropertyComponent.cpp"
-#include "Editor/foleys_StyleChoicePropertyComponent.cpp"
+private:
 
-#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    void updateWhichToDrag (juce::Point<float> p);
+
+    int getXposition() const;
+    int getYposition() const;
+
+    bool mouseOverDot = false;
+    bool mouseOverX   = false;
+    bool mouseOverY   = false;
+
+    bool wantsHorizontalDrag = true;
+    bool wantsVerticalDrag = true;
+
+    ParameterAttachment<float> xAttachment;
+    ParameterAttachment<float> yAttachment;
+
+    static float radius;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (XYDragComponent)
+};
+
+} // namespace foleys

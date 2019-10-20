@@ -41,6 +41,35 @@ void Container::addChildItem (std::unique_ptr<Decorator> child)
     addAndMakeVisible (child.get());
 }
 
+void Container::setChildNeedsRepaint (bool checkOnly)
+{
+    if (checkOnly && needsUpdate == false)
+        return;
+
+    const auto now = juce::Time::currentTimeMillis();
+    if (now - lastPaint > minFPStimeOutMS)
+    {
+        lastPaint = now;
+        repaint();
+        needsUpdate = false;
+    }
+    else
+    {
+        needsUpdate = true;
+        juce::Timer::callAfterDelay (minFPStimeOutMS - int (now - lastPaint),
+                                     [p = juce::Component::SafePointer<Container>(this)]() mutable
+        {
+            if (p != nullptr)
+                p->setChildNeedsRepaint (true);
+        });
+    }
+}
+
+void Container::setMaxFPSrate (int maxFPS)
+{
+    minFPStimeOutMS = (maxFPS > 0) ? int (1000 / maxFPS) : 0;
+}
+
 void Container::setEditMode (bool shouldEdit)
 {
     for (auto& child : children)

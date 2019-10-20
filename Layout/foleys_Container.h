@@ -51,6 +51,19 @@ public:
     void addChildItem (std::unique_ptr<Decorator> child);
 
     /**
+     A child component can call this method instead of repaint(),
+     and the container will make sure, that repaints only happen
+     at a configurable max FPS rate.
+     */
+    void setChildNeedsRepaint (bool checkOnly=false);
+
+    /**
+     Sets the maximum frame rate. If more paint calls via setChildNeedsRepaint()
+     arrive, they will be delayed.
+     */
+    void setMaxFPSrate (int maxFPS);
+
+    /**
      This switches this node and all it's descendents in the edit
      mode, which means, the components don't react, but instead you
      can move them around.
@@ -68,6 +81,11 @@ public:
 private:
 
     std::vector<std::unique_ptr<Decorator>> children;
+
+    int         minFPStimeOutMS = 40;
+    juce::int64 lastPaint = 0;
+    bool        needsUpdate = false;
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Container)
 };

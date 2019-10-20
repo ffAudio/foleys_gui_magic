@@ -32,6 +32,34 @@
 namespace foleys
 {
 
+//==============================================================================
+
+StylePropertyComponent* StylePropertyComponent::createComponent (MagicBuilder& builder, SettableProperty& property, juce::ValueTree& node)
+{
+    if (property.type == SettableProperty::Text)
+        return new StyleTextPropertyComponent (builder, property.name, node);
+
+    if (property.type == SettableProperty::Choice)
+    {
+        juce::StringArray names;
+
+        if (auto* choiceProperty = dynamic_cast<SettableChoiceProperty*>(&property))
+            for (const auto& pair : choiceProperty->options)
+                names.add (pair.name.toString());
+
+        return new StyleChoicePropertyComponent (builder, property.name, node, names);
+    }
+
+    if (property.type == SettableProperty::Parameter)
+        return new StyleChoicePropertyComponent (builder, property.name, node, builder.getParameterNames());
+
+    if (property.type == SettableProperty::PlotSource)
+        return new StyleChoicePropertyComponent (builder, property.name, node, builder.getPlotSourcesNames());
+
+    return nullptr;
+}
+
+//==============================================================================
 
 StylePropertyComponent::StylePropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse)
   : juce::PropertyComponent (propertyToUse.toString()),

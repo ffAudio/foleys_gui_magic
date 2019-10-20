@@ -157,6 +157,10 @@ std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Componen
             stylesheet.configureFlexBox (item->flexBox, node);
         }
 
+        auto throttle = stylesheet.getProperty (IDs::throttle, node).toString();
+        if (throttle.isNotEmpty())
+            item->setMaxFPSrate (throttle.getIntValue());
+
         component.addAndMakeVisible (item.get());
         return item;
     }
@@ -186,13 +190,6 @@ std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Componen
             if (colour.isNotEmpty())
                 item->getWrappedComponent()->setColour (pair.second, stylesheet.parseColour (colour));
         }
-    }
-
-    if (magicState != nullptr)
-    {
-        auto parameter = node.getProperty (IDs::parameter, juce::String()).toString();
-        if (parameter.isNotEmpty())
-            item->connectToState (parameter, magicState->getValueTreeState());
     }
 
     return item;

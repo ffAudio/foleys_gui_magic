@@ -206,55 +206,18 @@ juce::StringArray MagicBuilder::getAllColourNames() const
     return names;
 }
 
-juce::StringArray MagicBuilder::getAllLayoutPropertyNames() const
+void MagicBuilder::addSettableProperty (juce::Identifier type, std::unique_ptr<SettableProperty> property)
 {
-    return
-    {
-        IDs::id.toString(),
-        IDs::styleClass.toString(),
-        IDs::lookAndFeel.toString(),
-        IDs::margin.toString(),
-        IDs::padding.toString(),
-        IDs::border.toString(),
-        IDs::backgroundImage.toString(),
-        IDs::caption.toString(),
-        IDs::captionSize.toString(),
-        IDs::captionPlacement.toString(),
-        IDs::display.toString(),
-        IDs::flexDirection.toString(),
-        IDs::flexGrow.toString(),
-        IDs::flexShrink.toString(),
-        IDs::flexWrap.toString(),
-        IDs::flexOrder.toString(),
-        IDs::flexAlignContent.toString(),
-        IDs::flexAlignItems.toString(),
-        IDs::flexJustifyContent.toString(),
-        IDs::flexAlignSelf.toString(),
-        IDs::minWidth.toString(),
-        IDs::maxWidth.toString(),
-        IDs::minHeight.toString(),
-        IDs::maxHeight.toString(),
-        IDs::width.toString(),
-        IDs::height.toString()
-    };
+    settableProperties [type].push_back (std::move (property));
 }
 
-void MagicBuilder::addSettableProperty (juce::Identifier type, SettableProperty property)
-{
-    const auto& it = settableProperties.find (type);
-    if (it == settableProperties.end())
-        settableProperties [type] = { property };
-    else
-        it->second.push_back (property);
-}
-
-std::vector<SettableProperty> MagicBuilder::getSettableProperties (juce::Identifier type) const
+const std::vector<std::unique_ptr<SettableProperty>>& MagicBuilder::getSettableProperties (juce::Identifier type) const
 {
     const auto& it = settableProperties.find (type);
     if (it != settableProperties.end())
         return it->second;
 
-    return {};
+    return emptyPropertyList;
 }
 
 void MagicBuilder::createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree)
