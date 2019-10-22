@@ -35,7 +35,8 @@ Decorator::Decorator (MagicBuilder& builder, juce::ValueTree node, std::unique_p
     configNode (node),
     component (std::move (wrapped))
 {
-    setOpaque (margin == 0 && radius == 0);
+    setOpaque (false);
+
     setInterceptsMouseClicks (false, true);
 
     if (component.get() != nullptr)
@@ -71,6 +72,10 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
     auto paddingVar = stylesheet.getProperty (IDs::padding, node);
     if (! paddingVar.isVoid())
         padding = static_cast<float> (paddingVar);
+
+    auto radiusVar = stylesheet.getProperty (IDs::radius, node);
+    if (! radiusVar.isVoid())
+        radius = static_cast<float> (radiusVar);
 
     caption = node.getProperty (IDs::caption, juce::String());
 

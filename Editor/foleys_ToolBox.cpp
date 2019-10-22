@@ -147,9 +147,9 @@ void ToolBox::setSelectedNode (const juce::ValueTree& node)
     builder.setSelectedNode (node);
 }
 
-void ToolBox::setNodeToEdit (juce::ValueTree node, const juce::Identifier& propToScrollTo)
+void ToolBox::setNodeToEdit (juce::ValueTree node)
 {
-    propertiesEditor.setNodeToEdit (node, propToScrollTo);
+    propertiesEditor.setNodeToEdit (node);
 }
 
 void ToolBox::stateWasReloaded()

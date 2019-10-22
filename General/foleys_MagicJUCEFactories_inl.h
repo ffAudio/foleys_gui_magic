@@ -237,7 +237,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
 
     //==============================================================================
 
-#if JUCE_MODULE_AVAILABLE_juce_gui_extra
+#if JUCE_MODULE_AVAILABLE_juce_gui_extra && JUCE_WEB_BROWSER
     registerFactory (IDs::webBrowser,
                      [] (const juce::ValueTree& config, auto& app)
                      {

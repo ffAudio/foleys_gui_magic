@@ -42,14 +42,14 @@ public:
 
     void setStyle (juce::ValueTree style);
 
-    void setNodeToEdit (juce::ValueTree node, const juce::Identifier& propToScrollTo=juce::Identifier());
+    void setNodeToEdit (juce::ValueTree node);
     juce::ValueTree& getNodeToEdit();
 
-    void addNodeProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo=juce::Identifier());
-    void addDecoratorProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo=juce::Identifier());
-    void addTypeProperties (juce::Identifier type, juce::Array<juce::PropertyComponent*> additional, bool shouldBeOpen, const juce::Identifier& propToScrollTo=juce::Identifier());
-    void addFlexItemProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo=juce::Identifier());
-    void addContainerProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo=juce::Identifier());
+    void addNodeProperties();
+    void addDecoratorProperties();
+    void addTypeProperties (juce::Identifier type, juce::Array<juce::PropertyComponent*> additional);
+    void addFlexItemProperties();
+    void addContainerProperties();
 
     void paint (juce::Graphics&) override;
     void resized() override;
