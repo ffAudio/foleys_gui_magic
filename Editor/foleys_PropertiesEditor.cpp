@@ -128,6 +128,26 @@ juce::ValueTree& PropertiesEditor::getNodeToEdit()
 
 //==============================================================================
 
+void PropertiesEditor::createNewClass()
+{
+    static juce::String editorID { "styleClass" };
+
+    juce::AlertWindow dlg (TRANS ("New style class"), TRANS ("Enter a name:"), juce::AlertWindow::QuestionIcon, this);
+    dlg.addTextEditor (editorID, "class");
+    dlg.addButton (TRANS ("Cancel"), 0);
+    dlg.addButton (TRANS ("Ok"), 1);
+    if (dlg.runModalLoop() == 0)
+        return;
+
+    if (auto* editor = dlg.getTextEditor (editorID))
+    {
+        auto name = editor->getText().replaceCharacters (".&$@ ", "_____");
+        builder.getStylesheet().addNewStyleClass (name, &undo);
+    }
+}
+
+//==============================================================================
+
 void PropertiesEditor::addNodeProperties()
 {
     juce::Array<juce::PropertyComponent*> array;
@@ -250,6 +270,14 @@ void PropertiesEditor::updatePopupMenu()
         juce::PopupMenu menu;
         for (const auto& child : classesNode)
             menu.addItem (juce::PopupMenu::Item ("Class: " + child.getType().toString()).setID (index++));
+
+        menu.addSeparator();
+        menu.addItem (juce::PopupMenu::Item ("New Class...")
+                      .setAction ([p = juce::Component::SafePointer<PropertiesEditor>(this)]() mutable
+        {
+            if (p != nullptr)
+                p->createNewClass();
+        }));
 
         popup->addSubMenu ("Classes", menu);
     }

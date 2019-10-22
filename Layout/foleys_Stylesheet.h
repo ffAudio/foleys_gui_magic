@@ -86,6 +86,8 @@ public:
 
     juce::ValueTree getCurrentStyle() const;
 
+    juce::ValueTree addNewStyleClass (const juce::String& name, juce::UndoManager* undo);
+
     /**
      With that method you can register your custom LookAndFeel class and apply it to different components.
 

@@ -45,6 +45,8 @@ public:
     void setNodeToEdit (juce::ValueTree node);
     juce::ValueTree& getNodeToEdit();
 
+    void createNewClass();
+
     void addNodeProperties();
     void addDecoratorProperties();
     void addTypeProperties (juce::Identifier type, juce::Array<juce::PropertyComponent*> additional);

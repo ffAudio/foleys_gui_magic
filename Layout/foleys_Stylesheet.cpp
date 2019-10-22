@@ -181,6 +181,15 @@ juce::ValueTree Stylesheet::getCurrentStyle() const
     return currentStyle;
 }
 
+    juce::ValueTree Stylesheet::addNewStyleClass (const juce::String& name, juce::UndoManager* undo)
+{
+    if (currentStyle.isValid() == false)
+        return {};
+
+    auto classesNode = currentStyle.getOrCreateChildWithName (IDs::classes, undo);
+    return classesNode.getOrCreateChildWithName (name, undo);
+}
+
 void Stylesheet::registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel)
 {
     if (lookAndFeels.find (name) != lookAndFeels.cend())
