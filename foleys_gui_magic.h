@@ -79,8 +79,6 @@
 
 #include "Helpers/foleys_ParameterAttachment.h"
 
-#include "Helpers/foleys_ParameterAttachment.h"
-
 #include "Layout/foleys_Stylesheet.h"
 #include "Layout/foleys_Decorator.h"
 #include "Layout/foleys_Container.h"
