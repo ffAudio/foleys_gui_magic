@@ -141,7 +141,7 @@ void PropertiesEditor::createNewClass()
 
     if (auto* editor = dlg.getTextEditor (editorID))
     {
-        auto name = editor->getText().replaceCharacters (".&$@ ", "_____");
+        auto name = editor->getText().replaceCharacters (".&$@ ", "---__");
         builder.getStylesheet().addNewStyleClass (name, &undo);
     }
 }
