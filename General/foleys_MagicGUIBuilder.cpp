@@ -95,6 +95,7 @@ void MagicBuilder::setConfigTree (const juce::ValueTree& gui)
         return;
 
     config = gui;
+    undo.clearUndoHistory();
     updateAll();
 }
 
