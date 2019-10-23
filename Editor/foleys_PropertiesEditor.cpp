@@ -72,8 +72,10 @@ void PropertiesEditor::setStyle (juce::ValueTree styleToEdit)
     style.addListener (this);
 }
 
-void PropertiesEditor::setNodeToEdit (juce::ValueTree node, const juce::Identifier& propToScrollTo)
+void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
 {
+    const auto openness = properties.getOpennessState();
+
     styleItem = node;
 
     const auto& stylesheet = builder.getStylesheet();
@@ -86,26 +88,26 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node, const juce::Identifi
         return;
     }
 
-    addNodeProperties (true, propToScrollTo);
+    addNodeProperties();
 
-    addDecoratorProperties (false, propToScrollTo);
+    addDecoratorProperties();
 
     juce::Array<juce::PropertyComponent*> additional;
 
     if (stylesheet.isClassNode (styleItem))
     {
         for (auto factoryName : builder.getFactoryNames())
-            addTypeProperties (factoryName, {}, false, propToScrollTo);
+            addTypeProperties (factoryName, {});
     }
     else
     {
-        addTypeProperties (styleItem.getType(), additional, true, propToScrollTo);
+        addTypeProperties (styleItem.getType(), additional);
     }
 
     if (styleItem.getType() == IDs::view || stylesheet.isClassNode (styleItem))
-        addContainerProperties (false, propToScrollTo);
+        addContainerProperties();
 
-    addFlexItemProperties (false, propToScrollTo);
+    addFlexItemProperties();
 
     if (stylesheet.isClassNode (styleItem))
         nodeSelect.setText (TRANS ("Class: ") + styleItem.getType().toString(), juce::dontSendNotification);
@@ -115,6 +117,8 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node, const juce::Identifi
         nodeSelect.setText (TRANS ("Node: ") + styleItem.getType().toString(), juce::dontSendNotification);
     else
         nodeSelect.setText (TRANS ("Editing node"), juce::dontSendNotification);
+
+    properties.restoreOpennessState (*openness);
 }
 
 juce::ValueTree& PropertiesEditor::getNodeToEdit()
@@ -124,7 +128,27 @@ juce::ValueTree& PropertiesEditor::getNodeToEdit()
 
 //==============================================================================
 
-void PropertiesEditor::addNodeProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo)
+void PropertiesEditor::createNewClass()
+{
+    static juce::String editorID { "styleClass" };
+
+    juce::AlertWindow dlg (TRANS ("New style class"), TRANS ("Enter a name:"), juce::AlertWindow::QuestionIcon, this);
+    dlg.addTextEditor (editorID, "class");
+    dlg.addButton (TRANS ("Cancel"), 0);
+    dlg.addButton (TRANS ("Ok"), 1);
+    if (dlg.runModalLoop() == 0)
+        return;
+
+    if (auto* editor = dlg.getTextEditor (editorID))
+    {
+        auto name = editor->getText().replaceCharacters (".&$@ ", "---__");
+        builder.getStylesheet().addNewStyleClass (name, &undo);
+    }
+}
+
+//==============================================================================
+
+void PropertiesEditor::addNodeProperties()
 {
     juce::Array<juce::PropertyComponent*> array;
 
@@ -135,23 +159,11 @@ void PropertiesEditor::addNodeProperties (bool shouldBeOpen, const juce::Identif
     // FIXME add class choice
     array.add (new StyleTextPropertyComponent (builder, IDs::styleClass, styleItem));
 
-    properties.addSection ("Node", array, shouldBeOpen);
+    properties.addSection ("Node", array, false);
 }
 
-void PropertiesEditor::addDecoratorProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo)
+void PropertiesEditor::addDecoratorProperties()
 {
-    if (propToScrollTo == IDs::caption ||
-        propToScrollTo == IDs::captionSize ||
-        propToScrollTo == IDs::captionColour ||
-        propToScrollTo == IDs::margin ||
-        propToScrollTo == IDs::padding ||
-        propToScrollTo == IDs::border ||
-        propToScrollTo == IDs::borderColour ||
-        propToScrollTo == IDs::backgroundColour ||
-        propToScrollTo == IDs::lookAndFeel ||
-        propToScrollTo == IDs::backgroundImage)
-        shouldBeOpen = true;
-
     juce::Array<juce::PropertyComponent*> array;
     array.add (new StyleTextPropertyComponent (builder, IDs::caption, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::captionSize, styleItem));
@@ -159,15 +171,16 @@ void PropertiesEditor::addDecoratorProperties (bool shouldBeOpen, const juce::Id
     array.add (new StyleTextPropertyComponent (builder, IDs::margin, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::padding, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::border, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::radius, styleItem));
     array.add (new StyleColourPropertyComponent (builder, IDs::borderColour, styleItem));
     array.add (new StyleColourPropertyComponent (builder, IDs::backgroundColour, styleItem));
     array.add (new StyleChoicePropertyComponent (builder, IDs::lookAndFeel, styleItem, builder.getStylesheet().getLookAndFeelNames()));
     array.add (new StyleTextPropertyComponent (builder, IDs::backgroundImage, styleItem));
 
-    properties.addSection ("Decorator", array, shouldBeOpen);
+    properties.addSection ("Decorator", array, false);
 }
 
-void PropertiesEditor::addTypeProperties (juce::Identifier type, juce::Array<juce::PropertyComponent*> additional, bool shouldBeOpen, const juce::Identifier& propToScrollTo)
+void PropertiesEditor::addTypeProperties (juce::Identifier type, juce::Array<juce::PropertyComponent*> additional)
 {
     juce::Array<juce::PropertyComponent*> array;
 
@@ -177,9 +190,6 @@ void PropertiesEditor::addTypeProperties (juce::Identifier type, juce::Array<juc
     {
         if (auto* component = StylePropertyComponent::createComponent (builder, *p, styleItem))
             array.add (component);
-
-        if (p->name == propToScrollTo)
-            shouldBeOpen = true;
     }
 
     for (auto colour : builder.getColourNames (type))
@@ -187,23 +197,11 @@ void PropertiesEditor::addTypeProperties (juce::Identifier type, juce::Array<juc
         array.add (new StyleColourPropertyComponent (builder, colour, styleItem));
     }
 
-    properties.addSection (type.toString(), array, shouldBeOpen);
+    properties.addSection (type.toString(), array, false);
 }
 
-void PropertiesEditor::addFlexItemProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo)
+void PropertiesEditor::addFlexItemProperties()
 {
-    if (propToScrollTo == IDs::width ||
-        propToScrollTo == IDs::height ||
-        propToScrollTo == IDs::minWidth ||
-        propToScrollTo == IDs::minHeight ||
-        propToScrollTo == IDs::maxWidth ||
-        propToScrollTo == IDs::maxHeight ||
-        propToScrollTo == IDs::flexGrow ||
-        propToScrollTo == IDs::flexShrink ||
-        propToScrollTo == IDs::flexOrder ||
-        propToScrollTo == IDs::flexAlignSelf)
-        shouldBeOpen = true;
-
     juce::Array<juce::PropertyComponent*> array;
 
     array.add (new StyleTextPropertyComponent (builder, IDs::width, styleItem));
@@ -217,20 +215,11 @@ void PropertiesEditor::addFlexItemProperties (bool shouldBeOpen, const juce::Ide
     array.add (new StyleTextPropertyComponent (builder, IDs::flexOrder, styleItem));
     array.add (new StyleChoicePropertyComponent (builder, IDs::flexAlignSelf, styleItem, { IDs::flexStretch, IDs::flexStart, IDs::flexEnd, IDs::flexCenter, IDs::flexAuto }));
 
-    properties.addSection ("Flex-Item", array, shouldBeOpen);
+    properties.addSection ("Flex-Item", array, false);
 }
 
-void PropertiesEditor::addContainerProperties (bool shouldBeOpen, const juce::Identifier& propToScrollTo)
+void PropertiesEditor::addContainerProperties()
 {
-    if (propToScrollTo == IDs::display ||
-        propToScrollTo == IDs::throttle ||
-        propToScrollTo == IDs::flexDirection ||
-        propToScrollTo == IDs::flexWrap ||
-        propToScrollTo == IDs::flexAlignContent ||
-        propToScrollTo == IDs::flexAlignItems ||
-        propToScrollTo == IDs::flexJustifyContent)
-        shouldBeOpen = true;
-
     juce::Array<juce::PropertyComponent*> array;
 
     array.add (new StyleChoicePropertyComponent (builder, IDs::display, styleItem, { IDs::contents, IDs::flexbox }));
@@ -242,7 +231,7 @@ void PropertiesEditor::addContainerProperties (bool shouldBeOpen, const juce::Id
     array.add (new StyleChoicePropertyComponent (builder, IDs::flexAlignItems, styleItem, { IDs::flexStretch, IDs::flexStart, IDs::flexEnd, IDs::flexCenter }));
     array.add (new StyleChoicePropertyComponent (builder, IDs::flexJustifyContent, styleItem, { IDs::flexStart, IDs::flexEnd, IDs::flexCenter, IDs::flexSpaceAround, IDs::flexSpaceBetween }));
 
-    properties.addSection ("Flex-Container", array, shouldBeOpen);
+    properties.addSection ("Container", array, false);
 }
 
 //==============================================================================
@@ -281,6 +270,14 @@ void PropertiesEditor::updatePopupMenu()
         juce::PopupMenu menu;
         for (const auto& child : classesNode)
             menu.addItem (juce::PopupMenu::Item ("Class: " + child.getType().toString()).setID (index++));
+
+        menu.addSeparator();
+        menu.addItem (juce::PopupMenu::Item ("New Class...")
+                      .setAction ([p = juce::Component::SafePointer<PropertiesEditor>(this)]() mutable
+        {
+            if (p != nullptr)
+                p->createNewClass();
+        }));
 
         popup->addSubMenu ("Classes", menu);
     }

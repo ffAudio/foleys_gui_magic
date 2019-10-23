@@ -53,7 +53,7 @@ public:
     void timerCallback () override;
 
     void setSelectedNode (const juce::ValueTree& node);
-    void setNodeToEdit (juce::ValueTree node, const juce::Identifier& propToScrollTo=juce::Identifier());
+    void setNodeToEdit (juce::ValueTree node);
 
     void stateWasReloaded();
 

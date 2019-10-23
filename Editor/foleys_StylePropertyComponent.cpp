@@ -122,7 +122,7 @@ void StylePropertyComponent::resized()
 void StylePropertyComponent::mouseDoubleClick (const juce::MouseEvent& event)
 {
     if (inheritedFrom.isValid())
-        builder.getMagicToolBox().setNodeToEdit (inheritedFrom, property);
+        builder.getMagicToolBox().setNodeToEdit (inheritedFrom);
 }
 
 
