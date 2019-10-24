@@ -154,7 +154,7 @@ void Skeuomorphic::drawRotarySlider (Graphics& g, int x, int y, int width, int h
     int diameter = (width > height)? height : width;
     if (diameter < 16) return;
 
-    Point<float> centre (int (width * 0.5f + 0.5f), int (height * 0.5f + 0.5f));
+    Point<float> centre (x + int (width * 0.5f + 0.5f), y + int (height * 0.5f + 0.5f));
     diameter -= (diameter % 2)? 9 : 8;
     float radius = diameter * 0.5f;
     x = int (centre.x - radius);
