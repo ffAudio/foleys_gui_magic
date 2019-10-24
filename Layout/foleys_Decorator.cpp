@@ -164,6 +164,7 @@ void Decorator::paint (juce::Graphics& g)
         else
             box.setTop (box.getBottom() - captionSize);
 
+        g.setFont (box.getHeight() * 0.8f);
         g.drawFittedText (caption, box, justification.getOnlyHorizontalFlags(), 1);
     }
 }

@@ -33,6 +33,12 @@ namespace foleys
 {
 
 
+/**
+ The ParameterAttachment is a class you can use to have a value synchronised with
+ an AudioProcessorParameter. It takes care of updating either way, keeps the value
+ thread safe in an atomic and allows setting lambdas to be executed when the value
+ changes.
+ */
 template<typename ValueType>
 class ParameterAttachment : private juce::AudioProcessorValueTreeState::Listener,
                             private juce::AsyncUpdater
@@ -48,12 +54,18 @@ public:
         detachFromParameter();
     }
 
+    /**
+     Thread safe way to read the current value.
+     */
     ValueType getValue() const
     {
         return value.load();
     }
 
-    float getNormalisedValue() const
+    /**
+     Thread safe way to read the normalised value of the current value.
+     */
+    ValueType getNormalisedValue() const
     {
         if (parameter)
             return parameter->getNormalisableRange().convertTo0to1 (value.load());
@@ -61,6 +73,9 @@ public:
         return value.load();
     }
 
+    /**
+     Set the value from a normalised 0..1 value.
+     */
     void setNormalisedValue (ValueType newValue)
     {
         if (parameter)
@@ -69,6 +84,9 @@ public:
             parameterChanged (paramID, juce::jlimit (0.0f, 1.0f, newValue));
     }
 
+    /**
+     Make this value attached to the parameter with the supplied parameterID.
+     */
     void attachToParameter (const juce::String& parameterID)
     {
         detachFromParameter();
@@ -90,12 +108,20 @@ public:
             state.removeParameterListener (paramID, this);
     }
 
+    /**
+     Make sure to call this before you send changes (e.g. from mouseDown of your UI widget),
+     otherwise the hosts automation will battle with your value changes.
+     */
     void beginGesture()
     {
         if (parameter)
             parameter->beginChangeGesture();
     }
 
+    /**
+     Make sure to call this after finishing your changes (e.g. from mouseDown of your UI widget),
+     this way the automation can take back control (like e.g. latch mode).
+     */
     void endGesture()
     {
         if (parameter)
@@ -104,7 +130,7 @@ public:
 
     void parameterChanged (const juce::String& parameterID, float newValue) override
     {
-        value.store (newValue);
+        value.store (ValueType (newValue));
 
         if (onParameterChanged)
             onParameterChanged();
@@ -122,12 +148,12 @@ public:
     /**
      Set this lambda to be called from whatever thread is updating the parameter
      */
-    std::function<void()>               onParameterChanged;
+    std::function<void()> onParameterChanged;
 
     /**
      Set this lambda to be called from the message thread via AsyncUpdater
      */
-    std::function<void()>               onParameterChangedAsync;
+    std::function<void()> onParameterChangedAsync;
 
 private:
 

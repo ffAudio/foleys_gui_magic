@@ -34,6 +34,53 @@ namespace foleys
 
 /**
  */
+class AttachableSlider  : public juce::Slider
+{
+public:
+
+    AttachableSlider() = default;
+
+    void attachToParameter (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)
+    {
+        attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(state, paramID, *this);
+    }
+
+    void setAutoOrientation (bool shouldAutoOrient)
+    {
+        autoOrientation = shouldAutoOrient;
+        resized();
+    }
+
+    void resized() override
+    {
+        if (autoOrientation)
+        {
+            const auto w = getWidth();
+            const auto h = getHeight();
+
+            if (w > 2 * h)
+                setSliderStyle (juce::Slider::LinearHorizontal);
+            else if (h > 2 * w)
+                setSliderStyle (juce::Slider::LinearVertical);
+            else
+                setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+        }
+
+        juce::Slider::resized();
+    }
+
+private:
+
+    bool autoOrientation = true;
+
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachment;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AttachableSlider)
+};
+
+/**
+ This is a standard ComboBox, which has it's own ComboBoxAttachment member.
+ */
 class AttachableComboBox  : public juce::ComboBox
 {
 public:

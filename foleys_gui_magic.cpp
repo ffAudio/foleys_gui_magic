@@ -43,7 +43,6 @@
 #include "Visualisers/foleys_MagicAnalyser.cpp"
 #include "Visualisers/foleys_MagicOscilloscope.cpp"
 
-#include "Widgets/foleys_AttachableSlider.cpp"
 #include "Widgets/foleys_MagicPlotComponent.cpp"
 #include "Widgets/foleys_XYDragComponent.cpp"
 
