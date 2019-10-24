@@ -33,10 +33,39 @@
 namespace foleys
 {
 
-class foleys_Skeuomorphic
+class Skeuomorphic : public juce::LookAndFeel_V4
 {
-    public:
-        foleys_Skeuomorphic();
+public:
+    Skeuomorphic() = default;
+
+    void drawRotarySlider (juce::Graphics&, int x, int y, int width, int height,
+                           float sliderPosProportional, float rotaryStartAngle,
+                           float rotaryEndAngle, juce::Slider&) override;
+
+private:
+    struct knobImages
+    {
+        knobImages (juce::Image bg, juce::Image fg) : backgroundImage {bg}, foregroundImage {fg} {}
+        knobImages (const knobImages& src) = default;
+        knobImages (knobImages&& src) = default;
+
+        juce::Image backgroundImage;
+        juce::Image foregroundImage;
+    };
+    std::map<int, knobImages> knobsBgs;
+    int knobsMaxSize {6};
+
+    // hardcoded colors for the knobs
+    const juce::Colour whiteA010 = juce::Colours::white.withAlpha (juce::uint8 ( 10));
+    const juce::Colour whiteA042 = juce::Colours::white.withAlpha (juce::uint8 ( 42));
+    const juce::Colour blackA042 = juce::Colours::black.withAlpha (juce::uint8 ( 42));
+    const juce::Colour blackA092 = juce::Colours::black.withAlpha (juce::uint8 ( 92));
+    const juce::Colour blackA122 = juce::Colours::black.withAlpha (juce::uint8 (122));
+    const juce::Colour blackA142 = juce::Colours::black.withAlpha (juce::uint8 (142));
+
+    const knobImages& getKnobImages (int diameter);
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Skeuomorphic)
 };
 
 } // namespace foleys

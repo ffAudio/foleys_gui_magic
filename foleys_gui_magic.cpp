@@ -48,6 +48,7 @@
 #include "Widgets/foleys_XYDragComponent.cpp"
 
 #include "LookAndFeels/foleys_LookAndFeel.cpp"
+#include "LookAndFeels/foleys_Skeuomorphic.cpp"
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 

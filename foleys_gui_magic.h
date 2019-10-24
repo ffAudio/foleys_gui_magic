@@ -84,6 +84,7 @@
 #include "Layout/foleys_Container.h"
 
 #include "LookAndFeels/foleys_LookAndFeel.h"
+#include "LookAndFeels/foleys_Skeuomorphic.h"
 
 #include "Visualisers/foleys_MagicLevelSource.h"
 #include "Visualisers/foleys_MagicPlotSource.h"

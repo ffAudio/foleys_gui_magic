@@ -145,6 +145,7 @@ void MagicBuilder::registerJUCELookAndFeels()
     stylesheet.registerLookAndFeel ("LookAndFeel_V3", std::make_unique<juce::LookAndFeel_V3>());
     stylesheet.registerLookAndFeel ("LookAndFeel_V4", std::make_unique<juce::LookAndFeel_V4>());
     stylesheet.registerLookAndFeel ("FoleysFinest", std::make_unique<LookAndFeel>());
+    stylesheet.registerLookAndFeel ("Skeuomorphic", std::make_unique<Skeuomorphic>());
 }
 
 void MagicBuilder::setColourTranslation (juce::Identifier type, std::vector<std::pair<juce::String, int>> mapping)
