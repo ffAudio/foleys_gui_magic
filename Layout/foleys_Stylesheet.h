@@ -86,6 +86,13 @@ public:
 
     juce::ValueTree getCurrentStyle() const;
 
+    /**
+     Add a new style class node, so elements of your GUI can inherit that class.
+
+     @param name is the name of the new class. Make sure you only use XML conform identifiers, i.e. characters,
+                 numbers but not starting with a number, dash and underscore only.
+     @param undo the UndoManager to track the action
+     */
     juce::ValueTree addNewStyleClass (const juce::String& name, juce::UndoManager* undo);
 
     /**

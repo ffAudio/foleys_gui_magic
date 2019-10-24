@@ -91,7 +91,6 @@
 #include "Visualisers/foleys_MagicAnalyser.h"
 #include "Visualisers/foleys_MagicOscilloscope.h"
 
-#include "Widgets/foleys_AttachableSlider.h"
 #include "Widgets/foleys_AttachableComponent.h"
 #include "Widgets/foleys_MagicPlotComponent.h"
 #include "Widgets/foleys_XYDragComponent.h"
