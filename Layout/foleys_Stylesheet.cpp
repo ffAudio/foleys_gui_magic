@@ -27,20 +27,6 @@
  ==============================================================================
  */
 
-#if FOLEYS_ENABLE_BINARY_DATA
-namespace BinaryData
-{
-    // Number of elements in the namedResourceList and originalFileNames arrays.
-    extern const int namedResourceListSize;
-
-    // Points to the start of a list of resource names.
-    extern const char* namedResourceList[];
-
-    // If you provide the name of one of the binary resource variables above, this function will
-    // return the corresponding data and its size (or a null pointer if the name isn't found).
-    extern const char* getNamedResource (const char* resourceNameUTF8, int& dataSizeInBytes);
-}
-#endif
 
 namespace foleys
 {
@@ -136,23 +122,16 @@ juce::StringArray Stylesheet::getLookAndFeelNames() const
 
 juce::Image Stylesheet::getBackgroundImage (const juce::ValueTree& node) const
 {
-#if FOLEYS_ENABLE_BINARY_DATA
     auto name = getProperty (IDs::backgroundImage, node);
     if (name.isVoid())
         return {};
 
-    int dataSize = 0;
-    const char* data = BinaryData::getNamedResource (name.toString().toRawUTF8(), dataSize);
-    if (data != nullptr)
-        return juce::ImageCache::getFromMemory (data, dataSize);
-#endif
-
-    return {};
+    return Resources::getImage (name.toString());
 }
 
 juce::Array<juce::Colour> Stylesheet::getBackgroundGradient (const juce::ValueTree& node) const
 {
-    auto text = getProperty (IDs::backgroundImage, node).toString();
+    auto text = getProperty (IDs::backgroundGradient, node).toString();
 
     if (text.startsWith (IDs::linearGradient))
     {

@@ -91,6 +91,13 @@ namespace IDs
     static juce::String     repeatingLinearGradient { "repeating-linear-gradient" };
     static juce::String     repeatingRadialGradient { "repeating-radial-gradient" };
 
+    static juce::Identifier imagePlacement      { "image-placement" };
+    static juce::String     imageCentred        { "centred" };
+    static juce::String     imageFill           { "fill" };
+    static juce::String     imageStretch        { "stretch" };
+
+    static juce::Identifier backgroundGradient  { "background-gradient" };
+
     static juce::Identifier flexDirection       { "flex-direction" };
     static juce::String     flexDirRow          { "row" };
     static juce::String     flexDirRowReverse   { "row-reverse" };

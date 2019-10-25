@@ -111,6 +111,7 @@ private:
     std::unique_ptr<juce::Component> component;
 
     juce::Image                 backgroundImage;
+    juce::RectanglePlacement    backgroundPlacement = juce::RectanglePlacement::centred;
     juce::Array<juce::Colour>   backgroundFill;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Decorator)
