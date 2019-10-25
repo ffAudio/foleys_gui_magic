@@ -76,6 +76,7 @@
 
 #include "General/foleys_StringDefinitions.h"
 #include "General/foleys_SettableProperties.h"
+#include "General/foleys_Resources.h"
 
 #include "Helpers/foleys_ParameterAttachment.h"
 

@@ -27,42 +27,27 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+#pragma once
 
-#include <stack>
 
-#if FOLEYS_ENABLE_BINARY_DATA
-#include "BinaryData.h"
-#endif
+namespace foleys
+{
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
-#include "General/foleys_Resources.cpp"
+namespace Resources
+{
 
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
+    /**
+     Returns the available files from the BinaryData resources
+     */
+    static inline juce::StringArray getResourceFileNames();
 
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicAnalyser.cpp"
-#include "Visualisers/foleys_MagicOscilloscope.cpp"
+    /**
+     Loads an image from BinaryData via ImageCache
 
-#include "Widgets/foleys_MagicPlotComponent.cpp"
-#include "Widgets/foleys_XYDragComponent.cpp"
+     @param name is the filename as it appears in the BinaryData (the dot is replaced as underscore)
+     */
+    static inline juce::Image getImage (const juce::String& name);
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
+};
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
-#include "Editor/foleys_Palette.cpp"
-
-#include "Editor/foleys_StylePropertyComponent.cpp"
-#include "Editor/foleys_StyleTextPropertyComponent.cpp"
-#include "Editor/foleys_StyleColourPropertyComponent.cpp"
-#include "Editor/foleys_StyleChoicePropertyComponent.cpp"
-
-#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+}

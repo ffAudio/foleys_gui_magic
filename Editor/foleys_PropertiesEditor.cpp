@@ -175,7 +175,9 @@ void PropertiesEditor::addDecoratorProperties()
     array.add (new StyleColourPropertyComponent (builder, IDs::borderColour, styleItem));
     array.add (new StyleColourPropertyComponent (builder, IDs::backgroundColour, styleItem));
     array.add (new StyleChoicePropertyComponent (builder, IDs::lookAndFeel, styleItem, builder.getStylesheet().getLookAndFeelNames()));
-    array.add (new StyleTextPropertyComponent (builder, IDs::backgroundImage, styleItem));
+    array.add (new StyleChoicePropertyComponent (builder, IDs::backgroundImage, styleItem, Resources::getResourceFileNames()));
+    array.add (new StyleChoicePropertyComponent (builder, IDs::imagePlacement, styleItem, { IDs::imageCentred, IDs::imageFill, IDs::imageStretch }));
+    array.add (new StyleTextPropertyComponent (builder, IDs::backgroundGradient, styleItem));
 
     properties.addSection ("Decorator", array, false);
 }

@@ -94,6 +94,18 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
     backgroundImage = stylesheet.getBackgroundImage (node);
     backgroundFill  = stylesheet.getBackgroundGradient (node);
 
+    auto backPlacement = stylesheet.getProperty (IDs::imagePlacement, node);
+    if (! backPlacement.isVoid())
+    {
+        if (backPlacement.toString() == IDs::imageStretch)
+            backgroundPlacement = juce::RectanglePlacement::stretchToFit;
+        else if (backPlacement.toString() == IDs::imageFill)
+            backgroundPlacement = juce::RectanglePlacement::fillDestination;
+        else if (backPlacement.toString() == IDs::imageCentred)
+            backgroundPlacement = juce::RectanglePlacement::centred;
+    }
+
+
     if (component)
         if (auto* lookAndFeel = stylesheet.getLookAndFeel (node))
             component->setLookAndFeel (lookAndFeel);
@@ -118,41 +130,30 @@ void Decorator::paint (juce::Graphics& g)
 
     const auto bounds = getLocalBounds().reduced (margin).toFloat();
 
-    if (radius > 0.0f)
     {
+        juce::Graphics::ScopedSaveState save (g);
         g.setColour (backgroundColour);
 
         if (backgroundFill.size() > 1)
             g.setGradientFill (juce::ColourGradient::vertical (backgroundFill.getFirst(), backgroundFill.getLast(), bounds));
 
-        g.fillRoundedRectangle (bounds, radius);
-
-        if (! backgroundImage.isNull())
-            g.drawImage (backgroundImage, bounds);
-
-        if (border > 0.0f)
-        {
-            g.setColour (borderColour);
-            g.drawRoundedRectangle (bounds, radius, border);
-        }
+        if (radius > 0.0f)
+            g.fillRoundedRectangle (bounds, radius);
+        else
+            g.fillRect (bounds);
     }
-    else
+
+    if (! backgroundImage.isNull())
+        g.drawImage (backgroundImage, bounds, backgroundPlacement);
+
+    if (border > 0.0f)
     {
-        g.setColour (backgroundColour);
+        g.setColour (borderColour);
 
-        if (backgroundFill.size() > 1)
-            g.setGradientFill (juce::ColourGradient::vertical (backgroundFill.getFirst(), backgroundFill.getLast(), bounds));
-
-        g.fillRect (bounds);
-
-        if (! backgroundImage.isNull())
-            g.drawImage (backgroundImage, bounds);
-
-        if (border > 0.0f)
-        {
-            g.setColour (borderColour);
+        if (radius > 0.0f)
+            g.drawRoundedRectangle (bounds, radius, border);
+        else
             g.drawRect (bounds, border);
-        }
     }
 
     if (caption.isNotEmpty())

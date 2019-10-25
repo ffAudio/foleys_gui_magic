@@ -27,42 +27,37 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
 
-#include <stack>
+namespace foleys
+{
 
 #if FOLEYS_ENABLE_BINARY_DATA
-#include "BinaryData.h"
+
+juce::StringArray Resources::getResourceFileNames()
+{
+    juce::StringArray names;
+
+    for (int i = 0; i < BinaryData::namedResourceListSize; ++i)
+        names.add (juce::String::fromUTF8 (BinaryData::namedResourceList [i]));
+
+    return names;
+}
+
+juce::Image Resources::getImage (const juce::String& name)
+{
+    int dataSize = 0;
+    const char* data = BinaryData::getNamedResource (name.toRawUTF8(), dataSize);
+    if (data != nullptr)
+        return juce::ImageCache::getFromMemory (data, dataSize);
+
+    return {};
+}
+
+#else
+
+juce::StringArray Resources::getResourceFileNames()              { return {}; }
+juce::Image       Resources::getImage (const juce::String& name) { return {}; }
+
 #endif
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
-#include "General/foleys_Resources.cpp"
-
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
-
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicAnalyser.cpp"
-#include "Visualisers/foleys_MagicOscilloscope.cpp"
-
-#include "Widgets/foleys_MagicPlotComponent.cpp"
-#include "Widgets/foleys_XYDragComponent.cpp"
-
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
-
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
-#include "Editor/foleys_Palette.cpp"
-
-#include "Editor/foleys_StylePropertyComponent.cpp"
-#include "Editor/foleys_StyleTextPropertyComponent.cpp"
-#include "Editor/foleys_StyleColourPropertyComponent.cpp"
-#include "Editor/foleys_StyleChoicePropertyComponent.cpp"
-
-#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+}

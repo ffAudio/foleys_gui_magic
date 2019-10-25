@@ -146,6 +146,8 @@ std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Componen
 
         item->configureDecorator (stylesheet, node);
 
+        stylesheet.configureFlexBoxItem (item->flexItem, node);
+
         auto display = stylesheet.getProperty (IDs::display, node).toString();
         if (display == IDs::contents)
         {
