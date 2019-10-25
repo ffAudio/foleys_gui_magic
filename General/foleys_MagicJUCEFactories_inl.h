@@ -237,6 +237,44 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
 
     //==============================================================================
 
+    registerFactory (IDs::label,
+                     [] (const juce::ValueTree& config, auto& app)
+                     {
+                         return std::make_unique<juce::Label>();
+                     });
+
+    setColourTranslation (IDs::label,
+                          {
+                              { "label-background",         juce::Label::backgroundColourId },
+                              { "label-outline",            juce::Label::outlineColourId },
+                              { "label-text",               juce::Label::textColourId },
+                              { "label-editing-background", juce::Label::backgroundWhenEditingColourId },
+                              { "label-editing-outline",    juce::Label::outlineWhenEditingColourId },
+                              { "label-editing-text",       juce::Label::textWhenEditingColourId }
+                          });
+
+    addSettableProperty (IDs::label,
+                         std::make_unique<SettableTextProperty>
+                         (
+                          "text",
+                          [] (juce::Component* component, juce::var value)
+                          {
+                              if (auto* label = dynamic_cast<juce::Label*>(component))
+                                  label->setText (value.toString(), juce::dontSendNotification);
+                          }));
+
+    addSettableProperty (IDs::label,
+                         std::make_unique<SettableBoolProperty>
+                         (
+                          "editable",
+                          [] (juce::Component* component, juce::var value)
+                          {
+                              if (auto* label = dynamic_cast<juce::Label*>(component))
+                                  label->setEditable (value);
+                          }));
+
+    //==============================================================================
+
 #if JUCE_MODULE_AVAILABLE_juce_gui_extra && JUCE_WEB_BROWSER
     registerFactory (IDs::webBrowser,
                      [] (const juce::ValueTree& config, auto& app)

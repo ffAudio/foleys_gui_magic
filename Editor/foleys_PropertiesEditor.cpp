@@ -88,7 +88,10 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
         return;
     }
 
-    addNodeProperties();
+    if (stylesheet.isClassNode (styleItem) == false &&
+        stylesheet.isTypeNode (styleItem) == false &&
+        stylesheet.isIdNode (styleItem) == false)
+        addNodeProperties();
 
     addDecoratorProperties();
 

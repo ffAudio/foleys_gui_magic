@@ -27,43 +27,22 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+#pragma once
 
-#include <stack>
+namespace foleys
+{
 
-#if FOLEYS_ENABLE_BINARY_DATA
-#include "BinaryData.h"
-#endif
+class StyleBoolPropertyComponent  : public StylePropertyComponent
+{
+public:
+    StyleBoolPropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse);
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
-#include "General/foleys_Resources.cpp"
+    void refresh() override;
 
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
+private:
 
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicAnalyser.cpp"
-#include "Visualisers/foleys_MagicOscilloscope.cpp"
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StyleBoolPropertyComponent)
+};
 
-#include "Widgets/foleys_MagicPlotComponent.cpp"
-#include "Widgets/foleys_XYDragComponent.cpp"
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
-
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
-#include "Editor/foleys_Palette.cpp"
-
-#include "Editor/foleys_StylePropertyComponent.cpp"
-#include "Editor/foleys_StyleTextPropertyComponent.cpp"
-#include "Editor/foleys_StyleBoolPropertyComponent.cpp"
-#include "Editor/foleys_StyleColourPropertyComponent.cpp"
-#include "Editor/foleys_StyleChoicePropertyComponent.cpp"
-
-#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+} // namespace foleys

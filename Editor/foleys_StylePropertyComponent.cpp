@@ -39,6 +39,9 @@ StylePropertyComponent* StylePropertyComponent::createComponent (MagicBuilder& b
     if (property.type == SettableProperty::Text)
         return new StyleTextPropertyComponent (builder, property.name, node);
 
+    if (property.type == SettableProperty::Toggle)
+        return new StyleBoolPropertyComponent (builder, property.name, node);
+
     if (property.type == SettableProperty::Choice)
     {
         juce::StringArray names;
@@ -55,6 +58,9 @@ StylePropertyComponent* StylePropertyComponent::createComponent (MagicBuilder& b
 
     if (property.type == SettableProperty::PlotSource)
         return new StyleChoicePropertyComponent (builder, property.name, node, builder.getPlotSourcesNames());
+
+    if (property.type == SettableProperty::AssetFile)
+        return new StyleChoicePropertyComponent (builder, property.name, node, Resources::getResourceFileNames());
 
     return nullptr;
 }
