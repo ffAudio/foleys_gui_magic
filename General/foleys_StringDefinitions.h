@@ -41,6 +41,7 @@ namespace IDs
     static juce::Identifier slider       { "Slider" };
     static juce::Identifier textButton   { "TextButton" };
     static juce::Identifier toggleButton { "ToggleButton" };
+    static juce::Identifier label        { "Label" };
     static juce::Identifier comboBox     { "ComboBox" };
     static juce::Identifier plot         { "Plot" };
     static juce::Identifier xyDragComponent { "XYDragComponent" };

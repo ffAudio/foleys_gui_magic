@@ -44,6 +44,7 @@ struct SettableProperty
         Text,       /*< Plain text, e.g. for buttons */
         Number,     /*< A number, e.g. line width */
         Colour,     /*< Show the colour selector and palette names */
+        Toggle,     /*< Show a toggle for bool properties */
         Choice,     /*< Shows choices provided */
         Parameter,  /*< Shows available parameters as choice */
         PlotSource, /*< Shows available PlotSources as choice */
@@ -109,6 +110,24 @@ struct SettableTextProperty : public SettableProperty
     std::function<void(juce::Component*, juce::var)> setter;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettableTextProperty)
+};
+
+struct SettableBoolProperty : public SettableProperty
+{
+    SettableBoolProperty (const juce::Identifier& n,
+                          std::function<void(juce::Component*, juce::var)> s,
+                          PropertyType t = SettableProperty::Toggle)
+    : SettableProperty (n, t), setter (s) {}
+
+    void set (juce::Component* c, juce::var v) const override
+    {
+        if (setter && v.isVoid() == false)
+            setter (c, v);
+    }
+
+    std::function<void(juce::Component*, juce::var)> setter;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettableBoolProperty)
 };
 
 struct SettableNumberProperty : public SettableProperty

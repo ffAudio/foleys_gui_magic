@@ -27,43 +27,47 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+#pragma once
 
-#include <stack>
+namespace foleys
+{
 
-#if FOLEYS_ENABLE_BINARY_DATA
-#include "BinaryData.h"
-#endif
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
-#include "General/foleys_Resources.cpp"
+StyleBoolPropertyComponent::StyleBoolPropertyComponent (MagicBuilder& builderToUse,
+                                                        juce::Identifier propertyToUse,
+                                                        juce::ValueTree& nodeToUse)
+  : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse)
+{
+    auto toggle = std::make_unique<juce::ToggleButton>();
+    toggle->setClickingTogglesState (true);
 
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
+    addAndMakeVisible (toggle.get());
 
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicAnalyser.cpp"
-#include "Visualisers/foleys_MagicOscilloscope.cpp"
+    toggle->onClick = [&]
+    {
+        if (auto* toggle = dynamic_cast<juce::ToggleButton*>(editor.get()))
+            node.setProperty (property, toggle->getToggleState(), &builder.getUndoManager());
 
-#include "Widgets/foleys_MagicPlotComponent.cpp"
-#include "Widgets/foleys_XYDragComponent.cpp"
+        refresh();
+    };
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
+    editor = std::move (toggle);
+}
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+void StyleBoolPropertyComponent::refresh()
+{
+    auto value = lookupValue();
 
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
-#include "Editor/foleys_Palette.cpp"
+    if (auto* toggle = dynamic_cast<juce::ToggleButton*>(editor.get()))
+    {
+        if (node == inheritedFrom)
+            toggle->getToggleStateValue().referTo (node.getPropertyAsValue (property, &builder.getUndoManager()));
+        else
+            toggle->setToggleState (value, juce::dontSendNotification);
+    }
 
-#include "Editor/foleys_StylePropertyComponent.cpp"
-#include "Editor/foleys_StyleTextPropertyComponent.cpp"
-#include "Editor/foleys_StyleBoolPropertyComponent.cpp"
-#include "Editor/foleys_StyleColourPropertyComponent.cpp"
-#include "Editor/foleys_StyleChoicePropertyComponent.cpp"
+    repaint();
+}
 
-#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+
+} // namespace foleys
