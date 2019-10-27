@@ -77,7 +77,7 @@ MagicPlotSource* MagicProcessorState::addPlotSource (const juce::Identifier& sou
     if (auto* job = source->getBackgroundJob())
     {
         visualiserThread.addTimeSliceClient (job);
-        visualiserThread.startThread (5);
+        visualiserThread.startThread (3);
     }
 
     auto* pointer = source.get();

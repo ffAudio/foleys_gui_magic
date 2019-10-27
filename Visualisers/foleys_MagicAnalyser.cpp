@@ -47,10 +47,11 @@ void MagicAnalyser::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, 
     const float minFreq = 20.0f;
     const auto& data = analyserJob.getAnalyserData();
 
-    path.clear();
-    path.preallocateSpace (8 + data.getNumSamples() * 3);
-
+    if (pathNeedsUpdate.load())
     {
+        path.clear();
+        path.preallocateSpace (8 + data.getNumSamples() * 3);
+
         juce::ScopedLock lockedForReading (pathCreationLock);
         const auto* fftData = data.getReadPointer (0);
         const auto  factor  = bounds.getWidth() / 10.0f;
@@ -58,6 +59,8 @@ void MagicAnalyser::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, 
         path.startNewSubPath (bounds.getX() + factor * indexToX (0, minFreq), binToY (fftData [0], bounds));
         for (int i = 0; i < data.getNumSamples(); ++i)
             path.lineTo (bounds.getX() + factor * indexToX (i, minFreq), binToY (fftData [i], bounds));
+
+        pathNeedsUpdate.store (false);
     }
 
     g.setColour (component.findColour (isActive() ? MagicPlotComponent::plotColourId : MagicPlotComponent::plotInactiveColourId));
@@ -146,7 +149,7 @@ int MagicAnalyser::AnalyserJob::useTimeSlice()
         abstractFifo.prepareToRead (fft.getSize(), startIndex1, blockSize1, startIndex2, blockSize2);
         if (blockSize1 > 0) fftBuffer.copyFrom (0, 0,          audioFifo.getReadPointer (0, startIndex1), blockSize1);
         if (blockSize2 > 0) fftBuffer.copyFrom (0, blockSize1, audioFifo.getReadPointer (0, startIndex2), blockSize2);
-        abstractFifo.finishedRead ((blockSize1 + blockSize2) / 2);
+        abstractFifo.finishedRead ((blockSize1 + blockSize2));
 
         windowing.multiplyWithWindowingTable (fftBuffer.getWritePointer (0), size_t (fft.getSize()));
         fft.performFrequencyOnlyForwardTransform (fftBuffer.getWritePointer (0));
@@ -157,6 +160,7 @@ int MagicAnalyser::AnalyserJob::useTimeSlice()
         averager.addFrom (0, 0, averager.getReadPointer (averagerPtr), averager.getNumSamples());
         if (++averagerPtr == averager.getNumChannels()) averagerPtr = 1;
 
+        owner.pathNeedsUpdate.store (true);
         owner.sendChangeMessage();
     }
 

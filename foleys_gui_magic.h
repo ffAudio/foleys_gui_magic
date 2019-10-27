@@ -79,6 +79,7 @@
 #include "General/foleys_Resources.h"
 
 #include "Helpers/foleys_ParameterAttachment.h"
+#include "Helpers/foleys_Conversions.h"
 
 #include "Layout/foleys_Stylesheet.h"
 #include "Layout/foleys_Decorator.h"
