@@ -125,24 +125,25 @@ const Skeuomorphic::knobImages& Skeuomorphic::getKnobImages (int diameter)
 
         // middle
         {
-            g.saveState();
-            clipToEllipse (g, bounds);
+            {
+                juce::Graphics::ScopedSaveState save (g);
+                clipToEllipse (g, bounds);
 
-            juce::ColourGradient gr { { 55, 55, 66 }, 0.0f, bounds.getY(),
-                                      { 34, 35, 41 }, 0.0f, bounds.getBottom(), false };
-            fillEllipse (g, bounds, gr);
+                juce::ColourGradient gr { { 55, 55, 66 }, 0.0f, bounds.getY(),
+                                          { 34, 35, 41 }, 0.0f, bounds.getBottom(), false };
+                fillEllipse (g, bounds, gr);
 
-            juce::ColourGradient ringGr = makeGradient (centre, { centre.x, centre.y + fgRadius }, true,
-                                                     {  { 0.0,  juce::Colours::transparentBlack },
-                                                        { 0.72, juce::Colours::transparentBlack },
-                                                        { 1.0,  blackA042                 }  });
-            fillEllipse (g, bounds, ringGr);
+                juce::ColourGradient ringGr = makeGradient (centre, { centre.x, centre.y + fgRadius }, true,
+                                                         {  { 0.0,  juce::Colours::transparentBlack },
+                                                            { 0.72, juce::Colours::transparentBlack },
+                                                            { 1.0,  blackA042                 }  });
+                fillEllipse (g, bounds, ringGr);
 
-            g.setColour (whiteA042);
-            g.drawEllipse (bounds.translated (0.0f, 1.0f), 1.0f);
-            if (!isSmall) g.drawEllipse (bounds.translated (0.0f, 2.0f), 1.0f);
+                g.setColour (whiteA042);
+                g.drawEllipse (bounds.translated (0.0f, 1.0f), 1.0f);
+                if (!isSmall) g.drawEllipse (bounds.translated (0.0f, 2.0f), 1.0f);
+            }
 
-            g.restoreState();
             g.setColour (blackA092);
             g.drawEllipse (bounds, 1.0f);
         }
@@ -178,23 +179,22 @@ void Skeuomorphic::drawRotarySlider (juce::Graphics& g, int x, int y, int width,
 
     if (!isSmall) // marker dot
     {
-        g.saveState();
-
         auto dot = centre.getPointOnCircumference (radius * 0.825f, toAngle);
         auto dotRadius = radius * 0.072f;
         juce::Rectangle<float> dotBounds { dot.x - dotRadius, dot.y - dotRadius, dotRadius * 2.0f, dotRadius * 2.0f };
 
-        fillEllipse (g, dotBounds, fill);
+        {
+            juce::Graphics::ScopedSaveState save (g);
+            fillEllipse (g, dotBounds, fill);
 
-        clipToEllipse (g, dotBounds);
+            clipToEllipse (g, dotBounds);
 
-        g.setColour (fill.brighter (0.15f));
-        g.drawEllipse (dotBounds.translated (0.0f, -1.0f), 1.5f);
+            g.setColour (fill.brighter (0.15f));
+            g.drawEllipse (dotBounds.translated (0.0f, -1.0f), 1.5f);
 
-        g.setColour (fill.darker (0.3f));
-        g.drawEllipse (dotBounds.translated (0.0f, 0.5f), 1.5f);
-
-        g.restoreState();
+            g.setColour (fill.darker (0.3f));
+            g.drawEllipse (dotBounds.translated (0.0f, 0.5f), 1.5f);
+        }
 
         g.setColour (blackA092);
         g.drawEllipse (dotBounds.expanded (0.5f), 1.0f);
