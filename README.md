@@ -10,23 +10,99 @@ parameters of your AudioProcessorValueTreeState. Also an editor in the style of 
 to investigate the individual properties, and how they were obtained/calculated.
 
 
-Status
-------
+Setup
+-----
 
-foleys_gui_magic is a fresh take on ff_layouts and ff_meters. In addition to just layouting 
-the Components, foleys_gui_magic sets the colours according to the information defined
-in the stylesheet and the position in the DOM.
+To use the WYSWYG plugin editor, add this module via Projucer to your JUCE project.
+Remove the PluginEditor, that was automatically created by Projucer. Instead add a member
+called `foleys::MagicProcessorState` to your processor and create a `foleys::MagicPluginEditor`
+in the `createEditor() method of your processor:
 
-There is a default tree created from reading the processors `getParameterTree()` method,
-so it is easy to get an appealing starting point or even a fully functional generic processor
-editor with almost no effort.
+```
+// assumes an AudioProcessorValueTreeState named treeState
+foleys::MagicProcessorState magicState { *this, treeState };
 
-The designer can create style sheets, so every default editor is already styled in a
-consistent and appealing way. You can even create several style sheets and select from them.
+// return a new editor:
+AudioProcessorEditor* EqualizerExampleAudioProcessor::createEditor()
+{
+    // MAGIC GUI: create the generated editor, load your GUI from magic.xml in the binary resources
+    //            if you haven't created one yet, just give it a magicState and remove the last two arguments
+    return new foleys::MagicPluginEditor (magicState, BinaryData::magic_xml, BinaryData::magic_xmlSize);
+}
+```
 
-There will be the chance to register measure points inside your code to visualise the
-signal with an oscilloscope, the level with a meter or plotting curves including an analyser
-spectrum.
+
+Add Visualisations
+------------------
+
+To add visualisations like an Analyser or Osciloscope to your plugin, add them in the constructor
+to the `foleys::MagicPluginState`:
+
+```
+// Member:
+foleys::MagicPlotSource* analyser = nullptr;
+
+// Constructor
+analyser = magicState.addPlotSource ("input", std::make_unique<foleys::MagicAnalyser>());
+
+// e.g. in processBlock send the samples to the analyser:
+analyser->pushSamples (buffer);
+```
+
+In your editor, drag a `Plot` component into the UI and select the name you supplied as `source`, in this
+case "input".
+
+
+Saving and restoring the plugin
+-------------------------------
+
+You can save and restore your plugin state, just as you have been used to. But you can also delegate
+this to the `foleys::MagicPluginState`, which will additionally save and restore your PluginEditor's 
+last size:
+
+```
+void getStateInformation (MemoryBlock& destData) override
+{
+    // MAGIC GUI: let the magicState conveniently handle save and restore the state.
+    //            You don't need to use that, but it also takes care of restoring the last editor size
+    magicState.getStateInformation (destData);
+}
+
+void setStateInformation (const void* data, int sizeInBytes) override
+{
+    // MAGIC GUI: let the magicState conveniently handle save and restore the state.
+    //            You don't need to use that, but it also takes care of restoring the last editor size
+    magicState.setStateInformation (data, sizeInBytes, getActiveEditor());
+}
+```
+
+
+Removing the WYSWYG editor
+--------------------------
+
+The WYSWYG editor panel (attached outside the PluginEditor) is switched on or off with the config
+in Projucer named `FOLEYS_SHOW_GUI_EDITOR_PALLETTE`. An effective way is to add `FOLEYS_SHOW_GUI_EDITOR_PALLETTE=0`
+into extra preprocessor defines of the release build, that way you can design in debug mode, and avoid
+the WYSWYG editor from being included in the release build for deployment.
+
+
+Currently available Components
+------------------------------
+
+It is completely possible to register your own bespoke Components into the builder. These Components
+are already available:
+
+- Slider (attachable to parameters)
+- ComboBox ( -"- )
+- ToggleButton ( -"- )
+- TextButton ( -"- )
+- XYDragComponent (attachable to two parameters)
+- Plot
+- WebBrowserComponent
+
+All Components have the option to add margins/paddings and a border also with rounded corners.
+The View component serves as container, that has the option to layer all child components on top of each other
+or to layout them using flex-box.
 
 
 Contributing
