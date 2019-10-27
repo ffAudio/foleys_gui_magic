@@ -27,44 +27,45 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+#pragma once
 
-#include <stack>
 
-#if FOLEYS_ENABLE_BINARY_DATA
-#include "BinaryData.h"
-#endif
+namespace foleys
+{
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
-#include "General/foleys_Resources.cpp"
+class Skeuomorphic : public juce::LookAndFeel_V4
+{
+public:
+    Skeuomorphic() = default;
 
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
+    void drawRotarySlider (juce::Graphics&, int x, int y, int width, int height,
+                           float sliderPosProportional, float rotaryStartAngle,
+                           float rotaryEndAngle, juce::Slider&) override;
 
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicAnalyser.cpp"
-#include "Visualisers/foleys_MagicOscilloscope.cpp"
+private:
+    struct knobImages
+    {
+        knobImages (juce::Image bg, juce::Image fg) : backgroundImage {bg}, foregroundImage {fg} {}
+        knobImages (const knobImages& src) = default;
+        knobImages (knobImages&& src) = default;
 
-#include "Widgets/foleys_MagicPlotComponent.cpp"
-#include "Widgets/foleys_XYDragComponent.cpp"
+        juce::Image backgroundImage;
+        juce::Image foregroundImage;
+    };
+    std::map<int, knobImages> knobsBgs;
+    int knobsMaxSize {6};
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
-#include "LookAndFeels/foleys_Skeuomorphic.cpp"
+    // hardcoded colors for the knobs
+    const juce::Colour whiteA010 = juce::Colours::white.withAlpha (juce::uint8 ( 10));
+    const juce::Colour whiteA042 = juce::Colours::white.withAlpha (juce::uint8 ( 42));
+    const juce::Colour blackA042 = juce::Colours::black.withAlpha (juce::uint8 ( 42));
+    const juce::Colour blackA092 = juce::Colours::black.withAlpha (juce::uint8 ( 92));
+    const juce::Colour blackA122 = juce::Colours::black.withAlpha (juce::uint8 (122));
+    const juce::Colour blackA142 = juce::Colours::black.withAlpha (juce::uint8 (142));
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    const knobImages& getKnobImages (int diameter);
 
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
-#include "Editor/foleys_Palette.cpp"
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Skeuomorphic)
+};
 
-#include "Editor/foleys_StylePropertyComponent.cpp"
-#include "Editor/foleys_StyleTextPropertyComponent.cpp"
-#include "Editor/foleys_StyleBoolPropertyComponent.cpp"
-#include "Editor/foleys_StyleColourPropertyComponent.cpp"
-#include "Editor/foleys_StyleChoicePropertyComponent.cpp"
-
-#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+} // namespace foleys
