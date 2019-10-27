@@ -109,10 +109,11 @@ private:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AnalyserJob)
     };
 
-    double      sampleRate {};
-    juce::Path  path;
+    double            sampleRate {};
+    juce::Path        path;
+    std::atomic<bool> pathNeedsUpdate { true };
 
-    int         channel = -1;
+    int               channel = -1;
 
     juce::CriticalSection pathCreationLock;
     AnalyserJob analyserJob { *this };
