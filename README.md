@@ -105,6 +105,13 @@ The View component serves as container, that has the option to layer all child c
 or to layout them using flex-box.
 
 
+Demo projects
+-------------
+
+There is a repository with demo projects, that includes this module as git submodule:
+[PluginGuiMagic examples](https://github.com/ffAudio/PluginGuiMagic)
+
+
 Contributing
 ------------
 
