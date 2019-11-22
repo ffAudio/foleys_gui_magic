@@ -119,6 +119,11 @@ void MagicProcessorState::prepareToPlay (double sampleRate, int samplesPerBlockE
         plot.second->prepareToPlay (sampleRate, samplesPerBlockExpected);
 }
 
+void MagicProcessorState::processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents)
+{
+    keyboardState.processNextMidiBuffer (buffer, 0, numSamples, injectIndirectEvents);
+}
+
 juce::AudioProcessor& MagicProcessorState::getProcessor()
 {
     return processor;
@@ -174,6 +179,11 @@ void MagicProcessorState::setStateInformation (const void* data, int sizeInBytes
 juce::AudioProcessorValueTreeState& MagicProcessorState::getValueTreeState()
 {
     return state;
+}
+
+juce::MidiKeyboardState& MagicProcessorState::getKeyboardState()
+{
+    return keyboardState;
 }
 
 } // namespace foleys

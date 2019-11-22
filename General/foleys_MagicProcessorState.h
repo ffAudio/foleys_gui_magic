@@ -87,6 +87,15 @@ public:
     void prepareToPlay (double sampleRate, int samplesPerBlockExpected);
 
     /**
+     Send the midi data to the keyboard. This is only needed, if you added a MidiKeyboardComponent.
+
+     @param buffer the midi buffer from processBlock
+     @param numSamples the number of samples in the corresponding audio buffer
+     @param injectIndirectEvents if true key presses from the GUI are added to the midi stream
+     */
+    void processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents=true);
+
+    /**
      Allows the editor to set its last size to resore next time
      */
     void setLastEditorSize (int  width, int  height);
@@ -113,11 +122,14 @@ public:
 
     juce::AudioProcessor& getProcessor();
     juce::AudioProcessorValueTreeState& getValueTreeState();
+    juce::MidiKeyboardState& getKeyboardState();
 
 private:
 
     juce::AudioProcessor& processor;
     juce::AudioProcessorValueTreeState& state;
+
+    juce::MidiKeyboardState keyboardState;
 
     std::map<juce::Identifier, std::unique_ptr<MagicLevelSource>> levelSources;
     std::map<juce::Identifier, std::unique_ptr<MagicPlotSource>>  plotSources;

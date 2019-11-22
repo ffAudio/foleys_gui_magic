@@ -414,6 +414,49 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                               { "crosshair",    0x03 }
                           }));
 
+    //==============================================================================
+
+    registerFactory (IDs::keyboardComponent,
+                     [&] (const juce::ValueTree& config, auto& app)
+                     {
+                        if (magicState == nullptr)
+                            return std::unique_ptr<juce::MidiKeyboardComponent>();
+
+                         auto item = std::make_unique<juce::MidiKeyboardComponent>(magicState->getKeyboardState(),
+                                                                                   juce::MidiKeyboardComponent::horizontalKeyboard);
+
+                         return std::move (item);
+                     });
+
+    setColourTranslation (IDs::keyboardComponent,
+                          {
+                              { "white-note-color",      juce::MidiKeyboardComponent::whiteNoteColourId },
+                              { "black-note-color",      juce::MidiKeyboardComponent::blackNoteColourId },
+                              { "key-separator-line-color", juce::MidiKeyboardComponent::keySeparatorLineColourId },
+                              { "mouse-over-color",      juce::MidiKeyboardComponent::mouseOverKeyOverlayColourId },
+                              { "key-down-color",        juce::MidiKeyboardComponent::keyDownOverlayColourId },
+                          });
+
+    addSettableProperty (IDs::keyboardComponent,
+                         std::make_unique<SettableChoiceProperty>
+                         (
+                          "orientation",
+                          [] (juce::Component* component, juce::var value, const juce::NamedValueSet& options)
+                          {
+                              if (auto* keyboard = dynamic_cast<juce::MidiKeyboardComponent*>(component))
+                              {
+                                  const auto& v = options [value.toString()];
+                                  if (v.isVoid() == false)
+                                      keyboard->setOrientation (juce::MidiKeyboardComponent::Orientation (int (v)));
+                              }
+                          },
+                          "horizontal",
+                          juce::NamedValueSet {
+                              { "horizontal",     juce::MidiKeyboardComponent::horizontalKeyboard },
+                              { "vertical-left",  juce::MidiKeyboardComponent::verticalKeyboardFacingLeft },
+                              { "vertical-right", juce::MidiKeyboardComponent::verticalKeyboardFacingRight }
+                          }));
+
 }
 
 } // namespace foleys
