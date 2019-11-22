@@ -27,45 +27,60 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
 
-#include <stack>
+namespace foleys
+{
 
-#if FOLEYS_ENABLE_BINARY_DATA
-#include "BinaryData.h"
-#endif
+FileBrowserDialog::FileBrowserDialog (const juce::String cancelText,
+                                      const juce::String acceptText,
+                                      int                browserMode,
+                                      const juce::File&  directory,
+                                      std::unique_ptr<juce::FileFilter> filter)
+  : fileFilter (std::move (filter)),
+    cancel (cancelText),
+    accept (acceptText)
+{
+    addAndMakeVisible (cancel);
+    addAndMakeVisible (accept);
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
-#include "General/foleys_Resources.cpp"
+    fileBrowser = std::make_unique<juce::FileBrowserComponent>(browserMode,
+                                                               directory,
+                                                               fileFilter.get(),
+                                                               nullptr);
+    addAndMakeVisible (fileBrowser.get());
+}
 
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
+void FileBrowserDialog::resized()
+{
+    auto area = getLocalBounds().reduced (getWidth() / 10);
 
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicAnalyser.cpp"
-#include "Visualisers/foleys_MagicOscilloscope.cpp"
+    auto buttons = area.removeFromBottom (26).reduced (20, 0);
+    accept.setBounds (buttons.removeFromRight (100));
+    buttons.removeFromRight (10);
+    cancel.setBounds (buttons.removeFromRight (100));
 
-#include "Widgets/foleys_MagicPlotComponent.cpp"
-#include "Widgets/foleys_XYDragComponent.cpp"
-#include "Widgets/foleys_FileBrowserDialog.cpp"
+    area.removeFromBottom (10);
+    fileBrowser->setBounds (area);
+}
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
-#include "LookAndFeels/foleys_Skeuomorphic.cpp"
+void FileBrowserDialog::paint (juce::Graphics& g)
+{
+    g.fillAll (juce::Colours::black.withAlpha (0.8f));
+}
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+void FileBrowserDialog::setCancelFunction (std::function<void()> func)
+{
+    cancel.onClick = std::move (func);
+}
 
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
-#include "Editor/foleys_Palette.cpp"
+void FileBrowserDialog::setAcceptFunction (std::function<void()> func)
+{
+    accept.onClick = std::move (func);
+}
 
-#include "Editor/foleys_StylePropertyComponent.cpp"
-#include "Editor/foleys_StyleTextPropertyComponent.cpp"
-#include "Editor/foleys_StyleBoolPropertyComponent.cpp"
-#include "Editor/foleys_StyleColourPropertyComponent.cpp"
-#include "Editor/foleys_StyleChoicePropertyComponent.cpp"
+juce::File FileBrowserDialog::getFile()
+{
+    return fileBrowser->getSelectedFile (0);
+}
 
-#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+} // namespace foleys

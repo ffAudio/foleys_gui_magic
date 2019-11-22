@@ -152,6 +152,17 @@ public:
     void createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree);
 
     /**
+     This is used to display a dialog box. It is called by the GUI editor, but in future it might be reached
+     using the configured GUI.
+     */
+    void showOverlayDialog (std::unique_ptr<juce::Component> dialog);
+
+    /**
+     Closes a possibly open overlay dialog
+     */
+    void closeOverlayDialog();
+
+    /**
      returns the names of all registered factories
      */
     virtual juce::StringArray getFactoryNames() const = 0;
@@ -220,6 +231,8 @@ private:
     juce::Component::SafePointer<juce::Component> parent;
 
     std::unique_ptr<Decorator> root;
+
+    std::unique_ptr<juce::Component> overlayDialog;
 
     bool editMode = false;
     juce::ValueTree selectedNode;

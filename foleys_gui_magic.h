@@ -97,6 +97,7 @@
 #include "Widgets/foleys_AttachableComponent.h"
 #include "Widgets/foleys_MagicPlotComponent.h"
 #include "Widgets/foleys_XYDragComponent.h"
+#include "Widgets/foleys_FileBrowserDialog.h"
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 

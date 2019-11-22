@@ -32,68 +32,30 @@
 namespace foleys
 {
 
-class MagicBuilder;
-
-class ToolBox  : public juce::Component,
-                 public juce::DragAndDropContainer,
-                 public juce::KeyListener,
-                 private juce::Timer
+class FileBrowserDialog : public juce::Component
 {
 public:
-    ToolBox (juce::Component* parent, MagicBuilder& builder);
-    ~ToolBox();
-
-    void loadDialog();
-    void saveDialog();
-
-    void loadGUI (const juce::File& file);
-    void saveGUI (const juce::File& file);
-
-    void paint (juce::Graphics& g) override;
+    FileBrowserDialog (const juce::String cancelText,
+                       const juce::String acceptText,
+                       int                browserMode,
+                       const juce::File& directory,
+                       std::unique_ptr<juce::FileFilter> filter);
 
     void resized() override;
+    void paint (juce::Graphics& g) override;
 
-    void timerCallback () override;
+    void setCancelFunction (std::function<void()> func);
+    void setAcceptFunction (std::function<void()> func);
 
-    void setSelectedNode (const juce::ValueTree& node);
-    void setNodeToEdit (juce::ValueTree node);
-
-    void stateWasReloaded();
-
-    bool keyPressed (const juce::KeyPress& key) override;
-    bool keyPressed (const juce::KeyPress& key, juce::Component* originalComponent) override;
+    juce::File getFile();
 
 private:
-
-    juce::File getLastLocation() const;
-    std::unique_ptr<juce::FileFilter> getFileFilter() const;
-
-    juce::Component::SafePointer<juce::Component> parent;
-    juce::Point<int>    parentPos;
-    int                 parentHeight = 0;
-
-    MagicBuilder&       builder;
-    juce::UndoManager&  undo;
-
-    juce::TextButton    fileMenu   { TRANS ("File...") };
-    juce::TextButton    undoButton { TRANS ("Undo") };
-
-    juce::TextButton    editSwitch { TRANS ("Edit") };
-
-    juce::File          lastLocation;
-
-    GUITreeEditor       treeEditor          { builder };
-    PropertiesEditor    propertiesEditor    { builder };
-    Palette             palette             { builder };
-
-    juce::StretchableLayoutManager    resizeManager;
-    juce::StretchableLayoutResizerBar resizer1 { &resizeManager, 1, false };
-    juce::StretchableLayoutResizerBar resizer3 { &resizeManager, 3, false };
-
-    juce::TooltipWindow tooltip      { this };
-
+    std::unique_ptr<juce::FileFilter>           fileFilter;
     std::unique_ptr<juce::FileBrowserComponent> fileBrowser;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToolBox)
+
+    juce::TextButton cancel, accept;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FileBrowserDialog)
 };
 
 } // namespace foleys

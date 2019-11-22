@@ -89,6 +89,22 @@ void MagicBuilder::clearGUI()
     guiNode.removeAllProperties (&undo);
 }
 
+void MagicBuilder::showOverlayDialog (std::unique_ptr<juce::Component> dialog)
+{
+    if (parent == nullptr)
+        return;
+
+    overlayDialog = std::move (dialog);
+    parent->addAndMakeVisible (overlayDialog.get());
+
+    updateLayout();
+}
+
+void MagicBuilder::closeOverlayDialog()
+{
+    overlayDialog.reset();
+}
+
 void MagicBuilder::setConfigTree (const juce::ValueTree& gui)
 {
     if (gui.isValid() == false)
@@ -129,8 +145,14 @@ void MagicBuilder::updateComponents()
 
 void MagicBuilder::updateLayout()
 {
-    if (root.get() != nullptr && parent != nullptr)
+    if (parent == nullptr)
+        return;
+
+    if (root.get() != nullptr)
         root->setBounds (parent->getLocalBounds());
+
+    if (overlayDialog)
+        overlayDialog->setBounds (parent->getLocalBounds());
 }
 
 void MagicBuilder::registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel)
