@@ -294,7 +294,7 @@ juce::File ToolBox::getLastLocation() const
         return lastLocation;
 
     auto start = juce::File::getSpecialLocation (juce::File::currentExecutableFile);
-    while (start.exists() && start.getFileName() != "Builds")
+    while (start.exists() && !start.isRoot() && start.getFileName() != "Builds")
         start = start.getParentDirectory();
 
     if (start.getFileName() == "Builds")

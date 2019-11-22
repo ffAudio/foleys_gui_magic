@@ -65,7 +65,7 @@ void FileBrowserDialog::resized()
 
 void FileBrowserDialog::paint (juce::Graphics& g)
 {
-    g.fillAll (juce::Colours::black.withAlpha (0.8f));
+    g.fillAll (juce::Colours::black.withAlpha (0.9f));
 }
 
 void FileBrowserDialog::setCancelFunction (std::function<void()> func)
