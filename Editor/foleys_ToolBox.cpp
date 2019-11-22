@@ -109,35 +109,61 @@ ToolBox::~ToolBox()
 
 void ToolBox::loadDialog()
 {
-    juce::FileChooser myChooser ("Load from XML file...", getLastLocation(), "*.xml");
-    if (myChooser.browseForFileToOpen())
+    auto dialog = std::make_unique<FileBrowserDialog>(NEEDS_TRANS ("Cancel"), NEEDS_TRANS ("Load"),
+                                                      juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
+                                                      getLastLocation(), getFileFilter());
+    dialog->setAcceptFunction ([&, dlg=dialog.get()]
     {
-        juce::File xmlFile (myChooser.getResult());
-        juce::FileInputStream stream (xmlFile);
-        auto tree = juce::ValueTree::fromXml (stream.readEntireStreamAsString());
+        loadGUI (dlg->getFile());
+        builder.closeOverlayDialog();
+    });
+    dialog->setCancelFunction ([&]
+    {
+        builder.closeOverlayDialog();
+    });
 
-        if (tree.isValid() && tree.getType() == IDs::magic)
-        {
-            builder.setConfigTree (tree);
-            stateWasReloaded();
-        }
-
-        lastLocation = xmlFile;
-    }
+    builder.showOverlayDialog (std::move (dialog));
 }
 
 void ToolBox::saveDialog()
 {
-    juce::FileChooser myChooser ("Save XML to file...", getLastLocation(), "*.xml");
-    if (myChooser.browseForFileToSave (true))
+    auto dialog = std::make_unique<FileBrowserDialog>(NEEDS_TRANS ("Cancel"), NEEDS_TRANS ("Save"),
+                                                      juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles | juce::FileBrowserComponent::warnAboutOverwriting,
+                                                      getLastLocation(), getFileFilter());
+    dialog->setAcceptFunction ([&, dlg=dialog.get()]
     {
-        juce::File xmlFile (myChooser.getResult());
-        juce::FileOutputStream stream (xmlFile);
-        stream.setPosition (0);
-        stream.truncate();
-        stream.writeString (builder.getConfigTree().toXmlString());
-        lastLocation = xmlFile;
+        saveGUI (dlg->getFile());
+        builder.closeOverlayDialog();
+    });
+    dialog->setCancelFunction ([&]
+    {
+        builder.closeOverlayDialog();
+    });
+
+    builder.showOverlayDialog (std::move (dialog));
+}
+
+void ToolBox::loadGUI (const juce::File& xmlFile)
+{
+    juce::FileInputStream stream (xmlFile);
+    auto tree = juce::ValueTree::fromXml (stream.readEntireStreamAsString());
+
+    if (tree.isValid() && tree.getType() == IDs::magic)
+    {
+        builder.setConfigTree (tree);
+        stateWasReloaded();
     }
+
+    lastLocation = xmlFile;
+}
+
+void ToolBox::saveGUI (const juce::File& xmlFile)
+{
+    juce::FileOutputStream stream (xmlFile);
+    stream.setPosition (0);
+    stream.truncate();
+    stream.writeString (builder.getConfigTree().toXmlString());
+    lastLocation = xmlFile;
 }
 
 void ToolBox::setSelectedNode (const juce::ValueTree& node)
@@ -285,5 +311,9 @@ juce::File ToolBox::getLastLocation() const
     return juce::File::getSpecialLocation (juce::File::currentExecutableFile);
 }
 
+std::unique_ptr<juce::FileFilter> ToolBox::getFileFilter() const
+{
+    return std::make_unique<juce::WildcardFileFilter>("*.xml", "*", "XML files");
+}
 
 } // namespace foleys
