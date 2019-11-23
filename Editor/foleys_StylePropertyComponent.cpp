@@ -125,7 +125,7 @@ void StylePropertyComponent::resized()
     editor->setBounds (b);
 }
 
-void StylePropertyComponent::mouseDoubleClick (const juce::MouseEvent& event)
+void StylePropertyComponent::mouseDoubleClick (const juce::MouseEvent&)
 {
     if (inheritedFrom.isValid())
         builder.getMagicToolBox().setNodeToEdit (inheritedFrom);

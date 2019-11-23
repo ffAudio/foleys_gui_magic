@@ -73,7 +73,7 @@ void StyleChoicePropertyComponent::refresh()
     repaint();
 }
 
-void StyleChoicePropertyComponent::valueChanged (juce::Value& value)
+void StyleChoicePropertyComponent::valueChanged (juce::Value&)
 {
     if (updating)
         return;

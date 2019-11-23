@@ -77,7 +77,7 @@ public:
 
 private:
 
-    float indexToX (float index, float minFreq) const;
+    float indexToX (int index, float minFreq) const;
     float binToY (float bin, const juce::Rectangle<float> bounds) const;
 
     class AnalyserJob : public juce::TimeSliceClient

@@ -67,7 +67,7 @@ void MagicPlotComponent::paint (juce::Graphics& g)
     plotSource->drawPlot (g, getLocalBounds().toFloat(), *this);
 }
 
-void MagicPlotComponent::changeListenerCallback (juce::ChangeBroadcaster *source)
+void MagicPlotComponent::changeListenerCallback (juce::ChangeBroadcaster*)
 {
     triggerAsyncUpdate();
 }

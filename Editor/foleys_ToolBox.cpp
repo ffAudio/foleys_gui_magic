@@ -219,7 +219,7 @@ void ToolBox::resized()
                                     true, true);
 }
 
-bool ToolBox::keyPressed (const juce::KeyPress& key, juce::Component* originalComponent)
+bool ToolBox::keyPressed (const juce::KeyPress& key, juce::Component*)
 {
     return keyPressed (key);
 }
@@ -231,9 +231,9 @@ bool ToolBox::keyPressed (const juce::KeyPress& key)
         auto selected = builder.getSelectedNode();
         if (selected.isValid())
         {
-            auto parent = selected.getParent();
-            if (parent.isValid())
-                parent.removeChild (selected, &undo);
+            auto p = selected.getParent();
+            if (p.isValid())
+                p.removeChild (selected, &undo);
         }
 
         return true;

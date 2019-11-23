@@ -310,15 +310,14 @@ MagicBuilder& PropertiesEditor::getMagicBuilder()
     return builder;
 }
 
-void PropertiesEditor::valueTreeChildAdded (juce::ValueTree& parentTree,
-                                            juce::ValueTree& childWhichHasBeenAdded)
+void PropertiesEditor::valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&)
 {
     updatePopupMenu();
 }
 
-void PropertiesEditor::valueTreeChildRemoved (juce::ValueTree& parentTree,
+void PropertiesEditor::valueTreeChildRemoved (juce::ValueTree&,
                                               juce::ValueTree& childWhichHasBeenRemoved,
-                                              int indexFromWhichChildWasRemoved)
+                                              int)
 {
     if (childWhichHasBeenRemoved == styleItem)
         setNodeToEdit ({});

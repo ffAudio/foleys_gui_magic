@@ -110,31 +110,27 @@ void GUITreeEditor::setSelectedNode (const juce::ValueTree& node)
     treeView.scrollToKeepItemVisible (itemToSelect);
 }
 
-void GUITreeEditor::valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
-                                              const juce::Identifier& property)
+void GUITreeEditor::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
 {
     updateTree();
 }
 
-void GUITreeEditor::valueTreeChildAdded (juce::ValueTree& parentTree,
-                                         juce::ValueTree& childWhichHasBeenAdded)
+void GUITreeEditor::valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&)
 {
     updateTree();
 }
 
-void GUITreeEditor::valueTreeChildRemoved (juce::ValueTree& parentTree,
-                                           juce::ValueTree& childWhichHasBeenRemoved,
-                                           int indexFromWhichChildWasRemoved)
+void GUITreeEditor::valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int)
 {
     updateTree();
 }
 
-void GUITreeEditor::valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhoseChildrenHaveMoved,
-                                                int oldIndex, int newIndex)
+void GUITreeEditor::valueTreeChildOrderChanged (juce::ValueTree&, int, int)
 {
+    updateTree();
 }
 
-void GUITreeEditor::valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasChanged)
+void GUITreeEditor::valueTreeParentChanged (juce::ValueTree&)
 {
     updateTree();
 }
@@ -203,7 +199,7 @@ juce::var GUITreeEditor::GuiTreeItem::getDragSourceDescription()
     return IDs::dragSelected;
 }
 
-bool GUITreeEditor::GuiTreeItem::isInterestedInDragSource (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails)
+bool GUITreeEditor::GuiTreeItem::isInterestedInDragSource (const juce::DragAndDropTarget::SourceDetails&)
 {
     return itemNode.getType() == IDs::view;
 }

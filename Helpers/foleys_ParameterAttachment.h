@@ -130,6 +130,7 @@ public:
 
     void parameterChanged (const juce::String& parameterID, float newValue) override
     {
+        juce::ignoreUnused (parameterID);
         value.store (ValueType (newValue));
 
         if (onParameterChanged)

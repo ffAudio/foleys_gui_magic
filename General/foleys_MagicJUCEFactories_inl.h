@@ -37,7 +37,7 @@ template <typename AppType>
 void MagicGUIBuilder<AppType>::registerJUCEFactories()
 {
     registerFactory (IDs::slider,
-                     [] (const juce::ValueTree& config, auto& app)
+                     [] (const juce::ValueTree&, auto&)
                      {
                          return std::make_unique<AttachableSlider>();
                      });
@@ -127,7 +127,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::comboBox,
-                     [] (const juce::ValueTree& config, auto& app)
+                     [] (const juce::ValueTree&, auto&)
                      {
                          return std::make_unique<AttachableComboBox>();
                      });
@@ -159,7 +159,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::textButton,
-                     [] (const juce::ValueTree& config, auto& app)
+                     [] (const juce::ValueTree&, auto&)
                      {
                          return std::make_unique<AttachableTextButton>();
                      });
@@ -199,7 +199,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::toggleButton,
-                     [] (const juce::ValueTree& config, auto& app)
+                     [] (const juce::ValueTree&, auto&)
                      {
                          return std::make_unique<AttachableToggleButton>();
                      });
@@ -238,7 +238,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::label,
-                     [] (const juce::ValueTree& config, auto& app)
+                     [] (const juce::ValueTree&, auto&)
                      {
                          return std::make_unique<juce::Label>();
                      });
@@ -277,7 +277,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
 
 #if JUCE_MODULE_AVAILABLE_juce_gui_extra && JUCE_WEB_BROWSER
     registerFactory (IDs::webBrowser,
-                     [] (const juce::ValueTree& config, auto& app)
+                     [] (const juce::ValueTree&, auto&)
                      {
                          return std::make_unique<juce::WebBrowserComponent>();
                      });
@@ -296,7 +296,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::plot,
-                     [&] (const juce::ValueTree& config, auto& app)
+                     [&] (const juce::ValueTree& config, auto&)
                      {
                          auto item = std::make_unique<MagicPlotComponent>();
                          if (magicState && config.hasProperty (IDs::source))
@@ -336,7 +336,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::xyDragComponent,
-                     [&] (const juce::ValueTree& config, auto& app)
+                     [&] (const juce::ValueTree& config, auto&)
                      {
                          if (magicState == nullptr)
                              return std::unique_ptr<XYDragComponent>();
@@ -417,7 +417,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::keyboardComponent,
-                     [&] (const juce::ValueTree& config, auto& app)
+                     [&] (const juce::ValueTree&, auto&)
                      {
                         if (magicState == nullptr)
                             return std::unique_ptr<juce::MidiKeyboardComponent>();
