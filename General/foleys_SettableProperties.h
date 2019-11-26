@@ -47,6 +47,7 @@ struct SettableProperty
         Toggle,     /*< Show a toggle for bool properties */
         Choice,     /*< Shows choices provided */
         Parameter,  /*< Shows available parameters as choice */
+        LevelSource,/*< Shows available LevelSources as choice */
         PlotSource, /*< Shows available PlotSources as choice */
         AssetFile   /*< Shows embedded asset files to choose from (BinaryData) */
     };

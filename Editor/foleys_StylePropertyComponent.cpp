@@ -56,6 +56,9 @@ StylePropertyComponent* StylePropertyComponent::createComponent (MagicBuilder& b
     if (property.type == SettableProperty::Parameter)
         return new StyleChoicePropertyComponent (builder, property.name, node, builder.getParameterNames());
 
+    if (property.type == SettableProperty::LevelSource)
+        return new StyleChoicePropertyComponent (builder, property.name, node, builder.getLevelSourcesNames());
+
     if (property.type == SettableProperty::PlotSource)
         return new StyleChoicePropertyComponent (builder, property.name, node, builder.getPlotSourcesNames());
 
@@ -125,7 +128,7 @@ void StylePropertyComponent::resized()
     editor->setBounds (b);
 }
 
-void StylePropertyComponent::mouseDoubleClick (const juce::MouseEvent& event)
+void StylePropertyComponent::mouseDoubleClick (const juce::MouseEvent&)
 {
     if (inheritedFrom.isValid())
         builder.getMagicToolBox().setNodeToEdit (inheritedFrom);

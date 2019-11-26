@@ -27,48 +27,46 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+#pragma once
 
-#include <stack>
-#include <numeric>
+namespace foleys
+{
 
-#if FOLEYS_ENABLE_BINARY_DATA
-#include "BinaryData.h"
-#endif
+class MagicLevelMeter : public juce::Component,
+                        private juce::Timer
+{
+public:
+    enum ColourIds
+    {
+        backgroundColourId = 0x2002000,
+        barBackgroundColourId,
+        barFillColourId,
+        outlineColourId,
+        tickmarkColourId
+    };
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
-#include "General/foleys_Resources.cpp"
+    struct LookAndFeelMethods
+    {
+        virtual ~LookAndFeelMethods()=default;
+        virtual void drawLevelMeter (juce::Graphics& g,
+                                     MagicLevelMeter& meter,
+                                     MagicLevelSource* source,
+                                     juce::Rectangle<int> bounds) = 0;
+    };
 
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
+    MagicLevelMeter();
 
-#include "Visualisers/foleys_MagicLevelSource.cpp"
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicAnalyser.cpp"
-#include "Visualisers/foleys_MagicOscilloscope.cpp"
+    void paint (juce::Graphics& g) override;
 
-#include "Widgets/foleys_MagicLevelMeter.cpp"
-#include "Widgets/foleys_MagicPlotComponent.cpp"
-#include "Widgets/foleys_XYDragComponent.cpp"
-#include "Widgets/foleys_FileBrowserDialog.cpp"
+    void setLevelSource (MagicLevelSource* newSource);
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
-#include "LookAndFeels/foleys_Skeuomorphic.cpp"
+    void timerCallback() override;
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+private:
+    juce::WeakReference<MagicLevelSource> source;
 
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
-#include "Editor/foleys_Palette.cpp"
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicLevelMeter)
+};
 
-#include "Editor/foleys_StylePropertyComponent.cpp"
-#include "Editor/foleys_StyleTextPropertyComponent.cpp"
-#include "Editor/foleys_StyleBoolPropertyComponent.cpp"
-#include "Editor/foleys_StyleColourPropertyComponent.cpp"
-#include "Editor/foleys_StyleChoicePropertyComponent.cpp"
 
-#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+} // namespace foleys

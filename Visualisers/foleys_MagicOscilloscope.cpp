@@ -134,7 +134,7 @@ void MagicOscilloscope::drawPlot (juce::Graphics& g, juce::Rectangle<float> boun
     g.strokePath (path, juce::PathStrokeType (2.0f));
 }
 
-void MagicOscilloscope::prepareToPlay (double sampleRateToUse, int samplesPerBlockExpected)
+void MagicOscilloscope::prepareToPlay (double sampleRateToUse, int)
 {
     sampleRate = sampleRateToUse;
 

@@ -43,22 +43,25 @@ MagicProcessorState::~MagicProcessorState()
     visualiserThread.stopThread (1000);
 }
 
-void MagicProcessorState::addLevelSource (const juce::Identifier& sourceID, std::unique_ptr<MagicLevelSource> source)
+MagicLevelSource* MagicProcessorState::addLevelSource (const juce::Identifier& sourceID, std::unique_ptr<MagicLevelSource> source)
 {
-    if (levelSources.find (sourceID) != levelSources.cend())
+    const auto& present = levelSources.find (sourceID);
+    if (present != levelSources.cend())
     {
         // You tried to add two MagicLevelSources with the same sourceID
         jassertfalse;
-        return;
+        return present->second.get();
     }
 
+    auto* pointer = source.get();
     levelSources [sourceID] = std::move (source);
+    return pointer;
 }
 
 MagicLevelSource* MagicProcessorState::getLevelSource (const juce::Identifier& sourceID)
 {
     auto it = levelSources.find (sourceID);
-    if (it != levelSources.end())
+    if (it == levelSources.end())
         return nullptr;
 
     return it->second.get();
@@ -104,6 +107,15 @@ juce::StringArray MagicProcessorState::getParameterNames() const
     return names;
 }
 
+juce::StringArray MagicProcessorState::getLevelSourcesNames() const
+{
+    juce::StringArray names;
+    for (const auto& p : levelSources)
+        names.add (p.first.toString());
+
+    return names;
+}
+
 juce::StringArray MagicProcessorState::getPlotSourcesNames() const
 {
     juce::StringArray names;
@@ -117,6 +129,11 @@ void MagicProcessorState::prepareToPlay (double sampleRate, int samplesPerBlockE
 {
     for (auto& plot : plotSources)
         plot.second->prepareToPlay (sampleRate, samplesPerBlockExpected);
+}
+
+void MagicProcessorState::processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents)
+{
+    keyboardState.processNextMidiBuffer (buffer, 0, numSamples, injectIndirectEvents);
 }
 
 juce::AudioProcessor& MagicProcessorState::getProcessor()
@@ -174,6 +191,11 @@ void MagicProcessorState::setStateInformation (const void* data, int sizeInBytes
 juce::AudioProcessorValueTreeState& MagicProcessorState::getValueTreeState()
 {
     return state;
+}
+
+juce::MidiKeyboardState& MagicProcessorState::getKeyboardState()
+{
+    return keyboardState;
 }
 
 } // namespace foleys

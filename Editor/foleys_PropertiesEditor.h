@@ -62,9 +62,6 @@ private:
 
     void updatePopupMenu();
 
-    void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
-                                   const juce::Identifier& property) override {}
-
     void valueTreeChildAdded (juce::ValueTree& parentTree,
                               juce::ValueTree& childWhichHasBeenAdded) override;
 
@@ -72,10 +69,9 @@ private:
                                 juce::ValueTree& childWhichHasBeenRemoved,
                                 int indexFromWhichChildWasRemoved) override;
 
-    void valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhoseChildrenHaveMoved,
-                                     int oldIndex, int newIndex) override {}
-
-    void valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasChanged) override {}
+    void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override {}
+    void valueTreeChildOrderChanged (juce::ValueTree&, int, int) override {}
+    void valueTreeParentChanged (juce::ValueTree&) override {}
 
 
     MagicBuilder&       builder;

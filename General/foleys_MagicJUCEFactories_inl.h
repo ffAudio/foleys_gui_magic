@@ -37,7 +37,7 @@ template <typename AppType>
 void MagicGUIBuilder<AppType>::registerJUCEFactories()
 {
     registerFactory (IDs::slider,
-                     [] (const juce::ValueTree& config, auto& app)
+                     [] (const juce::ValueTree&, auto&)
                      {
                          return std::make_unique<AttachableSlider>();
                      });
@@ -127,7 +127,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::comboBox,
-                     [] (const juce::ValueTree& config, auto& app)
+                     [] (const juce::ValueTree&, auto&)
                      {
                          return std::make_unique<AttachableComboBox>();
                      });
@@ -159,7 +159,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::textButton,
-                     [] (const juce::ValueTree& config, auto& app)
+                     [] (const juce::ValueTree&, auto&)
                      {
                          return std::make_unique<AttachableTextButton>();
                      });
@@ -199,7 +199,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::toggleButton,
-                     [] (const juce::ValueTree& config, auto& app)
+                     [] (const juce::ValueTree&, auto&)
                      {
                          return std::make_unique<AttachableToggleButton>();
                      });
@@ -238,7 +238,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::label,
-                     [] (const juce::ValueTree& config, auto& app)
+                     [] (const juce::ValueTree&, auto&)
                      {
                          return std::make_unique<juce::Label>();
                      });
@@ -277,7 +277,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
 
 #if JUCE_MODULE_AVAILABLE_juce_gui_extra && JUCE_WEB_BROWSER
     registerFactory (IDs::webBrowser,
-                     [] (const juce::ValueTree& config, auto& app)
+                     [] (const juce::ValueTree&, auto&)
                      {
                          return std::make_unique<juce::WebBrowserComponent>();
                      });
@@ -296,7 +296,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::plot,
-                     [&] (const juce::ValueTree& config, auto& app)
+                     [&] (const juce::ValueTree& config, auto&)
                      {
                          auto item = std::make_unique<MagicPlotComponent>();
                          if (magicState && config.hasProperty (IDs::source))
@@ -336,7 +336,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::xyDragComponent,
-                     [&] (const juce::ValueTree& config, auto& app)
+                     [&] (const juce::ValueTree& config, auto&)
                      {
                          if (magicState == nullptr)
                              return std::unique_ptr<XYDragComponent>();
@@ -413,6 +413,90 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                               { "horizontal",   0x02 },
                               { "crosshair",    0x03 }
                           }));
+
+    //==============================================================================
+
+    registerFactory (IDs::keyboardComponent,
+                     [&] (const juce::ValueTree&, auto&)
+                     {
+                        if (magicState == nullptr)
+                            return std::unique_ptr<juce::MidiKeyboardComponent>();
+
+                         auto item = std::make_unique<juce::MidiKeyboardComponent>(magicState->getKeyboardState(),
+                                                                                   juce::MidiKeyboardComponent::horizontalKeyboard);
+
+                         return std::move (item);
+                     });
+
+    setColourTranslation (IDs::keyboardComponent,
+                          {
+                              { "white-note-color",      juce::MidiKeyboardComponent::whiteNoteColourId },
+                              { "black-note-color",      juce::MidiKeyboardComponent::blackNoteColourId },
+                              { "key-separator-line-color", juce::MidiKeyboardComponent::keySeparatorLineColourId },
+                              { "mouse-over-color",      juce::MidiKeyboardComponent::mouseOverKeyOverlayColourId },
+                              { "key-down-color",        juce::MidiKeyboardComponent::keyDownOverlayColourId },
+                          });
+
+    addSettableProperty (IDs::keyboardComponent,
+                         std::make_unique<SettableChoiceProperty>
+                         (
+                          "orientation",
+                          [] (juce::Component* component, juce::var value, const juce::NamedValueSet& options)
+                          {
+                              if (auto* keyboard = dynamic_cast<juce::MidiKeyboardComponent*>(component))
+                              {
+                                  const auto& v = options [value.toString()];
+                                  if (v.isVoid() == false)
+                                      keyboard->setOrientation (juce::MidiKeyboardComponent::Orientation (int (v)));
+                              }
+                          },
+                          "horizontal",
+                          juce::NamedValueSet {
+                              { "horizontal",     juce::MidiKeyboardComponent::horizontalKeyboard },
+                              { "vertical-left",  juce::MidiKeyboardComponent::verticalKeyboardFacingLeft },
+                              { "vertical-right", juce::MidiKeyboardComponent::verticalKeyboardFacingRight }
+                          }));
+
+    //==============================================================================
+
+    registerFactory (IDs::meter,
+                     [&] (const juce::ValueTree& config, auto&)
+                     {
+                         auto item = std::make_unique<MagicLevelMeter>();
+                         if (magicState && config.hasProperty (IDs::source))
+                         {
+                             auto sourceID = config.getProperty (IDs::source).toString();
+                             if (sourceID.isNotEmpty())
+                             {
+                                 auto* source = magicState->getLevelSource (sourceID);
+                                 item->setLevelSource (source);
+                             }
+                         }
+                         return std::move (item);
+                     });
+
+    setColourTranslation (IDs::meter,
+                          {
+                              { "background-color", MagicLevelMeter::backgroundColourId },
+                              { "bar-background-color", MagicLevelMeter::barBackgroundColourId },
+                              { "outline-color", MagicLevelMeter::outlineColourId },
+                              { "bar-fill-color", MagicLevelMeter::barFillColourId },
+                              { "tickmark-color", MagicLevelMeter::tickmarkColourId },
+                          });
+
+    addSettableProperty (IDs::meter,
+                         std::make_unique<SettableChoiceProperty>
+                         (IDs::source,
+                          [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
+                          {
+                              if (magicState == nullptr)
+                                  return;
+
+                              if (auto* meter = dynamic_cast<MagicLevelMeter*>(component))
+                                  meter->setLevelSource (magicState->getLevelSource (value.toString()));
+                          },
+                          juce::String(),
+                          SettableProperty::LevelSource));
 
 }
 

@@ -70,7 +70,7 @@ void MagicAnalyser::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, 
 void MagicAnalyser::prepareToPlay (double sampleRateToUse, int)
 {
     sampleRate = sampleRateToUse;
-    analyserJob.setupAnalyser (sampleRate);
+    analyserJob.setupAnalyser (int (sampleRate));
 }
 
 juce::TimeSliceClient* MagicAnalyser::getBackgroundJob()
@@ -78,7 +78,7 @@ juce::TimeSliceClient* MagicAnalyser::getBackgroundJob()
     return &analyserJob;
 }
 
-float MagicAnalyser::indexToX (float index, float minFreq) const
+float MagicAnalyser::indexToX (int index, float minFreq) const
 {
     const auto freq = (sampleRate * index) / analyserJob.fft.getSize();
     return (freq > 0.01f) ? std::log2 (freq / minFreq) : 0.0f;
@@ -108,12 +108,12 @@ void MagicAnalyser::AnalyserJob::setupAnalyser (int audioFifoSize)
     averager.clear();
 }
 
-void MagicAnalyser::AnalyserJob::pushSamples (const juce::AudioBuffer<float>& buffer, int channel)
+void MagicAnalyser::AnalyserJob::pushSamples (const juce::AudioBuffer<float>& buffer, int inChannel)
 {
     if (abstractFifo.getFreeSpace() < buffer.getNumSamples())
         return;
 
-    if (channel < 0)
+    if (inChannel < 0)
     {
         const auto b = abstractFifo.write (buffer.getNumSamples());
         if (b.blockSize1 > 0) audioFifo.copyFrom (0, b.startIndex1, buffer.getReadPointer (0),               b.blockSize1);
@@ -132,8 +132,8 @@ void MagicAnalyser::AnalyserJob::pushSamples (const juce::AudioBuffer<float>& bu
     else
     {
         const auto b = abstractFifo.write (buffer.getNumSamples());
-        if (b.blockSize1 > 0) audioFifo.copyFrom (0, b.startIndex1, buffer.getReadPointer (channel), b.blockSize1);
-        if (b.blockSize2 > 0) audioFifo.copyFrom (0, b.startIndex2, buffer.getReadPointer (channel, b.blockSize1), b.blockSize2);
+        if (b.blockSize1 > 0) audioFifo.copyFrom (0, b.startIndex1, buffer.getReadPointer (inChannel), b.blockSize1);
+        if (b.blockSize2 > 0) audioFifo.copyFrom (0, b.startIndex2, buffer.getReadPointer (inChannel, b.blockSize1), b.blockSize2);
     }
 }
 

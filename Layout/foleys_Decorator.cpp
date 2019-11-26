@@ -107,8 +107,8 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
 
 
     if (component)
-        if (auto* lookAndFeel = stylesheet.getLookAndFeel (node))
-            component->setLookAndFeel (lookAndFeel);
+        if (auto* lnf = stylesheet.getLookAndFeel (node))
+            component->setLookAndFeel (lnf);
 }
 
 void Decorator::configureComponent (Stylesheet& stylesheet, const juce::ValueTree& node)
@@ -128,7 +128,7 @@ void Decorator::paint (juce::Graphics& g)
 {
     juce::Graphics::ScopedSaveState stateSave (g);
 
-    const auto bounds = getLocalBounds().reduced (margin).toFloat();
+    const auto bounds = getLocalBounds().toFloat().reduced (margin);
 
     {
         juce::Graphics::ScopedSaveState save (g);
@@ -159,11 +159,11 @@ void Decorator::paint (juce::Graphics& g)
     if (caption.isNotEmpty())
     {
         g.setColour (captionColour);
-        auto box = getLocalBounds().reduced (margin + padding);
+        auto box = getLocalBounds().reduced (int (margin + padding));
         if (justification.getOnlyVerticalFlags() < int (juce::Justification::bottom))
-            box.setHeight (captionSize);
+            box.setHeight (int (captionSize));
         else
-            box.setTop (box.getBottom() - captionSize);
+            box.setTop (int (box.getBottom() - captionSize));
 
         g.setFont (box.getHeight() * 0.8f);
         g.drawFittedText (caption, box, justification.getOnlyHorizontalFlags(), 1);
@@ -176,9 +176,9 @@ juce::Rectangle<int> Decorator::getClientBounds() const
     if (caption.isNotEmpty())
     {
         if (justification.getOnlyVerticalFlags() < int (juce::Justification::bottom))
-            box.removeFromTop (captionSize);
+            box.removeFromTop (int (captionSize));
         else
-            box.removeFromBottom (captionSize);
+            box.removeFromBottom (int (captionSize));
     }
 
     return box;
@@ -189,13 +189,13 @@ void Decorator::resized()
     if (component.get() == nullptr)
         return;
 
-    auto box = getLocalBounds().reduced (margin + padding);
+    auto box = getLocalBounds().reduced (int (margin + padding));
     if (caption.isNotEmpty())
     {
         if (justification.getOnlyVerticalFlags() < int (juce::Justification::bottom))
-            box.removeFromTop (captionSize);
+            box.removeFromTop (int (captionSize));
         else
-            box.removeFromBottom (captionSize);
+            box.removeFromBottom (int (captionSize));
     }
 
     component->setBounds (box);
@@ -213,7 +213,7 @@ void Decorator::paintOverChildren (juce::Graphics& g)
         g.fillAll (juce::Colours::orange.withAlpha (0.5f));
 }
 
-void Decorator::mouseDown (const juce::MouseEvent& event)
+void Decorator::mouseDown (const juce::MouseEvent&)
 {
     magicBuilder.setSelectedNode (configNode);
 }
@@ -227,7 +227,7 @@ void Decorator::mouseDrag (const juce::MouseEvent& event)
     }
 }
 
-bool Decorator::isInterestedInDragSource (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails)
+bool Decorator::isInterestedInDragSource (const juce::DragAndDropTarget::SourceDetails &)
 {
     return true;
 }

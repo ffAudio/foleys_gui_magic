@@ -55,8 +55,8 @@ juce::Image Resources::getImage (const juce::String& name)
 
 #else
 
-juce::StringArray Resources::getResourceFileNames()              { return {}; }
-juce::Image       Resources::getImage (const juce::String& name) { return {}; }
+juce::StringArray Resources::getResourceFileNames()         { return {}; }
+juce::Image       Resources::getImage (const juce::String&) { return {}; }
 
 #endif
 

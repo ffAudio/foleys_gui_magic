@@ -55,7 +55,7 @@ public:
      one MagicLevelSource at the beginning of your processing and one at the end to show the user
      the input and output level.
      */
-    void addLevelSource (const juce::Identifier& sourceID, std::unique_ptr<MagicLevelSource> source);
+    MagicLevelSource* addLevelSource (const juce::Identifier& sourceID, std::unique_ptr<MagicLevelSource> source);
     MagicLevelSource* getLevelSource (const juce::Identifier& sourceID);
 
     /**
@@ -76,6 +76,11 @@ public:
     juce::StringArray getParameterNames() const;
 
     /**
+     Returns the IDs of MagicLevelSources for selection
+     */
+    juce::StringArray getLevelSourcesNames() const;
+
+    /**
      Returns the IDs of MagicPlotSources for selection
      */
     juce::StringArray getPlotSourcesNames() const;
@@ -85,6 +90,15 @@ public:
      properly setup
      */
     void prepareToPlay (double sampleRate, int samplesPerBlockExpected);
+
+    /**
+     Send the midi data to the keyboard. This is only needed, if you added a MidiKeyboardComponent.
+
+     @param buffer the midi buffer from processBlock
+     @param numSamples the number of samples in the corresponding audio buffer
+     @param injectIndirectEvents if true key presses from the GUI are added to the midi stream
+     */
+    void processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents=true);
 
     /**
      Allows the editor to set its last size to resore next time
@@ -113,11 +127,14 @@ public:
 
     juce::AudioProcessor& getProcessor();
     juce::AudioProcessorValueTreeState& getValueTreeState();
+    juce::MidiKeyboardState& getKeyboardState();
 
 private:
 
     juce::AudioProcessor& processor;
     juce::AudioProcessorValueTreeState& state;
+
+    juce::MidiKeyboardState keyboardState;
 
     std::map<juce::Identifier, std::unique_ptr<MagicLevelSource>> levelSources;
     std::map<juce::Identifier, std::unique_ptr<MagicPlotSource>>  plotSources;
