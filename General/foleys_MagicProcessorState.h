@@ -55,7 +55,7 @@ public:
      one MagicLevelSource at the beginning of your processing and one at the end to show the user
      the input and output level.
      */
-    void addLevelSource (const juce::Identifier& sourceID, std::unique_ptr<MagicLevelSource> source);
+    MagicLevelSource* addLevelSource (const juce::Identifier& sourceID, std::unique_ptr<MagicLevelSource> source);
     MagicLevelSource* getLevelSource (const juce::Identifier& sourceID);
 
     /**
@@ -74,6 +74,11 @@ public:
      Returns the IDs of AudioProcessorParameters for selection
      */
     juce::StringArray getParameterNames() const;
+
+    /**
+     Returns the IDs of MagicLevelSources for selection
+     */
+    juce::StringArray getLevelSourcesNames() const;
 
     /**
      Returns the IDs of MagicPlotSources for selection

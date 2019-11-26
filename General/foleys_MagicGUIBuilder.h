@@ -173,6 +173,11 @@ public:
     virtual juce::StringArray getParameterNames() const = 0;
 
     /**
+     Returns the IDs of MagicLevelSources for selection
+     */
+    virtual juce::StringArray getLevelSourcesNames() const = 0;
+
+    /**
      Returns the IDs of MagicPlotSources for selection
      */
     virtual juce::StringArray getPlotSourcesNames() const = 0;
@@ -298,6 +303,11 @@ public:
      Returns the IDs of AudioProcessorParameters for selection
      */
     juce::StringArray getParameterNames() const override;
+
+    /**
+     Returns the IDs of MagicPlotSources for selection
+     */
+    juce::StringArray getLevelSourcesNames() const override;
 
     /**
      Returns the IDs of MagicPlotSources for selection

@@ -43,22 +43,25 @@ MagicProcessorState::~MagicProcessorState()
     visualiserThread.stopThread (1000);
 }
 
-void MagicProcessorState::addLevelSource (const juce::Identifier& sourceID, std::unique_ptr<MagicLevelSource> source)
+MagicLevelSource* MagicProcessorState::addLevelSource (const juce::Identifier& sourceID, std::unique_ptr<MagicLevelSource> source)
 {
-    if (levelSources.find (sourceID) != levelSources.cend())
+    const auto& present = levelSources.find (sourceID);
+    if (present != levelSources.cend())
     {
         // You tried to add two MagicLevelSources with the same sourceID
         jassertfalse;
-        return;
+        return present->second.get();
     }
 
+    auto* pointer = source.get();
     levelSources [sourceID] = std::move (source);
+    return pointer;
 }
 
 MagicLevelSource* MagicProcessorState::getLevelSource (const juce::Identifier& sourceID)
 {
     auto it = levelSources.find (sourceID);
-    if (it != levelSources.end())
+    if (it == levelSources.end())
         return nullptr;
 
     return it->second.get();
@@ -100,6 +103,15 @@ juce::StringArray MagicProcessorState::getParameterNames() const
     for (const auto* p : processor.getParameters())
         if (const auto* withID = dynamic_cast<const juce::AudioProcessorParameterWithID*>(p))
             names.add (withID->paramID);
+
+    return names;
+}
+
+juce::StringArray MagicProcessorState::getLevelSourcesNames() const
+{
+    juce::StringArray names;
+    for (const auto& p : levelSources)
+        names.add (p.first.toString());
 
     return names;
 }

@@ -457,6 +457,47 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                               { "vertical-right", juce::MidiKeyboardComponent::verticalKeyboardFacingRight }
                           }));
 
+    //==============================================================================
+
+    registerFactory (IDs::meter,
+                     [&] (const juce::ValueTree& config, auto&)
+                     {
+                         auto item = std::make_unique<MagicLevelMeter>();
+                         if (magicState && config.hasProperty (IDs::source))
+                         {
+                             auto sourceID = config.getProperty (IDs::source).toString();
+                             if (sourceID.isNotEmpty())
+                             {
+                                 auto* source = magicState->getLevelSource (sourceID);
+                                 item->setLevelSource (source);
+                             }
+                         }
+                         return std::move (item);
+                     });
+
+    setColourTranslation (IDs::meter,
+                          {
+                              { "background-color", MagicLevelMeter::backgroundColourId },
+                              { "bar-background-color", MagicLevelMeter::barBackgroundColourId },
+                              { "outline-color", MagicLevelMeter::outlineColourId },
+                              { "bar-fill-color", MagicLevelMeter::barFillColourId },
+                              { "tickmark-color", MagicLevelMeter::tickmarkColourId },
+                          });
+
+    addSettableProperty (IDs::meter,
+                         std::make_unique<SettableChoiceProperty>
+                         (IDs::source,
+                          [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
+                          {
+                              if (magicState == nullptr)
+                                  return;
+
+                              if (auto* meter = dynamic_cast<MagicLevelMeter*>(component))
+                                  meter->setLevelSource (magicState->getLevelSource (value.toString()));
+                          },
+                          juce::String(),
+                          SettableProperty::LevelSource));
+
 }
 
 } // namespace foleys

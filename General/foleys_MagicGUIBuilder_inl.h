@@ -125,6 +125,15 @@ juce::StringArray MagicGUIBuilder<AppType>::getParameterNames() const
 }
 
 template<class AppType>
+juce::StringArray MagicGUIBuilder<AppType>::getLevelSourcesNames() const
+{
+    if (magicState == nullptr)
+        return {};
+
+    return magicState->getLevelSourcesNames();
+}
+
+template<class AppType>
 juce::StringArray MagicGUIBuilder<AppType>::getPlotSourcesNames() const
 {
     if (magicState == nullptr)

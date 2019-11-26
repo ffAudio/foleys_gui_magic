@@ -100,6 +100,7 @@
 #include "Visualisers/foleys_MagicOscilloscope.h"
 
 #include "Widgets/foleys_AttachableComponent.h"
+#include "Widgets/foleys_MagicLevelMeter.h"
 #include "Widgets/foleys_MagicPlotComponent.h"
 #include "Widgets/foleys_XYDragComponent.h"
 #include "Widgets/foleys_FileBrowserDialog.h"
