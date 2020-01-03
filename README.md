@@ -97,7 +97,10 @@ are already available:
 - ToggleButton ( -"- )
 - TextButton ( -"- )
 - XYDragComponent (attachable to two parameters)
-- Plot
+- Plot (displays various 2-d data)
+- LevelMeter (displays different RMS / Max levels)
+- Label
+- MidiKeyboardComponent
 - WebBrowserComponent
 
 All Components have the option to add margins/paddings and a border also with rounded corners.
