@@ -74,6 +74,17 @@ public:
     }
 
     /**
+     Set the value from a not normalised range.min..range.max value.
+     */
+    void setValue (ValueType newValue)
+    {
+        if (parameter)
+            parameter->setValueNotifyingHost (parameter->getNormalisableRange().convertTo0to1 (newValue));
+        else
+            parameterChanged (paramID, juce::jlimit (0.0f, 1.0f, newValue));
+    }
+
+    /**
      Set the value from a normalised 0..1 value.
      */
     void setNormalisedValue (ValueType newValue)

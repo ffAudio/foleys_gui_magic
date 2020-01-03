@@ -145,15 +145,17 @@ int MagicAnalyser::AnalyserJob::useTimeSlice()
     {
         fftBuffer.clear();
 
-        int startIndex1, startIndex2, blockSize1, blockSize2;
-        abstractFifo.prepareToRead (fft.getSize(), startIndex1, blockSize1, startIndex2, blockSize2);
-        if (blockSize1 > 0) fftBuffer.copyFrom (0, 0,          audioFifo.getReadPointer (0, startIndex1), blockSize1);
-        if (blockSize2 > 0) fftBuffer.copyFrom (0, blockSize1, audioFifo.getReadPointer (0, startIndex2), blockSize2);
-        abstractFifo.finishedRead ((blockSize1 + blockSize2));
+        const auto b = abstractFifo.read (fft.getSize());
+        if (b.blockSize1 > 0) fftBuffer.copyFrom (0, 0,            audioFifo.getReadPointer (0, b.startIndex1), b.blockSize1);
+        if (b.blockSize2 > 0) fftBuffer.copyFrom (0, b.blockSize1, audioFifo.getReadPointer (0, b.startIndex2), b.blockSize2);
+    }
 
-        windowing.multiplyWithWindowingTable (fftBuffer.getWritePointer (0), size_t (fft.getSize()));
-        fft.performFrequencyOnlyForwardTransform (fftBuffer.getWritePointer (0));
+    juce::ScopedNoDenormals noDenormals;
 
+    windowing.multiplyWithWindowingTable (fftBuffer.getWritePointer (0), size_t (fft.getSize()));
+    fft.performFrequencyOnlyForwardTransform (fftBuffer.getWritePointer (0));
+
+    {
         juce::ScopedLock lockedForWriting (owner.pathCreationLock);
         averager.addFrom (0, 0, averager.getReadPointer (averagerPtr), averager.getNumSamples(), -1.0f);
         averager.copyFrom (averagerPtr, 0, fftBuffer.getReadPointer (0), averager.getNumSamples(), 1.0f / (averager.getNumSamples() * (averager.getNumChannels() - 1)));
