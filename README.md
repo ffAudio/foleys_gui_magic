@@ -16,7 +16,7 @@ Setup
 To use the WYSWYG plugin editor, add this module via Projucer to your JUCE project.
 Remove the PluginEditor, that was automatically created by Projucer. Instead add a member
 called `foleys::MagicProcessorState` to your processor and create a `foleys::MagicPluginEditor`
-in the `createEditor() method of your processor:
+in the `createEditor()` method of your processor:
 
 ```
 // assumes an AudioProcessorValueTreeState named treeState
@@ -138,4 +138,4 @@ git submodule update
 ```
 
 
-Brighton, UK - Sept. 2019
+Brighton, UK - started Sept. 2019
