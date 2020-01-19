@@ -107,8 +107,17 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
 
 
     if (component)
+    {
         if (auto* lnf = stylesheet.getLookAndFeel (node))
             component->setLookAndFeel (lnf);
+
+        if (auto* tooltipClient = dynamic_cast<juce::SettableTooltipClient*>(component.get()))
+        {
+            auto tooltip = stylesheet.getProperty (IDs::tooltip, node).toString();
+            if (tooltip.isNotEmpty())
+                tooltipClient->setTooltip (tooltip);
+        }
+    }
 }
 
 void Decorator::configureComponent (Stylesheet& stylesheet, const juce::ValueTree& node)
