@@ -34,54 +34,54 @@ namespace foleys
 
 MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, std::unique_ptr<MagicBuilder> builderToUse)
   : juce::AudioProcessorEditor (stateToUse.getProcessor()),
-    processorState (stateToUse)
+    processorState (stateToUse),
+    builder (std::move (builderToUse))
 {
-#if JUCE_MODULE_AVAILABLE_juce_opengl
-    oglContext.attachTo (*this);
-#endif
-
-    if (builderToUse.get() != nullptr)
-        builder = std::move (builderToUse);
-    else
-        builder = createBuilderInstance();
-
-    builder->restoreGUI (*this);
-
-    builder->updateAll();
-
-    updateSize();
-
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-    builder->attachToolboxToWindow (*this);
-#endif
+    initialise();
 }
 
 MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const char* data, const int dataSize, std::unique_ptr<MagicBuilder> builderToUse)
   : juce::AudioProcessorEditor (stateToUse.getProcessor()),
-    processorState (stateToUse)
+    processorState (stateToUse),
+    builder (std::move (builderToUse))
 {
-#if JUCE_MODULE_AVAILABLE_juce_opengl
-    oglContext.attachTo (*this);
-#endif
-
-    if (builderToUse.get() != nullptr)
-        builder = std::move (builderToUse);
-    else
-        builder = createBuilderInstance();
-
-    setConfigTree (data, dataSize);
-
-    updateSize();
-
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-    builder->attachToolboxToWindow (*this);
-#endif
+    initialise (data, dataSize);
 }
 
 MagicPluginEditor::~MagicPluginEditor()
 {
 #if JUCE_MODULE_AVAILABLE_juce_opengl
     oglContext.detach();
+#endif
+}
+
+void MagicPluginEditor::initialise (const char* data, const int dataSize)
+{
+#if JUCE_MODULE_AVAILABLE_juce_opengl
+    oglContext.attachTo (*this);
+#endif
+
+    if (builder.get() == nullptr)
+        builder = createBuilderInstance();
+
+    auto guiTree = processorState.getValueTreeState().state.getChildWithName ("magic");
+    if (guiTree.isValid())
+        setConfigTree (guiTree);
+    else if (data != nullptr)
+        setConfigTree (data, dataSize);
+    else
+    {
+        builder->restoreGUI (*this);
+        builder->updateAll();
+    }
+
+    updateSize();
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    if (!guiTree.isValid())
+        processorState.getValueTreeState().state.addChild (builder->getConfigTree(), -1, nullptr);
+
+    builder->attachToolboxToWindow (*this);
 #endif
 }
 
