@@ -106,6 +106,7 @@ void MagicAnalyser::AnalyserJob::setupAnalyser (int audioFifoSize)
 
     audioFifo.clear();
     averager.clear();
+    averagerPtr = 1;
 }
 
 void MagicAnalyser::AnalyserJob::pushSamples (const juce::AudioBuffer<float>& buffer, int inChannel)
@@ -157,10 +158,17 @@ int MagicAnalyser::AnalyserJob::useTimeSlice()
 
     {
         juce::ScopedLock lockedForWriting (owner.pathCreationLock);
-        averager.addFrom (0, 0, averager.getReadPointer (averagerPtr), averager.getNumSamples(), -1.0f);
-        averager.copyFrom (averagerPtr, 0, fftBuffer.getReadPointer (0), averager.getNumSamples(), 1.0f / (averager.getNumSamples() * (averager.getNumChannels() - 1)));
-        averager.addFrom (0, 0, averager.getReadPointer (averagerPtr), averager.getNumSamples());
+
+        auto factor = 1.0f / averager.getNumSamples();
+        if (averager.getNumChannels() > 2)
+            factor = factor / (averager.getNumChannels() - 1.0f);
+
+        averager.copyFrom (averagerPtr, 0, fftBuffer.getReadPointer (0), averager.getNumSamples(), factor);
         if (++averagerPtr == averager.getNumChannels()) averagerPtr = 1;
+
+        averager.copyFrom (0, 0, averager.getReadPointer (1), averager.getNumSamples());
+        for (int i = 2; i < averager.getNumChannels(); ++i)
+            averager.addFrom (0, 0, averager.getReadPointer (i), averager.getNumSamples());
 
         owner.pathNeedsUpdate.store (true);
         owner.sendChangeMessage();
