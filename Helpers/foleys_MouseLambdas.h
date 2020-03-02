@@ -32,42 +32,53 @@
 namespace foleys
 {
 
-class StyleColourPropertyComponent  : public StylePropertyComponent,
-                                      private juce::Value::Listener
+class MouseLambdas : public juce::MouseListener
 {
 public:
-    StyleColourPropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse);
-    ~StyleColourPropertyComponent() = default;
+    MouseLambdas() = default;
 
-    void refresh() override;
+    void attachTo (juce::Component* component)
+    {
+        if (listenedComponent)
+            listenedComponent->removeMouseListener (this);
+
+        listenedComponent = component;
+
+        if (listenedComponent)
+            listenedComponent->addMouseListener (this, false);
+    }
+
+    ~MouseLambdas()
+    {
+        listenedComponent->removeMouseListener (this);
+    }
+
+    void mouseDown (const juce::MouseEvent& event) override
+    {
+        if (onMouseDown)
+            onMouseDown (event);
+    }
+
+    void mouseUp (const juce::MouseEvent& event) override
+    {
+        if (onMouseUp)
+            onMouseUp (event);
+    }
+
+    void mouseDoubleClick (const juce::MouseEvent& event) override
+    {
+        if (onMouseDoubleClick)
+            onMouseDoubleClick (event);
+    }
+
+    std::function<void(const juce::MouseEvent&)> onMouseDown;
+    std::function<void(const juce::MouseEvent&)> onMouseUp;
+    std::function<void(const juce::MouseEvent&)> onMouseDoubleClick;
 
 private:
+    juce::Component::SafePointer<juce::Component> listenedComponent;
 
-    class ColourPanel : public juce::Component, private juce::ChangeListener
-    {
-    public:
-        ColourPanel (juce::Value value, juce::Colour colour);
-        void resized() override;
-    private:
-        void changeListenerCallback (juce::ChangeBroadcaster*) override;
-
-        juce::Value          value;
-        juce::TextButton     close {"X"};
-        juce::ColourSelector selector;
-
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ColourPanel)
-    };
-
-    void valueChanged (juce::Value& value) override;
-
-    void setColourDisplay (juce::Colour colour);
-
-    void getLookAndFeelColourFallback();
-
-    MouseLambdas mouseEvents;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StyleColourPropertyComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MouseLambdas)
 };
 
-
-} // namespace foleys
+}
