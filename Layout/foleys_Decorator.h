@@ -74,6 +74,8 @@ public:
      */
     juce::Component* getWrappedComponent();
 
+    const juce::ValueTree& getConfigNode() const;
+
     juce::Colour backgroundColour { juce::Colours::darkgrey };
     juce::Colour borderColour     { juce::Colours::silver };
 

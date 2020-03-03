@@ -48,7 +48,13 @@ public:
 
     Container (MagicBuilder& builder, juce::ValueTree node);
 
+    /**
+     Append a child item. To change the order the flexbox.order is used.
+     */
     void addChildItem (std::unique_ptr<Decorator> child);
+
+    std::vector<std::unique_ptr<Decorator>>::iterator begin();
+    std::vector<std::unique_ptr<Decorator>>::iterator end();
 
     /**
      A child component can call this method instead of repaint(),
