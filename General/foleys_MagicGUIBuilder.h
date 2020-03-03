@@ -87,6 +87,11 @@ public:
     void updateComponents();
 
     /**
+     Updates the colours for all components
+     */
+    void updateColours (Decorator& item);
+
+    /**
      Recalculates the layout of all components
      */
     void updateLayout();
@@ -216,20 +221,15 @@ protected:
 
 private:
 
-    void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override
-    { updateAll(); }
+    void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override;
 
-    void valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&) override
-    { updateAll(); }
+    void valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&) override;
 
-    void valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int) override
-    { updateAll(); }
+    void valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int) override;
 
-    void valueTreeChildOrderChanged (juce::ValueTree&, int, int) override
-    { updateAll(); }
+    void valueTreeChildOrderChanged (juce::ValueTree&, int, int) override;
 
-    void valueTreeParentChanged (juce::ValueTree&) override
-    { updateAll(); }
+    void valueTreeParentChanged (juce::ValueTree&) override;
 
     //==============================================================================
 

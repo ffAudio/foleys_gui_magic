@@ -98,4 +98,14 @@ void Container::resized()
     }
 }
 
+std::vector<std::unique_ptr<Decorator>>::iterator Container::begin()
+{
+    return children.begin();
+}
+
+std::vector<std::unique_ptr<Decorator>>::iterator Container::end()
+{
+    return children.end();
+}
+
 } // namespace foleys

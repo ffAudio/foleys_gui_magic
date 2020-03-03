@@ -215,6 +215,11 @@ juce::Component* Decorator::getWrappedComponent()
     return component.get();
 }
 
+const juce::ValueTree& Decorator::getConfigNode() const
+{
+    return configNode;
+}
+
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 void Decorator::paintOverChildren (juce::Graphics& g)
 {
