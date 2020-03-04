@@ -276,15 +276,15 @@ void ToolBox::timerCallback ()
     if (parent == nullptr)
         return;
 
-    const auto pos = parent->getScreenPosition();
+    const auto pos = parent->getScreenBounds();
     const auto height = parent->getHeight();
     if (pos != parentPos || height != parentHeight)
     {
         const auto width = 260;
         parentPos = pos;
         parentHeight = height;
-        setBounds (parentPos.getX() - width, parentPos.getY(),
-                   width,                    parentHeight * 0.9f);
+        setBounds (parentPos.getRight(), parentPos.getY(),
+                   width,                parentHeight * 0.9f);
     }
 }
 
