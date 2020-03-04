@@ -69,7 +69,7 @@ private:
     std::unique_ptr<juce::FileFilter> getFileFilter() const;
 
     juce::Component::SafePointer<juce::Component> parent;
-    juce::Point<int>    parentPos;
+    juce::Rectangle<int> parentPos;
     int                 parentHeight = 0;
 
     MagicBuilder&       builder;
