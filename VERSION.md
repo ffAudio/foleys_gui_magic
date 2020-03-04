@@ -9,6 +9,7 @@ PluginGuiMagic - Versions history
 - Added LevelMeters
 - Added MidiKeyboardComponent
 - Improved accumulative error in analyser
+- Optimised update of colours
 
 
 1.0.1 - 27. October 2019
