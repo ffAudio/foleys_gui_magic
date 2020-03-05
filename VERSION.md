@@ -1,8 +1,8 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.0.2
------
+1.0.2 - 05. March 2020
+----------------------
 
 - Store current edit in plugin state
 - Added ColourSelector for editor
