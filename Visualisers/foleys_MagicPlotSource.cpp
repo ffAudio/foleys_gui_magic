@@ -33,34 +33,31 @@ namespace foleys
 {
 
 
-class StylePropertyComponent  : public juce::PropertyComponent
+void MagicPlotSource::fillPlotPath (juce::Graphics& g, const juce::Path& path, juce::Rectangle<float> bounds, MagicPlotComponent& component)
 {
-public:
-    StylePropertyComponent (MagicBuilder& builder, juce::Identifier property, juce::ValueTree& node);
+    const auto fillColour = component.findColour (isActive() ? MagicPlotComponent::plotFillColourId : MagicPlotComponent::plotInactiveFillColourId);
+    if (fillColour.isTransparent())
+        return;
 
-    void paint (juce::Graphics& g) override;
-    void resized() override;
+    auto pathCopy = path;
+    pathCopy.lineTo (bounds.getBottomRight());
+    pathCopy.lineTo (bounds.getBottomLeft());
+    pathCopy.closeSubPath();
 
-    void mouseDoubleClick (const juce::MouseEvent& event) override;
+    g.setColour (fillColour);
+    g.fillPath (pathCopy);
+}
 
-    static StylePropertyComponent* createComponent (MagicBuilder& builder, SettableProperty& property, juce::ValueTree& node);
+void MagicPlotSource::strokePlotPath (juce::Graphics& g, const juce::Path& path, MagicPlotComponent& component)
+{
+    auto strokeColour = component.findColour (isActive() ? MagicPlotComponent::plotColourId : MagicPlotComponent::plotInactiveColourId);
+    if (strokeColour.isTransparent())
+        return;
 
-protected:
-
-    juce::var lookupValue();
-
-    MagicBuilder&       builder;
-    juce::Identifier    property;
-    juce::ValueTree     node;
-    juce::ValueTree     inheritedFrom;
-
-    std::unique_ptr<juce::Component> editor;
-    juce::TextButton    remove { "X" };
-
-private:
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StylePropertyComponent)
-};
+    g.setColour (strokeColour);
+    g.strokePath (path, juce::PathStrokeType (2.0f));
+}
 
 
-} // namespace foleys
+
+}

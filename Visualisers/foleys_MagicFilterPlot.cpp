@@ -103,8 +103,8 @@ void MagicFilterPlot::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds
         plotChanged = false;
     }
 
-    g.setColour (component.findColour (isActive() ? MagicPlotComponent::plotColourId : MagicPlotComponent::plotInactiveColourId));
-    g.strokePath (path, juce::PathStrokeType (2.0f));
+    fillPlotPath (g, path, bounds, component);
+    strokePlotPath (g, path, component);
 }
 
 void MagicFilterPlot::prepareToPlay (double sampleRateToUse, int)

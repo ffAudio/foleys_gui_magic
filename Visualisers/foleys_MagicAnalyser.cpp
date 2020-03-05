@@ -63,8 +63,8 @@ void MagicAnalyser::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, 
         pathNeedsUpdate.store (false);
     }
 
-    g.setColour (component.findColour (isActive() ? MagicPlotComponent::plotColourId : MagicPlotComponent::plotInactiveColourId));
-    g.strokePath (path, juce::PathStrokeType (2.0f));
+    fillPlotPath (g, path, bounds, component);
+    strokePlotPath (g, path, component);
 }
 
 void MagicAnalyser::prepareToPlay (double sampleRateToUse, int)
