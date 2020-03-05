@@ -31,6 +31,7 @@
 
 namespace foleys
 {
+
 class MagicPlotComponent;
 
 /**
@@ -58,6 +59,25 @@ public:
      @param component grants access to the plot component, e.g. to find the colours from it
      */
     virtual void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component)=0;
+
+    /**
+     Your implementation of drawPlot should call this at the end.
+
+     @param g the Graphics context to draw onto
+     @param path the path to close
+     @param bounds the bounds of the plot
+     @param component grants access to the plot component, e.g. to find the colours from it
+     */
+    void fillPlotPath (juce::Graphics& g, const juce::Path& path, juce::Rectangle<float> bounds, MagicPlotComponent& component);
+
+    /**
+     Your implementation of drawPlot should call this at the end.
+
+     @param g the Graphics context to draw onto
+     @param path the path to close
+     @param component grants access to the plot component, e.g. to find the colours from it
+     */
+    void strokePlotPath (juce::Graphics& g, const juce::Path& path, MagicPlotComponent& component);
 
     /**
      You can add an active state to your plot to allow to paint in different colours

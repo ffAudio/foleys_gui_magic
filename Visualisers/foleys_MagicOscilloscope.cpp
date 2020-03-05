@@ -130,8 +130,8 @@ void MagicOscilloscope::drawPlot (juce::Graphics& g, juce::Rectangle<float> boun
                      juce::jmap (data [pos], -1.0f, 1.0f,                 bounds.getBottom(), bounds.getY()));
     }
 
-    g.setColour (component.findColour (isActive() ? MagicPlotComponent::plotColourId : MagicPlotComponent::plotInactiveColourId));
-    g.strokePath (path, juce::PathStrokeType (2.0f));
+    fillPlotPath (g, path, bounds, component);
+    strokePlotPath (g, path, component);
 }
 
 void MagicOscilloscope::prepareToPlay (double sampleRateToUse, int)

@@ -239,13 +239,13 @@ private:
 
     std::unique_ptr<juce::Component> overlayDialog;
 
-    bool editMode = false;
-    juce::ValueTree selectedNode;
-
     std::map<juce::Identifier, std::vector<std::unique_ptr<SettableProperty>>> settableProperties;
     const std::vector<std::unique_ptr<SettableProperty>> emptyPropertyList;
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    bool editMode = false;
+    juce::ValueTree selectedNode;
+
     std::unique_ptr<ToolBox> magicToolBox;
 #endif
 

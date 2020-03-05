@@ -8,6 +8,7 @@ PluginGuiMagic - Versions history
 - Added ColourSelector for editor
 - Added LevelMeters
 - Added MidiKeyboardComponent
+- Added fill for Plots
 - Improved accumulative error in analyser
 - Optimised update of colours
 
