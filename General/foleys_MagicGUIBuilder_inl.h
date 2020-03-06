@@ -149,28 +149,7 @@ std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Componen
     {
         auto item = std::make_unique<Container>(*this, node);
         for (auto childNode : node)
-        {
             item->addChildItem (restoreNode (*item, childNode));
-        }
-
-        item->configureDecorator (stylesheet, node);
-
-        stylesheet.configureFlexBoxItem (item->flexItem, node);
-
-        auto display = stylesheet.getProperty (IDs::display, node).toString();
-        if (display == IDs::contents)
-        {
-            item->layout = Container::Layout::Contents;
-        }
-        else
-        {
-            item->layout = Container::Layout::FlexBox;
-            stylesheet.configureFlexBox (item->flexBox, node);
-        }
-
-        auto throttle = stylesheet.getProperty (IDs::throttle, node).toString();
-        if (throttle.isNotEmpty())
-            item->setMaxFPSrate (throttle.getIntValue());
 
         component.addAndMakeVisible (item.get());
         return item;
@@ -185,23 +164,6 @@ std::unique_ptr<Decorator> MagicGUIBuilder<AppType>::restoreNode (juce::Componen
 
     auto item = std::make_unique<Decorator> (*this, node, factory ? factory (node, app) : nullptr);
     component.addAndMakeVisible (item.get());
-
-    item->configureDecorator (stylesheet, node);
-
-    item->configureComponent (stylesheet, node);
-
-    stylesheet.configureFlexBoxItem (item->flexItem, node);
-
-    const auto translation = colourTranslations.find (node.getType());
-    if (translation != colourTranslations.end() && item->getWrappedComponent() != nullptr)
-    {
-        for (auto& pair : translation->second)
-        {
-            auto colour = stylesheet.getProperty (pair.first, node).toString();
-            if (colour.isNotEmpty())
-                item->getWrappedComponent()->setColour (pair.second, stylesheet.parseColour (colour));
-        }
-    }
 
     return item;
 }

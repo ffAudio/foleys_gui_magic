@@ -32,35 +32,53 @@
 namespace foleys
 {
 
-
-class StylePropertyComponent  : public juce::PropertyComponent
+class MouseLambdas : public juce::MouseListener
 {
 public:
-    StylePropertyComponent (MagicBuilder& builder, juce::Identifier property, juce::ValueTree& node);
+    MouseLambdas() = default;
 
-    void paint (juce::Graphics& g) override;
-    void resized() override;
+    void attachTo (juce::Component* component)
+    {
+        if (listenedComponent)
+            listenedComponent->removeMouseListener (this);
 
-    void mouseDoubleClick (const juce::MouseEvent& event) override;
+        listenedComponent = component;
 
-    static StylePropertyComponent* createComponent (MagicBuilder& builder, SettableProperty& property, juce::ValueTree& node);
+        if (listenedComponent)
+            listenedComponent->addMouseListener (this, false);
+    }
 
-protected:
+    ~MouseLambdas()
+    {
+        listenedComponent->removeMouseListener (this);
+    }
 
-    juce::var lookupValue();
+    void mouseDown (const juce::MouseEvent& event) override
+    {
+        if (onMouseDown)
+            onMouseDown (event);
+    }
 
-    MagicBuilder&       builder;
-    juce::Identifier    property;
-    juce::ValueTree     node;
-    juce::ValueTree     inheritedFrom;
+    void mouseUp (const juce::MouseEvent& event) override
+    {
+        if (onMouseUp)
+            onMouseUp (event);
+    }
 
-    std::unique_ptr<juce::Component> editor;
-    juce::TextButton    remove { "X" };
+    void mouseDoubleClick (const juce::MouseEvent& event) override
+    {
+        if (onMouseDoubleClick)
+            onMouseDoubleClick (event);
+    }
+
+    std::function<void(const juce::MouseEvent&)> onMouseDown;
+    std::function<void(const juce::MouseEvent&)> onMouseUp;
+    std::function<void(const juce::MouseEvent&)> onMouseDoubleClick;
 
 private:
+    juce::Component::SafePointer<juce::Component> listenedComponent;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StylePropertyComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MouseLambdas)
 };
 
-
-} // namespace foleys
+}

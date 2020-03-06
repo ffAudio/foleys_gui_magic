@@ -59,6 +59,10 @@ void MagicBuilder::updateAll()
 {
     updateStylesheet();
     updateComponents();
+
+    if (root)
+        updateProperties (*root);
+
     updateLayout();
 
     config.addListener (this);
@@ -141,6 +145,51 @@ void MagicBuilder::updateComponents()
     if (root.get() != nullptr)
         root->setEditMode (editMode);
 #endif
+}
+
+void MagicBuilder::updateProperties (Decorator& item)
+{
+    const auto& configNode = item.getConfigNode();
+
+    item.configureDecorator (stylesheet, configNode);
+
+    item.configureComponent (stylesheet, configNode);
+
+    stylesheet.configureFlexBoxItem (item.flexItem, configNode);
+
+    const auto translation = colourTranslations.find (configNode.getType());
+    if (translation != colourTranslations.end() && item.getWrappedComponent() != nullptr)
+    {
+        for (auto& pair : translation->second)
+        {
+            auto colour = stylesheet.getProperty (pair.first, configNode).toString();
+            if (colour.isNotEmpty())
+                item.getWrappedComponent()->setColour (pair.second, stylesheet.parseColour (colour));
+        }
+    }
+
+    if (auto* container = dynamic_cast<Container*>(&item))
+    {
+        stylesheet.configureFlexBoxItem (item.flexItem, configNode);
+
+        auto display = stylesheet.getProperty (IDs::display, configNode).toString();
+        if (display == IDs::contents)
+        {
+            container->layout = Container::Layout::Contents;
+        }
+        else
+        {
+            container->layout = Container::Layout::FlexBox;
+            stylesheet.configureFlexBox (container->flexBox, configNode);
+        }
+
+        auto throttle = stylesheet.getProperty (IDs::throttle, configNode).toString();
+        if (throttle.isNotEmpty())
+            container->setMaxFPSrate (throttle.getIntValue());
+
+        for (auto& child : *container)
+            updateProperties (*child);
+    }
 }
 
 void MagicBuilder::updateLayout()
@@ -273,6 +322,33 @@ void MagicBuilder::createDefaultFromParameters (juce::ValueTree& node, const juc
     }
 }
 
+void MagicBuilder::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
+{
+    if (root)
+        updateProperties (*root);
+
+    updateLayout();
+}
+
+void MagicBuilder::valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&)
+{
+    updateAll();
+}
+
+void MagicBuilder::valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int)
+{
+    updateAll();
+}
+
+void MagicBuilder::valueTreeChildOrderChanged (juce::ValueTree&, int, int)
+{
+    updateAll();
+}
+
+void MagicBuilder::valueTreeParentChanged (juce::ValueTree&)
+{
+    updateAll();
+}
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 

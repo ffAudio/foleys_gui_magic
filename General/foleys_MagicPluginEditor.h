@@ -77,6 +77,8 @@ public:
     void resized() override;
 
 private:
+    void initialise (const char* data = nullptr, const int dataSize = 0);
+
     std::unique_ptr<MagicBuilder> createBuilderInstance();
 
     void updateSize();
@@ -88,6 +90,8 @@ private:
     MagicProcessorState& processorState;
 
     std::unique_ptr<MagicBuilder> builder;
+
+    juce::TooltipWindow tooltip      { this };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicPluginEditor)
 };

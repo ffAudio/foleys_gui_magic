@@ -159,13 +159,13 @@ void Skeuomorphic::drawRotarySlider (juce::Graphics& g, int x, int y, int width,
     int diameter = (width > height)? height : width;
     if (diameter < 16) return;
 
-    juce::Point<float> centre (x + int (width * 0.5f + 0.5f), y + int (height * 0.5f + 0.5f));
+    juce::Point<float> centre (x + std::floor (width * 0.5f + 0.5f), y + std::floor (height * 0.5f + 0.5f));
     diameter -= (diameter % 2)? 9 : 8;
     float radius = diameter * 0.5f;
     x = int (centre.x - radius);
     y = int (centre.y - radius);
 
-    juce::Rectangle<float> bounds (x, y, diameter, diameter);
+    const auto bounds = juce::Rectangle<int> (x, y, diameter, diameter).toFloat();
 
     bool isTiny  = diameter < 20;
     bool isSmall = diameter < 60;

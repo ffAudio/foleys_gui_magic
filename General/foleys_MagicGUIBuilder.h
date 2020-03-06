@@ -87,6 +87,11 @@ public:
     void updateComponents();
 
     /**
+     Updates the colours and properties for all components
+     */
+    void updateProperties (Decorator& item);
+
+    /**
      Recalculates the layout of all components
      */
     void updateLayout();
@@ -216,20 +221,15 @@ protected:
 
 private:
 
-    void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override
-    { updateAll(); }
+    void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override;
 
-    void valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&) override
-    { updateAll(); }
+    void valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&) override;
 
-    void valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int) override
-    { updateAll(); }
+    void valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int) override;
 
-    void valueTreeChildOrderChanged (juce::ValueTree&, int, int) override
-    { updateAll(); }
+    void valueTreeChildOrderChanged (juce::ValueTree&, int, int) override;
 
-    void valueTreeParentChanged (juce::ValueTree&) override
-    { updateAll(); }
+    void valueTreeParentChanged (juce::ValueTree&) override;
 
     //==============================================================================
 
@@ -239,13 +239,13 @@ private:
 
     std::unique_ptr<juce::Component> overlayDialog;
 
-    bool editMode = false;
-    juce::ValueTree selectedNode;
-
     std::map<juce::Identifier, std::vector<std::unique_ptr<SettableProperty>>> settableProperties;
     const std::vector<std::unique_ptr<SettableProperty>> emptyPropertyList;
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    bool editMode = false;
+    juce::ValueTree selectedNode;
+
     std::unique_ptr<ToolBox> magicToolBox;
 #endif
 

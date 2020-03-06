@@ -34,6 +34,10 @@ namespace foleys
 
 class MagicBuilder;
 
+/**
+ The Palette is the list of available components to be dragged into the tree or the GUI window.
+ To be able to drop into the GUI directly, the edit mode must be enabled.
+ */
 class Palette  : public juce::Component
 {
 public:

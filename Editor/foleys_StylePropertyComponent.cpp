@@ -115,8 +115,8 @@ void StylePropertyComponent::paint (juce::Graphics& g)
 
     g.fillAll (EditorColours::background);
     g.setColour (EditorColours::outline);
-    g.drawHorizontalLine (0, 0, getRight());
-    g.drawHorizontalLine (getBottom() - 1, 0, getRight());
+    g.drawHorizontalLine (0, 0.0f, static_cast<float>(getRight()));
+    g.drawHorizontalLine (getBottom() - 1, 0.0f, static_cast<float>(getRight()));
     g.setColour (node == inheritedFrom ? EditorColours::text : EditorColours::disabledText);
     g.drawFittedText (property.toString(), b, juce::Justification::left, 1);
 }

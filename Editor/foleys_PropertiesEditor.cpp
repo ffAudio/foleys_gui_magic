@@ -171,6 +171,7 @@ void PropertiesEditor::addDecoratorProperties()
     array.add (new StyleTextPropertyComponent (builder, IDs::caption, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::captionSize, styleItem));
     array.add (new StyleColourPropertyComponent (builder, IDs::captionColour, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::tooltip, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::margin, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::padding, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::border, styleItem));

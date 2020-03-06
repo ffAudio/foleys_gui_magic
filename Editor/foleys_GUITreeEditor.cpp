@@ -209,8 +209,8 @@ void GUITreeEditor::GuiTreeItem::itemDropped (const juce::DragAndDropTarget::Sou
     const auto text = dragSourceDetails.description.toString();
     if (text == IDs::dragSelected)
     {
-        auto selected = builder.getSelectedNode();
-        builder.draggedItemOnto (selected, itemNode, index);
+        auto selectedNode = builder.getSelectedNode();
+        builder.draggedItemOnto (selectedNode, itemNode, index);
         return;
     }
 

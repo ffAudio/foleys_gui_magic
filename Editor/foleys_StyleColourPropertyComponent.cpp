@@ -39,20 +39,46 @@ StyleColourPropertyComponent::StyleColourPropertyComponent (MagicBuilder& builde
   : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse)
 {
     auto label = std::make_unique<juce::Label>();
-    label->setEditable (true);
 
     addAndMakeVisible (label.get());
 
-    label->getTextValue().addListener (this);
-    label->onTextChange = [&]
+    mouseEvents.onMouseDown = [this](const juce::MouseEvent&)
     {
+        auto currentColour = juce::Colours::black;
         if (auto* label = dynamic_cast<juce::Label*>(editor.get()))
-            node.setProperty (property, label->getText(), &builder.getUndoManager());
+        {
+            if (label->getText().isNotEmpty())
+            {
+                currentColour = builder.getStylesheet().parseColour (label->getText());
+            }
+            else
+            {
+                if (auto* lookandfeel = builder.getStylesheet().getLookAndFeel (node))
+                {
+                    auto id = builder.findColourId (node.getType(), property);
+                    if (id >= 0)
+                        currentColour = lookandfeel->findColour (id);
+                }
+            }
+        }
 
-        refresh();
+        if (!node.hasProperty (property))
+        {
+            node.setProperty (property, currentColour.toDisplayString (true), &builder.getUndoManager());
+            refresh();
+        }
+
+        auto colourPanel = std::make_unique<ColourPanel>(node.getPropertyAsValue (property, &builder.getUndoManager()),
+                                                         currentColour);
+        colourPanel->setSize (300, 500);
+        juce::CallOutBox::launchAsynchronously (colourPanel.release(), getScreenBounds(), nullptr);
     };
 
+    label->getTextValue().addListener (this);
+
     editor = std::move (label);
+
+    mouseEvents.attachTo (editor.get());
 }
 
 void StyleColourPropertyComponent::refresh()
@@ -89,6 +115,7 @@ void StyleColourPropertyComponent::setColourDisplay (juce::Colour colour)
         editor->setColour (juce::Label::backgroundColourId, colour);
         editor->setColour (juce::Label::textColourId, colour.contrasting());
     }
+    editor->repaint();
 }
 
 void StyleColourPropertyComponent::getLookAndFeelColourFallback()
@@ -108,6 +135,35 @@ void StyleColourPropertyComponent::valueChanged (juce::Value& value)
 {
     auto colour = builder.getStylesheet().parseColour (value.getValue().toString());
     setColourDisplay (colour);
+}
+
+//==============================================================================
+
+StyleColourPropertyComponent::ColourPanel::ColourPanel (juce::Value valueToUse, juce::Colour colour)
+{
+    addAndMakeVisible (close);
+    addAndMakeVisible (selector);
+    selector.setCurrentColour (colour);
+    value.referTo (valueToUse);
+    selector.addChangeListener (this);
+
+    close.onClick = [this]
+    {
+        if (auto* box = findParentComponentOfClass<juce::CallOutBox>())
+            box->dismiss();
+    };
+}
+
+void StyleColourPropertyComponent::ColourPanel::resized()
+{
+    auto area = getLocalBounds();
+    close.setBounds (area.removeFromTop (20).withLeft (area.getRight() - 20));
+    selector.setBounds (area);
+}
+
+void StyleColourPropertyComponent::ColourPanel::changeListenerCallback (juce::ChangeBroadcaster*)
+{
+    value = selector.getCurrentColour().toDisplayString (true);
 }
 
 

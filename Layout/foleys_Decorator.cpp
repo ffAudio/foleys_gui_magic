@@ -89,7 +89,7 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
 
     auto placementVar = stylesheet.getProperty (IDs::captionPlacement, node);
     if (! placementVar.isVoid())
-        justification = static_cast<float> (placementVar);
+        justification = static_cast<int> (placementVar);
 
     backgroundImage = stylesheet.getBackgroundImage (node);
     backgroundFill  = stylesheet.getBackgroundGradient (node);
@@ -107,8 +107,17 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
 
 
     if (component)
+    {
         if (auto* lnf = stylesheet.getLookAndFeel (node))
             component->setLookAndFeel (lnf);
+
+        if (auto* tooltipClient = dynamic_cast<juce::SettableTooltipClient*>(component.get()))
+        {
+            auto tooltip = stylesheet.getProperty (IDs::tooltip, node).toString();
+            if (tooltip.isNotEmpty())
+                tooltipClient->setTooltip (tooltip);
+        }
+    }
 }
 
 void Decorator::configureComponent (Stylesheet& stylesheet, const juce::ValueTree& node)
@@ -172,7 +181,7 @@ void Decorator::paint (juce::Graphics& g)
 
 juce::Rectangle<int> Decorator::getClientBounds() const
 {
-    auto box = getLocalBounds().reduced (margin + padding);
+    auto box = getLocalBounds().reduced (juce::roundToInt (margin + padding));
     if (caption.isNotEmpty())
     {
         if (justification.getOnlyVerticalFlags() < int (juce::Justification::bottom))
@@ -204,6 +213,11 @@ void Decorator::resized()
 juce::Component* Decorator::getWrappedComponent()
 {
     return component.get();
+}
+
+const juce::ValueTree& Decorator::getConfigNode() const
+{
+    return configNode;
 }
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE

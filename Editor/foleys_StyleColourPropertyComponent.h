@@ -37,16 +37,34 @@ class StyleColourPropertyComponent  : public StylePropertyComponent,
 {
 public:
     StyleColourPropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse);
+    ~StyleColourPropertyComponent() = default;
 
     void refresh() override;
 
 private:
+
+    class ColourPanel : public juce::Component, private juce::ChangeListener
+    {
+    public:
+        ColourPanel (juce::Value value, juce::Colour colour);
+        void resized() override;
+    private:
+        void changeListenerCallback (juce::ChangeBroadcaster*) override;
+
+        juce::Value          value;
+        juce::TextButton     close {"X"};
+        juce::ColourSelector selector;
+
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ColourPanel)
+    };
 
     void valueChanged (juce::Value& value) override;
 
     void setColourDisplay (juce::Colour colour);
 
     void getLookAndFeelColourFallback();
+
+    MouseLambdas mouseEvents;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StyleColourPropertyComponent)
 };
