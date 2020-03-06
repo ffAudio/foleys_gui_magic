@@ -1,6 +1,11 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.0.3
+-----
+
+- Bugfix: update layout if child order was changed
+
 1.0.2 - 05. March 2020
 ----------------------
 

@@ -59,10 +59,11 @@ void MagicBuilder::updateAll()
 {
     updateStylesheet();
     updateComponents();
-    updateLayout();
 
     if (root)
-        updateColours (*root);
+        updateProperties (*root);
+
+    updateLayout();
 
     config.addListener (this);
 }
@@ -146,7 +147,7 @@ void MagicBuilder::updateComponents()
 #endif
 }
 
-void MagicBuilder::updateColours (Decorator& item)
+void MagicBuilder::updateProperties (Decorator& item)
 {
     const auto& configNode = item.getConfigNode();
 
@@ -187,7 +188,7 @@ void MagicBuilder::updateColours (Decorator& item)
             container->setMaxFPSrate (throttle.getIntValue());
 
         for (auto& child : *container)
-            updateColours (*child);
+            updateProperties (*child);
     }
 }
 
@@ -321,18 +322,12 @@ void MagicBuilder::createDefaultFromParameters (juce::ValueTree& node, const juc
     }
 }
 
-void MagicBuilder::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier& property)
+void MagicBuilder::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
 {
-    if (getAllColourNames().contains (property))
-    {
-        if (root)
-            updateColours (*root);
+    if (root)
+        updateProperties (*root);
 
-        if (parent)
-            parent->repaint();
-    }
-    else
-        updateAll();
+    updateLayout();
 }
 
 void MagicBuilder::valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&)

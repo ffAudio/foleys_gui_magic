@@ -87,9 +87,9 @@ public:
     void updateComponents();
 
     /**
-     Updates the colours for all components
+     Updates the colours and properties for all components
      */
-    void updateColours (Decorator& item);
+    void updateProperties (Decorator& item);
 
     /**
      Recalculates the layout of all components

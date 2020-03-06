@@ -34,12 +34,22 @@ namespace foleys
 
 class MagicBuilder;
 
+/**
+ The Toolbox defines a floating window, that allows live editing of the currently loaded GUI.
+ */
 class ToolBox  : public juce::Component,
                  public juce::DragAndDropContainer,
                  public juce::KeyListener,
                  private juce::Timer
 {
 public:
+    /**
+     Create a ToolBox floating window to edit the currently shown GUI.
+     The window will float attached to the edited window.
+
+     @param parent is the window to attach to
+     @param builder is the builder instance that manages the GUI
+     */
     ToolBox (juce::Component* parent, MagicBuilder& builder);
     ~ToolBox();
 

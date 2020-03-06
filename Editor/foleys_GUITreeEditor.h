@@ -34,6 +34,10 @@ namespace foleys
 
 class MagicBuilder;
 
+/**
+ This GUITreeEditor shows the DOM tree for the GUI. The order can be dragged within and nodes be selected
+ to edit them in the PropertiesEditor. It also allows copy and paste via CMD+C/V of sub trees.
+ */
 class GUITreeEditor  : public juce::Component,
                        private juce::ValueTree::Listener
 {
