@@ -284,7 +284,7 @@ void ToolBox::timerCallback ()
         parentPos = pos;
         parentHeight = height;
         setBounds (parentPos.getRight(), parentPos.getY(),
-                   width,                parentHeight * 0.9f);
+                   width,                juce::roundToInt (parentHeight * 0.9f));
     }
 }
 

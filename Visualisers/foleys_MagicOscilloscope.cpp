@@ -138,7 +138,7 @@ void MagicOscilloscope::prepareToPlay (double sampleRateToUse, int)
 {
     sampleRate = sampleRateToUse;
 
-    samples.setSize (1, sampleRate);
+    samples.setSize (1, static_cast<int> (sampleRate));
     samples.clear();
 
     writePosition.store (0);

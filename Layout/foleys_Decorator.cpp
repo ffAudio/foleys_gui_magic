@@ -89,7 +89,7 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
 
     auto placementVar = stylesheet.getProperty (IDs::captionPlacement, node);
     if (! placementVar.isVoid())
-        justification = static_cast<float> (placementVar);
+        justification = static_cast<int> (placementVar);
 
     backgroundImage = stylesheet.getBackgroundImage (node);
     backgroundFill  = stylesheet.getBackgroundGradient (node);
@@ -181,7 +181,7 @@ void Decorator::paint (juce::Graphics& g)
 
 juce::Rectangle<int> Decorator::getClientBounds() const
 {
-    auto box = getLocalBounds().reduced (margin + padding);
+    auto box = getLocalBounds().reduced (juce::roundToInt (margin + padding));
     if (caption.isNotEmpty())
     {
         if (justification.getOnlyVerticalFlags() < int (juce::Justification::bottom))
