@@ -105,7 +105,7 @@ void XYDragComponent::setParameterY (const juce::String& paramID)
 
 void XYDragComponent::updateWhichToDrag (juce::Point<float> pos)
 {
-    const juce::Point<float> centre (getXposition(), getYposition());
+    const auto centre = juce::Point<int> (getXposition(), getYposition()).toFloat();
 
     mouseOverDot = (centre.getDistanceFrom (pos) < radius * 1.5f);
     mouseOverX = (wantsHorizontalDrag && std::abs (pos.getX() - centre.getX()) < 3.0f);
@@ -116,8 +116,8 @@ void XYDragComponent::updateWhichToDrag (juce::Point<float> pos)
 
 bool XYDragComponent::hitTest (int x, int y)
 {
-    const juce::Point<float> click (x, y);
-    const juce::Point<float> centre (getXposition(), getYposition());
+    const auto click = juce::Point<int> (x, y).toFloat ();
+    const auto centre = juce::Point<int> (getXposition (), getYposition ()).toFloat ();
 
     if (centre.getDistanceFrom (click) < radius * 1.5f)
         return true;
@@ -181,12 +181,12 @@ void XYDragComponent::mouseExit (const juce::MouseEvent&)
 
 int XYDragComponent::getXposition() const
 {
-    return xAttachment.getNormalisedValue() * getWidth();
+    return juce::roundToInt (xAttachment.getNormalisedValue() * getWidth());
 }
 
 int XYDragComponent::getYposition() const
 {
-    return (1.0f - yAttachment.getNormalisedValue()) * getHeight();
+    return juce::roundToInt ((1.0f - yAttachment.getNormalisedValue()) * getHeight());
 }
 
 } // namespace foleys

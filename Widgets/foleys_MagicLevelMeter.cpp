@@ -80,9 +80,9 @@ void MagicLevelMeter::paint (juce::Graphics& g)
         g.setColour (barFillColour);
         g.fillRect (bar.withTop (juce::jmap (juce::Decibels::gainToDecibels (source->getRMSvalue (i), infinity),
                                              infinity, 0.0f, bar.getBottom(), bar.getY())));
-        g.drawHorizontalLine (juce::jmap (juce::Decibels::gainToDecibels (source->getMaxValue (i), infinity),
-                                          infinity, 0.0f, bar.getBottom(), bar.getY()), bar.getX(), bar.getRight());
-
+        g.drawHorizontalLine (juce::roundToInt (juce::jmap (juce::Decibels::gainToDecibels (source->getMaxValue (i), infinity),
+                                                            infinity, 0.0f, bar.getBottom (), bar.getY ())),
+                              static_cast<float>(bar.getX ()), static_cast<float>(bar.getRight ()));
     }
 }
 

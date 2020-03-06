@@ -64,7 +64,7 @@ void MagicLevelSource::pushSamples (const juce::AudioBuffer<float>& buffer)
         for (const auto item : data.rmsHistory)
             sum += item * item;
 
-        data.rms.store (std::sqrt (sum / double (data.rmsHistory.size())));
+        data.rms.store (static_cast<float> (std::sqrt (sum / double (data.rmsHistory.size()))));
     }
 }
 
@@ -87,9 +87,9 @@ float MagicLevelSource::getMaxValue (int channel) const
 void MagicLevelSource::setupSource (int numChannels, double sampleRate, int maxKeepMS, int rmsWindowMS)
 {
     setNumChannels (numChannels);
-    setRmsLength (sampleRate * rmsWindowMS * 0.001);
+    setRmsLength (static_cast<int> (std::ceil (sampleRate * rmsWindowMS * 0.001)));
 
-    maxCountDownInitial = sampleRate * maxKeepMS * 0.001 / 64.0;
+    maxCountDownInitial = static_cast<int> (std::ceil (sampleRate * maxKeepMS * 0.001 / 64.0));
 }
 
 void MagicLevelSource::setNumChannels (int numChannels)
