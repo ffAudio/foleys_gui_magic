@@ -1,10 +1,11 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.0.3
------
+1.0.3 - 06. March 2020
+----------------------
 
 - Bugfix: update layout if child order was changed
+- Fixed warnings on windows VS 2019
 
 1.0.2 - 05. March 2020
 ----------------------
