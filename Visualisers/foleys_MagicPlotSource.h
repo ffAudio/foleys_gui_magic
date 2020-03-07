@@ -98,6 +98,7 @@ public:
 
 private:
     bool active = true;
+    juce::Path filledPath;
 
     JUCE_DECLARE_WEAK_REFERENCEABLE (MagicPlotSource)
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicPlotSource)

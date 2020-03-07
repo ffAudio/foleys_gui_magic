@@ -83,7 +83,7 @@ private:
 
     void updateSize();
 
-#if JUCE_MODULE_AVAILABLE_juce_opengl
+#if JUCE_MODULE_AVAILABLE_juce_opengl && FOLEYS_ENABLE_OPEN_GL_CONTEXT
     juce::OpenGLContext oglContext;
 #endif
 
