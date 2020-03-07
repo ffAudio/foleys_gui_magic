@@ -39,13 +39,13 @@ void MagicPlotSource::fillPlotPath (juce::Graphics& g, const juce::Path& path, j
     if (fillColour.isTransparent())
         return;
 
-    auto pathCopy = path;
-    pathCopy.lineTo (bounds.getBottomRight());
-    pathCopy.lineTo (bounds.getBottomLeft());
-    pathCopy.closeSubPath();
+    filledPath = path;
+    filledPath.lineTo (bounds.getBottomRight());
+    filledPath.lineTo (bounds.getBottomLeft());
+    filledPath.closeSubPath();
 
     g.setColour (fillColour);
-    g.fillPath (pathCopy);
+    g.fillPath (filledPath);
 }
 
 void MagicPlotSource::strokePlotPath (juce::Graphics& g, const juce::Path& path, MagicPlotComponent& component)

@@ -61,6 +61,13 @@
 #define FOLEYS_ENABLE_BINARY_DATA 0
 #endif
 
+/** Config: FOLEYS_ENABLE_OPEN_GL_CONTEXT
+            If selected an juce OpenGLCOntext is attached. Not a big difference on OSX, but vital on Windows.
+  */
+#ifndef FOLEYS_ENABLE_OPEN_GL_CONTEXT
+#define FOLEYS_ENABLE_OPEN_GL_CONTEXT 1
+#endif
+
 
 #include <juce_core/juce_core.h>
 #include <juce_audio_basics/juce_audio_basics.h>
@@ -71,7 +78,7 @@
 #include <juce_audio_utils/juce_audio_utils.h>
 #include <juce_dsp/juce_dsp.h>
 
-#if JUCE_MODULE_AVAILABLE_juce_opengl
+#if JUCE_MODULE_AVAILABLE_juce_opengl && FOLEYS_ENABLE_OPEN_GL_CONTEXT
 #include <juce_opengl/juce_opengl.h>
 #endif
 

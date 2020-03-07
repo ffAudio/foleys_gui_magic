@@ -50,14 +50,14 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const cha
 
 MagicPluginEditor::~MagicPluginEditor()
 {
-#if JUCE_MODULE_AVAILABLE_juce_opengl
+#if JUCE_MODULE_AVAILABLE_juce_opengl && FOLEYS_ENABLE_OPEN_GL_CONTEXT
     oglContext.detach();
 #endif
 }
 
 void MagicPluginEditor::initialise (const char* data, const int dataSize)
 {
-#if JUCE_MODULE_AVAILABLE_juce_opengl
+#if JUCE_MODULE_AVAILABLE_juce_opengl && FOLEYS_ENABLE_OPEN_GL_CONTEXT
     oglContext.attachTo (*this);
 #endif
 
