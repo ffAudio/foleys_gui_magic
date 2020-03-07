@@ -1,6 +1,11 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.0.4
+-----
+
+- Added swatches to colour picker
+
 1.0.3 - 06. March 2020
 ----------------------
 
