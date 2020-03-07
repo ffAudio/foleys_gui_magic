@@ -166,5 +166,15 @@ void StyleColourPropertyComponent::ColourPanel::changeListenerCallback (juce::Ch
     value = selector.getCurrentColour().toDisplayString (true);
 }
 
+//==============================================================================
+
+std::vector<juce::Colour> StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::swatchColours;
+
+StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::ColourSelectorWithSwatches()
+{
+    for (int i = int (swatchColours.size()); i < numSwatches; ++i)
+        swatchColours.push_back (juce::Colour());
+}
+
 
 } // namespace foleys

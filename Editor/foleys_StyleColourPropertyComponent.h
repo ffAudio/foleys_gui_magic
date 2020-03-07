@@ -51,9 +51,25 @@ private:
     private:
         void changeListenerCallback (juce::ChangeBroadcaster*) override;
 
-        juce::Value          value;
-        juce::TextButton     close {"X"};
-        juce::ColourSelector selector;
+        class ColourSelectorWithSwatches  : public juce::ColourSelector
+        {
+        public:
+            ColourSelectorWithSwatches();
+
+            int getNumSwatches() const override                                   { return numSwatches; }
+            juce::Colour getSwatchColour (int index) const override               { return swatchColours [index]; }
+            void setSwatchColour (int index, const juce::Colour& colour) override { swatchColours [index] = colour; }
+
+        private:
+            const int numSwatches = 20;
+            static std::vector<juce::Colour> swatchColours;
+
+            JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ColourSelectorWithSwatches)
+        };
+
+        juce::Value                 value;
+        juce::TextButton            close {"X"};
+        ColourSelectorWithSwatches  selector;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ColourPanel)
     };
