@@ -73,9 +73,13 @@ public:
     bool keyPressed (const juce::KeyPress& key) override;
     bool keyPressed (const juce::KeyPress& key, juce::Component* originalComponent) override;
 
+    static juce::PropertiesFile::Options getApplicationPropertyStorage();
+
 private:
 
     juce::File getLastLocation() const;
+    void setLastLocation(juce::File file);
+
     std::unique_ptr<juce::FileFilter> getFileFilter() const;
 
     juce::Component::SafePointer<juce::Component> parent;
@@ -89,8 +93,6 @@ private:
     juce::TextButton    undoButton { TRANS ("Undo") };
 
     juce::TextButton    editSwitch { TRANS ("Edit") };
-
-    juce::File          lastLocation;
 
     GUITreeEditor       treeEditor          { builder };
     PropertiesEditor    propertiesEditor    { builder };
