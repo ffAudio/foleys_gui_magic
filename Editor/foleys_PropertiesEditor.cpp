@@ -158,7 +158,7 @@ void PropertiesEditor::addNodeProperties()
     array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::id, &undo, true), IDs::id.toString(), 64, false, true));
 
     auto classNames = builder.getStylesheet().getAllClassesNames();
-    array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::styleClass, &undo, true), IDs::styleClass.toString(), 256, false, true));
+    array.add (new MultiListPropertyComponent (styleItem.getPropertyAsValue (IDs::styleClass, &undo, true), IDs::styleClass.toString(), classNames));
 
     properties.addSection ("Node", array, false);
 }
