@@ -30,6 +30,10 @@
 namespace foleys
 {
 
+namespace IDs
+{
+    static juce::String lastLocation { "lastLocation" };
+}
 
 ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
   : parent (parentToUse),
@@ -154,7 +158,7 @@ void ToolBox::loadGUI (const juce::File& xmlFile)
         stateWasReloaded();
     }
 
-    lastLocation = xmlFile;
+    setLastLocation (xmlFile);
 }
 
 void ToolBox::saveGUI (const juce::File& xmlFile)
@@ -163,7 +167,7 @@ void ToolBox::saveGUI (const juce::File& xmlFile)
     stream.setPosition (0);
     stream.truncate();
     stream.writeString (builder.getConfigTree().toXmlString());
-    lastLocation = xmlFile;
+    setLastLocation (xmlFile);
 }
 
 void ToolBox::setSelectedNode (const juce::ValueTree& node)
@@ -290,6 +294,13 @@ void ToolBox::timerCallback ()
 
 juce::File ToolBox::getLastLocation() const
 {
+    juce::File lastLocation;
+
+    juce::ApplicationProperties properties;
+    properties.setStorageParameters (ToolBox::getApplicationPropertyStorage());
+    if (auto* p = properties.getUserSettings())
+        lastLocation = juce::File (p->getValue (IDs::lastLocation));
+
     if (lastLocation.exists())
         return lastLocation;
 
@@ -311,9 +322,28 @@ juce::File ToolBox::getLastLocation() const
     return juce::File::getSpecialLocation (juce::File::currentExecutableFile);
 }
 
+void ToolBox::setLastLocation(juce::File file)
+{
+    juce::ApplicationProperties properties;
+    properties.setStorageParameters (ToolBox::getApplicationPropertyStorage());
+    if (auto* p = properties.getUserSettings())
+        p->setValue (IDs::lastLocation, file.getFullPathName());
+
+}
+
 std::unique_ptr<juce::FileFilter> ToolBox::getFileFilter() const
 {
     return std::make_unique<juce::WildcardFileFilter>("*.xml", "*", "XML files");
+}
+
+juce::PropertiesFile::Options ToolBox::getApplicationPropertyStorage()
+{
+    juce::PropertiesFile::Options options;
+    options.folderName      = "FoleysFinest";
+    options.applicationName = "foleys_gui_magic";
+    options.filenameSuffix  = ".settings";
+    options.osxLibrarySubFolder = "Application Support";
+    return options;
 }
 
 } // namespace foleys

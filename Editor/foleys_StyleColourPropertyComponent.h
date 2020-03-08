@@ -59,14 +59,19 @@ private:
         {
         public:
             ColourSelectorWithSwatches();
+            ~ColourSelectorWithSwatches();
 
-            int getNumSwatches() const override                                   { return numSwatches; }
-            juce::Colour getSwatchColour (int index) const override               { return swatchColours [index]; }
-            void setSwatchColour (int index, const juce::Colour& colour) override { swatchColours [index] = colour; }
+            int getNumSwatches() const override;
+            juce::Colour getSwatchColour (int index) const override;
+            void setSwatchColour (int index, const juce::Colour& colour) override;
 
         private:
-            const int numSwatches = 32;
-            static std::vector<juce::Colour> swatchColours;
+            void loadSwatches();
+            void saveSwatches();
+
+            juce::ApplicationProperties properties;
+
+            std::vector<juce::Colour> swatchColours;
 
             JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ColourSelectorWithSwatches)
         };

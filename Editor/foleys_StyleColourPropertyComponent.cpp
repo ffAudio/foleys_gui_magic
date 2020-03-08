@@ -188,12 +188,69 @@ void StyleColourPropertyComponent::ColourPanel::removeChangeListener (juce::Chan
 
 //==============================================================================
 
-std::vector<juce::Colour> StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::swatchColours;
+namespace IDs
+{
+    static juce::String swatches { "swatches" };
+    static juce::String colour   { "colour" };
+}
 
 StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::ColourSelectorWithSwatches()
 {
-    for (int i = int (swatchColours.size()); i < numSwatches; ++i)
-        swatchColours.push_back (juce::Colour());
+    properties.setStorageParameters (ToolBox::getApplicationPropertyStorage());
+    swatchColours.resize (32, juce::Colour());
+
+    loadSwatches();
+}
+
+StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::~ColourSelectorWithSwatches()
+{
+    saveSwatches();
+}
+
+int StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::getNumSwatches() const
+{
+    return static_cast<int>(swatchColours.size());
+}
+
+juce::Colour StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::getSwatchColour (int index) const
+{
+    return swatchColours [index];
+}
+
+void StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::setSwatchColour (int index, const juce::Colour& colour)
+{
+    swatchColours [index] = colour;
+}
+
+void StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::loadSwatches()
+{
+    if (auto* p = properties.getUserSettings())
+    {
+        auto coloursNode = (p->containsKey (IDs::swatches)) ? p->getXmlValue (IDs::swatches)
+                                                            : p->createXml (IDs::swatches);
+
+        for (int i = 0; i < std::min (coloursNode->getNumChildElements(), int (swatchColours.size())); ++i)
+            swatchColours [i] = juce::Colour::fromString (coloursNode->getChildElement (i)->getAllSubText());
+    }
+}
+
+void StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::saveSwatches()
+{
+    if (auto* p = properties.getUserSettings())
+    {
+        auto coloursNode = (p->containsKey (IDs::swatches)) ? p->getXmlValue (IDs::swatches)
+                                                            : p->createXml (IDs::swatches);
+
+        coloursNode->deleteAllChildElements();
+        for (int i = 0; i < int (swatchColours.size()); ++i)
+        {
+            auto* node = coloursNode->createNewChildElement (IDs::colour);
+            node->addTextElement (swatchColours [i].toDisplayString (true));
+        }
+
+        p->setValue (IDs::swatches, coloursNode.get());
+        p->setNeedsToBeSaved (true);
+    }
 }
 
 
