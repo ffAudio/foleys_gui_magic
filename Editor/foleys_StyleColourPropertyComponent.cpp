@@ -39,8 +39,18 @@ StyleColourPropertyComponent::StyleColourPropertyComponent (MagicBuilder& builde
   : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse)
 {
     auto label = std::make_unique<juce::Label>();
+    label->setEditable (true);
 
     addAndMakeVisible (label.get());
+
+    label->getTextValue().addListener (this);
+    label->onTextChange = [&]
+    {
+        if (auto* label = dynamic_cast<juce::Label*>(editor.get()))
+            node.setProperty (property, label->getText(), &builder.getUndoManager());
+
+        refresh();
+    };
 
     mouseEvents.onMouseDown = [this](const juce::MouseEvent&)
     {
