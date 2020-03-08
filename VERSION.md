@@ -5,6 +5,8 @@ PluginGuiMagic - Versions history
 -----
 
 - Added swatches to colour picker
+- Added style classes selector
+- Added switch for OpenGL
 
 1.0.3 - 06. March 2020
 ----------------------

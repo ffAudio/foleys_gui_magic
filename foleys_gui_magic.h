@@ -125,6 +125,7 @@ namespace EditorColours
     static juce::Colour selectedBackground;
 }
 
+#include "Editor/foleys_MultiListPropertyComponent.h"
 #include "Editor/foleys_StylePropertyComponent.h"
 #include "Editor/foleys_StyleTextPropertyComponent.h"
 #include "Editor/foleys_StyleBoolPropertyComponent.h"
