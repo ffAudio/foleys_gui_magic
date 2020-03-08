@@ -33,23 +33,27 @@ namespace foleys
 {
 
 class StyleColourPropertyComponent  : public StylePropertyComponent,
-                                      private juce::Value::Listener
+                                      private juce::Value::Listener,
+                                      private juce::ChangeListener
 {
 public:
     StyleColourPropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse);
-    ~StyleColourPropertyComponent() = default;
+    ~StyleColourPropertyComponent();
 
     void refresh() override;
 
 private:
 
-    class ColourPanel : public juce::Component, private juce::ChangeListener
+    class ColourPanel : public juce::Component
     {
     public:
-        ColourPanel (juce::Value value, juce::Colour colour);
+        ColourPanel (juce::Colour colour);
         void resized() override;
+
+        void addChangeListener (juce::ChangeListener*);
+        void removeChangeListener (juce::ChangeListener*);
+
     private:
-        void changeListenerCallback (juce::ChangeBroadcaster*) override;
 
         class ColourSelectorWithSwatches  : public juce::ColourSelector
         {
@@ -67,7 +71,6 @@ private:
             JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ColourSelectorWithSwatches)
         };
 
-        juce::Value                 value;
         juce::TextButton            close {"X"};
         ColourSelectorWithSwatches  selector;
 
@@ -76,11 +79,14 @@ private:
 
     void valueChanged (juce::Value& value) override;
 
+    void changeListenerCallback (juce::ChangeBroadcaster*) override;
+
     void setColourDisplay (juce::Colour colour);
 
     void getLookAndFeelColourFallback();
 
     MouseLambdas mouseEvents;
+    juce::Component::SafePointer<ColourPanel> colourPanel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StyleColourPropertyComponent)
 };
