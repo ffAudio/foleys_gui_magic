@@ -5,6 +5,8 @@ PluginGuiMagic - Versions history
 -----
 
 - Added swatches to colour picker
+- Added persistency for colour swatches
+- Allows typing colour names and copy paste colours
 - Added style classes selector
 - Added switch for OpenGL
 
