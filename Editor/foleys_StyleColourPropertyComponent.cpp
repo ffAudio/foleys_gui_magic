@@ -72,16 +72,11 @@ StyleColourPropertyComponent::StyleColourPropertyComponent (MagicBuilder& builde
             }
         }
 
-        if (!node.hasProperty (property))
-        {
-            node.setProperty (property, currentColour.toDisplayString (true), &builder.getUndoManager());
-            refresh();
-        }
-
-        auto colourPanel = std::make_unique<ColourPanel>(node.getPropertyAsValue (property, &builder.getUndoManager()),
-                                                         currentColour);
-        colourPanel->setSize (300, 500);
-        juce::CallOutBox::launchAsynchronously (colourPanel.release(), getScreenBounds(), nullptr);
+        auto newColourPanel = std::make_unique<ColourPanel>(currentColour);
+        newColourPanel->addChangeListener (this);
+        newColourPanel->setSize (300, 500);
+        colourPanel = newColourPanel.get();
+        juce::CallOutBox::launchAsynchronously (newColourPanel.release(), getScreenBounds(), nullptr);
     };
 
     label->getTextValue().addListener (this);
@@ -89,6 +84,12 @@ StyleColourPropertyComponent::StyleColourPropertyComponent (MagicBuilder& builde
     editor = std::move (label);
 
     mouseEvents.attachTo (editor.get());
+}
+
+StyleColourPropertyComponent::~StyleColourPropertyComponent()
+{
+    if (colourPanel)
+        colourPanel->removeChangeListener (this);
 }
 
 void StyleColourPropertyComponent::refresh()
@@ -147,15 +148,19 @@ void StyleColourPropertyComponent::valueChanged (juce::Value& value)
     setColourDisplay (colour);
 }
 
+void StyleColourPropertyComponent::changeListenerCallback (juce::ChangeBroadcaster* sender)
+{
+    if (auto* selector = dynamic_cast<juce::ColourSelector*>(sender))
+        node.setProperty (property, selector->getCurrentColour().toDisplayString (true), &builder.getUndoManager());
+}
+
 //==============================================================================
 
-StyleColourPropertyComponent::ColourPanel::ColourPanel (juce::Value valueToUse, juce::Colour colour)
+StyleColourPropertyComponent::ColourPanel::ColourPanel (juce::Colour colour)
 {
     addAndMakeVisible (close);
     addAndMakeVisible (selector);
     selector.setCurrentColour (colour);
-    value.referTo (valueToUse);
-    selector.addChangeListener (this);
 
     close.onClick = [this]
     {
@@ -171,9 +176,14 @@ void StyleColourPropertyComponent::ColourPanel::resized()
     selector.setBounds (area);
 }
 
-void StyleColourPropertyComponent::ColourPanel::changeListenerCallback (juce::ChangeBroadcaster*)
+void StyleColourPropertyComponent::ColourPanel::addChangeListener (juce::ChangeListener* listener)
 {
-    value = selector.getCurrentColour().toDisplayString (true);
+    selector.addChangeListener (listener);
+}
+
+void StyleColourPropertyComponent::ColourPanel::removeChangeListener (juce::ChangeListener* listener)
+{
+    selector.removeChangeListener (listener);
 }
 
 //==============================================================================
