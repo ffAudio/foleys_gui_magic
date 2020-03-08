@@ -61,7 +61,7 @@ private:
             void setSwatchColour (int index, const juce::Colour& colour) override { swatchColours [index] = colour; }
 
         private:
-            const int numSwatches = 20;
+            const int numSwatches = 32;
             static std::vector<juce::Colour> swatchColours;
 
             JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ColourSelectorWithSwatches)

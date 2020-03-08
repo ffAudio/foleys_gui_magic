@@ -52,7 +52,6 @@ MultiListPropertyComponent::MultiListPropertyComponent (const juce::Value& value
     {
         auto strings = juce::StringArray::fromTokens (text.getText(), separator, "");
 
-        auto bounds = getScreenBounds();
         juce::PopupMenu popup;
         for (const auto& name : choices)
             if (! strings.contains (name))
@@ -66,7 +65,7 @@ MultiListPropertyComponent::MultiListPropertyComponent (const juce::Value& value
                     }
                 });
 
-        popup.showAt (bounds.withY (bounds.getBottom()).withHeight (bounds.getHeight() * popup.getNumItems()));
+        popup.showAt (getScreenBounds());
     };
 }
 
