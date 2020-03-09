@@ -202,6 +202,8 @@ void MagicBuilder::updateLayout()
 
     if (overlayDialog)
         overlayDialog->setBounds (parent->getLocalBounds());
+
+    parent->repaint();
 }
 
 void MagicBuilder::registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel)
