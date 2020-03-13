@@ -100,7 +100,9 @@ void MagicOscilloscope::drawPlot (juce::Graphics& g, juce::Rectangle<float> boun
 
     // trigger
     auto sign = data [pos] > 0.0f;
-    while (sign == false)
+    auto bail = int (sampleRate / 20.0f);
+
+    while (sign == false && --bail > 0)
     {
         if (--pos < 0)
             pos += samples.getNumSamples();
@@ -108,7 +110,7 @@ void MagicOscilloscope::drawPlot (juce::Graphics& g, juce::Rectangle<float> boun
         sign = data [pos] > 0.0f;
     }
 
-    while (sign == true)
+    while (sign == true && --bail > 0)
     {
         if (--pos < 0)
             pos += samples.getNumSamples();

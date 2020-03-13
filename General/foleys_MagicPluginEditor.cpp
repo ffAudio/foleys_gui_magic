@@ -78,7 +78,7 @@ void MagicPluginEditor::initialise (const char* data, const int dataSize)
     updateSize();
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-    if (!guiTree.isValid())
+    if (!guiTree.isValid() && processorState.getValueTreeState().state.isValid())
         processorState.getValueTreeState().state.addChild (builder->getConfigTree(), -1, nullptr);
 
     builder->attachToolboxToWindow (*this);
