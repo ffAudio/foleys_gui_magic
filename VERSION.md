@@ -6,6 +6,7 @@ PluginGuiMagic - Versions history
 
 - Bugfix: avoid infinite loop in Oscilloscope
 - Bugfix: don't assert, if AudioProcessorValueTreeState has no ValueTree state set up
+- Bugfix: fixed update of layout if a property changes
 
 1.0.4 - 10. March 2020
 ----------------------

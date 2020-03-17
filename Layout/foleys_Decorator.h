@@ -70,6 +70,11 @@ public:
     virtual bool isContainer() const { return false; }
 
     /**
+     This will trigger a recalculation of the children layout regardless of resized
+     */
+    virtual void updateLayout();
+
+    /**
      Allows accessing the Component inside that Decorator. Don't keep this pointer!
      */
     juce::Component* getWrappedComponent();

@@ -80,6 +80,11 @@ void Container::setEditMode (bool shouldEdit)
 
 void Container::resized()
 {
+    updateLayout();
+}
+
+void Container::updateLayout()
+{
     if (children.empty())
         return;
 
@@ -96,6 +101,9 @@ void Container::resized()
         for (auto& child : children)
             child->setBounds (getClientBounds());
     }
+
+    for (auto& child : children)
+        child->updateLayout();
 }
 
 std::vector<std::unique_ptr<Decorator>>::iterator Container::begin()

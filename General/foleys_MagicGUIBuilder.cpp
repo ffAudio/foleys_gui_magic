@@ -198,10 +198,20 @@ void MagicBuilder::updateLayout()
         return;
 
     if (root.get() != nullptr)
-        root->setBounds (parent->getLocalBounds());
+    {
+        if (root->getBounds() == parent->getLocalBounds())
+            root->updateLayout();
+        else
+            root->setBounds (parent->getLocalBounds());
+    }
 
     if (overlayDialog)
-        overlayDialog->setBounds (parent->getLocalBounds());
+    {
+        if (overlayDialog->getBounds() == parent->getLocalBounds())
+            overlayDialog->resized();
+        else
+            overlayDialog->setBounds (parent->getLocalBounds());
+    }
 
     parent->repaint();
 }

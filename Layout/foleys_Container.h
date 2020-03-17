@@ -80,6 +80,11 @@ public:
 
     bool isContainer() const override { return true; }
 
+    /**
+     This will trigger a recalculation of the children layout regardless of resized
+     */
+    void updateLayout() override;
+
     juce::FlexBox flexBox;
 
     Layout layout = Layout::FlexBox;
