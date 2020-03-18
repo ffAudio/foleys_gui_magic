@@ -99,7 +99,9 @@ void MagicPluginEditor::updateSize()
     int width = 600;
     int height = 400;
 
+#if !JUCE_IOS
     setResizable (true, true);
+#endif
 
     processorState.getLastEditorSize (width, height);
     setSize (width, height);
