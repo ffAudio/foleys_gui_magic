@@ -424,6 +424,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
 
                          auto item = std::make_unique<juce::MidiKeyboardComponent>(magicState->getKeyboardState(),
                                                                                    juce::MidiKeyboardComponent::horizontalKeyboard);
+                         item->setKeyWidth (50.0f);
 
                          return std::move (item);
                      });
@@ -455,6 +456,19 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                               { "horizontal",     juce::MidiKeyboardComponent::horizontalKeyboard },
                               { "vertical-left",  juce::MidiKeyboardComponent::verticalKeyboardFacingLeft },
                               { "vertical-right", juce::MidiKeyboardComponent::verticalKeyboardFacingRight }
+                          }));
+
+    addSettableProperty (IDs::keyboardComponent,
+                         std::make_unique<SettableNumberProperty>
+                         (
+                          "key-width",
+                          [] (juce::Component* component, juce::var value)
+                          {
+                              if (auto* keyboard = dynamic_cast<juce::MidiKeyboardComponent*>(component))
+                              {
+                                  if (value.isVoid() == false)
+                                      keyboard->setKeyWidth (float (value));
+                              }
                           }));
 
     //==============================================================================

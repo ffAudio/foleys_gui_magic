@@ -39,6 +39,9 @@ StylePropertyComponent* StylePropertyComponent::createComponent (MagicBuilder& b
     if (property.type == SettableProperty::Text)
         return new StyleTextPropertyComponent (builder, property.name, node);
 
+    if (property.type == SettableProperty::Number)
+        return new StyleTextPropertyComponent (builder, property.name, node);
+
     if (property.type == SettableProperty::Toggle)
         return new StyleBoolPropertyComponent (builder, property.name, node);
 
@@ -65,6 +68,7 @@ StylePropertyComponent* StylePropertyComponent::createComponent (MagicBuilder& b
     if (property.type == SettableProperty::AssetFile)
         return new StyleChoicePropertyComponent (builder, property.name, node, Resources::getResourceFileNames());
 
+    jassertfalse;
     return nullptr;
 }
 
