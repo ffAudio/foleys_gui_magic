@@ -210,6 +210,11 @@ void Decorator::resized()
     component->setBounds (box);
 }
 
+void Decorator::updateLayout()
+{
+    resized();
+}
+
 juce::Component* Decorator::getWrappedComponent()
 {
     return component.get();
