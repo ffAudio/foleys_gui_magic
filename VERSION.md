@@ -1,8 +1,8 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.0.5
------
+1.0.5 - 19. March 2020
+----------------------
 
 - Added alpha value for background images
 - Added key-width for MidiKeyboardComponent
