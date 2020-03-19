@@ -118,6 +118,7 @@ private:
     std::unique_ptr<juce::Component> component;
 
     juce::Image                 backgroundImage;
+    float                       backgroundAlpha = 1.0f;
     juce::RectanglePlacement    backgroundPlacement = juce::RectanglePlacement::centred;
     juce::Array<juce::Colour>   backgroundFill;
 

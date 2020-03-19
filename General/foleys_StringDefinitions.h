@@ -90,6 +90,7 @@ namespace IDs
 
 
     static juce::Identifier backgroundImage     { "background-image" };
+    static juce::Identifier backgroundAlpha     { "background-alpha" };
     static juce::String     linearGradient      { "linear-gradient" };
     static juce::String     radialGradient      { "radial-gradient" };
     static juce::String     repeatingLinearGradient { "repeating-linear-gradient" };

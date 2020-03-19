@@ -4,6 +4,8 @@ PluginGuiMagic - Versions history
 1.0.5
 -----
 
+- Added alpha value for background images
+- Added key-width for MidiKeyboardComponent
 - Bugfix: avoid infinite loop in Oscilloscope
 - Bugfix: don't assert, if AudioProcessorValueTreeState has no ValueTree state set up
 - Bugfix: fixed update of layout if a property changes

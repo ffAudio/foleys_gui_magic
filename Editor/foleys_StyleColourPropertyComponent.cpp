@@ -151,7 +151,12 @@ void StyleColourPropertyComponent::valueChanged (juce::Value& value)
 void StyleColourPropertyComponent::changeListenerCallback (juce::ChangeBroadcaster* sender)
 {
     if (auto* selector = dynamic_cast<juce::ColourSelector*>(sender))
-        node.setProperty (property, selector->getCurrentColour().toDisplayString (true), &builder.getUndoManager());
+    {
+        const auto newColour = selector->getCurrentColour().toDisplayString (true);
+        node.setProperty (property, newColour, &builder.getUndoManager());
+        if (auto* label = dynamic_cast<juce::Label*>(editor.get()))
+            label->setText (newColour, juce::dontSendNotification);
+    }
 }
 
 //==============================================================================

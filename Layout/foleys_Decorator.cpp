@@ -94,6 +94,10 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
     backgroundImage = stylesheet.getBackgroundImage (node);
     backgroundFill  = stylesheet.getBackgroundGradient (node);
 
+    auto alphaVar = stylesheet.getProperty (IDs::backgroundAlpha, node);
+    if (! alphaVar.isVoid())
+        backgroundAlpha = static_cast<float> (alphaVar);
+
     auto backPlacement = stylesheet.getProperty (IDs::imagePlacement, node);
     if (! backPlacement.isVoid())
     {
@@ -153,7 +157,11 @@ void Decorator::paint (juce::Graphics& g)
     }
 
     if (! backgroundImage.isNull())
+    {
+        juce::Graphics::ScopedSaveState save (g);
+        g.setOpacity (backgroundAlpha);
         g.drawImage (backgroundImage, bounds, backgroundPlacement);
+    }
 
     if (border > 0.0f)
     {
