@@ -93,7 +93,7 @@ StylePropertyComponent::StylePropertyComponent (MagicBuilder& builderToUse, juce
 
 juce::var StylePropertyComponent::lookupValue()
 {
-    auto value = builder.getStylesheet().getProperty (property, node, true, &inheritedFrom);
+    const auto value = builder.getStylesheet().getProperty (property, node, true, &inheritedFrom);
 
     const auto& s = builder.getStylesheet();
 
@@ -129,7 +129,8 @@ void StylePropertyComponent::resized()
 {
     auto b = getLocalBounds().reduced (1).withLeft (getWidth() / 2);
     remove.setBounds (b.removeFromRight (getHeight()));
-    editor->setBounds (b);
+    if (editor)
+        editor->setBounds (b);
 }
 
 void StylePropertyComponent::mouseDoubleClick (const juce::MouseEvent&)

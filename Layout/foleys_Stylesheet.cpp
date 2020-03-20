@@ -93,6 +93,9 @@ juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::Val
     if (parent.isValid() && parent.getType() != IDs::magic)
         return getProperty (name, parent, false, definedHere);
 
+    if (definedHere)
+        *definedHere = juce::ValueTree();
+
     return {};
 }
 

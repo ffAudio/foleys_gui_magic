@@ -60,7 +60,7 @@ StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicBuilder& builde
 
 void StyleChoicePropertyComponent::refresh()
 {
-    auto value = lookupValue();
+    const auto value = lookupValue();
 
     if (auto* combo = dynamic_cast<juce::ComboBox*>(editor.get()))
     {

@@ -56,7 +56,7 @@ StyleBoolPropertyComponent::StyleBoolPropertyComponent (MagicBuilder& builderToU
 
 void StyleBoolPropertyComponent::refresh()
 {
-    auto value = lookupValue();
+    const auto value = lookupValue();
 
     if (auto* toggle = dynamic_cast<juce::ToggleButton*>(editor.get()))
     {
