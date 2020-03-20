@@ -94,7 +94,7 @@ StyleColourPropertyComponent::~StyleColourPropertyComponent()
 
 void StyleColourPropertyComponent::refresh()
 {
-    auto value = lookupValue();
+    const auto value = lookupValue();
 
     if (auto* label = dynamic_cast<juce::Label*>(editor.get()))
     {
