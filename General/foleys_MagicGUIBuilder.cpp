@@ -309,6 +309,31 @@ const std::vector<std::unique_ptr<SettableProperty>>& MagicBuilder::getSettableP
     return emptyPropertyList;
 }
 
+juce::var MagicBuilder::getPropertyDefaultValue (juce::Identifier type, juce::Identifier property) const
+{
+    const auto& properties = getSettableProperties (type);
+
+    const auto& settableProperty = std::find_if (properties.begin(), properties.end(), [property] (const auto& element) { return element->name == property; });
+    if (settableProperty != properties.end())
+        return settableProperty->get()->defaultValue;
+
+    // flexbox
+    if (property == IDs::flexDirection) return IDs::flexDirRow;
+    if (property == IDs::flexWrap)      return IDs::flexNoWrap;
+    if (property == IDs::flexAlignContent) return IDs::flexStretch;
+    if (property == IDs::flexAlignItems) return IDs::flexStretch;
+    if (property == IDs::flexJustifyContent) return IDs::flexStart;
+    if (property == IDs::flexAlignSelf) return IDs::flexStretch;
+    if (property == IDs::flexOrder) return 0;
+    if (property == IDs::flexGrow) return 1.0;
+    if (property == IDs::flexShrink) return 1.0;
+    if (property == IDs::minWidth) return 0.0;
+    if (property == IDs::minHeight) return 0.0;
+    if (property == IDs::display) return IDs::flexbox;
+
+    return {};
+}
+
 void MagicBuilder::createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree)
 {
     for (const auto& sub : tree.getSubgroups (false))

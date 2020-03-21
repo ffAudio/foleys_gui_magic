@@ -66,7 +66,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                               if (auto* slider = dynamic_cast<AttachableSlider*>(component))
                                   slider->attachToParameter (value.toString(), magicState->getValueTreeState());
                           },
-                          juce::String(),
+                          juce::var(),
                           SettableProperty::Parameter));
 
     addSettableProperty (IDs::slider,
@@ -176,6 +176,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                          std::make_unique<SettableTextProperty>
                          (
                           "text",
+                          juce::var(),
                           [] (juce::Component* component, juce::var value)
                           {
                               if (auto* button = dynamic_cast<juce::TextButton*>(component))
@@ -215,6 +216,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                          std::make_unique<SettableTextProperty>
                          (
                           "text",
+                          juce::var(),
                           [] (juce::Component* component, juce::var value)
                           {
                               if (auto* button = dynamic_cast<juce::ToggleButton*>(component))
@@ -257,6 +259,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                          std::make_unique<SettableTextProperty>
                          (
                           "text",
+                          juce::var(),
                           [] (juce::Component* component, juce::var value)
                           {
                               if (auto* label = dynamic_cast<juce::Label*>(component))
@@ -267,6 +270,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                          std::make_unique<SettableBoolProperty>
                          (
                           "editable",
+                          juce::var(),
                           [] (juce::Component* component, juce::var value)
                           {
                               if (auto* label = dynamic_cast<juce::Label*>(component))
@@ -286,6 +290,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                          std::make_unique<SettableTextProperty>
                          (
                           "url",
+                          juce::var(),
                           [] (juce::Component* component, juce::var value)
                           {
                               if (auto* browser = dynamic_cast<juce::WebBrowserComponent*>(component))
@@ -462,6 +467,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                          std::make_unique<SettableNumberProperty>
                          (
                           "key-width",
+                          50,
                           [] (juce::Component* component, juce::var value)
                           {
                               if (auto* keyboard = dynamic_cast<juce::MidiKeyboardComponent*>(component))

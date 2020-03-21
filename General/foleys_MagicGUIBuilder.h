@@ -190,6 +190,10 @@ public:
     void addSettableProperty (juce::Identifier type, std::unique_ptr<SettableProperty> property);
     const std::vector<std::unique_ptr<SettableProperty>>& getSettableProperties (juce::Identifier type) const;
 
+    /**
+     Lookup the default value of the property
+     */
+    juce::var getPropertyDefaultValue (juce::Identifier type, juce::Identifier property) const;
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     void attachToolboxToWindow (juce::Component& window);
