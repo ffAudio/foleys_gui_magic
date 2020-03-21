@@ -97,8 +97,10 @@ juce::var StylePropertyComponent::lookupValue()
 
     const auto& s = builder.getStylesheet();
 
-    if (node == inheritedFrom || inheritedFrom.isValid() == false)
+    if (node == inheritedFrom)
         setTooltip ({});
+    else if (inheritedFrom.isValid() == false)
+        setTooltip ("default");
     else if (s.isClassNode (inheritedFrom))
         setTooltip ("Class: " + inheritedFrom.getType().toString() + " (double-click)");
     else if (s.isTypeNode (inheritedFrom))
@@ -109,6 +111,9 @@ juce::var StylePropertyComponent::lookupValue()
         setTooltip (inheritedFrom.getType().toString() + " (double-click)");
 
     remove.setEnabled (node == inheritedFrom);
+
+    if (value.isVoid())
+        return builder.getPropertyDefaultValue (node.getType(), property);
 
     return value;
 }

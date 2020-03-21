@@ -190,7 +190,7 @@ void Stylesheet::registerLookAndFeel (juce::String name, std::unique_ptr<juce::L
 
 void Stylesheet::configureFlexBox (juce::FlexBox& flexBox, const juce::ValueTree& node) const
 {
-    auto direction = getProperty (IDs::flexDirection, node).toString();
+    const auto direction = getProperty (IDs::flexDirection, node).toString();
     if (direction == IDs::flexDirRow)
         flexBox.flexDirection = juce::FlexBox::Direction::row;
     else if (direction == IDs::flexDirRowReverse)
@@ -200,7 +200,7 @@ void Stylesheet::configureFlexBox (juce::FlexBox& flexBox, const juce::ValueTree
     else if (direction == IDs::flexDirColumnReverse)
         flexBox.flexDirection = juce::FlexBox::Direction::columnReverse;
 
-    auto wrap = getProperty (IDs::flexWrap, node).toString();
+    const auto wrap = getProperty (IDs::flexWrap, node).toString();
     if (wrap == IDs::flexWrapNormal)
         flexBox.flexWrap = juce::FlexBox::Wrap::wrap;
     else if (wrap == IDs::flexWrapReverse)
@@ -208,7 +208,7 @@ void Stylesheet::configureFlexBox (juce::FlexBox& flexBox, const juce::ValueTree
     else
         flexBox.flexWrap = juce::FlexBox::Wrap::noWrap;
 
-    auto alignContent = getProperty (IDs::flexAlignContent, node).toString();
+    const auto alignContent = getProperty (IDs::flexAlignContent, node).toString();
     if (alignContent == IDs::flexStart)
         flexBox.alignContent = juce::FlexBox::AlignContent::flexStart;
     else if (alignContent == IDs::flexEnd)
@@ -222,7 +222,7 @@ void Stylesheet::configureFlexBox (juce::FlexBox& flexBox, const juce::ValueTree
     else
         flexBox.alignContent = juce::FlexBox::AlignContent::stretch;
 
-    auto alignItems = getProperty (IDs::flexAlignItems, node).toString();
+    const auto alignItems = getProperty (IDs::flexAlignItems, node).toString();
     if (alignItems == IDs::flexStart)
         flexBox.alignItems = juce::FlexBox::AlignItems::flexStart;
     else if (alignItems == IDs::flexEnd)
@@ -232,7 +232,7 @@ void Stylesheet::configureFlexBox (juce::FlexBox& flexBox, const juce::ValueTree
     else
         flexBox.alignItems = juce::FlexBox::AlignItems::stretch;
 
-    auto justify = getProperty (IDs::flexJustifyContent, node).toString();
+    const auto justify = getProperty (IDs::flexJustifyContent, node).toString();
     if (justify == IDs::flexEnd)
         flexBox.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
     else if (justify == IDs::flexCenter)
@@ -247,27 +247,27 @@ void Stylesheet::configureFlexBox (juce::FlexBox& flexBox, const juce::ValueTree
 
 void Stylesheet::configureFlexBoxItem (juce::FlexItem& item, const juce::ValueTree& node) const
 {
-    auto minWidth = getProperty (IDs::minWidth, node);
+    const auto minWidth = getProperty (IDs::minWidth, node);
     if (! minWidth.isVoid())
         item.minWidth = minWidth;
 
-    auto maxWidth = getProperty (IDs::maxWidth, node);
+    const auto maxWidth = getProperty (IDs::maxWidth, node);
     if (! maxWidth.isVoid())
         item.maxWidth = maxWidth;
 
-    auto minHeight = getProperty (IDs::minHeight, node);
+    const auto minHeight = getProperty (IDs::minHeight, node);
     if (! minHeight.isVoid())
         item.minHeight = minHeight;
 
-    auto maxHeight = getProperty (IDs::maxHeight, node);
+    const auto maxHeight = getProperty (IDs::maxHeight, node);
     if (! maxHeight.isVoid())
         item.maxHeight = maxHeight;
 
-    auto width = getProperty (IDs::width, node);
+    const auto width = getProperty (IDs::width, node);
     if (! width.isVoid())
         item.width = width;
 
-    auto height = getProperty (IDs::height, node);
+    const auto height = getProperty (IDs::height, node);
     if (! height.isVoid())
         item.height = height;
 
@@ -275,15 +275,15 @@ void Stylesheet::configureFlexBoxItem (juce::FlexItem& item, const juce::ValueTr
     if (! grow.isVoid())
         item.flexGrow = grow;
 
-    auto flexShrink = getProperty (IDs::flexShrink, node);
+    const auto flexShrink = getProperty (IDs::flexShrink, node);
     if (! flexShrink.isVoid())
         item.flexShrink = flexShrink;
 
-    auto flexOrder = getProperty (IDs::flexOrder, node);
+    const auto flexOrder = getProperty (IDs::flexOrder, node);
     if (! flexOrder.isVoid())
         item.order = flexOrder;
 
-    auto alignSelf = getProperty (IDs::flexAlignSelf, node).toString();
+    const auto alignSelf = getProperty (IDs::flexAlignSelf, node).toString();
     if (alignSelf == IDs::flexStart)
         item.alignSelf = juce::FlexItem::AlignSelf::flexStart;
     else if (alignSelf == IDs::flexEnd)

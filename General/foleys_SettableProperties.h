@@ -52,13 +52,14 @@ struct SettableProperty
         AssetFile   /*< Shows embedded asset files to choose from (BinaryData) */
     };
 
-    SettableProperty (const juce::Identifier& n, PropertyType t)
-    : name (n), type (t) {}
+    SettableProperty (const juce::Identifier& n, PropertyType t, juce::var defaultToUse)
+    : name (n), type (t), defaultValue (defaultToUse) {}
     virtual ~SettableProperty() = default;
 
     virtual void set (juce::Component*, juce::var) const = 0;
     const juce::Identifier name;
     const PropertyType     type;
+    const juce::var        defaultValue;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettableProperty)
 };
@@ -67,29 +68,28 @@ struct SettableChoiceProperty : public SettableProperty
 {
     SettableChoiceProperty (const juce::Identifier& n,
                             std::function<void(juce::Component*, juce::var, const juce::NamedValueSet&)> s,
-                            juce::String d,
+                            juce::var d,
                             PropertyType t)
-    : SettableProperty (n, t), setter (s), defaultValue (d) {}
+    : SettableProperty (n, t, d), setter (s) {}
 
     SettableChoiceProperty (const juce::Identifier& n,
                             std::function<void(juce::Component*, juce::var, const juce::NamedValueSet&)> s,
                             juce::String d,
                             juce::NamedValueSet m)
-    : SettableProperty (n, SettableProperty::Choice), setter (s), defaultValue (d), options (m) {}
+    : SettableProperty (n, SettableProperty::Choice, d), setter (s), options (m) {}
 
     void set (juce::Component* c, juce::var v) const override
     {
         if (setter)
         {
             if (v.isVoid())
-                setter (c, defaultValue, options);
+                setter (c, defaultValue.toString(), options);
             else
                 setter (c, v, options);
         }
     }
 
     std::function<void(juce::Component*, juce::var, const juce::NamedValueSet&)> setter;
-    juce::String                                                                 defaultValue;
     juce::NamedValueSet                                                          options;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettableChoiceProperty)
@@ -98,9 +98,10 @@ struct SettableChoiceProperty : public SettableProperty
 struct SettableTextProperty : public SettableProperty
 {
     SettableTextProperty (const juce::Identifier& n,
+                          juce::var d,
                           std::function<void(juce::Component*, juce::var)> s,
                           PropertyType t = SettableProperty::Text)
-    : SettableProperty (n, t), setter (s) {}
+      : SettableProperty (n, t, d), setter (s) {}
 
     void set (juce::Component* c, juce::var v) const override
     {
@@ -116,9 +117,10 @@ struct SettableTextProperty : public SettableProperty
 struct SettableBoolProperty : public SettableProperty
 {
     SettableBoolProperty (const juce::Identifier& n,
+                          juce::var d,
                           std::function<void(juce::Component*, juce::var)> s,
                           PropertyType t = SettableProperty::Toggle)
-    : SettableProperty (n, t), setter (s) {}
+      : SettableProperty (n, t, d), setter (s) {}
 
     void set (juce::Component* c, juce::var v) const override
     {
@@ -134,8 +136,9 @@ struct SettableBoolProperty : public SettableProperty
 struct SettableNumberProperty : public SettableProperty
 {
     SettableNumberProperty (const juce::Identifier& n,
-                          std::function<void(juce::Component*, juce::var)> s)
-    : SettableProperty (n, SettableProperty::Number), setter (s) {}
+                            juce::var d,
+                            std::function<void(juce::Component*, juce::var)> s)
+      : SettableProperty (n, SettableProperty::Number, d), setter (s) {}
 
     void set (juce::Component* c, juce::var v) const override
     {
