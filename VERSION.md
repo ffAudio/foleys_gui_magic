@@ -1,8 +1,8 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.0.6
------
+1.0.6 - 22.03.2020
+------------------
 
 - Property editor displays many default values
 - Bugfix: update property editor when deleting a property
