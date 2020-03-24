@@ -49,6 +49,7 @@ struct SettableProperty
         Parameter,  /*< Shows available parameters as choice */
         LevelSource,/*< Shows available LevelSources as choice */
         PlotSource, /*< Shows available PlotSources as choice */
+        Trigger,    /*< Shows available Triggers as choice */
         AssetFile   /*< Shows embedded asset files to choose from (BinaryData) */
     };
 

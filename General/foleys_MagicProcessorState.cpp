@@ -97,6 +97,20 @@ MagicPlotSource* MagicProcessorState::getPlotSource (const juce::Identifier& sou
     return it->second.get();
 }
 
+void MagicProcessorState::addTrigger (const juce::Identifier& triggerID, std::function<void()> function)
+{
+    triggers [triggerID] = function;
+}
+
+std::function<void()> MagicProcessorState::getTrigger (const juce::Identifier& triggerID)
+{
+    auto it = triggers.find (triggerID);
+    if (it == triggers.end())
+        return nullptr;
+
+    return it->second;
+}
+
 juce::StringArray MagicProcessorState::getParameterNames() const
 {
     juce::StringArray names;
@@ -122,6 +136,42 @@ juce::StringArray MagicProcessorState::getPlotSourcesNames() const
     for (const auto& p : plotSources)
         names.add (p.first.toString());
 
+    return names;
+}
+
+juce::StringArray MagicProcessorState::getSettableOptions (SettableProperty::PropertyType type) const
+{
+    juce::StringArray names;
+    switch (type)
+    {
+        case SettableProperty::Parameter:
+            for (const auto* p : processor.getParameters())
+                if (const auto* withID = dynamic_cast<const juce::AudioProcessorParameterWithID*>(p))
+                    names.add (withID->paramID);
+            break;
+
+        case SettableProperty::LevelSource:
+            for (const auto& p : levelSources)
+                names.add (p.first.toString());
+            break;
+
+        case SettableProperty::PlotSource:
+            for (const auto& p : levelSources)
+                names.add (p.first.toString());
+            break;
+
+        case SettableProperty::Trigger:
+            for (const auto& p : triggers)
+                names.add (p.first.toString());
+            break;
+
+        case SettableProperty::AssetFile:
+            names = Resources::getResourceFileNames();
+            break;
+
+        default:
+            break;
+    }
     return names;
 }
 

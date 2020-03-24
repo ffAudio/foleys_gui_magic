@@ -31,7 +31,8 @@ namespace foleys
 {
 
 
-MagicBuilder::MagicBuilder()
+MagicBuilder::MagicBuilder (MagicProcessorState* state)
+  : magicState (state)
 {
 }
 
@@ -321,6 +322,14 @@ const std::vector<std::unique_ptr<SettableProperty>>& MagicBuilder::getSettableP
     return emptyPropertyList;
 }
 
+juce::StringArray MagicBuilder::getSettableOptions (SettableProperty::PropertyType type) const
+{
+    if (magicState)
+        return magicState->getSettableOptions (type);
+
+    return {};
+}
+
 juce::var MagicBuilder::getPropertyDefaultValue (juce::Identifier type, juce::Identifier property) const
 {
     const auto& properties = getSettableProperties (type);
@@ -344,6 +353,11 @@ juce::var MagicBuilder::getPropertyDefaultValue (juce::Identifier type, juce::Id
     if (property == IDs::display) return IDs::flexbox;
 
     return {};
+}
+
+MagicProcessorState* MagicBuilder::getProcessorState()
+{
+    return magicState;
 }
 
 void MagicBuilder::createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree)

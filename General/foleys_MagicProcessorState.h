@@ -71,6 +71,13 @@ public:
     MagicPlotSource* getPlotSource (const juce::Identifier& sourceID);
 
     /**
+     Add a function to be connected to e.g. Buttons
+     */
+    void addTrigger (const juce::Identifier& triggerID, std::function<void()> function);
+
+    std::function<void()> getTrigger (const juce::Identifier& triggerID);
+
+    /**
      Returns the IDs of AudioProcessorParameters for selection
      */
     juce::StringArray getParameterNames() const;
@@ -84,6 +91,11 @@ public:
      Returns the IDs of MagicPlotSources for selection
      */
     juce::StringArray getPlotSourcesNames() const;
+
+    /**
+     Returns possible options for selection
+     */
+    juce::StringArray getSettableOptions (SettableProperty::PropertyType type) const;
 
     /**
      Call this method in your prepareToPlay implementation, to allow th visualisers to be
@@ -138,6 +150,7 @@ private:
 
     std::map<juce::Identifier, std::unique_ptr<MagicLevelSource>> levelSources;
     std::map<juce::Identifier, std::unique_ptr<MagicPlotSource>>  plotSources;
+    std::map<juce::Identifier, std::function<void()>>             triggers;
 
     juce::TimeSliceThread visualiserThread { "Visualiser Thread" };
 
