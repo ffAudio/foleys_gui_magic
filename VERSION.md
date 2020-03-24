@@ -1,6 +1,11 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.0.7
+-----
+
+- Added glow effect to Oscilloscope
+
 1.0.6 - 22.03.2020
 ------------------
 

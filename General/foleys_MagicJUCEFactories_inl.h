@@ -338,6 +338,16 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                           juce::String(),
                           SettableProperty::PlotSource));
 
+    addSettableProperty (IDs::plot,
+                         std::make_unique<SettableNumberProperty>
+                         ("plot-decay",
+                          0.0f,
+                          [] (juce::Component* component, juce::var value)
+                          {
+                              if (auto* plotComponent = dynamic_cast<MagicPlotComponent*>(component))
+                                  plotComponent->setDecayFactor (float (value));
+                          }));
+
     //==============================================================================
 
     registerFactory (IDs::xyDragComponent,
