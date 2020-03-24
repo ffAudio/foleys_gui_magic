@@ -117,7 +117,19 @@ void MagicBuilder::setConfigTree (const juce::ValueTree& gui)
     if (gui.isValid() == false)
         return;
 
-    config = gui;
+    if (config.isValid())
+    {
+        auto parentNode = config.getParent();
+        parentNode.removeChild (config, nullptr);
+        config = gui;
+        if (parentNode.isValid())
+            parentNode.appendChild (config, nullptr);
+    }
+    else
+    {
+        config = gui;
+    }
+
     undo.clearUndoHistory();
     updateAll();
 }

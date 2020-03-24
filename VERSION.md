@@ -5,6 +5,7 @@ PluginGuiMagic - Versions history
 -----
 
 - Added glow effect to Oscilloscope
+- Bugfix: Keep current edits in state even after load XML
 
 1.0.6 - 22.03.2020
 ------------------
