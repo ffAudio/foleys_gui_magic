@@ -92,9 +92,14 @@ void MagicPlotComponent::updateGlowBufferSize()
     const auto h = getHeight();
 
     if (decay > 0.0f && w > 0 && h > 0)
-        glowBuffer = juce::Image (juce::Image::ARGB, w, h, true);
+    {
+        if (glowBuffer.getWidth() != w || glowBuffer.getHeight() != h)
+            glowBuffer = juce::Image (juce::Image::ARGB, w, h, true);
+    }
     else
+    {
         glowBuffer = juce::Image();
+    }
 }
 
 void MagicPlotComponent::resized()
