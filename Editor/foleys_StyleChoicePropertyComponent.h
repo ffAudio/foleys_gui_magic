@@ -37,17 +37,19 @@ class StyleChoicePropertyComponent  : public StylePropertyComponent,
 {
 public:
     StyleChoicePropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse, juce::StringArray choices);
+    StyleChoicePropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse, juce::PopupMenu choices);
 
     void refresh() override;
 
 private:
+    void initialiseComboBox();
 
     void valueChanged (juce::Value& value) override;
 
-    juce::StringArray choices;
-    juce::Value       proxy;
+    juce::PopupMenu choices;
+    juce::Value     proxy;
 
-    bool              updating = false;
+    bool            updating = false;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StyleChoicePropertyComponent)
 };

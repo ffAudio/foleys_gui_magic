@@ -95,7 +95,7 @@ public:
     /**
      Returns possible options for selection
      */
-    juce::StringArray getSettableOptions (SettableProperty::PropertyType type) const;
+    juce::PopupMenu getSettableOptions (SettableProperty::PropertyType type) const;
 
     /**
      Call this method in your prepareToPlay implementation, to allow th visualisers to be
@@ -142,6 +142,8 @@ public:
     juce::MidiKeyboardState& getKeyboardState();
 
 private:
+
+    void addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const;
 
     juce::AudioProcessor& processor;
     juce::AudioProcessorValueTreeState& state;

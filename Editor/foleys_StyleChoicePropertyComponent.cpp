@@ -37,11 +37,29 @@ StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicBuilder& builde
                                                             juce::Identifier propertyToUse,
                                                             juce::ValueTree& nodeToUse,
                                                             juce::StringArray choicesToUse)
+  : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse)
+{
+    int index = 0;
+    for (const auto& name : choicesToUse)
+        choices.addItem (++index, name);
+
+    initialiseComboBox();
+}
+
+StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicBuilder& builderToUse,
+                                                            juce::Identifier propertyToUse,
+                                                            juce::ValueTree& nodeToUse,
+                                                            juce::PopupMenu choicesToUse)
   : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse),
     choices (choicesToUse)
 {
+    initialiseComboBox();
+}
+
+void StyleChoicePropertyComponent::initialiseComboBox()
+{
     auto combo = std::make_unique<juce::ComboBox>();
-    combo->addItemList (choices, 1);
+    *combo->getRootMenu() = choices;
 
     addAndMakeVisible (combo.get());
 
@@ -80,12 +98,11 @@ void StyleChoicePropertyComponent::valueChanged (juce::Value&)
 
     juce::ScopedValueSetter<bool> updateFlag (updating, true);
     auto v = proxy.getValue().toString();
-    auto id = choices.indexOf (v) + 1;
 
     if (auto* combo = dynamic_cast<juce::ComboBox*>(editor.get()))
     {
-        if (combo->getSelectedId() != id)
-            combo->setSelectedId (id, juce::sendNotificationSync);
+        if (combo->getText() != v)
+            combo->setText (v, juce::sendNotificationSync);
     }
 
     if (property == IDs::lookAndFeel)

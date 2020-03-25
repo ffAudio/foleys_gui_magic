@@ -5,6 +5,7 @@ PluginGuiMagic - Versions history
 -----
 
 - Added trigger option for Buttons
+- Display parameters in groups for selection
 - Added glow effect to Oscilloscope
 - Bugfix: Keep current edits in state even after load XML
 

@@ -178,7 +178,7 @@ public:
     /**
      Return the list of options
      */
-    juce::StringArray getSettableOptions (SettableProperty::PropertyType type) const;
+    juce::PopupMenu getSettableOptions (SettableProperty::PropertyType type) const;
 
     /**
      Lookup the default value of the property

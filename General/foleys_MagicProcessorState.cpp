@@ -139,41 +139,60 @@ juce::StringArray MagicProcessorState::getPlotSourcesNames() const
     return names;
 }
 
-juce::StringArray MagicProcessorState::getSettableOptions (SettableProperty::PropertyType type) const
+juce::PopupMenu MagicProcessorState::getSettableOptions (SettableProperty::PropertyType type) const
 {
-    juce::StringArray names;
+    juce::PopupMenu menu;
+    int index = 0;
     switch (type)
     {
         case SettableProperty::Parameter:
-            for (const auto* p : processor.getParameters())
-                if (const auto* withID = dynamic_cast<const juce::AudioProcessorParameterWithID*>(p))
-                    names.add (withID->paramID);
+            addParametersToMenu (processor.getParameterTree(), menu, index);
             break;
 
         case SettableProperty::LevelSource:
             for (const auto& p : levelSources)
-                names.add (p.first.toString());
+                menu.addItem (++index, p.first.toString());
             break;
 
         case SettableProperty::PlotSource:
             for (const auto& p : levelSources)
-                names.add (p.first.toString());
+                menu.addItem (++index, p.first.toString());
             break;
 
         case SettableProperty::Trigger:
             for (const auto& p : triggers)
-                names.add (p.first.toString());
+                menu.addItem (++index, p.first.toString());
             break;
 
         case SettableProperty::AssetFile:
-            names = Resources::getResourceFileNames();
+            for (const auto& name : Resources::getResourceFileNames())
+                menu.addItem (++index, name);
             break;
 
         default:
             break;
     }
-    return names;
+    return menu;
 }
+
+void MagicProcessorState::addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const
+{
+    for (const auto& node : group)
+    {
+        if (const auto* parameter = node->getParameter())
+        {
+            if (const auto* withID = dynamic_cast<const juce::AudioProcessorParameterWithID*>(parameter))
+                menu.addItem (++index, withID->paramID);
+        }
+        else if (const auto* groupNode = node->getGroup())
+        {
+            juce::PopupMenu subMenu;
+            addParametersToMenu (*groupNode, subMenu, index);
+            menu.addSubMenu (groupNode->getName(), subMenu);
+        }
+    }
+}
+
 
 void MagicProcessorState::prepareToPlay (double sampleRate, int samplesPerBlockExpected)
 {

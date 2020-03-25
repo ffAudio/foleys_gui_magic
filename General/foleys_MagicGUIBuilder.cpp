@@ -322,7 +322,7 @@ const std::vector<std::unique_ptr<SettableProperty>>& MagicBuilder::getSettableP
     return emptyPropertyList;
 }
 
-juce::StringArray MagicBuilder::getSettableOptions (SettableProperty::PropertyType type) const
+juce::PopupMenu MagicBuilder::getSettableOptions (SettableProperty::PropertyType type) const
 {
     if (magicState)
         return magicState->getSettableOptions (type);
