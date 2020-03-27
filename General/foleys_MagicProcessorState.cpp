@@ -170,7 +170,7 @@ void MagicProcessorState::populateSettableOptionsMenu (juce::ComboBox& comboBox,
             break;
 
         case SettableProperty::PlotSource:
-            for (const auto& p : levelSources)
+            for (const auto& p : plotSources)
                 comboBox.addItem (p.first.toString(), ++index);
             break;
 
