@@ -1,6 +1,11 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.0.8
+-----
+
+- Added option to delete style class
+
 1.0.7 - 27.03.2020
 ------------------
 

@@ -46,6 +46,7 @@ public:
     juce::ValueTree& getNodeToEdit();
 
     void createNewClass();
+    void deleteClass (const juce::String& name);
 
     void addNodeProperties();
     void addDecoratorProperties();

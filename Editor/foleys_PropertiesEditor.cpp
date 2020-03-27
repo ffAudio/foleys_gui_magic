@@ -88,6 +88,8 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
         return;
     }
 
+    updatePopupMenu();
+
     if (stylesheet.isClassNode (styleItem) == false &&
         stylesheet.isTypeNode (styleItem) == false &&
         stylesheet.isIdNode (styleItem) == false)
@@ -147,6 +149,13 @@ void PropertiesEditor::createNewClass()
         auto name = editor->getText().replaceCharacters (".&$@ ", "---__");
         builder.getStylesheet().addNewStyleClass (name, &undo);
     }
+}
+
+void PropertiesEditor::deleteClass (const juce::String& name)
+{
+    auto& stylesheet = builder.getStylesheet();
+    stylesheet.deleteStyleClass (name, &undo);
+    builder.removeStyleClassReferences (builder.getGuiRootNode(), name);
 }
 
 //==============================================================================
@@ -284,6 +293,17 @@ void PropertiesEditor::updatePopupMenu()
             if (p != nullptr)
                 p->createNewClass();
         }));
+
+        if (builder.getStylesheet().isClassNode (styleItem))
+        {
+            auto name = styleItem.getType().toString();
+            menu.addItem (juce::PopupMenu::Item ("Delete Class \"" + name + "\"")
+                          .setAction ([p = juce::Component::SafePointer<PropertiesEditor>(this), name]() mutable
+            {
+                if (p != nullptr)
+                    p->deleteClass (name);
+            }));
+        }
 
         popup->addSubMenu ("Classes", menu);
     }
