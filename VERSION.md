@@ -1,8 +1,8 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.0.7
------
+1.0.7 - 27.03.2020
+------------------
 
 - Added Properties to connect to ToggleButtons
 - Added Visibility switch via Properties
