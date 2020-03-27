@@ -37,21 +37,18 @@ StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicBuilder& builde
                                                             juce::Identifier propertyToUse,
                                                             juce::ValueTree& nodeToUse,
                                                             juce::StringArray choicesToUse)
-  : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse)
+  : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse),
+    choices (choicesToUse)
 {
-    int index = 0;
-    for (const auto& name : choicesToUse)
-        choices.addItem (++index, name);
-
     initialiseComboBox();
 }
 
 StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicBuilder& builderToUse,
                                                             juce::Identifier propertyToUse,
                                                             juce::ValueTree& nodeToUse,
-                                                            juce::PopupMenu choicesToUse)
+                                                            SettableProperty::PropertyType typeToUse)
   : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse),
-    choices (choicesToUse)
+    type (typeToUse)
 {
     initialiseComboBox();
 }
@@ -59,8 +56,19 @@ StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicBuilder& builde
 void StyleChoicePropertyComponent::initialiseComboBox()
 {
     auto combo = std::make_unique<juce::ComboBox>();
-    *combo->getRootMenu() = choices;
 
+    if (! choices.isEmpty())
+    {
+        int index = 0;
+        for (const auto& name : choices)
+        {
+            combo->addItem (name, ++index);
+        }
+    }
+    else
+    {
+        builder.populateSettableOptionsMenu (*combo, type);
+    }
     addAndMakeVisible (combo.get());
 
     combo->onChange = [&]

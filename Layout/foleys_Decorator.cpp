@@ -37,6 +37,8 @@ Decorator::Decorator (MagicBuilder& builder, juce::ValueTree node, std::unique_p
 {
     setOpaque (false);
 
+    visibility.addListener (this);
+
     setInterceptsMouseClicks (false, true);
 
     if (component.get() != nullptr)
@@ -53,6 +55,12 @@ void Decorator::setEditMode (bool shouldEdit)
 
 void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTree& node)
 {
+    auto* processorState = magicBuilder.getProcessorState();
+
+    auto visibilityNode = stylesheet.getProperty (IDs::visibility, node);
+    if (! visibilityNode.isVoid() && processorState)
+        visibility.referTo (processorState->getPropertyAsValue (visibilityNode.toString()));
+
     auto bg = stylesheet.getProperty (IDs::backgroundColour, node);
     if (! bg.isVoid())
         backgroundColour = stylesheet.parseColour (bg.toString());
@@ -231,6 +239,12 @@ juce::Component* Decorator::getWrappedComponent()
 const juce::ValueTree& Decorator::getConfigNode() const
 {
     return configNode;
+}
+
+void Decorator::valueChanged (juce::Value& source)
+{
+    if (source == visibility)
+        setVisible (visibility.getValue());
 }
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE

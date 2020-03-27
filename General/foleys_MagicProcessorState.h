@@ -78,6 +78,16 @@ public:
     std::function<void()> getTrigger (const juce::Identifier& triggerID);
 
     /**
+     Returns a property as value inside the ValueTreeState. The nodes are a colon separated list, the last component is the property name
+     */
+    juce::Value getPropertyAsValue (const juce::String& pathToProperty);
+
+    /**
+     Returns the root node for exposed properties for the GUI
+     */
+    juce::ValueTree getPropertyRoot() const;
+
+    /**
      Returns the IDs of AudioProcessorParameters for selection
      */
     juce::StringArray getParameterNames() const;
@@ -93,9 +103,9 @@ public:
     juce::StringArray getPlotSourcesNames() const;
 
     /**
-     Returns possible options for selection
+     Populates a menu with options from SettableProperty
      */
-    juce::PopupMenu getSettableOptions (SettableProperty::PropertyType type) const;
+    void populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const;
 
     /**
      Call this method in your prepareToPlay implementation, to allow th visualisers to be
@@ -144,6 +154,7 @@ public:
 private:
 
     void addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const;
+    void addPropertiesToMenu (const juce::ValueTree& tree, juce::ComboBox& combo, juce::PopupMenu& menu, const juce::String& path) const;
 
     juce::AudioProcessor& processor;
     juce::AudioProcessorValueTreeState& state;

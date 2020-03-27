@@ -178,7 +178,7 @@ public:
     /**
      Return the list of options
      */
-    juce::PopupMenu getSettableOptions (SettableProperty::PropertyType type) const;
+    void populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const;
 
     /**
      Lookup the default value of the property

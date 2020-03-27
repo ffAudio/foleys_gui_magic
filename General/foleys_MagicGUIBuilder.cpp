@@ -322,12 +322,10 @@ const std::vector<std::unique_ptr<SettableProperty>>& MagicBuilder::getSettableP
     return emptyPropertyList;
 }
 
-juce::PopupMenu MagicBuilder::getSettableOptions (SettableProperty::PropertyType type) const
+void MagicBuilder::populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const
 {
     if (magicState)
-        return magicState->getSettableOptions (type);
-
-    return {};
+        return magicState->populateSettableOptionsMenu (comboBox, type);
 }
 
 juce::var MagicBuilder::getPropertyDefaultValue (juce::Identifier type, juce::Identifier property) const

@@ -60,8 +60,9 @@ StylePropertyComponent* StylePropertyComponent::createComponent (MagicBuilder& b
         property.type == SettableProperty::LevelSource ||
         property.type == SettableProperty::PlotSource ||
         property.type == SettableProperty::Trigger ||
+        property.type == SettableProperty::Property ||
         property.type == SettableProperty::AssetFile)
-        return new StyleChoicePropertyComponent (builder, property.name, node, builder.getSettableOptions (property.type));
+        return new StyleChoicePropertyComponent (builder, property.name, node, property.type);
 
     jassertfalse;
     return nullptr;

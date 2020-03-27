@@ -231,6 +231,26 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
 
     addSettableProperty (IDs::toggleButton,
                          std::make_unique<SettableChoiceProperty>
+                         ("value",
+                          [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
+                          {
+                              if (value.toString().isEmpty())
+                                  return;
+
+                              if (auto* magicState = getProcessorState())
+                              {
+                                  if (auto* button = dynamic_cast<AttachableToggleButton*>(component))
+                                  {
+                                      button->setClickingTogglesState (true);
+                                      button->getToggleStateValue().referTo (magicState->getPropertyAsValue (value.toString()));
+                                  }
+                              }
+                          },
+                          juce::String(),
+                          SettableProperty::Property));
+
+    addSettableProperty (IDs::toggleButton,
+                         std::make_unique<SettableChoiceProperty>
                          (IDs::parameter,
                           [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
                           {

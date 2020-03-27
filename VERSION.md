@@ -4,6 +4,8 @@ PluginGuiMagic - Versions history
 1.0.7
 -----
 
+- Added Properties to connect to ToggleButtons
+- Added Visibility switch via Properties
 - Added trigger option for Buttons
 - Display parameters in groups for selection
 - Added glow effect to Oscilloscope

@@ -111,6 +111,22 @@ std::function<void()> MagicProcessorState::getTrigger (const juce::Identifier& t
     return it->second;
 }
 
+juce::ValueTree MagicProcessorState::getPropertyRoot() const
+{
+    return state.state.getOrCreateChildWithName ("properties", nullptr);
+}
+
+juce::Value MagicProcessorState::getPropertyAsValue (const juce::String& pathToProperty)
+{
+    const auto path = juce::StringArray::fromTokens (pathToProperty, ":", "");
+    auto tree = getPropertyRoot();
+
+    for (int i = 0; i < path.size() - 1 && tree.isValid(); ++i)
+        tree = tree.getOrCreateChildWithName (path [i], nullptr);
+
+    return tree.getPropertyAsValue (path [path.size()-1], nullptr);
+}
+
 juce::StringArray MagicProcessorState::getParameterNames() const
 {
     juce::StringArray names;
@@ -139,40 +155,42 @@ juce::StringArray MagicProcessorState::getPlotSourcesNames() const
     return names;
 }
 
-juce::PopupMenu MagicProcessorState::getSettableOptions (SettableProperty::PropertyType type) const
+void MagicProcessorState::populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const
 {
-    juce::PopupMenu menu;
     int index = 0;
     switch (type)
     {
         case SettableProperty::Parameter:
-            addParametersToMenu (processor.getParameterTree(), menu, index);
+            addParametersToMenu (processor.getParameterTree(), *comboBox.getRootMenu(), index);
             break;
 
         case SettableProperty::LevelSource:
             for (const auto& p : levelSources)
-                menu.addItem (++index, p.first.toString());
+                comboBox.addItem (p.first.toString(), ++index);
             break;
 
         case SettableProperty::PlotSource:
             for (const auto& p : levelSources)
-                menu.addItem (++index, p.first.toString());
+                comboBox.addItem (p.first.toString(), ++index);
             break;
 
         case SettableProperty::Trigger:
             for (const auto& p : triggers)
-                menu.addItem (++index, p.first.toString());
+                comboBox.addItem (p.first.toString(), ++index);
+            break;
+
+        case SettableProperty::Property:
+            addPropertiesToMenu (getPropertyRoot(), comboBox, *comboBox.getRootMenu(), {});
             break;
 
         case SettableProperty::AssetFile:
             for (const auto& name : Resources::getResourceFileNames())
-                menu.addItem (++index, name);
+                comboBox.addItem (name, ++index);
             break;
 
         default:
             break;
     }
-    return menu;
 }
 
 void MagicProcessorState::addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const
@@ -193,6 +211,25 @@ void MagicProcessorState::addParametersToMenu (const juce::AudioProcessorParamet
     }
 }
 
+void MagicProcessorState::addPropertiesToMenu (const juce::ValueTree& tree, juce::ComboBox& combo, juce::PopupMenu& menu, const juce::String& path) const
+{
+    for (const auto& child : tree)
+    {
+        const auto name = child.getType().toString();
+        juce::PopupMenu subMenu;
+        addPropertiesToMenu (child, combo, subMenu, path + name + ":");
+        menu.addSubMenu (name, subMenu);
+    }
+
+    for (int i=0; i < tree.getNumProperties(); ++i)
+    {
+        const auto name = tree.getPropertyName (i).toString();
+        menu.addItem (name, [&combo, t = path + name]
+        {
+            combo.setText (t);
+        });
+    }
+}
 
 void MagicProcessorState::prepareToPlay (double sampleRate, int samplesPerBlockExpected)
 {
@@ -246,7 +283,7 @@ void MagicProcessorState::setStateInformation (const void* data, int sizeInBytes
     if (tree.isValid() == false)
         return;
 
-    state.state = tree;
+    state.replaceState (tree);
 
     if (editor)
     {
