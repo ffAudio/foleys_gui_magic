@@ -5,6 +5,7 @@ PluginGuiMagic - Versions history
 -----
 
 - Added option to delete style class
+- Bugfix: Fixed wrong entries in plot source menu
 
 1.0.7 - 27.03.2020
 ------------------
