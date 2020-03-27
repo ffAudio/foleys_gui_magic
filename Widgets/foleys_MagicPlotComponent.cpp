@@ -59,12 +59,52 @@ void MagicPlotComponent::setPlotSource (MagicPlotSource* source)
         plotSource->addChangeListener (this);
 }
 
+void MagicPlotComponent::setDecayFactor (float decayFactor)
+{
+    decay = decayFactor;
+    updateGlowBufferSize();
+}
+
 void MagicPlotComponent::paint (juce::Graphics& g)
 {
     if (plotSource == nullptr)
         return;
 
-    plotSource->drawPlot (g, getLocalBounds().toFloat(), *this);
+    if (! glowBuffer.isNull())
+        drawPlotGlowing (g);
+    else
+        plotSource->drawPlot (g, getLocalBounds().toFloat(), *this);
+}
+
+void MagicPlotComponent::drawPlotGlowing (juce::Graphics& g)
+{
+    if (decay < 1.0f)
+        glowBuffer.multiplyAllAlphas (decay);
+
+    juce::Graphics glow (glowBuffer);
+    plotSource->drawPlot (glow, glow.getClipBounds().toFloat(), *this);
+    g.drawImageAt (glowBuffer, 0, 0);
+}
+
+void MagicPlotComponent::updateGlowBufferSize()
+{
+    const auto w = getWidth();
+    const auto h = getHeight();
+
+    if (decay > 0.0f && w > 0 && h > 0)
+    {
+        if (glowBuffer.getWidth() != w || glowBuffer.getHeight() != h)
+            glowBuffer = juce::Image (juce::Image::ARGB, w, h, true);
+    }
+    else
+    {
+        glowBuffer = juce::Image();
+    }
+}
+
+void MagicPlotComponent::resized()
+{
+    updateGlowBufferSize();
 }
 
 void MagicPlotComponent::changeListenerCallback (juce::ChangeBroadcaster*)

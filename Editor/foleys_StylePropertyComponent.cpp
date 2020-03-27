@@ -56,17 +56,13 @@ StylePropertyComponent* StylePropertyComponent::createComponent (MagicBuilder& b
         return new StyleChoicePropertyComponent (builder, property.name, node, names);
     }
 
-    if (property.type == SettableProperty::Parameter)
-        return new StyleChoicePropertyComponent (builder, property.name, node, builder.getParameterNames());
-
-    if (property.type == SettableProperty::LevelSource)
-        return new StyleChoicePropertyComponent (builder, property.name, node, builder.getLevelSourcesNames());
-
-    if (property.type == SettableProperty::PlotSource)
-        return new StyleChoicePropertyComponent (builder, property.name, node, builder.getPlotSourcesNames());
-
-    if (property.type == SettableProperty::AssetFile)
-        return new StyleChoicePropertyComponent (builder, property.name, node, Resources::getResourceFileNames());
+    if (property.type == SettableProperty::Parameter ||
+        property.type == SettableProperty::LevelSource ||
+        property.type == SettableProperty::PlotSource ||
+        property.type == SettableProperty::Trigger ||
+        property.type == SettableProperty::Property ||
+        property.type == SettableProperty::AssetFile)
+        return new StyleChoicePropertyComponent (builder, property.name, node, property.type);
 
     jassertfalse;
     return nullptr;

@@ -52,8 +52,10 @@ public:
     ~MagicPlotComponent();
 
     void setPlotSource (MagicPlotSource* source);
+    void setDecayFactor (float decayFactor);
 
     void paint (juce::Graphics& g) override;
+    void resized() override;
 
     void changeListenerCallback (juce::ChangeBroadcaster *source) override;
     void handleAsyncUpdate() override;
@@ -62,7 +64,12 @@ public:
     { return false; }
 
 private:
+    void drawPlotGlowing (juce::Graphics& g);
+    void updateGlowBufferSize();
+
     juce::WeakReference<MagicPlotSource> plotSource;
+    juce::Image glowBuffer;
+    float       decay = 0.0f;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicPlotComponent)
 };

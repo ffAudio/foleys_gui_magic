@@ -42,7 +42,7 @@ namespace foleys
 class MagicBuilder : private juce::ValueTree::Listener
 {
 public:
-    MagicBuilder();
+    MagicBuilder (MagicProcessorState* magicStateToUse);
 
     virtual ~MagicBuilder();
 
@@ -172,28 +172,20 @@ public:
      */
     virtual juce::StringArray getFactoryNames() const = 0;
 
-    /**
-     Returns the IDs of AudioProcessorParameters for selection
-     */
-    virtual juce::StringArray getParameterNames() const = 0;
-
-    /**
-     Returns the IDs of MagicLevelSources for selection
-     */
-    virtual juce::StringArray getLevelSourcesNames() const = 0;
-
-    /**
-     Returns the IDs of MagicPlotSources for selection
-     */
-    virtual juce::StringArray getPlotSourcesNames() const = 0;
-
     void addSettableProperty (juce::Identifier type, std::unique_ptr<SettableProperty> property);
     const std::vector<std::unique_ptr<SettableProperty>>& getSettableProperties (juce::Identifier type) const;
+
+    /**
+     Return the list of options
+     */
+    void populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const;
 
     /**
      Lookup the default value of the property
      */
     juce::var getPropertyDefaultValue (juce::Identifier type, juce::Identifier property) const;
+
+    MagicProcessorState* getProcessorState();
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     void attachToolboxToWindow (juce::Component& window);
@@ -238,6 +230,8 @@ private:
     //==============================================================================
 
     juce::Component::SafePointer<juce::Component> parent;
+
+    MagicProcessorState* magicState;
 
     std::unique_ptr<Decorator> root;
 
@@ -303,22 +297,6 @@ public:
      */
     juce::StringArray getFactoryNames() const override;
 
-    /**
-     Returns the IDs of AudioProcessorParameters for selection
-     */
-    juce::StringArray getParameterNames() const override;
-
-    /**
-     Returns the IDs of MagicPlotSources for selection
-     */
-    juce::StringArray getLevelSourcesNames() const override;
-
-    /**
-     Returns the IDs of MagicPlotSources for selection
-     */
-    juce::StringArray getPlotSourcesNames() const override;
-
-
 protected:
 
     std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node) override;
@@ -326,8 +304,6 @@ protected:
 private:
 
     AppType& app;
-
-    MagicProcessorState* magicState;
 
     std::map<juce::Identifier, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&, AppType&)>> factories;
 

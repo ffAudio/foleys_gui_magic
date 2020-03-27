@@ -39,7 +39,8 @@ class MagicBuilder;
  It also owns the Component and the Attachment, in case the Component is connected
  to an AudioProcessorValueTreeState.
  */
-class Decorator : public juce::Component
+class Decorator   : public juce::Component,
+                    private juce::Value::Listener
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
                 , public juce::DragAndDropTarget
 #endif
@@ -112,8 +113,11 @@ protected:
 
 private:
 
+    void valueChanged (juce::Value& source) override;
+
     MagicBuilder&               magicBuilder;
     juce::ValueTree             configNode;
+    juce::Value                 visibility { true };
 
     std::unique_ptr<juce::Component> component;
 

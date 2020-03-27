@@ -1,6 +1,16 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.0.7 - 27.03.2020
+------------------
+
+- Added Properties to connect to ToggleButtons
+- Added Visibility switch via Properties
+- Added trigger option for Buttons
+- Display parameters in groups for selection
+- Added glow effect to Oscilloscope
+- Bugfix: Keep current edits in state even after load XML
+
 1.0.6 - 22.03.2020
 ------------------
 

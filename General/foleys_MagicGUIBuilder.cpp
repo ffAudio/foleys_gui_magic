@@ -31,7 +31,8 @@ namespace foleys
 {
 
 
-MagicBuilder::MagicBuilder()
+MagicBuilder::MagicBuilder (MagicProcessorState* state)
+  : magicState (state)
 {
 }
 
@@ -117,7 +118,19 @@ void MagicBuilder::setConfigTree (const juce::ValueTree& gui)
     if (gui.isValid() == false)
         return;
 
-    config = gui;
+    if (config.isValid())
+    {
+        auto parentNode = config.getParent();
+        parentNode.removeChild (config, nullptr);
+        config = gui;
+        if (parentNode.isValid())
+            parentNode.appendChild (config, nullptr);
+    }
+    else
+    {
+        config = gui;
+    }
+
     undo.clearUndoHistory();
     updateAll();
 }
@@ -309,6 +322,12 @@ const std::vector<std::unique_ptr<SettableProperty>>& MagicBuilder::getSettableP
     return emptyPropertyList;
 }
 
+void MagicBuilder::populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const
+{
+    if (magicState)
+        return magicState->populateSettableOptionsMenu (comboBox, type);
+}
+
 juce::var MagicBuilder::getPropertyDefaultValue (juce::Identifier type, juce::Identifier property) const
 {
     const auto& properties = getSettableProperties (type);
@@ -332,6 +351,11 @@ juce::var MagicBuilder::getPropertyDefaultValue (juce::Identifier type, juce::Id
     if (property == IDs::display) return IDs::flexbox;
 
     return {};
+}
+
+MagicProcessorState* MagicBuilder::getProcessorState()
+{
+    return magicState;
 }
 
 void MagicBuilder::createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree)

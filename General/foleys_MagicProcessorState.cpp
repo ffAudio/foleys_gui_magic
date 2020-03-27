@@ -97,6 +97,36 @@ MagicPlotSource* MagicProcessorState::getPlotSource (const juce::Identifier& sou
     return it->second.get();
 }
 
+void MagicProcessorState::addTrigger (const juce::Identifier& triggerID, std::function<void()> function)
+{
+    triggers [triggerID] = function;
+}
+
+std::function<void()> MagicProcessorState::getTrigger (const juce::Identifier& triggerID)
+{
+    auto it = triggers.find (triggerID);
+    if (it == triggers.end())
+        return nullptr;
+
+    return it->second;
+}
+
+juce::ValueTree MagicProcessorState::getPropertyRoot() const
+{
+    return state.state.getOrCreateChildWithName ("properties", nullptr);
+}
+
+juce::Value MagicProcessorState::getPropertyAsValue (const juce::String& pathToProperty)
+{
+    const auto path = juce::StringArray::fromTokens (pathToProperty, ":", "");
+    auto tree = getPropertyRoot();
+
+    for (int i = 0; i < path.size() - 1 && tree.isValid(); ++i)
+        tree = tree.getOrCreateChildWithName (path [i], nullptr);
+
+    return tree.getPropertyAsValue (path [path.size()-1], nullptr);
+}
+
 juce::StringArray MagicProcessorState::getParameterNames() const
 {
     juce::StringArray names;
@@ -123,6 +153,82 @@ juce::StringArray MagicProcessorState::getPlotSourcesNames() const
         names.add (p.first.toString());
 
     return names;
+}
+
+void MagicProcessorState::populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const
+{
+    int index = 0;
+    switch (type)
+    {
+        case SettableProperty::Parameter:
+            addParametersToMenu (processor.getParameterTree(), *comboBox.getRootMenu(), index);
+            break;
+
+        case SettableProperty::LevelSource:
+            for (const auto& p : levelSources)
+                comboBox.addItem (p.first.toString(), ++index);
+            break;
+
+        case SettableProperty::PlotSource:
+            for (const auto& p : levelSources)
+                comboBox.addItem (p.first.toString(), ++index);
+            break;
+
+        case SettableProperty::Trigger:
+            for (const auto& p : triggers)
+                comboBox.addItem (p.first.toString(), ++index);
+            break;
+
+        case SettableProperty::Property:
+            addPropertiesToMenu (getPropertyRoot(), comboBox, *comboBox.getRootMenu(), {});
+            break;
+
+        case SettableProperty::AssetFile:
+            for (const auto& name : Resources::getResourceFileNames())
+                comboBox.addItem (name, ++index);
+            break;
+
+        default:
+            break;
+    }
+}
+
+void MagicProcessorState::addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const
+{
+    for (const auto& node : group)
+    {
+        if (const auto* parameter = node->getParameter())
+        {
+            if (const auto* withID = dynamic_cast<const juce::AudioProcessorParameterWithID*>(parameter))
+                menu.addItem (++index, withID->paramID);
+        }
+        else if (const auto* groupNode = node->getGroup())
+        {
+            juce::PopupMenu subMenu;
+            addParametersToMenu (*groupNode, subMenu, index);
+            menu.addSubMenu (groupNode->getName(), subMenu);
+        }
+    }
+}
+
+void MagicProcessorState::addPropertiesToMenu (const juce::ValueTree& tree, juce::ComboBox& combo, juce::PopupMenu& menu, const juce::String& path) const
+{
+    for (const auto& child : tree)
+    {
+        const auto name = child.getType().toString();
+        juce::PopupMenu subMenu;
+        addPropertiesToMenu (child, combo, subMenu, path + name + ":");
+        menu.addSubMenu (name, subMenu);
+    }
+
+    for (int i=0; i < tree.getNumProperties(); ++i)
+    {
+        const auto name = tree.getPropertyName (i).toString();
+        menu.addItem (name, [&combo, t = path + name]
+        {
+            combo.setText (t);
+        });
+    }
 }
 
 void MagicProcessorState::prepareToPlay (double sampleRate, int samplesPerBlockExpected)
@@ -177,7 +283,7 @@ void MagicProcessorState::setStateInformation (const void* data, int sizeInBytes
     if (tree.isValid() == false)
         return;
 
-    state.state = tree;
+    state.replaceState (tree);
 
     if (editor)
     {

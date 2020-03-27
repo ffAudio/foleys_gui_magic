@@ -34,8 +34,8 @@ namespace foleys
 
 template<class AppType>
 MagicGUIBuilder<AppType>::MagicGUIBuilder (AppType& appToUse, MagicProcessorState* magicStateToUse)
-: app (appToUse),
-magicState (magicStateToUse)
+  : MagicBuilder (magicStateToUse),
+    app (appToUse)
 {
     config = juce::ValueTree (IDs::magic);
 
@@ -53,7 +53,7 @@ void MagicGUIBuilder<AppType>::createDefaultGUITree (bool keepExisting)
 
     auto current = rootNode;
 
-    if (magicState != nullptr)
+    if (auto* magicState = getProcessorState())
     {
         auto plotNames = magicState->getPlotSourcesNames();
 
@@ -113,33 +113,6 @@ juce::StringArray MagicGUIBuilder<AppType>::getFactoryNames() const
         names.add (f.first.toString());
 
     return names;
-}
-
-template<class AppType>
-juce::StringArray MagicGUIBuilder<AppType>::getParameterNames() const
-{
-    if (magicState == nullptr)
-        return {};
-
-    return magicState->getParameterNames();
-}
-
-template<class AppType>
-juce::StringArray MagicGUIBuilder<AppType>::getLevelSourcesNames() const
-{
-    if (magicState == nullptr)
-        return {};
-
-    return magicState->getLevelSourcesNames();
-}
-
-template<class AppType>
-juce::StringArray MagicGUIBuilder<AppType>::getPlotSourcesNames() const
-{
-    if (magicState == nullptr)
-        return {};
-
-    return magicState->getPlotSourcesNames();
 }
 
 template<class AppType>

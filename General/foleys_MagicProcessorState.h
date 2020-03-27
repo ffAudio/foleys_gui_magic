@@ -71,6 +71,23 @@ public:
     MagicPlotSource* getPlotSource (const juce::Identifier& sourceID);
 
     /**
+     Add a function to be connected to e.g. Buttons
+     */
+    void addTrigger (const juce::Identifier& triggerID, std::function<void()> function);
+
+    std::function<void()> getTrigger (const juce::Identifier& triggerID);
+
+    /**
+     Returns a property as value inside the ValueTreeState. The nodes are a colon separated list, the last component is the property name
+     */
+    juce::Value getPropertyAsValue (const juce::String& pathToProperty);
+
+    /**
+     Returns the root node for exposed properties for the GUI
+     */
+    juce::ValueTree getPropertyRoot() const;
+
+    /**
      Returns the IDs of AudioProcessorParameters for selection
      */
     juce::StringArray getParameterNames() const;
@@ -84,6 +101,11 @@ public:
      Returns the IDs of MagicPlotSources for selection
      */
     juce::StringArray getPlotSourcesNames() const;
+
+    /**
+     Populates a menu with options from SettableProperty
+     */
+    void populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const;
 
     /**
      Call this method in your prepareToPlay implementation, to allow th visualisers to be
@@ -131,6 +153,9 @@ public:
 
 private:
 
+    void addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const;
+    void addPropertiesToMenu (const juce::ValueTree& tree, juce::ComboBox& combo, juce::PopupMenu& menu, const juce::String& path) const;
+
     juce::AudioProcessor& processor;
     juce::AudioProcessorValueTreeState& state;
 
@@ -138,6 +163,7 @@ private:
 
     std::map<juce::Identifier, std::unique_ptr<MagicLevelSource>> levelSources;
     std::map<juce::Identifier, std::unique_ptr<MagicPlotSource>>  plotSources;
+    std::map<juce::Identifier, std::function<void()>>             triggers;
 
     juce::TimeSliceThread visualiserThread { "Visualiser Thread" };
 
