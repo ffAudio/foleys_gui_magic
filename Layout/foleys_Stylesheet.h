@@ -96,6 +96,14 @@ public:
     juce::ValueTree addNewStyleClass (const juce::String& name, juce::UndoManager* undo);
 
     /**
+     Delete a style class. This will not delete references to the class.
+
+     @param name the name of the class to be deleted.
+     @param undo the UndoManager to track the action
+     */
+    void deleteStyleClass (const juce::String& name, juce::UndoManager* undo);
+
+    /**
      With that method you can register your custom LookAndFeel class and apply it to different components.
 
      @param name the name the LookAndFeel can be referenced in the GUI editor

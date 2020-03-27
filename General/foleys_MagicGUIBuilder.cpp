@@ -285,6 +285,21 @@ int MagicBuilder::findColourId (juce::Identifier name)
     return -1;
 }
 
+void MagicBuilder::removeStyleClassReferences (juce::ValueTree tree, const juce::String& name)
+{
+    if (tree.hasProperty (IDs::styleClass))
+    {
+        const auto separator = " ";
+        auto strings = juce::StringArray::fromTokens (tree.getProperty (IDs::styleClass).toString(), separator, "");
+        strings.removeEmptyStrings (true);
+        strings.removeString (name);
+        tree.setProperty (IDs::styleClass, strings.joinIntoString (separator), &undo);
+    }
+
+    for (auto child : tree)
+        removeStyleClassReferences (child, name);
+}
+
 juce::StringArray MagicBuilder::getColourNames (juce::Identifier type) const
 {
     juce::StringArray names;

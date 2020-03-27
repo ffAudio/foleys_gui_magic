@@ -71,6 +71,9 @@ public:
      */
     juce::ValueTree getGuiRootNode();
 
+    /**
+     Will call updateStylesheet(), updateComponents(), updateProperties() and updateLayout()
+     */
     void updateAll();
 
     /**
@@ -127,6 +130,11 @@ public:
      Looks up the ColourId in all types. Finds only the first hit, if the names are not unique.
      */
     int findColourId (juce::Identifier name);
+
+    /**
+     This will go through all nodes and delete the reference to a class
+     */
+    void removeStyleClassReferences (juce::ValueTree tree, const juce::String& name);
 
     /**
      This method returns the names of colours for a certain Component type
