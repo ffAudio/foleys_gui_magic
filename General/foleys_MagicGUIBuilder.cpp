@@ -31,32 +31,35 @@ namespace foleys
 {
 
 
-MagicBuilder::MagicBuilder (MagicProcessorState* state)
+MagicGUIBuilder::MagicGUIBuilder (MagicProcessorState* state)
   : magicState (state)
 {
+    config = juce::ValueTree (IDs::magic);
+
+    updateStylesheet();
 }
 
-MagicBuilder::~MagicBuilder()
+MagicGUIBuilder::~MagicGUIBuilder()
 {
     config.removeListener (this);
 }
 
-Stylesheet& MagicBuilder::getStylesheet()
+Stylesheet& MagicGUIBuilder::getStylesheet()
 {
     return stylesheet;
 }
 
-juce::ValueTree& MagicBuilder::getConfigTree()
+juce::ValueTree& MagicGUIBuilder::getConfigTree()
 {
     return config;
 }
 
-juce::ValueTree MagicBuilder::getGuiRootNode()
+juce::ValueTree MagicGUIBuilder::getGuiRootNode()
 {
     return config.getChildWithName (IDs::view);
 }
 
-void MagicBuilder::updateAll()
+void MagicGUIBuilder::updateAll()
 {
     updateStylesheet();
     updateComponents();
@@ -72,7 +75,7 @@ void MagicBuilder::updateAll()
     config.addListener (this);
 }
 
-void MagicBuilder::updateStylesheet()
+void MagicGUIBuilder::updateStylesheet()
 {
     auto stylesNode = config.getOrCreateChildWithName (IDs::styles, &undo);
     if (stylesNode.getNumChildren() == 0)
@@ -90,14 +93,14 @@ void MagicBuilder::updateStylesheet()
     }
 }
 
-void MagicBuilder::clearGUI()
+void MagicGUIBuilder::clearGUI()
 {
     auto guiNode = config.getOrCreateChildWithName (IDs::view, &undo);
     guiNode.removeAllChildren (&undo);
     guiNode.removeAllProperties (&undo);
 }
 
-void MagicBuilder::showOverlayDialog (std::unique_ptr<juce::Component> dialog)
+void MagicGUIBuilder::showOverlayDialog (std::unique_ptr<juce::Component> dialog)
 {
     if (parent == nullptr)
         return;
@@ -108,12 +111,12 @@ void MagicBuilder::showOverlayDialog (std::unique_ptr<juce::Component> dialog)
     updateLayout();
 }
 
-void MagicBuilder::closeOverlayDialog()
+void MagicGUIBuilder::closeOverlayDialog()
 {
     overlayDialog.reset();
 }
 
-void MagicBuilder::setConfigTree (const juce::ValueTree& gui)
+void MagicGUIBuilder::setConfigTree (const juce::ValueTree& gui)
 {
     if (gui.isValid() == false)
         return;
@@ -135,7 +138,7 @@ void MagicBuilder::setConfigTree (const juce::ValueTree& gui)
     updateAll();
 }
 
-void MagicBuilder::restoreGUI (juce::Component& parentToUse)
+void MagicGUIBuilder::restoreGUI (juce::Component& parentToUse)
 {
     parent = &parentToUse;
 
@@ -147,7 +150,7 @@ void MagicBuilder::restoreGUI (juce::Component& parentToUse)
 #endif
 }
 
-void MagicBuilder::updateComponents()
+void MagicGUIBuilder::updateComponents()
 {
     if (parent == nullptr)
         return;
@@ -163,7 +166,7 @@ void MagicBuilder::updateComponents()
 #endif
 }
 
-void MagicBuilder::updateProperties (Decorator& item)
+void MagicGUIBuilder::updateProperties (Decorator& item)
 {
     const auto& configNode = item.getConfigNode();
 
@@ -208,7 +211,7 @@ void MagicBuilder::updateProperties (Decorator& item)
     }
 }
 
-void MagicBuilder::updateLayout()
+void MagicGUIBuilder::updateLayout()
 {
     if (parent == nullptr)
         return;
@@ -232,12 +235,36 @@ void MagicBuilder::updateLayout()
     parent->repaint();
 }
 
-void MagicBuilder::registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel)
+void MagicGUIBuilder::registerFactory (juce::Identifier type, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&)> factory)
+{
+    if (factories.find (type) != factories.cend())
+    {
+        // You tried to add two factories with the same type name!
+        // That cannot work, the second factory will be ignored.
+        jassertfalse;
+        return;
+    }
+
+    factories [type] = factory;
+}
+
+juce::StringArray MagicGUIBuilder::getFactoryNames() const
+{
+    juce::StringArray names { IDs::view.toString() };
+
+    names.ensureStorageAllocated (int (factories.size()));
+    for (const auto& f : factories)
+        names.add (f.first.toString());
+
+    return names;
+}
+
+void MagicGUIBuilder::registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel)
 {
     stylesheet.registerLookAndFeel (name, std::move (lookAndFeel));
 }
 
-void MagicBuilder::registerJUCELookAndFeels()
+void MagicGUIBuilder::registerJUCELookAndFeels()
 {
     stylesheet.registerLookAndFeel ("LookAndFeel_V1", std::make_unique<juce::LookAndFeel_V1>());
     stylesheet.registerLookAndFeel ("LookAndFeel_V2", std::make_unique<juce::LookAndFeel_V2>());
@@ -247,7 +274,7 @@ void MagicBuilder::registerJUCELookAndFeels()
     stylesheet.registerLookAndFeel ("Skeuomorphic", std::make_unique<Skeuomorphic>());
 }
 
-void MagicBuilder::setColourTranslation (juce::Identifier type, std::vector<std::pair<juce::String, int>> mapping)
+void MagicGUIBuilder::setColourTranslation (juce::Identifier type, std::vector<std::pair<juce::String, int>> mapping)
 {
     if (colourTranslations.find (type) != colourTranslations.cend())
     {
@@ -260,7 +287,7 @@ void MagicBuilder::setColourTranslation (juce::Identifier type, std::vector<std:
     colourTranslations [type] = mapping;
 }
 
-int MagicBuilder::findColourId (juce::Identifier type, juce::Identifier name)
+int MagicGUIBuilder::findColourId (juce::Identifier type, juce::Identifier name)
 {
     const auto& map = colourTranslations.find (type);
     if (map == colourTranslations.end())
@@ -273,7 +300,7 @@ int MagicBuilder::findColourId (juce::Identifier type, juce::Identifier name)
     return -1;
 }
 
-int MagicBuilder::findColourId (juce::Identifier name)
+int MagicGUIBuilder::findColourId (juce::Identifier name)
 {
     for (const auto& map : colourTranslations)
     {
@@ -285,7 +312,7 @@ int MagicBuilder::findColourId (juce::Identifier name)
     return -1;
 }
 
-void MagicBuilder::removeStyleClassReferences (juce::ValueTree tree, const juce::String& name)
+void MagicGUIBuilder::removeStyleClassReferences (juce::ValueTree tree, const juce::String& name)
 {
     if (tree.hasProperty (IDs::styleClass))
     {
@@ -300,7 +327,7 @@ void MagicBuilder::removeStyleClassReferences (juce::ValueTree tree, const juce:
         removeStyleClassReferences (child, name);
 }
 
-juce::StringArray MagicBuilder::getColourNames (juce::Identifier type) const
+juce::StringArray MagicGUIBuilder::getColourNames (juce::Identifier type) const
 {
     juce::StringArray names;
 
@@ -312,7 +339,7 @@ juce::StringArray MagicBuilder::getColourNames (juce::Identifier type) const
     return names;
 }
 
-juce::StringArray MagicBuilder::getAllColourNames() const
+juce::StringArray MagicGUIBuilder::getAllColourNames() const
 {
     juce::StringArray names { IDs::backgroundColour.toString(), IDs::borderColour.toString(), IDs::captionColour.toString() };
 
@@ -323,12 +350,12 @@ juce::StringArray MagicBuilder::getAllColourNames() const
     return names;
 }
 
-void MagicBuilder::addSettableProperty (juce::Identifier type, std::unique_ptr<SettableProperty> property)
+void MagicGUIBuilder::addSettableProperty (juce::Identifier type, std::unique_ptr<SettableProperty> property)
 {
     settableProperties [type].push_back (std::move (property));
 }
 
-const std::vector<std::unique_ptr<SettableProperty>>& MagicBuilder::getSettableProperties (juce::Identifier type) const
+const std::vector<std::unique_ptr<SettableProperty>>& MagicGUIBuilder::getSettableProperties (juce::Identifier type) const
 {
     const auto& it = settableProperties.find (type);
     if (it != settableProperties.end())
@@ -337,13 +364,38 @@ const std::vector<std::unique_ptr<SettableProperty>>& MagicBuilder::getSettableP
     return emptyPropertyList;
 }
 
-void MagicBuilder::populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const
+std::unique_ptr<Decorator> MagicGUIBuilder::restoreNode (juce::Component& component, const juce::ValueTree& node)
+{
+    if (node.getType() == IDs::view)
+    {
+        auto item = std::make_unique<Container>(*this, node);
+        for (auto childNode : node)
+            item->addChildItem (restoreNode (*item, childNode));
+
+        component.addAndMakeVisible (item.get());
+        return item;
+    }
+
+    auto factory = factories [node.getType()];
+
+    if (factory == nullptr)
+    {
+        DBG ("No factory for: " << node.getType().toString());
+    }
+
+    auto item = std::make_unique<Decorator> (*this, node, factory ? factory (node) : nullptr);
+    component.addAndMakeVisible (item.get());
+
+    return item;
+}
+
+void MagicGUIBuilder::populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const
 {
     if (magicState)
         return magicState->populateSettableOptionsMenu (comboBox, type);
 }
 
-juce::var MagicBuilder::getPropertyDefaultValue (juce::Identifier type, juce::Identifier property) const
+juce::var MagicGUIBuilder::getPropertyDefaultValue (juce::Identifier type, juce::Identifier property) const
 {
     const auto& properties = getSettableProperties (type);
 
@@ -368,12 +420,12 @@ juce::var MagicBuilder::getPropertyDefaultValue (juce::Identifier type, juce::Id
     return {};
 }
 
-MagicProcessorState* MagicBuilder::getProcessorState()
+MagicProcessorState* MagicGUIBuilder::getProcessorState()
 {
     return magicState;
 }
 
-void MagicBuilder::createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree)
+void MagicGUIBuilder::createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree)
 {
     for (const auto& sub : tree.getSubgroups (false))
     {
@@ -401,7 +453,53 @@ void MagicBuilder::createDefaultFromParameters (juce::ValueTree& node, const juc
     }
 }
 
-void MagicBuilder::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
+void MagicGUIBuilder::createDefaultGUITree (bool keepExisting)
+{
+    if (keepExisting && config.getChildWithName (IDs::view).isValid())
+        return;
+
+    auto rootNode = config.getOrCreateChildWithName (IDs::view, &undo);
+    rootNode.setProperty (IDs::id, IDs::root, &undo);
+
+    auto current = rootNode;
+
+    if (magicState)
+    {
+        auto plotNames = magicState->getPlotSourcesNames();
+
+        if (plotNames.isEmpty() == false)
+        {
+            juce::StringArray colours { "orange", "blue", "red", "silver", "green", "cyan", "brown", "white" };
+            int nextColour = 0;
+
+            auto child = juce::ValueTree (IDs::view, {
+                { IDs::id, "plot-view" },
+                { IDs::styleClass, "plot-view" }});
+
+            for (auto plotName : plotNames)
+            {
+                child.appendChild ({IDs::plot, {
+                    { IDs::source, plotName },
+                    { "plot-color", colours [nextColour++] }}}, nullptr);
+
+                if (nextColour >= colours.size())
+                    nextColour = 0;
+            }
+
+            current.appendChild (child, nullptr);
+
+            juce::ValueTree parameters { IDs::view, {
+                { IDs::styleClass, "parameters nomargin" }}};
+
+            current.appendChild (parameters, nullptr);
+            current = parameters;
+        }
+
+        createDefaultFromParameters (current, magicState->getProcessor().getParameterTree());
+    }
+}
+
+void MagicGUIBuilder::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
 {
     if (root)
         updateProperties (*root);
@@ -409,29 +507,29 @@ void MagicBuilder::valueTreePropertyChanged (juce::ValueTree&, const juce::Ident
     updateLayout();
 }
 
-void MagicBuilder::valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&)
+void MagicGUIBuilder::valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&)
 {
     updateAll();
 }
 
-void MagicBuilder::valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int)
+void MagicGUIBuilder::valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int)
 {
     updateAll();
 }
 
-void MagicBuilder::valueTreeChildOrderChanged (juce::ValueTree&, int, int)
+void MagicGUIBuilder::valueTreeChildOrderChanged (juce::ValueTree&, int, int)
 {
     updateAll();
 }
 
-void MagicBuilder::valueTreeParentChanged (juce::ValueTree&)
+void MagicGUIBuilder::valueTreeParentChanged (juce::ValueTree&)
 {
     updateAll();
 }
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 
-void MagicBuilder::attachToolboxToWindow (juce::Component& window)
+void MagicGUIBuilder::attachToolboxToWindow (juce::Component& window)
 {
     juce::Component::SafePointer<juce::Component> reference (&window);
 
@@ -442,7 +540,7 @@ void MagicBuilder::attachToolboxToWindow (juce::Component& window)
                                      });
 }
 
-void MagicBuilder::setEditMode (bool shouldEdit)
+void MagicGUIBuilder::setEditMode (bool shouldEdit)
 {
     editMode = shouldEdit;
 
@@ -458,12 +556,12 @@ void MagicBuilder::setEditMode (bool shouldEdit)
     parent->repaint();
 }
 
-bool MagicBuilder::isEditModeOn() const
+bool MagicGUIBuilder::isEditModeOn() const
 {
     return editMode;
 }
 
-void MagicBuilder::setSelectedNode (const juce::ValueTree& node)
+void MagicGUIBuilder::setSelectedNode (const juce::ValueTree& node)
 {
     if (selectedNode != node)
     {
@@ -476,12 +574,12 @@ void MagicBuilder::setSelectedNode (const juce::ValueTree& node)
     }
 }
 
-const juce::ValueTree& MagicBuilder::getSelectedNode() const
+const juce::ValueTree& MagicGUIBuilder::getSelectedNode() const
 {
     return selectedNode;
 }
 
-void MagicBuilder::draggedItemOnto (juce::ValueTree dragged, juce::ValueTree target, int index)
+void MagicGUIBuilder::draggedItemOnto (juce::ValueTree dragged, juce::ValueTree target, int index)
 {
     undo.beginNewTransaction();
 
@@ -500,7 +598,7 @@ void MagicBuilder::draggedItemOnto (juce::ValueTree dragged, juce::ValueTree tar
         targetParent.addChild (dragged, index, &undo);
 }
 
-ToolBox& MagicBuilder::getMagicToolBox()
+ToolBox& MagicGUIBuilder::getMagicToolBox()
 {
     // The magicToolBox should always be present!
     // This method wouldn't be included, if
@@ -510,7 +608,7 @@ ToolBox& MagicBuilder::getMagicToolBox()
     return *magicToolBox;
 }
 
-juce::UndoManager& MagicBuilder::getUndoManager()
+juce::UndoManager& MagicGUIBuilder::getUndoManager()
 {
     return undo;
 }

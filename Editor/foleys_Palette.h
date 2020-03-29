@@ -32,7 +32,7 @@
 namespace foleys
 {
 
-class MagicBuilder;
+class MagicGUIBuilder;
 
 /**
  The Palette is the list of available components to be dragged into the tree or the GUI window.
@@ -41,7 +41,7 @@ class MagicBuilder;
 class Palette  : public juce::Component
 {
 public:
-    Palette (MagicBuilder& builder);
+    Palette (MagicGUIBuilder& builder);
 
     void paint (juce::Graphics& g) override;
 
@@ -51,7 +51,7 @@ public:
 
 private:
 
-    MagicBuilder&           builder;
+    MagicGUIBuilder& builder;
 
     class PaletteListModel : public juce::ListBoxModel
     {

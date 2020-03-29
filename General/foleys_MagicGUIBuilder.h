@@ -34,17 +34,15 @@ namespace foleys
 
 
 /**
- The MagicBuilder is responsible to recreate the GUI from a single ValueTree.
+ The MagicGUIBuilder is responsible to recreate the GUI from a single ValueTree.
  You can add your own factories to the builder to allow additional components.
- There is a template available that allows for instance a specific AudioProcessor
- to be supplied to components, that need it.
  */
-class MagicBuilder : private juce::ValueTree::Listener
+class MagicGUIBuilder : private juce::ValueTree::Listener
 {
 public:
-    MagicBuilder (MagicProcessorState* magicStateToUse);
+    MagicGUIBuilder (MagicProcessorState* magicStateToUse);
 
-    virtual ~MagicBuilder();
+    virtual ~MagicGUIBuilder();
 
     /**
      Allows to set the GUI definition when reloading
@@ -100,6 +98,11 @@ public:
     void updateLayout();
 
     /**
+     Register a factory for Components to be available in the GUI editor. If you need a reference to the application, you can capture that in the factory lambda.
+     */
+    void registerFactory (juce::Identifier type, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&)> factory);
+
+    /**
      With that method you can register your custom LookAndFeel class and apply it to different components.
      */
     void registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel);
@@ -113,7 +116,7 @@ public:
      Calling this method will register the bundled JUCE factories to give already access to
      many JUCE Components.
      */
-    virtual void registerJUCEFactories() {}
+    void registerJUCEFactories();
 
     /**
      For each factory you can register a translation table, which will forward the colours from the
@@ -157,7 +160,7 @@ public:
      @param keepExisting if set to true, it will not change an existing root div tree,
                          if set to false, it will replace any existing data.
      */
-    virtual void createDefaultGUITree (bool keepExisting) = 0;
+    void createDefaultGUITree (bool keepExisting);
 
     /**
      This creates a hierarchical DOM according to the parameters defined in an AudioProcessor
@@ -178,7 +181,7 @@ public:
     /**
      returns the names of all registered factories
      */
-    virtual juce::StringArray getFactoryNames() const = 0;
+    juce::StringArray getFactoryNames() const;
 
     void addSettableProperty (juce::Identifier type, std::unique_ptr<SettableProperty> property);
     const std::vector<std::unique_ptr<SettableProperty>>& getSettableProperties (juce::Identifier type) const;
@@ -213,17 +216,15 @@ public:
     juce::UndoManager& getUndoManager();
 #endif
 
-protected:
+private:
 
-    virtual std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node) = 0;
+    std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node);
 
     juce::UndoManager undo;
     juce::ValueTree   config;
     Stylesheet        stylesheet;
 
     std::map<juce::Identifier, std::vector<std::pair<juce::String, int>>> colourTranslations;
-
-private:
 
     void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override;
 
@@ -245,6 +246,7 @@ private:
 
     std::unique_ptr<juce::Component> overlayDialog;
 
+    std::map<juce::Identifier, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&)>> factories;
     std::map<juce::Identifier, std::vector<std::unique_ptr<SettableProperty>>> settableProperties;
     const std::vector<std::unique_ptr<SettableProperty>> emptyPropertyList;
 
@@ -255,67 +257,8 @@ private:
     std::unique_ptr<ToolBox> magicToolBox;
 #endif
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicBuilder)
-};
-
-/**
- The MagicGUIBuilder is responsible to recreate the GUI from a single ValueTree.
- You can add your own factories to the builder to allow additional components.
- The template parameter AppType specifies a type, that each components gets a reference of,
- it is intended to be eithe AudioProcessor, JUCEApplication or your own MainWindow, it's up to you.
- */
-template <class AppType>
-class MagicGUIBuilder : public MagicBuilder
-{
-public:
-
-    /**
-     Creates the MagicGUIBuilder. This is responsible to create the GUI elements from the ValueTree.
-     To allow custom Components to be created with a backlink to the containing application.
-     This can be an AudioProcessor or it's descendents. Or it could be your custom MainComponent.
-     In which case you have to template it with your own type. Now you can reference it in the
-     factory method.
-
-     @param parent      is the component, the GUI will be imbedded into.
-     @param app         is the model the components might connect to.
-     @param magicState  an optional pointer to the MagicProcessorState. This is only useful
-                        for AudioProcessors, but will allow automatic connection of parameters.
-     */
-    MagicGUIBuilder (AppType& appToUse, MagicProcessorState* magicStateToUse);
-
-    /**
-     Calling this method will register the bundled JUCE factories to give already access to
-     many JUCE Components.
-     */
-    void registerJUCEFactories() override;
-
-
-    /**
-     This method creates a default DOM from the MagicProcessorState. It will read the
-     parameterTree() from the AudioProcessor. It does nothing, if magicState is not provided
-     (e.g. if the project is not an audio plugin).
-     */
-    void createDefaultGUITree (bool keepExisting) override;
-
-
-    void registerFactory (juce::Identifier type, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&, AppType&)> factory);
-
-    /**
-     returns the names of all registered factories
-     */
-    juce::StringArray getFactoryNames() const override;
-
-protected:
-
-    std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node) override;
-
-private:
-
-    AppType& app;
-
-    std::map<juce::Identifier, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&, AppType&)>> factories;
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicGUIBuilder)
 };
+
 
 } // namespace foleys

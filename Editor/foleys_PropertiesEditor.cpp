@@ -32,7 +32,7 @@ namespace foleys
 {
 
 
-PropertiesEditor::PropertiesEditor (MagicBuilder& builderToEdit)
+PropertiesEditor::PropertiesEditor (MagicGUIBuilder& builderToEdit)
   : builder (builderToEdit),
     undo (builder.getUndoManager())
 {
@@ -325,7 +325,7 @@ void PropertiesEditor::resized()
     properties.setBounds (bounds.reduced (0, 2));
 }
 
-MagicBuilder& PropertiesEditor::getMagicBuilder()
+MagicGUIBuilder& PropertiesEditor::getMagicBuilder()
 {
     return builder;
 }

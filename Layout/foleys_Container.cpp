@@ -30,7 +30,7 @@
 namespace foleys
 {
 
-Container::Container (MagicBuilder& builder, juce::ValueTree node)
+Container::Container (MagicGUIBuilder& builder, juce::ValueTree node)
   : Decorator (builder, node)
 {
 }

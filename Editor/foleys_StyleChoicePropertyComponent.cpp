@@ -33,7 +33,7 @@ namespace foleys
 {
 
 
-StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicBuilder& builderToUse,
+StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicGUIBuilder& builderToUse,
                                                             juce::Identifier propertyToUse,
                                                             juce::ValueTree& nodeToUse,
                                                             juce::StringArray choicesToUse)
@@ -43,7 +43,7 @@ StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicBuilder& builde
     initialiseComboBox();
 }
 
-StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicBuilder& builderToUse,
+StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicGUIBuilder& builderToUse,
                                                             juce::Identifier propertyToUse,
                                                             juce::ValueTree& nodeToUse,
                                                             SettableProperty::PropertyType typeToUse)

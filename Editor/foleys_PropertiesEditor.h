@@ -32,13 +32,13 @@
 namespace foleys
 {
 
-class MagicBuilder;
+class MagicGUIBuilder;
 
 class PropertiesEditor  : public juce::Component,
                           private juce::ValueTree::Listener
 {
 public:
-    PropertiesEditor (MagicBuilder& builder);
+    PropertiesEditor (MagicGUIBuilder& builder);
 
     void setStyle (juce::ValueTree style);
 
@@ -57,7 +57,7 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
-    MagicBuilder& getMagicBuilder();
+    MagicGUIBuilder& getMagicBuilder();
 
 private:
 
@@ -75,7 +75,7 @@ private:
     void valueTreeParentChanged (juce::ValueTree&) override {}
 
 
-    MagicBuilder&       builder;
+    MagicGUIBuilder&    builder;
     juce::UndoManager&  undo;
 
     juce::ComboBox      nodeSelect;

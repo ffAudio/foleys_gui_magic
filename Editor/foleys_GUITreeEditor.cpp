@@ -30,7 +30,7 @@
 namespace foleys
 {
 
-GUITreeEditor::GUITreeEditor (MagicBuilder& builderToEdit)
+GUITreeEditor::GUITreeEditor (MagicGUIBuilder& builderToEdit)
   : builder (builderToEdit),
     undo (builder.getUndoManager())
 {
@@ -137,7 +137,7 @@ void GUITreeEditor::valueTreeParentChanged (juce::ValueTree&)
 
 //==============================================================================
 
-GUITreeEditor::GuiTreeItem::GuiTreeItem (MagicBuilder& builderToUse, juce::ValueTree& refValueTree)
+GUITreeEditor::GuiTreeItem::GuiTreeItem (MagicGUIBuilder& builderToUse, juce::ValueTree& refValueTree)
   : builder (builderToUse),
     itemNode (refValueTree)
 {

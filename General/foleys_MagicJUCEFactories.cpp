@@ -33,11 +33,10 @@ namespace foleys
 {
 
 
-template <typename AppType>
-void MagicGUIBuilder<AppType>::registerJUCEFactories()
+void MagicGUIBuilder::registerJUCEFactories()
 {
     registerFactory (IDs::slider,
-                     [] (const juce::ValueTree&, auto&)
+                     [] (const juce::ValueTree&)
                      {
                          return std::make_unique<AttachableSlider>();
                      });
@@ -60,7 +59,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                          (IDs::parameter,
                           [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
                           {
-                              if (auto* magicState = getProcessorState())
+                              if (magicState)
                                   if (auto* slider = dynamic_cast<AttachableSlider*>(component))
                                       slider->attachToParameter (value.toString(), magicState->getValueTreeState());
                           },
@@ -125,7 +124,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::comboBox,
-                     [] (const juce::ValueTree&, auto&)
+                     [] (const juce::ValueTree&)
                      {
                          return std::make_unique<AttachableComboBox>();
                      });
@@ -145,7 +144,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                          (IDs::parameter,
                           [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
                           {
-                              if (auto* magicState = getProcessorState())
+                              if (magicState)
                                   if (auto* combo = dynamic_cast<AttachableComboBox*>(component))
                                       combo->attachToParameter (value.toString(), magicState->getValueTreeState());
                           },
@@ -155,7 +154,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::textButton,
-                     [] (const juce::ValueTree&, auto&)
+                     [] (const juce::ValueTree&)
                      {
                          return std::make_unique<AttachableTextButton>();
                      });
@@ -184,7 +183,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                          (IDs::parameter,
                           [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
                           {
-                              if (auto* magicState = getProcessorState())
+                              if (magicState)
                                   if (auto* button = dynamic_cast<AttachableTextButton*>(component))
                                       button->attachToParameter (value.toString(), magicState->getValueTreeState());
                           },
@@ -196,7 +195,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                          ("onClick",
                           [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
                           {
-                              if (auto* magicState = getProcessorState())
+                              if (magicState)
                                   if (auto* button = dynamic_cast<AttachableTextButton*>(component))
                                       button->onClick = magicState->getTrigger (value.toString());
                           },
@@ -206,7 +205,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::toggleButton,
-                     [] (const juce::ValueTree&, auto&)
+                     [] (const juce::ValueTree&)
                      {
                          return std::make_unique<AttachableToggleButton>();
                      });
@@ -237,7 +236,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                               if (value.toString().isEmpty())
                                   return;
 
-                              if (auto* magicState = getProcessorState())
+                              if (magicState)
                               {
                                   if (auto* button = dynamic_cast<AttachableToggleButton*>(component))
                                   {
@@ -254,7 +253,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                          (IDs::parameter,
                           [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
                           {
-                              if (auto* magicState = getProcessorState())
+                              if (magicState)
                                   if (auto* button = dynamic_cast<AttachableToggleButton*>(component))
                                       button->attachToParameter (value.toString(), magicState->getValueTreeState());
                           },
@@ -264,7 +263,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::label,
-                     [] (const juce::ValueTree&, auto&)
+                     [] (const juce::ValueTree&)
                      {
                          return std::make_unique<juce::Label>();
                      });
@@ -305,7 +304,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
 
 #if JUCE_MODULE_AVAILABLE_juce_gui_extra && JUCE_WEB_BROWSER
     registerFactory (IDs::webBrowser,
-                     [] (const juce::ValueTree&, auto&)
+                     [] (const juce::ValueTree&)
                      {
                          return std::make_unique<juce::WebBrowserComponent>();
                      });
@@ -325,21 +324,20 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::plot,
-                     [&] (const juce::ValueTree& config, auto&)
+                     [&] (const juce::ValueTree& newConfig)
                      {
                          auto item = std::make_unique<MagicPlotComponent>();
-                         auto* magicState = getProcessorState();
 
-                         if (magicState && config.hasProperty (IDs::source))
+                         if (magicState && newConfig.hasProperty (IDs::source))
                          {
-                             auto sourceID = config.getProperty (IDs::source).toString();
+                             auto sourceID = newConfig.getProperty (IDs::source).toString();
                              if (sourceID.isNotEmpty())
                              {
                                  auto* source = magicState->getPlotSource (sourceID);
                                  item->setPlotSource (source);
                              }
                          }
-                         return std::move (item);
+                         return item;
                      });
 
     setColourTranslation (IDs::plot,
@@ -355,7 +353,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                          (IDs::source,
                           [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
                           {
-                              if (auto* magicState = getProcessorState())
+                              if (magicState)
                                   if (auto* plotComponent = dynamic_cast<MagicPlotComponent*>(component))
                                       plotComponent->setPlotSource (magicState->getPlotSource (value.toString()));
                           },
@@ -375,21 +373,21 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::xyDragComponent,
-                     [&] (const juce::ValueTree& config, auto&)
+                     [&] (const juce::ValueTree& newConfig)
                      {
-                         if (auto* magicState = getProcessorState())
+                         if (magicState)
                          {
                              auto item = std::make_unique<XYDragComponent>(magicState->getValueTreeState());
 
-                             auto paramX = config.getProperty (IDs::parameterX).toString();
+                             auto paramX = newConfig.getProperty (IDs::parameterX).toString();
                              if (paramX.isNotEmpty())
                                  item->setParameterX (paramX);
 
-                             auto paramY = config.getProperty (IDs::parameterY).toString();
+                             auto paramY = newConfig.getProperty (IDs::parameterY).toString();
                              if (paramY.isNotEmpty())
                                  item->setParameterY (paramY);
 
-                             return std::move (item);
+                             return item;
                          }
                          else
                          {
@@ -460,15 +458,15 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::keyboardComponent,
-                     [&] (const juce::ValueTree&, auto&)
+                     [&] (const juce::ValueTree&)
                      {
-                         if (auto* magicState = getProcessorState())
+                         if (magicState)
                          {
                              auto item = std::make_unique<juce::MidiKeyboardComponent>(magicState->getKeyboardState(),
                                                                                        juce::MidiKeyboardComponent::horizontalKeyboard);
                              item->setKeyWidth (50.0f);
 
-                             return std::move (item);
+                             return item;
                          }
 
                          return std::unique_ptr<juce::MidiKeyboardComponent>();
@@ -520,21 +518,20 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::meter,
-                     [&] (const juce::ValueTree& config, auto&)
+                     [&] (const juce::ValueTree& newConfig)
                      {
                          auto item = std::make_unique<MagicLevelMeter>();
-                         auto* magicState = getProcessorState();
 
-                         if (magicState && config.hasProperty (IDs::source))
+                         if (magicState && newConfig.hasProperty (IDs::source))
                          {
-                             auto sourceID = config.getProperty (IDs::source).toString();
+                             auto sourceID = newConfig.getProperty (IDs::source).toString();
                              if (sourceID.isNotEmpty())
                              {
                                  auto* source = magicState->getLevelSource (sourceID);
                                  item->setLevelSource (source);
                              }
                          }
-                         return std::move (item);
+                         return item;
                      });
 
     setColourTranslation (IDs::meter,
@@ -551,7 +548,7 @@ void MagicGUIBuilder<AppType>::registerJUCEFactories()
                          (IDs::source,
                           [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
                           {
-                              if (auto* magicState = getProcessorState())
+                              if (magicState)
                                   if (auto* meter = dynamic_cast<MagicLevelMeter*>(component))
                                       meter->setLevelSource (magicState->getLevelSource (value.toString()));
                           },

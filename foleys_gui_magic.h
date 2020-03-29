@@ -141,6 +141,4 @@ namespace EditorColours
 
 #include "General/foleys_MagicProcessorState.h"
 #include "General/foleys_MagicGUIBuilder.h"
-#include "General/foleys_MagicGUIBuilder_inl.h"
-#include "General/foleys_MagicJUCEFactories_inl.h"
 #include "General/foleys_MagicPluginEditor.h"

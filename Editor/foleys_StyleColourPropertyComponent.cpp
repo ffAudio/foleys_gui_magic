@@ -33,7 +33,7 @@ namespace foleys
 {
 
 
-StyleColourPropertyComponent::StyleColourPropertyComponent (MagicBuilder& builderToUse,
+StyleColourPropertyComponent::StyleColourPropertyComponent (MagicGUIBuilder& builderToUse,
                                                             juce::Identifier propertyToUse,
                                                             juce::ValueTree& nodeToUse)
   : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse)

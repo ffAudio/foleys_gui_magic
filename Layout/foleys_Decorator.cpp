@@ -30,7 +30,7 @@
 namespace foleys
 {
 
-Decorator::Decorator (MagicBuilder& builder, juce::ValueTree node, std::unique_ptr<juce::Component> wrapped)
+Decorator::Decorator (MagicGUIBuilder& builder, juce::ValueTree node, std::unique_ptr<juce::Component> wrapped)
   : magicBuilder (builder),
     configNode (node),
     component (std::move (wrapped))

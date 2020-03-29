@@ -32,7 +32,7 @@
 namespace foleys
 {
 
-MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, std::unique_ptr<MagicBuilder> builderToUse)
+MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, std::unique_ptr<MagicGUIBuilder> builderToUse)
   : juce::AudioProcessorEditor (stateToUse.getProcessor()),
     processorState (stateToUse),
     builder (std::move (builderToUse))
@@ -40,7 +40,7 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, std::uniq
     initialise();
 }
 
-MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const char* data, const int dataSize, std::unique_ptr<MagicBuilder> builderToUse)
+MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const char* data, const int dataSize, std::unique_ptr<MagicGUIBuilder> builderToUse)
   : juce::AudioProcessorEditor (stateToUse.getProcessor()),
     processorState (stateToUse),
     builder (std::move (builderToUse))
@@ -85,9 +85,9 @@ void MagicPluginEditor::initialise (const char* data, const int dataSize)
 #endif
 }
 
-std::unique_ptr<MagicBuilder> MagicPluginEditor::createBuilderInstance()
+std::unique_ptr<MagicGUIBuilder> MagicPluginEditor::createBuilderInstance()
 {
-    auto newBuilder = std::make_unique<MagicGUIBuilder<juce::AudioProcessor>>(processorState.getProcessor(), &processorState);
+    auto newBuilder = std::make_unique<MagicGUIBuilder>(&processorState);
     newBuilder->registerJUCEFactories();
     newBuilder->registerJUCELookAndFeels();
 

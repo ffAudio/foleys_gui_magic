@@ -46,7 +46,7 @@ public:
         FlexBox
     };
 
-    Container (MagicBuilder& builder, juce::ValueTree node);
+    Container (MagicGUIBuilder& builder, juce::ValueTree node);
 
     /**
      Append a child item. To change the order the flexbox.order is used.

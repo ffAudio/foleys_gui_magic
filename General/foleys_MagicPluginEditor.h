@@ -41,9 +41,9 @@ class MagicPluginEditor  : public juce::AudioProcessorEditor,
                            public juce::DragAndDropContainer
 {
 public:
-    MagicPluginEditor (MagicProcessorState& processorState, std::unique_ptr<MagicBuilder> builder = {});
+    MagicPluginEditor (MagicProcessorState& processorState, std::unique_ptr<MagicGUIBuilder> builder = {});
 
-    MagicPluginEditor (MagicProcessorState& processorState, const char* data, const int dataSize, std::unique_ptr<MagicBuilder> builder = {});
+    MagicPluginEditor (MagicProcessorState& processorState, const char* data, const int dataSize, std::unique_ptr<MagicGUIBuilder> builder = {});
 
     ~MagicPluginEditor() override;
 
@@ -79,7 +79,7 @@ public:
 private:
     void initialise (const char* data = nullptr, const int dataSize = 0);
 
-    std::unique_ptr<MagicBuilder> createBuilderInstance();
+    std::unique_ptr<MagicGUIBuilder> createBuilderInstance();
 
     void updateSize();
 
@@ -89,7 +89,7 @@ private:
 
     MagicProcessorState& processorState;
 
-    std::unique_ptr<MagicBuilder> builder;
+    std::unique_ptr<MagicGUIBuilder> builder;
 
     juce::TooltipWindow tooltip      { this };
 

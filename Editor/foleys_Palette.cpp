@@ -33,7 +33,7 @@ namespace foleys
 {
 
 
-Palette::Palette (MagicBuilder& builderToUse)
+Palette::Palette (MagicGUIBuilder& builderToUse)
   : builder (builderToUse)
 {
     addAndMakeVisible (paletteList);
