@@ -77,6 +77,7 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
     const auto openness = properties.getOpennessState();
 
     styleItem = node;
+    updatePopupMenu();
 
     const auto& stylesheet = builder.getStylesheet();
 
@@ -87,8 +88,6 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
         nodeSelect.setText (TRANS ("Nothing selected"));
         return;
     }
-
-    updatePopupMenu();
 
     if (stylesheet.isClassNode (styleItem) == false &&
         stylesheet.isTypeNode (styleItem) == false &&
@@ -253,8 +252,8 @@ void PropertiesEditor::addContainerProperties()
 
 void PropertiesEditor::updatePopupMenu()
 {
-    nodeSelect.clear();
     auto* popup = nodeSelect.getRootMenu();
+    popup->clear();
 
     auto typesNode = style.getChildWithName (IDs::types);
     if (typesNode.isValid())
