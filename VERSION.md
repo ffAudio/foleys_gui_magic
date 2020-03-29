@@ -1,8 +1,8 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.0.9
------
+1.0.9 - 30.03.2020
+------------------
 
 - Removed MagicGuiBuilder template: capture the app instead when registering the factory
 - Bugfix: Fixed editor becomming unresponsive when a class was selected via the ComboBox
