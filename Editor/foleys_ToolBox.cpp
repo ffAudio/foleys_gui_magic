@@ -35,7 +35,7 @@ namespace IDs
     static juce::String lastLocation { "lastLocation" };
 }
 
-ToolBox::ToolBox (juce::Component* parentToUse, MagicBuilder& builderToControl)
+ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToControl)
   : parent (parentToUse),
     builder (builderToControl),
     undo (builder.getUndoManager())

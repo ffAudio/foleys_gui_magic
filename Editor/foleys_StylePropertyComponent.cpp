@@ -34,7 +34,7 @@ namespace foleys
 
 //==============================================================================
 
-StylePropertyComponent* StylePropertyComponent::createComponent (MagicBuilder& builder, SettableProperty& property, juce::ValueTree& node)
+StylePropertyComponent* StylePropertyComponent::createComponent (MagicGUIBuilder& builder, SettableProperty& property, juce::ValueTree& node)
 {
     if (property.type == SettableProperty::Text)
         return new StyleTextPropertyComponent (builder, property.name, node);
@@ -70,7 +70,7 @@ StylePropertyComponent* StylePropertyComponent::createComponent (MagicBuilder& b
 
 //==============================================================================
 
-StylePropertyComponent::StylePropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse)
+StylePropertyComponent::StylePropertyComponent (MagicGUIBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse)
   : juce::PropertyComponent (propertyToUse.toString()),
     builder (builderToUse),
     property (propertyToUse),

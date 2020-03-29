@@ -32,7 +32,7 @@ namespace foleys
 {
 
 
-PropertiesEditor::PropertiesEditor (MagicBuilder& builderToEdit)
+PropertiesEditor::PropertiesEditor (MagicGUIBuilder& builderToEdit)
   : builder (builderToEdit),
     undo (builder.getUndoManager())
 {
@@ -77,6 +77,7 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
     const auto openness = properties.getOpennessState();
 
     styleItem = node;
+    updatePopupMenu();
 
     const auto& stylesheet = builder.getStylesheet();
 
@@ -253,8 +254,8 @@ void PropertiesEditor::addContainerProperties()
 
 void PropertiesEditor::updatePopupMenu()
 {
-    nodeSelect.clear();
     auto* popup = nodeSelect.getRootMenu();
+    popup->clear();
 
     auto typesNode = style.getChildWithName (IDs::types);
     if (typesNode.isValid())
@@ -326,7 +327,7 @@ void PropertiesEditor::resized()
     properties.setBounds (bounds.reduced (0, 2));
 }
 
-MagicBuilder& PropertiesEditor::getMagicBuilder()
+MagicGUIBuilder& PropertiesEditor::getMagicBuilder()
 {
     return builder;
 }

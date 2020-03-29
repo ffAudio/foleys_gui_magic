@@ -36,20 +36,20 @@ namespace foleys
 class StylePropertyComponent  : public juce::PropertyComponent
 {
 public:
-    StylePropertyComponent (MagicBuilder& builder, juce::Identifier property, juce::ValueTree& node);
+    StylePropertyComponent (MagicGUIBuilder& builder, juce::Identifier property, juce::ValueTree& node);
 
     void paint (juce::Graphics& g) override;
     void resized() override;
 
     void mouseDoubleClick (const juce::MouseEvent& event) override;
 
-    static StylePropertyComponent* createComponent (MagicBuilder& builder, SettableProperty& property, juce::ValueTree& node);
+    static StylePropertyComponent* createComponent (MagicGUIBuilder& builder, SettableProperty& property, juce::ValueTree& node);
 
 protected:
 
     juce::var lookupValue();
 
-    MagicBuilder&       builder;
+    MagicGUIBuilder&    builder;
     juce::Identifier    property;
     juce::ValueTree     node;
     juce::ValueTree     inheritedFrom;

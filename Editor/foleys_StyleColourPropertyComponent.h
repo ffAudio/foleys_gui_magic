@@ -37,7 +37,7 @@ class StyleColourPropertyComponent  : public StylePropertyComponent,
                                       private juce::ChangeListener
 {
 public:
-    StyleColourPropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse);
+    StyleColourPropertyComponent (MagicGUIBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse);
     ~StyleColourPropertyComponent();
 
     void refresh() override;

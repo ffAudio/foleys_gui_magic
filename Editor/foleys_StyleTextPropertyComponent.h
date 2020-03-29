@@ -35,7 +35,7 @@ namespace foleys
 class StyleTextPropertyComponent  : public StylePropertyComponent
 {
 public:
-    StyleTextPropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse);
+    StyleTextPropertyComponent (MagicGUIBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse);
 
     void refresh() override;
 

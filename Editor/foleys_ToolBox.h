@@ -32,7 +32,7 @@
 namespace foleys
 {
 
-class MagicBuilder;
+class MagicGUIBuilder;
 
 /**
  The Toolbox defines a floating window, that allows live editing of the currently loaded GUI.
@@ -50,7 +50,7 @@ public:
      @param parent is the window to attach to
      @param builder is the builder instance that manages the GUI
      */
-    ToolBox (juce::Component* parent, MagicBuilder& builder);
+    ToolBox (juce::Component* parent, MagicGUIBuilder& builder);
     ~ToolBox();
 
     void loadDialog();
@@ -86,7 +86,7 @@ private:
     juce::Rectangle<int> parentPos;
     int                 parentHeight = 0;
 
-    MagicBuilder&       builder;
+    MagicGUIBuilder&    builder;
     juce::UndoManager&  undo;
 
     juce::TextButton    fileMenu   { TRANS ("File...") };

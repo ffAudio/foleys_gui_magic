@@ -36,8 +36,8 @@ class StyleChoicePropertyComponent  : public StylePropertyComponent,
                                       private juce::Value::Listener
 {
 public:
-    StyleChoicePropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse, juce::StringArray choices);
-    StyleChoicePropertyComponent (MagicBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse, SettableProperty::PropertyType type);
+    StyleChoicePropertyComponent (MagicGUIBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse, juce::StringArray choices);
+    StyleChoicePropertyComponent (MagicGUIBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse, SettableProperty::PropertyType type);
 
     void refresh() override;
 

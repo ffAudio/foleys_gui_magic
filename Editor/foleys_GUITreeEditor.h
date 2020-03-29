@@ -32,7 +32,7 @@
 namespace foleys
 {
 
-class MagicBuilder;
+class MagicGUIBuilder;
 
 /**
  This GUITreeEditor shows the DOM tree for the GUI. The order can be dragged within and nodes be selected
@@ -42,7 +42,7 @@ class GUITreeEditor  : public juce::Component,
                        private juce::ValueTree::Listener
 {
 public:
-    GUITreeEditor (MagicBuilder& builder);
+    GUITreeEditor (MagicGUIBuilder& builder);
 
     void paint (juce::Graphics&) override;
     void resized() override;
@@ -57,7 +57,7 @@ private:
     class GuiTreeItem : public juce::TreeViewItem
     {
     public:
-        GuiTreeItem (MagicBuilder& builder, juce::ValueTree& refValueTree);
+        GuiTreeItem (MagicGUIBuilder& builder, juce::ValueTree& refValueTree);
 
         juce::String getUniqueName() const override;
 
@@ -75,8 +75,8 @@ private:
         juce::ValueTree& getTree () { return itemNode; }
 
     private:
-        MagicBuilder&   builder;
-        juce::ValueTree itemNode;
+        MagicGUIBuilder& builder;
+        juce::ValueTree  itemNode;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GuiTreeItem)
     };
@@ -98,7 +98,7 @@ private:
     void valueTreeParentChanged (juce::ValueTree& treeWhoseParentHasChanged) override;
 
 
-    MagicBuilder&                builder;
+    MagicGUIBuilder&             builder;
     juce::UndoManager&           undo;
 
     juce::ValueTree              tree;

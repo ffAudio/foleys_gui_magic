@@ -33,7 +33,7 @@ namespace foleys
 {
 
 
-StyleTextPropertyComponent::StyleTextPropertyComponent (MagicBuilder& builderToUse,
+StyleTextPropertyComponent::StyleTextPropertyComponent (MagicGUIBuilder& builderToUse,
                                                         juce::Identifier propertyToUse,
                                                         juce::ValueTree& nodeToUse)
   : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse)
