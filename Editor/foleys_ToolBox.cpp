@@ -54,7 +54,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
     viewMenu.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
     undoButton.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
     editSwitch.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
-    
+
     addAndMakeVisible (fileMenu);
     addAndMakeVisible (viewMenu);
     addAndMakeVisible (undoButton);
@@ -70,18 +70,18 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
         file.addItem ("Default",  [&] { builder.createDefaultGUITree (false); });
         file.show();
     };
-    
+
     viewMenu.onClick = [&]
     {
         juce::PopupMenu view;
-        
+
         view.addItem ("AlwaysOnTop",
                       true,
                       isAlwaysOnTop(),
                       [&]() { setAlwaysOnTop ( ! isAlwaysOnTop() ); });
-       
+
         view.addSeparator();
-        
+
         view.addItem ("Left",
                       true,
                       currentToolboxPosition == left,
@@ -95,7 +95,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
                       currentToolboxPosition == free,
                       [&]() { positionToolbox (free); });
 
-        
+
         view.show ();
     };
 
@@ -110,7 +110,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
     {
         builder.setEditMode (editSwitch.getToggleState());
     };
-    
+
     addAndMakeVisible (treeEditor);
     addAndMakeVisible (resizer1);
     addAndMakeVisible (propertiesEditor);
@@ -125,7 +125,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
 
     addChildComponent (resizeCorner);
     resizeCorner.setAlwaysOnTop (true);
-    
+
     setBounds (100, 100, 300, 700);
     addToDesktop (getLookAndFeel().getMenuWindowFlags());
 
@@ -271,17 +271,17 @@ void ToolBox::resized()
                                     bounds.getWidth(),
                                     bounds.getHeight(),
                                     true, true);
-    
+
     const int resizeCornerSize { 25 };
     const auto bottomRight { getLocalBounds().getBottomRight() };
-    
+
     juce::Rectangle<int> resizeCornerArea { bottomRight.getX() - resizeCornerSize,
                                             bottomRight.getY() - resizeCornerSize,
                                             resizeCornerSize,
                                             resizeCornerSize };
     resizeCorner.setBounds (resizeCornerArea);
-        
-    
+
+
 }
 
 bool ToolBox::keyPressed (const juce::KeyPress& key, juce::Component*)
@@ -342,7 +342,7 @@ void ToolBox::timerCallback ()
         return;
 
     const bool isAttached = currentToolboxPosition != ToolboxPositionOption::free;
-    
+
     if (isAttached)
     {
         const auto pos = parent->getScreenBounds();
@@ -362,10 +362,10 @@ void ToolBox::timerCallback ()
 void ToolBox::positionToolbox (const ToolboxPositionOption& position)
 {
     currentToolboxPosition = position;
-    
+
     const bool isFree = position == ToolboxPositionOption::free;
     resizeCorner.setVisible (isFree);
-    
+
     if ( ! isFree )
     {
         const auto pos = parent->getScreenBounds();
@@ -382,7 +382,7 @@ void ToolBox::positionToolbox (const ToolboxPositionOption& position)
 void ToolBox::positionToolbox (const juce::Rectangle<int> parentPos, const int parentHeight)
 {
     const auto width { 280 };
-  
+
     int xPos { 0 };
     switch (currentToolboxPosition)
     {
