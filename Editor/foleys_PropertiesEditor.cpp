@@ -89,6 +89,8 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
         return;
     }
 
+    updatePopupMenu();
+
     if (stylesheet.isClassNode (styleItem) == false &&
         stylesheet.isTypeNode (styleItem) == false &&
         stylesheet.isIdNode (styleItem) == false)
