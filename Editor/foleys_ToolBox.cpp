@@ -75,26 +75,11 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
     {
         juce::PopupMenu view;
 
-        view.addItem ("AlwaysOnTop",
-                      true,
-                      isAlwaysOnTop(),
-                      [&]() { setAlwaysOnTop ( ! isAlwaysOnTop() ); });
-
+        view.addItem ("Left",  true, positionOption == left, [&]() { setToolboxPosition (left); });
+        view.addItem ("Right", true, positionOption == right, [&]() { setToolboxPosition (right); });
+        view.addItem ("Detached", true, positionOption == detached, [&]() { setToolboxPosition (detached); });
         view.addSeparator();
-
-        view.addItem ("Left",
-                      true,
-                      currentToolboxPosition == left,
-                      [&]() { positionToolbox (left); });
-        view.addItem ("Right",
-                      true,
-                      currentToolboxPosition == right,
-                      [&]() { positionToolbox (right); });
-        view.addItem ("Free",
-                      true,
-                      currentToolboxPosition == free,
-                      [&]() { positionToolbox (free); });
-
+        view.addItem ("AlwaysOnTop", true, isAlwaysOnTop(), [&]() { setAlwaysOnTop ( ! isAlwaysOnTop() ); });
 
         view.show ();
     };
@@ -146,18 +131,14 @@ ToolBox::~ToolBox()
 
 void ToolBox::mouseDown (const juce::MouseEvent& e)
 {
-    if (currentToolboxPosition == ToolboxPositionOption::free)
-    {
-        compDragger.startDraggingComponent (this, e);
-    }
+    if (positionOption == PositionOption::detached)
+        componentDragger.startDraggingComponent (this, e);
 }
 
 void ToolBox::mouseDrag (const juce::MouseEvent& e)
 {
-    if (currentToolboxPosition == ToolboxPositionOption::free)
-    {
-        compDragger.dragComponent (this, e, nullptr);
-    }
+    if (positionOption == PositionOption::detached)
+        componentDragger.dragComponent (this, e, nullptr);
 }
 
 void ToolBox::loadDialog()
@@ -272,7 +253,7 @@ void ToolBox::resized()
                                     bounds.getHeight(),
                                     true, true);
 
-    const int resizeCornerSize { 25 };
+    const int resizeCornerSize { 20 };
     const auto bottomRight { getLocalBounds().getBottomRight() };
 
     juce::Rectangle<int> resizeCornerArea { bottomRight.getX() - resizeCornerSize,
@@ -280,8 +261,6 @@ void ToolBox::resized()
                                             resizeCornerSize,
                                             resizeCornerSize };
     resizeCorner.setBounds (resizeCornerArea);
-
-
 }
 
 bool ToolBox::keyPressed (const juce::KeyPress& key, juce::Component*)
@@ -338,61 +317,35 @@ bool ToolBox::keyPressed (const juce::KeyPress& key)
 
 void ToolBox::timerCallback ()
 {
-    if (parent == nullptr)
+    updateToolboxPosition();
+}
+
+void ToolBox::setToolboxPosition (PositionOption position)
+{
+    positionOption = position;
+    const auto isDetached = (positionOption == PositionOption::detached);
+
+    resizeCorner.setVisible (isDetached);
+
+    if (isDetached)
+        stopTimer ();
+    else
+        startTimer (100);
+}
+
+void ToolBox::updateToolboxPosition()
+{
+    if (parent == nullptr || positionOption == PositionOption::detached)
         return;
 
-    const bool isAttached = currentToolboxPosition != ToolboxPositionOption::free;
-
-    if (isAttached)
-    {
-        const auto pos = parent->getScreenBounds();
-        const auto height = parent->getHeight();
-        if (pos != parentPos || height != parentHeight)
-        {
-            positionToolbox (pos, height);
-        }
-    }
-    else
-    {
-        stopTimer ();
-    }
-
-}
-
-void ToolBox::positionToolbox (const ToolboxPositionOption& position)
-{
-    currentToolboxPosition = position;
-
-    const bool isFree = position == ToolboxPositionOption::free;
-    resizeCorner.setVisible (isFree);
-
-    if ( ! isFree )
-    {
-        const auto pos = parent->getScreenBounds();
-        const auto height = parent->getHeight();
-        positionToolbox (pos, height);
-        startTimer (100);
-    }
-    else
-    {
-        stopTimer ();
-    }
-}
-
-void ToolBox::positionToolbox (const juce::Rectangle<int> parentPos, const int parentHeight)
-{
+    const auto parentBounds = parent->getScreenBounds();
     const auto width { 280 };
+    const auto height = juce::roundToInt (parentBounds.getHeight() * 0.9f);
 
-    int xPos { 0 };
-    switch (currentToolboxPosition)
-    {
-        case right: xPos = parentPos.getRight(); break;
-        case left: xPos = parentPos.getX() - width; break;
-        default: jassertfalse; break; //shouldn't get in here if not attached left/right
-    }
-
-    setBounds (xPos, parentPos.getY(),
-               width, juce::roundToInt (parentHeight * 0.9f));
+    if (positionOption == PositionOption::left)
+        setBounds (parentBounds.getX() - width, parentBounds.getY(), width, height);
+    else if (positionOption == PositionOption::right)
+        setBounds (parentBounds.getRight(), parentBounds.getY(), width, height);
 }
 
 juce::File ToolBox::getLastLocation() const
@@ -431,7 +384,6 @@ void ToolBox::setLastLocation(juce::File file)
     properties.setStorageParameters (ToolBox::getApplicationPropertyStorage());
     if (auto* p = properties.getUserSettings())
         p->setValue (IDs::lastLocation, file.getFullPathName());
-
 }
 
 std::unique_ptr<juce::FileFilter> ToolBox::getFileFilter() const

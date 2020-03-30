@@ -53,6 +53,8 @@ public:
     ToolBox (juce::Component* parent, MagicGUIBuilder& builder);
     ~ToolBox();
 
+    enum PositionOption  { left, right, detached };
+
     void loadDialog();
     void saveDialog();
 
@@ -67,6 +69,8 @@ public:
 
     void setSelectedNode (const juce::ValueTree& node);
     void setNodeToEdit (juce::ValueTree node);
+
+    void setToolboxPosition (PositionOption position);
 
     void stateWasReloaded();
 
@@ -83,8 +87,6 @@ private:
     std::unique_ptr<juce::FileFilter> getFileFilter() const;
 
     juce::Component::SafePointer<juce::Component> parent;
-    juce::Rectangle<int> parentPos;
-    int                 parentHeight = 0;
 
     MagicGUIBuilder&    builder;
     juce::UndoManager&  undo;
@@ -96,8 +98,7 @@ private:
 
     juce::TextButton    editSwitch { TRANS ("Edit") };
 
-    enum ToolboxPositionOption  { left = 1, right = 2, free = 3};
-    ToolboxPositionOption       currentToolboxPosition { left };
+    PositionOption      positionOption      { left };
 
     GUITreeEditor       treeEditor          { builder };
     PropertiesEditor    propertiesEditor    { builder };
@@ -111,10 +112,9 @@ private:
 
     std::unique_ptr<juce::FileBrowserComponent> fileBrowser;
 
-    void positionToolbox (const ToolboxPositionOption& position);
-    void positionToolbox (const juce::Rectangle<int> parentPos, const int parentHeight);
+    void updateToolboxPosition();
     juce::ResizableCornerComponent resizeCorner { this, nullptr };
-    juce::ComponentDragger compDragger;
+    juce::ComponentDragger componentDragger;
 
     void mouseDown (const juce::MouseEvent& e) override;
     void mouseDrag (const juce::MouseEvent& e) override;
