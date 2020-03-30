@@ -86,7 +86,7 @@ void MagicFilterPlot::pushSamples (const juce::AudioBuffer<float>&){}
 
 void MagicFilterPlot::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component)
 {
-    if (plotChanged || lastBounds != bounds)
+    if (plotChanged || checkPlotNeedsResizing())
     {
         const juce::ScopedReadLock readLock (plotLock);
 
@@ -98,8 +98,7 @@ void MagicFilterPlot::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds
         for (size_t i=1; i < frequencies.size(); ++i)
             path.lineTo (float (bounds.getX() + i * xFactor),
                          float (magnitudes [i] > 0 ? bounds.getCentreY() - yFactor * std::log (magnitudes [i]) / std::log (2) : bounds.getBottom()));
-
-        lastBounds  = bounds;
+        
         plotChanged = false;
     }
 

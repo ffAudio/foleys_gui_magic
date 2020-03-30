@@ -58,6 +58,11 @@ void MagicPlotSource::strokePlotPath (juce::Graphics& g, const juce::Path& path,
     g.strokePath (path, juce::PathStrokeType (2.0f));
 }
 
-
+bool MagicPlotSource::checkPlotNeedsResizing()
+{
+    auto flag = needsResizing;
+    needsResizing = false;
+    return flag;
+}
 
 }

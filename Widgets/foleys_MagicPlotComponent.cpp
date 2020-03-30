@@ -105,6 +105,8 @@ void MagicPlotComponent::updateGlowBufferSize()
 void MagicPlotComponent::resized()
 {
     updateGlowBufferSize();
+    if (plotSource != nullptr)
+        plotSource->alertResized();
 }
 
 void MagicPlotComponent::changeListenerCallback (juce::ChangeBroadcaster*)

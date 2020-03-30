@@ -82,7 +82,6 @@ private:
     juce::ReadWriteLock     plotLock;
     bool                    plotChanged = true;
     juce::Path              path;
-    juce::Rectangle<float>  lastBounds;
 
     std::vector<double>     frequencies;
     std::vector<double>     magnitudes;

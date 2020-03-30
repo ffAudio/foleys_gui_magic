@@ -95,9 +95,20 @@ public:
      and it will automatically be added to the common background thread.
      */
     virtual juce::TimeSliceClient* getBackgroundJob() { return nullptr; }
+    
+    /**
+     Notifies the plot that it has been resized and may need redrawing.
+     */
+    void alertResized() { needsResizing = true; }
+    
+    /**
+     Gets and disables the needsResizing flag.
+     */
+    bool checkPlotNeedsResizing();
 
 private:
     bool active = true;
+    bool needsResizing = false;
     juce::Path filledPath;
 
     JUCE_DECLARE_WEAK_REFERENCEABLE (MagicPlotSource)

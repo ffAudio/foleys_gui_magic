@@ -46,8 +46,8 @@ void MagicAnalyser::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, 
 {
     const float minFreq = 20.0f;
     const auto& data = analyserJob.getAnalyserData();
-
-    if (pathNeedsUpdate.load())
+    
+    if (pathNeedsUpdate.load() || checkPlotNeedsResizing())
     {
         path.clear();
         path.preallocateSpace (8 + data.getNumSamples() * 3);
