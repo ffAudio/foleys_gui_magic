@@ -90,14 +90,19 @@ private:
     juce::UndoManager&  undo;
 
     juce::TextButton    fileMenu   { TRANS ("File...") };
+    juce::TextButton    viewMenu   { TRANS ("View...") };
+    
     juce::TextButton    undoButton { TRANS ("Undo") };
 
     juce::TextButton    editSwitch { TRANS ("Edit") };
-
+    
+    enum ToolboxPositionOption  { left = 1, right = 2, free = 3};
+    ToolboxPositionOption       currentToolboxPosition { left };
+    
     GUITreeEditor       treeEditor          { builder };
     PropertiesEditor    propertiesEditor    { builder };
     Palette             palette             { builder };
-
+    
     juce::StretchableLayoutManager    resizeManager;
     juce::StretchableLayoutResizerBar resizer1 { &resizeManager, 1, false };
     juce::StretchableLayoutResizerBar resizer3 { &resizeManager, 3, false };
@@ -105,6 +110,15 @@ private:
     juce::TooltipWindow tooltip      { this };
 
     std::unique_ptr<juce::FileBrowserComponent> fileBrowser;
+    
+    void positionToolbox (const ToolboxPositionOption& position);
+    void positionToolbox (const juce::Rectangle<int> parentPos, const int parentHeight);
+    juce::ResizableCornerComponent resizeCorner { this, nullptr };
+    juce::ComponentDragger compDragger;
+    
+    void mouseDown (const juce::MouseEvent& e) override;
+    void mouseDrag (const juce::MouseEvent& e) override;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToolBox)
 };
 

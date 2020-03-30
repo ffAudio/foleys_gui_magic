@@ -51,10 +51,12 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
     setWantsKeyboardFocus (true);
 
     fileMenu.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
+    viewMenu.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
     undoButton.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
     editSwitch.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
-
+    
     addAndMakeVisible (fileMenu);
+    addAndMakeVisible (viewMenu);
     addAndMakeVisible (undoButton);
     addAndMakeVisible (editSwitch);
 
@@ -68,6 +70,34 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
         file.addItem ("Default",  [&] { builder.createDefaultGUITree (false); });
         file.show();
     };
+    
+    viewMenu.onClick = [&]
+    {
+        juce::PopupMenu view;
+        
+        view.addItem ("AlwaysOnTop",
+                      true,
+                      isAlwaysOnTop(),
+                      [&]() { setAlwaysOnTop ( ! isAlwaysOnTop() ); });
+       
+        view.addSeparator();
+        
+        view.addItem ("Left",
+                      true,
+                      currentToolboxPosition == left,
+                      [&]() { positionToolbox (left); });
+        view.addItem ("Right",
+                      true,
+                      currentToolboxPosition == right,
+                      [&]() { positionToolbox (right); });
+        view.addItem ("Free",
+                      true,
+                      currentToolboxPosition == free,
+                      [&]() { positionToolbox (free); });
+
+        
+        view.show ();
+    };
 
     undoButton.onClick = [&]
     {
@@ -80,7 +110,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
     {
         builder.setEditMode (editSwitch.getToggleState());
     };
-
+    
     addAndMakeVisible (treeEditor);
     addAndMakeVisible (resizer1);
     addAndMakeVisible (propertiesEditor);
@@ -93,6 +123,9 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
     resizeManager.setItemLayout (3, 6, 6, 6);
     resizeManager.setItemLayout (4, 1, -1.0, -0.3);
 
+    addChildComponent (resizeCorner);
+    resizeCorner.setAlwaysOnTop (true);
+    
     setBounds (100, 100, 300, 700);
     addToDesktop (getLookAndFeel().getMenuWindowFlags());
 
@@ -109,6 +142,22 @@ ToolBox::~ToolBox()
 {
     if (parent != nullptr)
         parent->removeKeyListener (this);
+}
+
+void ToolBox::mouseDown (const juce::MouseEvent& e)
+{
+    if (currentToolboxPosition == ToolboxPositionOption::free)
+    {
+        compDragger.startDraggingComponent (this, e);
+    }
+}
+
+void ToolBox::mouseDrag (const juce::MouseEvent& e)
+{
+    if (currentToolboxPosition == ToolboxPositionOption::free)
+    {
+        compDragger.dragComponent (this, e, nullptr);
+    }
 }
 
 void ToolBox::loadDialog()
@@ -202,8 +251,9 @@ void ToolBox::resized()
 {
     auto bounds = getLocalBounds().reduced (2).withTop (24);
     auto buttons = bounds.removeFromTop (24);
-    auto w = buttons.getWidth() / 4;
+    auto w = buttons.getWidth() / 6;
     fileMenu.setBounds (buttons.removeFromLeft (w));
+    viewMenu.setBounds (buttons.removeFromLeft (w));
     undoButton.setBounds (buttons.removeFromLeft (w));
     editSwitch.setBounds (buttons.removeFromLeft (w));
 
@@ -221,6 +271,17 @@ void ToolBox::resized()
                                     bounds.getWidth(),
                                     bounds.getHeight(),
                                     true, true);
+    
+    const int resizeCornerSize { 25 };
+    const auto bottomRight { getLocalBounds().getBottomRight() };
+    
+    juce::Rectangle<int> resizeCornerArea { bottomRight.getX() - resizeCornerSize,
+                                            bottomRight.getY() - resizeCornerSize,
+                                            resizeCornerSize,
+                                            resizeCornerSize };
+    resizeCorner.setBounds (resizeCornerArea);
+        
+    
 }
 
 bool ToolBox::keyPressed (const juce::KeyPress& key, juce::Component*)
@@ -280,16 +341,58 @@ void ToolBox::timerCallback ()
     if (parent == nullptr)
         return;
 
-    const auto pos = parent->getScreenBounds();
-    const auto height = parent->getHeight();
-    if (pos != parentPos || height != parentHeight)
+    const bool isAttached = currentToolboxPosition != ToolboxPositionOption::free;
+    
+    if (isAttached)
     {
-        const auto width = 260;
-        parentPos = pos;
-        parentHeight = height;
-        setBounds (parentPos.getRight(), parentPos.getY(),
-                   width,                juce::roundToInt (parentHeight * 0.9f));
+        const auto pos = parent->getScreenBounds();
+        const auto height = parent->getHeight();
+        if (pos != parentPos || height != parentHeight)
+        {
+            positionToolbox (pos, height);
+        }
     }
+    else
+    {
+        stopTimer ();
+    }
+
+}
+
+void ToolBox::positionToolbox (const ToolboxPositionOption& position)
+{
+    currentToolboxPosition = position;
+    
+    const bool isFree = position == ToolboxPositionOption::free;
+    resizeCorner.setVisible (isFree);
+    
+    if ( ! isFree )
+    {
+        const auto pos = parent->getScreenBounds();
+        const auto height = parent->getHeight();
+        positionToolbox (pos, height);
+        startTimer (100);
+    }
+    else
+    {
+        stopTimer ();
+    }
+}
+
+void ToolBox::positionToolbox (const juce::Rectangle<int> parentPos, const int parentHeight)
+{
+    const auto width { 280 };
+  
+    int xPos { 0 };
+    switch (currentToolboxPosition)
+    {
+        case right: xPos = parentPos.getRight(); break;
+        case left: xPos = parentPos.getX() - width; break;
+        default: jassertfalse; break; //shouldn't get in here if not attached left/right
+    }
+
+    setBounds (xPos, parentPos.getY(),
+               width, juce::roundToInt (parentHeight * 0.9f));
 }
 
 juce::File ToolBox::getLastLocation() const
