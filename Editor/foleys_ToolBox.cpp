@@ -251,7 +251,7 @@ void ToolBox::resized()
 {
     auto bounds = getLocalBounds().reduced (2).withTop (24);
     auto buttons = bounds.removeFromTop (24);
-    auto w = buttons.getWidth() / 6;
+    auto w = buttons.getWidth() / 5;
     fileMenu.setBounds (buttons.removeFromLeft (w));
     viewMenu.setBounds (buttons.removeFromLeft (w));
     undoButton.setBounds (buttons.removeFromLeft (w));
