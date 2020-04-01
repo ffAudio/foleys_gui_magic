@@ -324,20 +324,9 @@ void MagicGUIBuilder::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::plot,
-                     [&] (const juce::ValueTree& newConfig)
+                     [&] (const juce::ValueTree&)
                      {
-                         auto item = std::make_unique<MagicPlotComponent>();
-
-                         if (magicState && newConfig.hasProperty (IDs::source))
-                         {
-                             auto sourceID = newConfig.getProperty (IDs::source).toString();
-                             if (sourceID.isNotEmpty())
-                             {
-                                 auto* source = magicState->getPlotSource (sourceID);
-                                 item->setPlotSource (source);
-                             }
-                         }
-                         return item;
+                         return std::make_unique<MagicPlotComponent>();
                      });
 
     setColourTranslation (IDs::plot,
@@ -373,26 +362,9 @@ void MagicGUIBuilder::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::xyDragComponent,
-                     [&] (const juce::ValueTree& newConfig)
+                     [&] (const juce::ValueTree&)
                      {
-                         if (magicState)
-                         {
-                             auto item = std::make_unique<XYDragComponent>(magicState->getValueTreeState());
-
-                             auto paramX = newConfig.getProperty (IDs::parameterX).toString();
-                             if (paramX.isNotEmpty())
-                                 item->setParameterX (paramX);
-
-                             auto paramY = newConfig.getProperty (IDs::parameterY).toString();
-                             if (paramY.isNotEmpty())
-                                 item->setParameterY (paramY);
-
-                             return item;
-                         }
-                         else
-                         {
-                             return std::unique_ptr<XYDragComponent>();
-                         }
+                         return std::unique_ptr<XYDragComponent>();
                      });
 
     setColourTranslation (IDs::xyDragComponent,
@@ -518,20 +490,9 @@ void MagicGUIBuilder::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::meter,
-                     [&] (const juce::ValueTree& newConfig)
+                     [&] (const juce::ValueTree&)
                      {
-                         auto item = std::make_unique<MagicLevelMeter>();
-
-                         if (magicState && newConfig.hasProperty (IDs::source))
-                         {
-                             auto sourceID = newConfig.getProperty (IDs::source).toString();
-                             if (sourceID.isNotEmpty())
-                             {
-                                 auto* source = magicState->getLevelSource (sourceID);
-                                 item->setLevelSource (source);
-                             }
-                         }
-                         return item;
+                         return std::make_unique<MagicLevelMeter>();
                      });
 
     setColourTranslation (IDs::meter,
