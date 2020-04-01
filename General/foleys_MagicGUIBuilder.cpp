@@ -373,7 +373,9 @@ std::unique_ptr<Decorator> MagicGUIBuilder::restoreNode (juce::Component& compon
             item->addChildItem (restoreNode (*item, childNode));
 
         component.addAndMakeVisible (item.get());
-        return item;
+
+        // Xcode 8 needs the move for returning a derrived class
+        return std::move (item);
     }
 
     auto factory = factories [node.getType()];
