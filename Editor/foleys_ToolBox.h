@@ -53,6 +53,8 @@ public:
     ToolBox (juce::Component* parent, MagicGUIBuilder& builder);
     ~ToolBox();
 
+    enum PositionOption  { left, right, detached };
+
     void loadDialog();
     void saveDialog();
 
@@ -67,6 +69,8 @@ public:
 
     void setSelectedNode (const juce::ValueTree& node);
     void setNodeToEdit (juce::ValueTree node);
+
+    void setToolboxPosition (PositionOption position);
 
     void stateWasReloaded();
 
@@ -83,16 +87,18 @@ private:
     std::unique_ptr<juce::FileFilter> getFileFilter() const;
 
     juce::Component::SafePointer<juce::Component> parent;
-    juce::Rectangle<int> parentPos;
-    int                 parentHeight = 0;
 
     MagicGUIBuilder&    builder;
     juce::UndoManager&  undo;
 
     juce::TextButton    fileMenu   { TRANS ("File...") };
+    juce::TextButton    viewMenu   { TRANS ("View...") };
+
     juce::TextButton    undoButton { TRANS ("Undo") };
 
     juce::TextButton    editSwitch { TRANS ("Edit") };
+
+    PositionOption      positionOption      { left };
 
     GUITreeEditor       treeEditor          { builder };
     PropertiesEditor    propertiesEditor    { builder };
@@ -105,6 +111,14 @@ private:
     juce::TooltipWindow tooltip      { this };
 
     std::unique_ptr<juce::FileBrowserComponent> fileBrowser;
+
+    void updateToolboxPosition();
+    juce::ResizableCornerComponent resizeCorner { this, nullptr };
+    juce::ComponentDragger componentDragger;
+
+    void mouseDown (const juce::MouseEvent& e) override;
+    void mouseDrag (const juce::MouseEvent& e) override;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToolBox)
 };
 

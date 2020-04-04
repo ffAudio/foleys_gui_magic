@@ -153,4 +153,22 @@ struct SettableNumberProperty : public SettableProperty
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettableNumberProperty)
 };
 
+struct SettableValueProperty : public SettableProperty
+{
+    SettableValueProperty (const juce::Identifier& n,
+                            juce::var d,
+                            std::function<void(juce::Component*, juce::var)> s)
+      : SettableProperty (n, SettableProperty::Property, d), setter (s) {}
+
+    void set (juce::Component* c, juce::var v) const override
+    {
+        if (setter && v.isVoid() == false)
+            setter (c, v);
+    }
+
+    std::function<void(juce::Component*, juce::var)> setter;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettableValueProperty)
+};
+
 } // namespace foleys

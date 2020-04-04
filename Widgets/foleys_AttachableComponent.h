@@ -33,6 +33,7 @@ namespace foleys
 {
 
 /**
+ This is a Slider, that holds an attachment to the AudioProcessorValueTreeState
  */
 class AttachableSlider  : public juce::Slider
 {
@@ -42,6 +43,7 @@ public:
 
     void attachToParameter (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)
     {
+        attachment.reset();
         attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(state, paramID, *this);
     }
 
@@ -89,6 +91,8 @@ public:
 
     void attachToParameter (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)
     {
+        attachment.reset();
+
         if (auto* parameter = state.getParameter (paramID))
         {
             clear();
@@ -104,7 +108,9 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AttachableComboBox)
 };
 
-
+/**
+ This is an extension to Buttons, that adds an attachment to the AudioProcessorValueTreeState
+ */
 template<class ButtonType>
 class ButtonAttacher  : public ButtonType
 {
@@ -116,6 +122,8 @@ public:
     {
         if (auto* button = dynamic_cast<juce::Button*>(this))
         {
+            attachment.reset();
+
             button->setClickingTogglesState (true);
             attachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(state, paramID, *button);
         }

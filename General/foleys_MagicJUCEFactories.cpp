@@ -290,6 +290,49 @@ void MagicGUIBuilder::registerJUCEFactories()
                           }));
 
     addSettableProperty (IDs::label,
+                         std::make_unique<SettableValueProperty>
+                         (
+                          "value",
+                          juce::var(),
+                          [&] (juce::Component* component, juce::var value)
+                          {
+                              if (magicState == nullptr)
+                                  return;
+
+                              if (auto* label = dynamic_cast<juce::Label*>(component))
+                                  label->getTextValue().referTo (magicState->getPropertyAsValue (value.toString()));
+                          }));
+
+    addSettableProperty (IDs::label,
+                         std::make_unique<SettableChoiceProperty>
+                         (
+                          "justification",
+                          [] (juce::Component* component, juce::var value, const juce::NamedValueSet& options)
+                          {
+                              if (auto* label = dynamic_cast<juce::Label*>(component))
+                              {
+                                  const auto flags = int (options [value.toString()]);
+                                  label->setJustificationType (flags);
+                              }
+                          },
+                          "centred-left",
+                          makeJustificationsChoices()));
+
+    addSettableProperty (IDs::label,
+                         std::make_unique<SettableNumberProperty>
+                         (
+                          "font-size",
+                          0,
+                          [] (juce::Component* component, juce::var value)
+                          {
+                              if (auto* label = dynamic_cast<juce::Label*>(component))
+                              {
+                                  if (value.isVoid() == false)
+                                      label->setFont (juce::Font (float (value)));
+                              }
+                          }));
+
+    addSettableProperty (IDs::label,
                          std::make_unique<SettableBoolProperty>
                          (
                           "editable",
@@ -324,20 +367,9 @@ void MagicGUIBuilder::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::plot,
-                     [&] (const juce::ValueTree& newConfig)
+                     [&] (const juce::ValueTree&)
                      {
-                         auto item = std::make_unique<MagicPlotComponent>();
-
-                         if (magicState && newConfig.hasProperty (IDs::source))
-                         {
-                             auto sourceID = newConfig.getProperty (IDs::source).toString();
-                             if (sourceID.isNotEmpty())
-                             {
-                                 auto* source = magicState->getPlotSource (sourceID);
-                                 item->setPlotSource (source);
-                             }
-                         }
-                         return item;
+                         return std::make_unique<MagicPlotComponent>();
                      });
 
     setColourTranslation (IDs::plot,
@@ -373,26 +405,9 @@ void MagicGUIBuilder::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::xyDragComponent,
-                     [&] (const juce::ValueTree& newConfig)
+                     [&] (const juce::ValueTree&)
                      {
-                         if (magicState)
-                         {
-                             auto item = std::make_unique<XYDragComponent>(magicState->getValueTreeState());
-
-                             auto paramX = newConfig.getProperty (IDs::parameterX).toString();
-                             if (paramX.isNotEmpty())
-                                 item->setParameterX (paramX);
-
-                             auto paramY = newConfig.getProperty (IDs::parameterY).toString();
-                             if (paramY.isNotEmpty())
-                                 item->setParameterY (paramY);
-
-                             return item;
-                         }
-                         else
-                         {
-                             return std::unique_ptr<XYDragComponent>();
-                         }
+                         return std::unique_ptr<XYDragComponent>();
                      });
 
     setColourTranslation (IDs::xyDragComponent,
@@ -518,20 +533,9 @@ void MagicGUIBuilder::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::meter,
-                     [&] (const juce::ValueTree& newConfig)
+                     [&] (const juce::ValueTree&)
                      {
-                         auto item = std::make_unique<MagicLevelMeter>();
-
-                         if (magicState && newConfig.hasProperty (IDs::source))
-                         {
-                             auto sourceID = newConfig.getProperty (IDs::source).toString();
-                             if (sourceID.isNotEmpty())
-                             {
-                                 auto* source = magicState->getLevelSource (sourceID);
-                                 item->setLevelSource (source);
-                             }
-                         }
-                         return item;
+                         return std::make_unique<MagicLevelMeter>();
                      });
 
     setColourTranslation (IDs::meter,

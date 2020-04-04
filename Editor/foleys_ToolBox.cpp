@@ -51,10 +51,12 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
     setWantsKeyboardFocus (true);
 
     fileMenu.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
+    viewMenu.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
     undoButton.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
     editSwitch.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
 
     addAndMakeVisible (fileMenu);
+    addAndMakeVisible (viewMenu);
     addAndMakeVisible (undoButton);
     addAndMakeVisible (editSwitch);
 
@@ -67,6 +69,19 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
         file.addItem ("Clear",    [&] { builder.clearGUI(); });
         file.addItem ("Default",  [&] { builder.createDefaultGUITree (false); });
         file.show();
+    };
+
+    viewMenu.onClick = [&]
+    {
+        juce::PopupMenu view;
+
+        view.addItem ("Left",  true, positionOption == left, [&]() { setToolboxPosition (left); });
+        view.addItem ("Right", true, positionOption == right, [&]() { setToolboxPosition (right); });
+        view.addItem ("Detached", true, positionOption == detached, [&]() { setToolboxPosition (detached); });
+        view.addSeparator();
+        view.addItem ("AlwaysOnTop", true, isAlwaysOnTop(), [&]() { setAlwaysOnTop ( ! isAlwaysOnTop() ); });
+
+        view.show ();
     };
 
     undoButton.onClick = [&]
@@ -93,6 +108,9 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
     resizeManager.setItemLayout (3, 6, 6, 6);
     resizeManager.setItemLayout (4, 1, -1.0, -0.3);
 
+    addChildComponent (resizeCorner);
+    resizeCorner.setAlwaysOnTop (true);
+
     setBounds (100, 100, 300, 700);
     addToDesktop (getLookAndFeel().getMenuWindowFlags());
 
@@ -109,6 +127,18 @@ ToolBox::~ToolBox()
 {
     if (parent != nullptr)
         parent->removeKeyListener (this);
+}
+
+void ToolBox::mouseDown (const juce::MouseEvent& e)
+{
+    if (positionOption == PositionOption::detached)
+        componentDragger.startDraggingComponent (this, e);
+}
+
+void ToolBox::mouseDrag (const juce::MouseEvent& e)
+{
+    if (positionOption == PositionOption::detached)
+        componentDragger.dragComponent (this, e, nullptr);
 }
 
 void ToolBox::loadDialog()
@@ -202,8 +232,9 @@ void ToolBox::resized()
 {
     auto bounds = getLocalBounds().reduced (2).withTop (24);
     auto buttons = bounds.removeFromTop (24);
-    auto w = buttons.getWidth() / 4;
+    auto w = buttons.getWidth() / 5;
     fileMenu.setBounds (buttons.removeFromLeft (w));
+    viewMenu.setBounds (buttons.removeFromLeft (w));
     undoButton.setBounds (buttons.removeFromLeft (w));
     editSwitch.setBounds (buttons.removeFromLeft (w));
 
@@ -221,6 +252,15 @@ void ToolBox::resized()
                                     bounds.getWidth(),
                                     bounds.getHeight(),
                                     true, true);
+
+    const int resizeCornerSize { 20 };
+    const auto bottomRight { getLocalBounds().getBottomRight() };
+
+    juce::Rectangle<int> resizeCornerArea { bottomRight.getX() - resizeCornerSize,
+                                            bottomRight.getY() - resizeCornerSize,
+                                            resizeCornerSize,
+                                            resizeCornerSize };
+    resizeCorner.setBounds (resizeCornerArea);
 }
 
 bool ToolBox::keyPressed (const juce::KeyPress& key, juce::Component*)
@@ -277,19 +317,35 @@ bool ToolBox::keyPressed (const juce::KeyPress& key)
 
 void ToolBox::timerCallback ()
 {
-    if (parent == nullptr)
+    updateToolboxPosition();
+}
+
+void ToolBox::setToolboxPosition (PositionOption position)
+{
+    positionOption = position;
+    const auto isDetached = (positionOption == PositionOption::detached);
+
+    resizeCorner.setVisible (isDetached);
+
+    if (isDetached)
+        stopTimer ();
+    else
+        startTimer (100);
+}
+
+void ToolBox::updateToolboxPosition()
+{
+    if (parent == nullptr || positionOption == PositionOption::detached)
         return;
 
-    const auto pos = parent->getScreenBounds();
-    const auto height = parent->getHeight();
-    if (pos != parentPos || height != parentHeight)
-    {
-        const auto width = 260;
-        parentPos = pos;
-        parentHeight = height;
-        setBounds (parentPos.getRight(), parentPos.getY(),
-                   width,                juce::roundToInt (parentHeight * 0.9f));
-    }
+    const auto parentBounds = parent->getScreenBounds();
+    const auto width { 280 };
+    const auto height = juce::roundToInt (parentBounds.getHeight() * 0.9f);
+
+    if (positionOption == PositionOption::left)
+        setBounds (parentBounds.getX() - width, parentBounds.getY(), width, height);
+    else if (positionOption == PositionOption::right)
+        setBounds (parentBounds.getRight(), parentBounds.getY(), width, height);
 }
 
 juce::File ToolBox::getLastLocation() const
@@ -328,7 +384,6 @@ void ToolBox::setLastLocation(juce::File file)
     properties.setStorageParameters (ToolBox::getApplicationPropertyStorage());
     if (auto* p = properties.getUserSettings())
         p->setValue (IDs::lastLocation, file.getFullPathName());
-
 }
 
 std::unique_ptr<juce::FileFilter> ToolBox::getFileFilter() const

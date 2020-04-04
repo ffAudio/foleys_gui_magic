@@ -251,7 +251,10 @@ void Decorator::valueChanged (juce::Value& source)
 void Decorator::paintOverChildren (juce::Graphics& g)
 {
     if (magicBuilder.isEditModeOn() && magicBuilder.getSelectedNode() == configNode)
-        g.fillAll (juce::Colours::orange.withAlpha (0.5f));
+    {
+        g.setColour (juce::Colours::orange.withAlpha (0.5f));
+        g.fillRoundedRectangle (getLocalBounds().toFloat(), 5.0f);
+    }
 }
 
 void Decorator::mouseDown (const juce::MouseEvent&)

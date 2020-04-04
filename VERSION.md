@@ -1,6 +1,14 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.1.0
+------
+
+- Added note of the dual licensing
+- Label can display a dynamic text
+- Added font-size and justification to Label
+- Toolbox an be detached and set always on top (thanks Benedikt)
+
 1.0.9 - 30.03.2020
 ------------------
 

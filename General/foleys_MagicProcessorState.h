@@ -38,7 +38,7 @@ namespace foleys
  It is also the place, where the data for the visualisers is sent to, which are
  MagicPlotSources and MagicLevelSources.
  */
-class MagicProcessorState
+class MagicProcessorState   : private juce::Timer
 {
 public:
     /**
@@ -122,6 +122,18 @@ public:
      */
     void processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents=true);
 
+
+    /**
+     Calling this in the processBlock() will store the values from AudioPlayHead into the state, so it can be used in the GUI.
+     To enable this call setPlayheadUpdateFrequency (frequency) with an appropriate value
+     */
+    void updatePlayheadInformation (juce::AudioPlayHead* playhead);
+
+    /**
+     Starts the timer to fetch the playhead values from the audio thread
+     */
+    void setPlayheadUpdateFrequency (int frequency);
+
     /**
      Allows the editor to set its last size to resore next time
      */
@@ -156,6 +168,8 @@ private:
     void addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const;
     void addPropertiesToMenu (const juce::ValueTree& tree, juce::ComboBox& combo, juce::PopupMenu& menu, const juce::String& path) const;
 
+    void timerCallback() override;
+
     juce::AudioProcessor& processor;
     juce::AudioProcessorValueTreeState& state;
 
@@ -164,6 +178,13 @@ private:
     std::map<juce::Identifier, std::unique_ptr<MagicLevelSource>> levelSources;
     std::map<juce::Identifier, std::unique_ptr<MagicPlotSource>>  plotSources;
     std::map<juce::Identifier, std::function<void()>>             triggers;
+
+    std::atomic<double> bpm;
+    std::atomic<int>    timeSigNumerator;
+    std::atomic<int>    timeSigDenominator;
+    std::atomic<double> timeInSeconds;
+    std::atomic<bool>   isPlaying;
+    std::atomic<bool>   isRecording;
 
     juce::TimeSliceThread visualiserThread { "Visualiser Thread" };
 

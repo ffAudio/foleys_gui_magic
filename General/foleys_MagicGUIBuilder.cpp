@@ -373,7 +373,9 @@ std::unique_ptr<Decorator> MagicGUIBuilder::restoreNode (juce::Component& compon
             item->addChildItem (restoreNode (*item, childNode));
 
         component.addAndMakeVisible (item.get());
-        return item;
+
+        // Xcode 8 needs the move for returning a derrived class
+        return std::move (item);
     }
 
     auto factory = factories [node.getType()];
@@ -418,6 +420,21 @@ juce::var MagicGUIBuilder::getPropertyDefaultValue (juce::Identifier type, juce:
     if (property == IDs::display) return IDs::flexbox;
 
     return {};
+}
+
+juce::NamedValueSet MagicGUIBuilder::makeJustificationsChoices()
+{
+    juce::NamedValueSet choices;
+    choices.set ("centred",         juce::Justification::centred);
+    choices.set ("top-left",        juce::Justification::topLeft);
+    choices.set ("centred-left",    juce::Justification::centredLeft);
+    choices.set ("bottom-left",     juce::Justification::bottomLeft);
+    choices.set ("centred-top",     juce::Justification::centredTop);
+    choices.set ("centred-bottom",  juce::Justification::centredBottom);
+    choices.set ("top-right",       juce::Justification::topRight);
+    choices.set ("centred-right",   juce::Justification::centredRight);
+    choices.set ("bottom-right",    juce::Justification::bottomRight);
+    return choices;
 }
 
 MagicProcessorState* MagicGUIBuilder::getProcessorState()

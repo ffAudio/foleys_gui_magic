@@ -294,6 +294,40 @@ void MagicProcessorState::setStateInformation (const void* data, int sizeInBytes
     }
 }
 
+void MagicProcessorState::updatePlayheadInformation (juce::AudioPlayHead* playhead)
+{
+    if (playhead == nullptr)
+        return;
+
+    juce::AudioPlayHead::CurrentPositionInfo info;
+    playhead->getCurrentPosition (info);
+
+    bpm.store (info.bpm);
+    timeInSeconds.store (info.timeInSeconds);
+    timeSigNumerator.store (info.timeSigNumerator);
+    timeSigDenominator.store (info.timeSigDenominator);
+    isPlaying.store (info.isPlaying);
+    isRecording.store (info.isRecording);
+}
+
+void MagicProcessorState::setPlayheadUpdateFrequency (int frequency)
+{
+    if (frequency > 0)
+        startTimerHz (frequency);
+    else
+        stopTimer();
+}
+
+void MagicProcessorState::timerCallback()
+{
+    getPropertyAsValue ("playhead:bpm").setValue (bpm.load());
+    getPropertyAsValue ("playhead:timeInSeconds").setValue (timeInSeconds.load());
+    getPropertyAsValue ("playhead:timeSigNumerator").setValue (timeSigNumerator.load());
+    getPropertyAsValue ("playhead:timeSigDenominator").setValue (timeSigDenominator.load());
+    getPropertyAsValue ("playhead:isPlaying").setValue (isPlaying.load());
+    getPropertyAsValue ("playhead:isRecording").setValue (isRecording.load());
+}
+
 juce::AudioProcessorValueTreeState& MagicProcessorState::getValueTreeState()
 {
     return state;
