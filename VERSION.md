@@ -1,6 +1,12 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.0.10
+------
+
+- Label can display a dynamic text
+- Toolbox an be detached and set always on top (thanks Benedikt)
+
 1.0.9 - 30.03.2020
 ------------------
 

@@ -290,6 +290,20 @@ void MagicGUIBuilder::registerJUCEFactories()
                           }));
 
     addSettableProperty (IDs::label,
+                         std::make_unique<SettableValueProperty>
+                         (
+                          "value",
+                          juce::var(),
+                          [&] (juce::Component* component, juce::var value)
+                          {
+                              if (magicState == nullptr)
+                                  return;
+
+                              if (auto* label = dynamic_cast<juce::Label*>(component))
+                                  label->getTextValue().referTo (magicState->getPropertyAsValue (value.toString()));
+                          }));
+
+    addSettableProperty (IDs::label,
                          std::make_unique<SettableBoolProperty>
                          (
                           "editable",
