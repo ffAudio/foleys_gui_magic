@@ -304,6 +304,35 @@ void MagicGUIBuilder::registerJUCEFactories()
                           }));
 
     addSettableProperty (IDs::label,
+                         std::make_unique<SettableChoiceProperty>
+                         (
+                          "justification",
+                          [] (juce::Component* component, juce::var value, const juce::NamedValueSet& options)
+                          {
+                              if (auto* label = dynamic_cast<juce::Label*>(component))
+                              {
+                                  const auto flags = int (options [value.toString()]);
+                                  label->setJustificationType (flags);
+                              }
+                          },
+                          "centred-left",
+                          makeJustificationsChoices()));
+
+    addSettableProperty (IDs::label,
+                         std::make_unique<SettableNumberProperty>
+                         (
+                          "font-size",
+                          0,
+                          [] (juce::Component* component, juce::var value)
+                          {
+                              if (auto* label = dynamic_cast<juce::Label*>(component))
+                              {
+                                  if (value.isVoid() == false)
+                                      label->setFont (juce::Font (float (value)));
+                              }
+                          }));
+
+    addSettableProperty (IDs::label,
                          std::make_unique<SettableBoolProperty>
                          (
                           "editable",

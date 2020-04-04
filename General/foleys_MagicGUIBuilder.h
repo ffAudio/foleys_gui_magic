@@ -218,6 +218,8 @@ public:
 
 private:
 
+    static juce::NamedValueSet makeJustificationsChoices();
+
     std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node);
 
     juce::UndoManager undo;
