@@ -367,7 +367,7 @@ void MagicGUIBuilder::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::plot,
-                     [&] (const juce::ValueTree&)
+                     [] (const juce::ValueTree&)
                      {
                          return std::make_unique<MagicPlotComponent>();
                      });
@@ -407,7 +407,8 @@ void MagicGUIBuilder::registerJUCEFactories()
     registerFactory (IDs::xyDragComponent,
                      [&] (const juce::ValueTree&)
                      {
-                         return std::unique_ptr<XYDragComponent>();
+                         return (magicState ? std::make_unique<XYDragComponent>(magicState->getValueTreeState())
+                                            : std::unique_ptr<XYDragComponent>());
                      });
 
     setColourTranslation (IDs::xyDragComponent,
@@ -533,7 +534,7 @@ void MagicGUIBuilder::registerJUCEFactories()
     //==============================================================================
 
     registerFactory (IDs::meter,
-                     [&] (const juce::ValueTree&)
+                     [] (const juce::ValueTree&)
                      {
                          return std::make_unique<MagicLevelMeter>();
                      });
