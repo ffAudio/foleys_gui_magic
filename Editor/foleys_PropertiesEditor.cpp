@@ -188,6 +188,8 @@ void PropertiesEditor::addDecoratorProperties()
     array.add (new StyleTextPropertyComponent (builder, IDs::radius, styleItem));
     array.add (new StyleColourPropertyComponent (builder, IDs::borderColour, styleItem));
     array.add (new StyleColourPropertyComponent (builder, IDs::backgroundColour, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::tabCaption, styleItem));
+    array.add (new StyleColourPropertyComponent (builder, IDs::tabColour, styleItem));
     array.add (new StyleChoicePropertyComponent (builder, IDs::lookAndFeel, styleItem, builder.getStylesheet().getLookAndFeelNames()));
     array.add (new StyleChoicePropertyComponent (builder, IDs::backgroundImage, styleItem, Resources::getResourceFileNames()));
     array.add (new StyleChoicePropertyComponent (builder, IDs::imagePlacement, styleItem, { IDs::imageCentred, IDs::imageFill, IDs::imageStretch }));

@@ -95,6 +95,7 @@ public:
 
 private:
 
+    void updateTabbedButtons();
     void updateSelectedTab();
 
     Layout layout = Layout::FlexBox;

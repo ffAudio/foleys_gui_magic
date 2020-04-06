@@ -95,6 +95,9 @@ public:
     float               captionSize   = 20.0f;
     juce::Colour        captionColour = juce::Colours::silver;
 
+    juce::String        tabCaption;
+    juce::Colour        tabColour;
+
     juce::FlexItem flexItem { juce::FlexItem (*this).withFlex (1.0f) };
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE

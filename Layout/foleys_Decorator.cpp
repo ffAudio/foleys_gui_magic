@@ -85,7 +85,11 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
     if (! radiusVar.isVoid())
         radius = static_cast<float> (radiusVar);
 
-    caption = node.getProperty (IDs::caption, juce::String());
+    caption    = node.getProperty (IDs::caption, juce::String());
+    tabCaption = node.getProperty (IDs::tabCaption, juce::String());
+    auto tc    = stylesheet.getProperty (IDs::tabColour, node);
+    if (! tc.isVoid())
+        tabColour = stylesheet.parseColour (tc.toString());
 
     auto sizeVar = stylesheet.getProperty (IDs::captionSize, node);
     if (! sizeVar.isVoid())

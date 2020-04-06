@@ -68,6 +68,8 @@ namespace IDs
 
     static juce::Identifier backgroundColour  { "background-color" };
     static juce::Identifier borderColour      { "border-color" };
+    static juce::Identifier tabCaption   { "tab-caption" };
+    static juce::Identifier tabColour    { "tab-color" };
     static juce::Identifier border       { "border" };
     static juce::Identifier margin       { "margin" };
     static juce::Identifier padding      { "padding" };
