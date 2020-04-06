@@ -43,7 +43,8 @@ public:
     enum class Layout
     {
         Contents,
-        FlexBox
+        FlexBox,
+        Tabbed
     };
 
     Container (MagicGUIBuilder& builder, juce::ValueTree node);
@@ -70,6 +71,11 @@ public:
     void setMaxFPSrate (int maxFPS);
 
     /**
+     Sets the layout mode of the container
+     */
+    void setLayoutMode (Layout layout);
+
+    /**
      This switches this node and all it's descendents in the edit
      mode, which means, the components don't react, but instead you
      can move them around.
@@ -87,10 +93,13 @@ public:
 
     juce::FlexBox flexBox;
 
-    Layout layout = Layout::FlexBox;
-
 private:
 
+    void updateSelectedTab();
+
+    Layout layout = Layout::FlexBox;
+
+    std::unique_ptr<juce::TabbedButtonBar>  tabbedButtons;
     std::vector<std::unique_ptr<Decorator>> children;
 
     int         minFPStimeOutMS = 40;

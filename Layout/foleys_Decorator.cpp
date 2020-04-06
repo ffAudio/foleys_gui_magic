@@ -97,7 +97,7 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
 
     auto placementVar = stylesheet.getProperty (IDs::captionPlacement, node);
     if (! placementVar.isVoid())
-        justification = static_cast<int> (placementVar);
+        justification = juce::Justification (MagicGUIBuilder::makeJustificationsChoices()[placementVar.toString()]);
 
     backgroundImage = stylesheet.getBackgroundImage (node);
     backgroundFill  = stylesheet.getBackgroundGradient (node);
@@ -116,7 +116,6 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
         else if (backPlacement.toString() == IDs::imageCentred)
             backgroundPlacement = juce::RectanglePlacement::centred;
     }
-
 
     if (component)
     {
@@ -185,7 +184,7 @@ void Decorator::paint (juce::Graphics& g)
     {
         g.setColour (captionColour);
         auto box = getLocalBounds().reduced (int (margin + padding));
-        if (justification.getOnlyVerticalFlags() < int (juce::Justification::bottom))
+        if (justification.getOnlyVerticalFlags() & juce::Justification::top)
             box.setHeight (int (captionSize));
         else
             box.setTop (int (box.getBottom() - captionSize));
@@ -200,7 +199,7 @@ juce::Rectangle<int> Decorator::getClientBounds() const
     auto box = getLocalBounds().reduced (juce::roundToInt (margin + padding));
     if (caption.isNotEmpty())
     {
-        if (justification.getOnlyVerticalFlags() < int (juce::Justification::bottom))
+        if (justification.getOnlyVerticalFlags() & juce::Justification::top)
             box.removeFromTop (int (captionSize));
         else
             box.removeFromBottom (int (captionSize));
@@ -217,7 +216,7 @@ void Decorator::resized()
     auto box = getLocalBounds().reduced (int (margin + padding));
     if (caption.isNotEmpty())
     {
-        if (justification.getOnlyVerticalFlags() < int (juce::Justification::bottom))
+        if (justification.getOnlyVerticalFlags() & juce::Justification::top)
             box.removeFromTop (int (captionSize));
         else
             box.removeFromBottom (int (captionSize));

@@ -41,17 +41,18 @@ struct SettableProperty
 {
     enum PropertyType
     {
-        Text,       /*< Plain text, e.g. for buttons */
-        Number,     /*< A number, e.g. line width */
-        Colour,     /*< Show the colour selector and palette names */
-        Toggle,     /*< Show a toggle for bool properties */
-        Choice,     /*< Shows choices provided */
-        Parameter,  /*< Shows available parameters as choice */
-        LevelSource,/*< Shows available LevelSources as choice */
-        PlotSource, /*< Shows available PlotSources as choice */
-        Trigger,    /*< Shows available Triggers as choice */
-        Property,   /*< Shows available properties in the state tree to connect to */
-        AssetFile   /*< Shows embedded asset files to choose from (BinaryData) */
+        Text,           /*< Plain text, e.g. for buttons */
+        Number,         /*< A number, e.g. line width */
+        Colour,         /*< Show the colour selector and palette names */
+        Justification,  /*< Offer a list of the different justification options */
+        Toggle,         /*< Show a toggle for bool properties */
+        Choice,         /*< Shows choices provided */
+        Parameter,      /*< Shows available parameters as choice */
+        LevelSource,    /*< Shows available LevelSources as choice */
+        PlotSource,     /*< Shows available PlotSources as choice */
+        Trigger,        /*< Shows available Triggers as choice */
+        Property,       /*< Shows available properties in the state tree to connect to */
+        AssetFile       /*< Shows embedded asset files to choose from (BinaryData) */
     };
 
     SettableProperty (const juce::Identifier& n, PropertyType t, juce::var defaultToUse)

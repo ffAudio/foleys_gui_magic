@@ -190,24 +190,22 @@ void MagicGUIBuilder::updateProperties (Decorator& item)
     if (auto* container = dynamic_cast<Container*>(&item))
     {
         stylesheet.configureFlexBoxItem (item.flexItem, configNode);
+        stylesheet.configureFlexBox (container->flexBox, configNode);
 
-        auto display = stylesheet.getProperty (IDs::display, configNode).toString();
+        for (auto& child : *container)
+            updateProperties (*child);
+
+        const auto display = stylesheet.getProperty (IDs::display, configNode).toString();
         if (display == IDs::contents)
-        {
-            container->layout = Container::Layout::Contents;
-        }
+            container->setLayoutMode (Container::Layout::Contents);
+        else if (display == IDs::tabbed)
+            container->setLayoutMode (Container::Layout::Tabbed);
         else
-        {
-            container->layout = Container::Layout::FlexBox;
-            stylesheet.configureFlexBox (container->flexBox, configNode);
-        }
+            container->setLayoutMode (Container::Layout::FlexBox);
 
         auto throttle = stylesheet.getProperty (IDs::throttle, configNode).toString();
         if (throttle.isNotEmpty())
             container->setMaxFPSrate (throttle.getIntValue());
-
-        for (auto& child : *container)
-            updateProperties (*child);
     }
 }
 

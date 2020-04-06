@@ -180,6 +180,7 @@ void PropertiesEditor::addDecoratorProperties()
     array.add (new StyleTextPropertyComponent (builder, IDs::caption, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::captionSize, styleItem));
     array.add (new StyleColourPropertyComponent (builder, IDs::captionColour, styleItem));
+    array.add (new StyleChoicePropertyComponent (builder, IDs::captionPlacement, styleItem, SettableProperty::Justification));
     array.add (new StyleTextPropertyComponent (builder, IDs::tooltip, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::margin, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::padding, styleItem));
@@ -238,7 +239,7 @@ void PropertiesEditor::addContainerProperties()
 {
     juce::Array<juce::PropertyComponent*> array;
 
-    array.add (new StyleChoicePropertyComponent (builder, IDs::display, styleItem, { IDs::contents, IDs::flexbox }));
+    array.add (new StyleChoicePropertyComponent (builder, IDs::display, styleItem, { IDs::contents, IDs::flexbox, IDs::tabbed }));
     array.add (new StyleTextPropertyComponent (builder, IDs::throttle, styleItem));
 
     array.add (new StyleChoicePropertyComponent (builder, IDs::flexDirection, styleItem, { IDs::flexDirRow, IDs::flexDirRowReverse, IDs::flexDirColumn, IDs::flexDirColumnReverse }));

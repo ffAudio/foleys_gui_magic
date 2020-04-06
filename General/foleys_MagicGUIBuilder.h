@@ -191,6 +191,8 @@ public:
      */
     void populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const;
 
+    static juce::NamedValueSet makeJustificationsChoices();
+
     /**
      Lookup the default value of the property
      */
@@ -217,8 +219,6 @@ public:
 #endif
 
 private:
-
-    static juce::NamedValueSet makeJustificationsChoices();
 
     std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node);
 
