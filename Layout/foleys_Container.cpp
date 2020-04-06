@@ -46,17 +46,7 @@ void Container::setLayoutMode (Layout layoutToUse)
     layout = layoutToUse;
     if (layout == Layout::Tabbed)
     {
-        if (tabbedButtons.get() == nullptr)
-        {
-            tabbedButtons = std::make_unique<juce::TabbedButtonBar>(juce::TabbedButtonBar::TabsAtTop);
-            addAndMakeVisible (*tabbedButtons);
-            for (auto& child : children)
-            {
-                tabbedButtons->addTab (child->caption, juce::Colours::black, -1);
-                tabbedButtons->getTabButton (tabbedButtons->getNumTabs()-1)->onClick = [&] { updateSelectedTab(); };
-            }
-        }
-        updateSelectedTab();
+        updateTabbedButtons();
     }
     else
     {
@@ -125,8 +115,13 @@ void Container::updateLayout()
     {
         auto box = getClientBounds();
 
-        if (tabbedButtons.get() != nullptr)
+        if (layout == Layout::Tabbed)
+        {
+            updateTabbedButtons();
             tabbedButtons->setBounds (box.removeFromTop (30));
+        }
+        else
+            tabbedButtons.reset();
 
         for (auto& child : children)
             child->setBounds (box);
@@ -134,6 +129,23 @@ void Container::updateLayout()
 
     for (auto& child : children)
         child->updateLayout();
+}
+
+void Container::updateTabbedButtons()
+{
+    tabbedButtons = std::make_unique<juce::TabbedButtonBar>(juce::TabbedButtonBar::TabsAtTop);
+    addAndMakeVisible (*tabbedButtons);
+    for (auto& child : children)
+    {
+        auto caption = child->tabCaption.isNotEmpty() ? child->tabCaption
+                                                      : child->caption.isNotEmpty() ? child->caption
+                                                                                    : "Tab " + juce::String (tabbedButtons->getNumTabs());
+
+        tabbedButtons->addTab (caption, child->tabColour, -1);
+        tabbedButtons->getTabButton (tabbedButtons->getNumTabs()-1)->onClick = [&] { updateSelectedTab(); };
+    }
+
+    updateSelectedTab();
 }
 
 void Container::updateSelectedTab()
