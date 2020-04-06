@@ -1,8 +1,14 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.1.0
-------
+1.1.1
+-----
+
+- Added tabbed containers
+- Bugfix: Fixed not showing XYDraggerComponent
+
+1.1.0 - 04.04.2020
+-------------------
 
 - Added note of the dual licensing
 - Label can display a dynamic text

@@ -61,6 +61,7 @@ StylePropertyComponent* StylePropertyComponent::createComponent (MagicGUIBuilder
         property.type == SettableProperty::PlotSource ||
         property.type == SettableProperty::Trigger ||
         property.type == SettableProperty::Property ||
+        property.type == SettableProperty::Justification ||
         property.type == SettableProperty::AssetFile)
         return new StyleChoicePropertyComponent (builder, property.name, node, property.type);
 

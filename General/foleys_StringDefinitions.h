@@ -76,6 +76,7 @@ namespace IDs
     static juce::Identifier display      { "display" };
     static juce::Identifier throttle     { "throttle" };
     static juce::String     contents     { "contents" };
+    static juce::String     tabbed       { "tabbed" };
     static juce::String     flexbox      { "flexbox" };
 
     static juce::String     root         { "root" };

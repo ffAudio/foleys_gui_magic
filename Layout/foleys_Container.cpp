@@ -41,6 +41,31 @@ void Container::addChildItem (std::unique_ptr<Decorator> child)
     addAndMakeVisible (child.get());
 }
 
+void Container::setLayoutMode (Layout layoutToUse)
+{
+    layout = layoutToUse;
+    if (layout == Layout::Tabbed)
+    {
+        if (tabbedButtons.get() == nullptr)
+        {
+            tabbedButtons = std::make_unique<juce::TabbedButtonBar>(juce::TabbedButtonBar::TabsAtTop);
+            addAndMakeVisible (*tabbedButtons);
+            for (auto& child : children)
+            {
+                tabbedButtons->addTab (child->caption, juce::Colours::black, -1);
+                tabbedButtons->getTabButton (tabbedButtons->getNumTabs()-1)->onClick = [&] { updateSelectedTab(); };
+            }
+        }
+        updateSelectedTab();
+    }
+    else
+    {
+        tabbedButtons.reset();
+        for (auto& child : children)
+            child->setVisible (true);
+    }
+}
+
 void Container::setChildNeedsRepaint (bool checkOnly)
 {
     if (checkOnly && needsUpdate == false)
@@ -98,12 +123,29 @@ void Container::updateLayout()
     }
     else
     {
+        auto box = getClientBounds();
+
+        if (tabbedButtons.get() != nullptr)
+            tabbedButtons->setBounds (box.removeFromTop (30));
+
         for (auto& child : children)
-            child->setBounds (getClientBounds());
+            child->setBounds (box);
     }
 
     for (auto& child : children)
         child->updateLayout();
+}
+
+void Container::updateSelectedTab()
+{
+    if (tabbedButtons.get() == nullptr)
+        return;
+
+    const auto selectedIndex = tabbedButtons->getCurrentTabIndex();
+
+    int index = 0;
+    for (auto& child : children)
+        child->setVisible (selectedIndex == index++);
 }
 
 std::vector<std::unique_ptr<Decorator>>::iterator Container::begin()

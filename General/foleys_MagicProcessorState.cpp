@@ -174,6 +174,11 @@ void MagicProcessorState::populateSettableOptionsMenu (juce::ComboBox& comboBox,
                 comboBox.addItem (p.first.toString(), ++index);
             break;
 
+        case SettableProperty::Justification:
+            for (const auto& p : MagicGUIBuilder::makeJustificationsChoices())
+                comboBox.addItem (p.name.toString(), ++index);
+            break;
+
         case SettableProperty::Trigger:
             for (const auto& p : triggers)
                 comboBox.addItem (p.first.toString(), ++index);
