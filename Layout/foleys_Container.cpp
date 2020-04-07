@@ -135,6 +135,7 @@ void Container::updateTabbedButtons()
 {
     tabbedButtons = std::make_unique<juce::TabbedButtonBar>(juce::TabbedButtonBar::TabsAtTop);
     addAndMakeVisible (*tabbedButtons);
+
     for (auto& child : children)
     {
         auto caption = child->tabCaption.isNotEmpty() ? child->tabCaption
@@ -142,22 +143,24 @@ void Container::updateTabbedButtons()
                                                                                     : "Tab " + juce::String (tabbedButtons->getNumTabs());
 
         tabbedButtons->addTab (caption, child->tabColour, -1);
-        tabbedButtons->getTabButton (tabbedButtons->getNumTabs()-1)->onClick = [&] { updateSelectedTab(); };
     }
 
+    tabbedButtons->addChangeListener (this);
+    tabbedButtons->setCurrentTabIndex (currentTab, false);
+    updateSelectedTab();
+}
+
+void Container::changeListenerCallback (juce::ChangeBroadcaster*)
+{
+    currentTab = tabbedButtons ? tabbedButtons->getCurrentTabIndex() : 0;
     updateSelectedTab();
 }
 
 void Container::updateSelectedTab()
 {
-    if (tabbedButtons.get() == nullptr)
-        return;
-
-    const auto selectedIndex = tabbedButtons->getCurrentTabIndex();
-
     int index = 0;
     for (auto& child : children)
-        child->setVisible (selectedIndex == index++);
+        child->setVisible (currentTab == index++);
 }
 
 std::vector<std::unique_ptr<Decorator>>::iterator Container::begin()

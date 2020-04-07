@@ -37,7 +37,8 @@ namespace foleys
  In the editor it is seen as "View". With the setting "display"
  the layout strategy can be chosen.
  */
-class Container : public Decorator
+class Container   : public Decorator,
+                    private juce::ChangeListener
 {
 public:
     enum class Layout
@@ -95,8 +96,12 @@ public:
 
 private:
 
+    void changeListenerCallback (juce::ChangeBroadcaster*) override;
+
     void updateTabbedButtons();
     void updateSelectedTab();
+
+    int  currentTab = 0;
 
     Layout layout = Layout::FlexBox;
 

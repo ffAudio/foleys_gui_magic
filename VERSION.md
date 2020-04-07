@@ -1,8 +1,13 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.1.1
+1.1.2
 -----
+
+- Bugfix: Selected Tab will stay when changes are made via editor
+
+1.1.1 - 06.04.2020
+------------------
 
 - Added tabbed containers
 - Bugfix: Fixed not showing XYDraggerComponent
