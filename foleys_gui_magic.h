@@ -92,6 +92,7 @@
 
 #include "Helpers/foleys_MouseLambdas.h"
 #include "Helpers/foleys_ParameterAttachment.h"
+#include "Helpers/foleys_AtomicValueAttachment.h"
 #include "Helpers/foleys_Conversions.h"
 
 #include "Layout/foleys_Stylesheet.h"

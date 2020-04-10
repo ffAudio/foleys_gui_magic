@@ -27,59 +27,50 @@
  ==============================================================================
  */
 
+#pragma once
 
 namespace foleys
 {
 
-MultiListPropertyComponent::MultiListPropertyComponent (const juce::Value& valueToControl, const juce::String& propertyName, const juce::StringArray &choicesToUse, const juce::String& separatorToUse, int preferredHeight)
-  : juce::PropertyComponent (propertyName, preferredHeight),
-    choices (choicesToUse),
-    separator (separatorToUse)
+/**
+ The AtomicValueAttachment allows to read from a Value in a thread safe manner.
+ You attach to a Value and call get() to read the current value.
+ */
+template<typename T>
+class AtomicValueAttachment : private juce::Value::Listener
 {
-    text.setEditable (true);
-    text.getTextValue().referTo (valueToControl);
-    text.onTextChange = [&]
+public:
+    AtomicValueAttachment()
     {
-        auto strings = juce::StringArray::fromTokens (text.getText(), separator, "");
-        strings.removeEmptyStrings (true);
-        text.setText (strings.joinIntoString (separator), juce::sendNotificationAsync);
-    };
+        internalValue.addListener (this);
+    }
 
-    addAndMakeVisible (text);
-    addAndMakeVisible (select);
-
-    select.onClick = [&]
+    /**
+     Let the attachment refer to the value.
+     */
+    void attachToValue (const juce::Value& value)
     {
-        auto strings = juce::StringArray::fromTokens (text.getText(), separator, "");
+        internalValue.referTo (value);
+        atomicValue.store (static_cast<T>(internalValue.getValue()));
+    }
 
-        juce::PopupMenu popup;
-        for (const auto& name : choices)
-            if (! strings.contains (name))
-                popup.addItem (name, [&]
-                {
-                    if (! strings.contains (name))
-                    {
-                        strings.add (name);
-                        strings.removeEmptyStrings (true);
-                        text.setText (strings.joinIntoString (separator), juce::sendNotificationAsync);
-                    }
-                });
+    /**
+     Return the current value of the property.
+     */
+    T get() const
+    {
+        return atomicValue.load();
+    }
 
-        popup.showAt (getScreenBounds());
-    };
+private:
+
+    void valueChanged (juce::Value&) override
+    {
+        atomicValue.store (static_cast<T>(internalValue.getValue()));
+    }
+
+    juce::Value    internalValue;
+    std::atomic<T> atomicValue;
+};
+
 }
-
-void MultiListPropertyComponent::refresh()
-{
-}
-
-void MultiListPropertyComponent::resized()
-{
-    auto area = getLookAndFeel().getPropertyComponentContentPosition (*this);
-
-    select.setBounds (area.removeFromRight (getHeight()));
-    text.setBounds (area);
-}
-
-
-} // namespace foleys
