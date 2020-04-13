@@ -91,10 +91,7 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
 
     updatePopupMenu();
 
-    if (stylesheet.isClassNode (styleItem) == false &&
-        stylesheet.isTypeNode (styleItem) == false &&
-        stylesheet.isIdNode (styleItem) == false)
-        addNodeProperties();
+    addNodeProperties();
 
     addDecoratorProperties();
 
@@ -163,14 +160,33 @@ void PropertiesEditor::deleteClass (const juce::String& name)
 
 void PropertiesEditor::addNodeProperties()
 {
+    const auto& stylesheet = builder.getStylesheet();
+
+    if (stylesheet.isTypeNode (styleItem) ||
+        stylesheet.isIdNode (styleItem))
+        return;
+
     juce::Array<juce::PropertyComponent*> array;
 
-    array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::id, &undo, true), IDs::id.toString(), 64, false, true));
+    if (stylesheet.isClassNode (styleItem))
+    {
+        array.add (new StyleBoolPropertyComponent (builder, IDs::recursive, styleItem));
 
-    auto classNames = builder.getStylesheet().getAllClassesNames();
-    array.add (new MultiListPropertyComponent (styleItem.getPropertyAsValue (IDs::styleClass, &undo, true), IDs::styleClass.toString(), classNames));
+        auto media = styleItem.getOrCreateChildWithName (IDs::media, &undo);
+        array.add (new StyleTextPropertyComponent (builder, IDs::minWidth, media));
+        array.add (new StyleTextPropertyComponent (builder, IDs::maxWidth, media));
+        array.add (new StyleTextPropertyComponent (builder, IDs::minHeight, media));
+        array.add (new StyleTextPropertyComponent (builder, IDs::maxHeight, media));
+        properties.addSection ("Class", array, false);
+    }
+    else
+    {
+        array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::id, &undo, true), IDs::id.toString(), 64, false, true));
 
-    properties.addSection ("Node", array, false);
+        auto classNames = builder.getStylesheet().getAllClassesNames();
+        array.add (new MultiListPropertyComponent (styleItem.getPropertyAsValue (IDs::styleClass, &undo, true), IDs::styleClass.toString(), classNames));
+        properties.addSection ("Node", array, false);
+    }
 }
 
 void PropertiesEditor::addDecoratorProperties()

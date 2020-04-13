@@ -4,6 +4,7 @@ PluginGuiMagic - Versions history
 1.1.2
 -----
 
+- Added class conditions to allow responsive layouts (media tag)
 - Bugfix: Selected Tab will stay when changes are made via editor
 
 1.1.1 - 06.04.2020

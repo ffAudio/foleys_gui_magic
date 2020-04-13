@@ -75,6 +75,8 @@ public:
      */
     virtual void updateLayout();
 
+    void configureFlexBoxItem (Stylesheet& item, const juce::ValueTree& node);
+
     /**
      Allows accessing the Component inside that Decorator. Don't keep this pointer!
      */

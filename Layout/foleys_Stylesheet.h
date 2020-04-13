@@ -50,12 +50,25 @@ public:
     void setStyle (const juce::ValueTree& node);
 
     /**
+     Set the size of the UI. This will be used to resolve the properties from the style classes.
+     @param width is the width of the UI
+     @param height is the height of the UI
+     @return false, if the properties are likely to have changed (because a conditional class became valid or invalid)
+     */
+    bool setMediaSize (int width, int height);
+
+    /**
+     Reads the range, in which the properties won't change due to conditional classes
+     */
+    void updateValidRanges();
+
+    /**
      This method traverses the dom and checks each style, if that property was defined.
 
      @param name the name of the property.
      @param node is the node in the DOM. This is used for inheritance by traversing upwards.
      */
-    juce::var getProperty (const juce::Identifier& name, const juce::ValueTree& node, bool inherit=true, juce::ValueTree* definedHere=nullptr) const;
+    juce::var getStyleProperty (const juce::Identifier& name, const juce::ValueTree& node, bool inherit=true, juce::ValueTree* definedHere=nullptr) const;
 
     /**
      Return the LookAndFeel for the node. Make sure never to remove a LookAndFeel, especially
@@ -111,10 +124,6 @@ public:
      */
     void registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel);
 
-    void configureFlexBox (juce::FlexBox& flexBox, const juce::ValueTree& node) const;
-
-    void configureFlexBoxItem (juce::FlexItem& item, const juce::ValueTree& node) const;
-
     /**
      This creates a default stylesheet from scratch, to allow the default GUI to look sensible.
      */
@@ -129,12 +138,24 @@ public:
     bool isIdNode (const juce::ValueTree& node) const;
 
 private:
+    struct SizeRange
+    {
+        juce::Range<int> width  { 0, std::numeric_limits<int>::max() };
+        juce::Range<int> height { 0, std::numeric_limits<int>::max() };
+    };
+
+    SizeRange getStyleClassRange (const juce::ValueTree& styleClass) const;
 
     juce::StringArray getParameters (const juce::String& text) const;
 
     juce::ValueTree   currentStyle;
 
     std::map<juce::String, std::unique_ptr<juce::LookAndFeel>> lookAndFeels;
+
+    int mediaWidth = 0;
+    int mediaHeight = 0;
+
+    SizeRange validMediaRanges;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Stylesheet)
 };

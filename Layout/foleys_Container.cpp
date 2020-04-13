@@ -150,6 +150,65 @@ void Container::updateTabbedButtons()
     updateSelectedTab();
 }
 
+void Container::configureFlexBox (const Stylesheet& stylesheet, const juce::ValueTree& node)
+{
+    flexBox = juce::FlexBox();
+
+    const auto direction = stylesheet.getStyleProperty (IDs::flexDirection, node).toString();
+    if (direction == IDs::flexDirRow)
+        flexBox.flexDirection = juce::FlexBox::Direction::row;
+    else if (direction == IDs::flexDirRowReverse)
+        flexBox.flexDirection = juce::FlexBox::Direction::rowReverse;
+    else if (direction == IDs::flexDirColumn)
+        flexBox.flexDirection = juce::FlexBox::Direction::column;
+    else if (direction == IDs::flexDirColumnReverse)
+        flexBox.flexDirection = juce::FlexBox::Direction::columnReverse;
+
+    const auto wrap = stylesheet.getStyleProperty (IDs::flexWrap, node).toString();
+    if (wrap == IDs::flexWrapNormal)
+        flexBox.flexWrap = juce::FlexBox::Wrap::wrap;
+    else if (wrap == IDs::flexWrapReverse)
+        flexBox.flexWrap = juce::FlexBox::Wrap::wrapReverse;
+    else
+        flexBox.flexWrap = juce::FlexBox::Wrap::noWrap;
+
+    const auto alignContent = stylesheet.getStyleProperty (IDs::flexAlignContent, node).toString();
+    if (alignContent == IDs::flexStart)
+        flexBox.alignContent = juce::FlexBox::AlignContent::flexStart;
+    else if (alignContent == IDs::flexEnd)
+        flexBox.alignContent = juce::FlexBox::AlignContent::flexEnd;
+    else if (alignContent == IDs::flexCenter)
+        flexBox.alignContent = juce::FlexBox::AlignContent::center;
+    else if (alignContent == IDs::flexSpaceAround)
+        flexBox.alignContent = juce::FlexBox::AlignContent::spaceAround;
+    else if (alignContent == IDs::flexSpaceBetween)
+        flexBox.alignContent = juce::FlexBox::AlignContent::spaceBetween;
+    else
+        flexBox.alignContent = juce::FlexBox::AlignContent::stretch;
+
+    const auto alignItems = stylesheet.getStyleProperty (IDs::flexAlignItems, node).toString();
+    if (alignItems == IDs::flexStart)
+        flexBox.alignItems = juce::FlexBox::AlignItems::flexStart;
+    else if (alignItems == IDs::flexEnd)
+        flexBox.alignItems = juce::FlexBox::AlignItems::flexEnd;
+    else if (alignItems == IDs::flexCenter)
+        flexBox.alignItems = juce::FlexBox::AlignItems::center;
+    else
+        flexBox.alignItems = juce::FlexBox::AlignItems::stretch;
+
+    const auto justify = stylesheet.getStyleProperty (IDs::flexJustifyContent, node).toString();
+    if (justify == IDs::flexEnd)
+        flexBox.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
+    else if (justify == IDs::flexCenter)
+        flexBox.justifyContent = juce::FlexBox::JustifyContent::center;
+    else if (justify == IDs::flexSpaceAround)
+        flexBox.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+    else if (justify == IDs::flexSpaceBetween)
+        flexBox.justifyContent = juce::FlexBox::JustifyContent::spaceBetween;
+    else
+        flexBox.justifyContent = juce::FlexBox::JustifyContent::flexStart;
+}
+
 void Container::changeListenerCallback (juce::ChangeBroadcaster*)
 {
     currentTab = tabbedButtons ? tabbedButtons->getCurrentTabIndex() : 0;

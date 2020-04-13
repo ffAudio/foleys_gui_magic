@@ -136,7 +136,11 @@ void MagicGUIBuilder::registerJUCEFactories()
                               { "combo-outline", juce::ComboBox::outlineColourId },
                               { "combo-button", juce::ComboBox::buttonColourId },
                               { "combo-arrow", juce::ComboBox::arrowColourId },
-                              { "combo-focused-outline", juce::ComboBox::focusedOutlineColourId }
+                              { "combo-focused-outline", juce::ComboBox::focusedOutlineColourId },
+                              { "combo-menu-background", juce::PopupMenu::backgroundColourId },
+                              { "combo-menu-background-highlight", juce::PopupMenu::highlightedBackgroundColourId },
+                              { "combo-menu-text", juce::PopupMenu::textColourId },
+                              { "combo-menu-text-highlight", juce::PopupMenu::highlightedTextColourId }
                           });
 
     addSettableProperty (IDs::comboBox,

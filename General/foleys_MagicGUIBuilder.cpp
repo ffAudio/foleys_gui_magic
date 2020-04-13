@@ -91,6 +91,8 @@ void MagicGUIBuilder::updateStylesheet()
     {
         stylesheet.setStyle (stylesNode.getChild (0));
     }
+
+    stylesheet.updateValidRanges();
 }
 
 void MagicGUIBuilder::clearGUI()
@@ -171,17 +173,15 @@ void MagicGUIBuilder::updateProperties (Decorator& item)
     const auto& configNode = item.getConfigNode();
 
     item.configureDecorator (stylesheet, configNode);
-
     item.configureComponent (stylesheet, configNode);
-
-    stylesheet.configureFlexBoxItem (item.flexItem, configNode);
+    item.configureFlexBoxItem (stylesheet, configNode);
 
     const auto translation = colourTranslations.find (configNode.getType());
     if (translation != colourTranslations.end() && item.getWrappedComponent() != nullptr)
     {
         for (auto& pair : translation->second)
         {
-            auto colour = stylesheet.getProperty (pair.first, configNode).toString();
+            auto colour = stylesheet.getStyleProperty (pair.first, configNode).toString();
             if (colour.isNotEmpty())
                 item.getWrappedComponent()->setColour (pair.second, stylesheet.parseColour (colour));
         }
@@ -189,13 +189,12 @@ void MagicGUIBuilder::updateProperties (Decorator& item)
 
     if (auto* container = dynamic_cast<Container*>(&item))
     {
-        stylesheet.configureFlexBoxItem (item.flexItem, configNode);
-        stylesheet.configureFlexBox (container->flexBox, configNode);
+        container->configureFlexBox (stylesheet, configNode);
 
         for (auto& child : *container)
             updateProperties (*child);
 
-        const auto display = stylesheet.getProperty (IDs::display, configNode).toString();
+        const auto display = stylesheet.getStyleProperty (IDs::display, configNode).toString();
         if (display == IDs::contents)
             container->setLayoutMode (Container::Layout::Contents);
         else if (display == IDs::tabbed)
@@ -203,7 +202,7 @@ void MagicGUIBuilder::updateProperties (Decorator& item)
         else
             container->setLayoutMode (Container::Layout::FlexBox);
 
-        auto throttle = stylesheet.getProperty (IDs::throttle, configNode).toString();
+        auto throttle = stylesheet.getStyleProperty (IDs::throttle, configNode).toString();
         if (throttle.isNotEmpty())
             container->setMaxFPSrate (throttle.getIntValue());
     }
@@ -216,6 +215,12 @@ void MagicGUIBuilder::updateLayout()
 
     if (root.get() != nullptr)
     {
+        if (! stylesheet.setMediaSize (parent->getWidth(), root->getHeight()))
+        {
+            stylesheet.updateValidRanges();
+            updateProperties (*root);
+        }
+
         if (root->getBounds() == parent->getLocalBounds())
             root->updateLayout();
         else
@@ -517,7 +522,10 @@ void MagicGUIBuilder::createDefaultGUITree (bool keepExisting)
 void MagicGUIBuilder::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
 {
     if (root)
+    {
+        stylesheet.updateValidRanges();
         updateProperties (*root);
+    }
 
     updateLayout();
 }

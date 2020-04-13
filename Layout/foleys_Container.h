@@ -92,7 +92,7 @@ public:
      */
     void updateLayout() override;
 
-    juce::FlexBox flexBox;
+    void configureFlexBox (const Stylesheet& stylesheet, const juce::ValueTree& node);
 
 private:
 
@@ -104,6 +104,7 @@ private:
     int  currentTab = 0;
 
     Layout layout = Layout::FlexBox;
+    juce::FlexBox flexBox;
 
     std::unique_ptr<juce::TabbedButtonBar>  tabbedButtons;
     std::vector<std::unique_ptr<Decorator>> children;

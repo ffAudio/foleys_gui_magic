@@ -134,6 +134,8 @@ namespace IDs
     static juce::String     flexSpaceAround     { "space-around" };
     static juce::String     flexAuto            { "auto" };
 
+    static juce::Identifier media       { "media" };
+    static juce::Identifier recursive   { "recursive" };
     static juce::Identifier minWidth    { "min-width" };
     static juce::Identifier maxWidth    { "max-width" };
     static juce::Identifier minHeight   { "min-height" };

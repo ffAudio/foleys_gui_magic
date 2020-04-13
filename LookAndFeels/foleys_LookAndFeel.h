@@ -42,6 +42,13 @@ public:
                            float sliderPosProportional, float rotaryStartAngle,
                            float rotaryEndAngle, juce::Slider&) override;
 
+    //==============================================================================
+
+    void drawComboBox (juce::Graphics&, int width, int height, bool isButtonDown,
+                       int buttonX, int buttonY, int buttonW, int buttonH,
+                       juce::ComboBox&) override;
+
+    void positionComboBoxText (juce::ComboBox&, juce::Label& labelToPosition) override;
 
 private:
 
