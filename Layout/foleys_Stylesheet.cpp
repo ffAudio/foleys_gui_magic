@@ -140,7 +140,7 @@ juce::var Stylesheet::getStyleProperty (const juce::Identifier& name, const juce
     return {};
 }
 
-juce::Colour Stylesheet::parseColour (const juce::String& name) const
+juce::Colour Stylesheet::parseColour (const juce::String& name)
 {
     return juce::Colours::findColourForName (name, juce::Colour::fromString (name.length() < 8 ? "ff" + name : name));
 }
@@ -205,7 +205,7 @@ juce::Array<juce::Colour> Stylesheet::getBackgroundGradient (const juce::ValueTr
 
         juce::Array<juce::Colour> colours;
         for (int i=0; i < parameters.size(); ++i)
-            colours.add (parseColour (parameters [i].trim()));
+            colours.add (Stylesheet::parseColour (parameters [i].trim()));
 
         return colours;
     }

@@ -57,60 +57,60 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
 {
     auto* processorState = magicBuilder.getProcessorState();
 
-    auto visibilityNode = stylesheet.getStyleProperty (IDs::visibility, node);
+    auto visibilityNode = magicBuilder.getStyleProperty (IDs::visibility, node);
     if (! visibilityNode.isVoid() && processorState)
         visibility.referTo (processorState->getPropertyAsValue (visibilityNode.toString()));
 
-    auto bg = stylesheet.getStyleProperty (IDs::backgroundColour, node);
+    auto bg = magicBuilder.getStyleProperty (IDs::backgroundColour, node);
     if (! bg.isVoid())
-        backgroundColour = stylesheet.parseColour (bg.toString());
+        backgroundColour = Stylesheet::parseColour (bg.toString());
 
-    auto bcVar = stylesheet.getStyleProperty (IDs::borderColour, node);
+    auto bcVar = magicBuilder.getStyleProperty (IDs::borderColour, node);
     if (! bcVar.isVoid())
-        borderColour = stylesheet.parseColour (bcVar.toString());
+        borderColour = Stylesheet::parseColour (bcVar.toString());
 
-    auto borderVar = stylesheet.getStyleProperty (IDs::border, node);
+    auto borderVar = magicBuilder.getStyleProperty (IDs::border, node);
     if (! borderVar.isVoid())
         border = static_cast<float> (borderVar);
 
-    auto marginVar = stylesheet.getStyleProperty (IDs::margin, node);
+    auto marginVar = magicBuilder.getStyleProperty (IDs::margin, node);
     if (! marginVar.isVoid())
         margin = static_cast<float> (marginVar);
 
-    auto paddingVar = stylesheet.getStyleProperty (IDs::padding, node);
+    auto paddingVar = magicBuilder.getStyleProperty (IDs::padding, node);
     if (! paddingVar.isVoid())
         padding = static_cast<float> (paddingVar);
 
-    auto radiusVar = stylesheet.getStyleProperty (IDs::radius, node);
+    auto radiusVar = magicBuilder.getStyleProperty (IDs::radius, node);
     if (! radiusVar.isVoid())
         radius = static_cast<float> (radiusVar);
 
     caption    = node.getProperty (IDs::caption, juce::String());
     tabCaption = node.getProperty (IDs::tabCaption, juce::String());
-    auto tc    = stylesheet.getStyleProperty (IDs::tabColour, node);
+    auto tc    = magicBuilder.getStyleProperty (IDs::tabColour, node);
     if (! tc.isVoid())
-        tabColour = stylesheet.parseColour (tc.toString());
+        tabColour = Stylesheet::parseColour (tc.toString());
 
-    auto sizeVar = stylesheet.getStyleProperty (IDs::captionSize, node);
+    auto sizeVar = magicBuilder.getStyleProperty (IDs::captionSize, node);
     if (! sizeVar.isVoid())
         captionSize = static_cast<float> (sizeVar);
 
-    auto ccVar = stylesheet.getStyleProperty (IDs::captionColour, node);
+    auto ccVar = magicBuilder.getStyleProperty (IDs::captionColour, node);
     if (! ccVar.isVoid())
-        captionColour = stylesheet.parseColour (ccVar.toString());
+        captionColour = Stylesheet::parseColour (ccVar.toString());
 
-    auto placementVar = stylesheet.getStyleProperty (IDs::captionPlacement, node);
+    auto placementVar = magicBuilder.getStyleProperty (IDs::captionPlacement, node);
     if (! placementVar.isVoid())
         justification = juce::Justification (MagicGUIBuilder::makeJustificationsChoices()[placementVar.toString()]);
 
     backgroundImage = stylesheet.getBackgroundImage (node);
     backgroundFill  = stylesheet.getBackgroundGradient (node);
 
-    auto alphaVar = stylesheet.getStyleProperty (IDs::backgroundAlpha, node);
+    auto alphaVar = magicBuilder.getStyleProperty (IDs::backgroundAlpha, node);
     if (! alphaVar.isVoid())
         backgroundAlpha = static_cast<float> (alphaVar);
 
-    auto backPlacement = stylesheet.getStyleProperty (IDs::imagePlacement, node);
+    auto backPlacement = magicBuilder.getStyleProperty (IDs::imagePlacement, node);
     if (! backPlacement.isVoid())
     {
         if (backPlacement.toString() == IDs::imageStretch)
@@ -128,7 +128,7 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
 
         if (auto* tooltipClient = dynamic_cast<juce::SettableTooltipClient*>(component.get()))
         {
-            auto tooltip = stylesheet.getStyleProperty (IDs::tooltip, node).toString();
+            auto tooltip = magicBuilder.getStyleProperty (IDs::tooltip, node).toString();
             if (tooltip.isNotEmpty())
                 tooltipClient->setTooltip (tooltip);
         }
@@ -148,47 +148,47 @@ void Decorator::configureComponent (Stylesheet& stylesheet, const juce::ValueTre
     }
 }
 
-void Decorator::configureFlexBoxItem (Stylesheet& stylesheet, const juce::ValueTree& node)
+void Decorator::configureFlexBoxItem (const juce::ValueTree& node)
 {
     flexItem = juce::FlexItem (*this).withFlex (1.0f);
 
-    const auto minWidth = stylesheet.getStyleProperty (IDs::minWidth, node);
+    const auto minWidth = magicBuilder.getStyleProperty (IDs::minWidth, node);
     if (! minWidth.isVoid())
         flexItem.minWidth = minWidth;
 
-    const auto maxWidth = stylesheet.getStyleProperty (IDs::maxWidth, node);
+    const auto maxWidth = magicBuilder.getStyleProperty (IDs::maxWidth, node);
     if (! maxWidth.isVoid())
         flexItem.maxWidth = maxWidth;
 
-    const auto minHeight = stylesheet.getStyleProperty (IDs::minHeight, node);
+    const auto minHeight = magicBuilder.getStyleProperty (IDs::minHeight, node);
     if (! minHeight.isVoid())
         flexItem.minHeight = minHeight;
 
-    const auto maxHeight = stylesheet.getStyleProperty (IDs::maxHeight, node);
+    const auto maxHeight = magicBuilder.getStyleProperty (IDs::maxHeight, node);
     if (! maxHeight.isVoid())
         flexItem.maxHeight = maxHeight;
 
-    const auto width = stylesheet.getStyleProperty (IDs::width, node);
+    const auto width = magicBuilder.getStyleProperty (IDs::width, node);
     if (! width.isVoid())
         flexItem.width = width;
 
-    const auto height = stylesheet.getStyleProperty (IDs::height, node);
+    const auto height = magicBuilder.getStyleProperty (IDs::height, node);
     if (! height.isVoid())
         flexItem.height = height;
 
-    auto grow = stylesheet.getStyleProperty (IDs::flexGrow, node);
+    auto grow = magicBuilder.getStyleProperty (IDs::flexGrow, node);
     if (! grow.isVoid())
         flexItem.flexGrow = grow;
 
-    const auto flexShrink = stylesheet.getStyleProperty (IDs::flexShrink, node);
+    const auto flexShrink = magicBuilder.getStyleProperty (IDs::flexShrink, node);
     if (! flexShrink.isVoid())
         flexItem.flexShrink = flexShrink;
 
-    const auto flexOrder = stylesheet.getStyleProperty (IDs::flexOrder, node);
+    const auto flexOrder = magicBuilder.getStyleProperty (IDs::flexOrder, node);
     if (! flexOrder.isVoid())
         flexItem.order = flexOrder;
 
-    const auto alignSelf = stylesheet.getStyleProperty (IDs::flexAlignSelf, node).toString();
+    const auto alignSelf = magicBuilder.getStyleProperty (IDs::flexAlignSelf, node).toString();
     if (alignSelf == IDs::flexStart)
         flexItem.alignSelf = juce::FlexItem::AlignSelf::flexStart;
     else if (alignSelf == IDs::flexEnd)

@@ -174,27 +174,27 @@ void MagicGUIBuilder::updateProperties (Decorator& item)
 
     item.configureDecorator (stylesheet, configNode);
     item.configureComponent (stylesheet, configNode);
-    item.configureFlexBoxItem (stylesheet, configNode);
+    item.configureFlexBoxItem (configNode);
 
     const auto translation = colourTranslations.find (configNode.getType());
     if (translation != colourTranslations.end() && item.getWrappedComponent() != nullptr)
     {
         for (auto& pair : translation->second)
         {
-            auto colour = stylesheet.getStyleProperty (pair.first, configNode).toString();
+            auto colour = getStyleProperty (pair.first, configNode).toString();
             if (colour.isNotEmpty())
-                item.getWrappedComponent()->setColour (pair.second, stylesheet.parseColour (colour));
+                item.getWrappedComponent()->setColour (pair.second, Stylesheet::parseColour (colour));
         }
     }
 
     if (auto* container = dynamic_cast<Container*>(&item))
     {
-        container->configureFlexBox (stylesheet, configNode);
+        container->configureFlexBox (configNode);
 
         for (auto& child : *container)
             updateProperties (*child);
 
-        const auto display = stylesheet.getStyleProperty (IDs::display, configNode).toString();
+        const auto display = getStyleProperty (IDs::display, configNode).toString();
         if (display == IDs::contents)
             container->setLayoutMode (Container::Layout::Contents);
         else if (display == IDs::tabbed)
@@ -202,7 +202,7 @@ void MagicGUIBuilder::updateProperties (Decorator& item)
         else
             container->setLayoutMode (Container::Layout::FlexBox);
 
-        auto throttle = stylesheet.getStyleProperty (IDs::throttle, configNode).toString();
+        auto throttle = getStyleProperty (IDs::throttle, configNode).toString();
         if (throttle.isNotEmpty())
             container->setMaxFPSrate (throttle.getIntValue());
     }
@@ -215,7 +215,7 @@ void MagicGUIBuilder::updateLayout()
 
     if (root.get() != nullptr)
     {
-        if (! stylesheet.setMediaSize (parent->getWidth(), root->getHeight()))
+        if (! stylesheet.setMediaSize (parent->getWidth(), parent->getHeight()))
         {
             stylesheet.updateValidRanges();
             updateProperties (*root);
@@ -288,6 +288,11 @@ void MagicGUIBuilder::setColourTranslation (juce::Identifier type, std::vector<s
     }
 
     colourTranslations [type] = mapping;
+}
+
+juce::var MagicGUIBuilder::getStyleProperty (const juce::Identifier& name, const juce::ValueTree& node) const
+{
+    return stylesheet.getStyleProperty (name, node);
 }
 
 int MagicGUIBuilder::findColourId (juce::Identifier type, juce::Identifier name)

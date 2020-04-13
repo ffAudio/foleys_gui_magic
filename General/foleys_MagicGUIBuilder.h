@@ -125,6 +125,14 @@ public:
     void setColourTranslation (juce::Identifier type, std::vector<std::pair<juce::String, int>> mapping);
 
     /**
+     This method traverses the dom and checks each style, if that property was defined.
+
+     @param name the name of the property.
+     @param node is the node in the DOM. This is used for inheritance by traversing upwards.
+     */
+    juce::var getStyleProperty (const juce::Identifier& name, const juce::ValueTree& node) const;
+
+    /**
      Looks up the ColourId for a given type
      */
     int findColourId (juce::Identifier type, juce::Identifier name);

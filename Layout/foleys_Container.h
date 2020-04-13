@@ -92,7 +92,7 @@ public:
      */
     void updateLayout() override;
 
-    void configureFlexBox (const Stylesheet& stylesheet, const juce::ValueTree& node);
+    void configureFlexBox (const juce::ValueTree& node);
 
 private:
 

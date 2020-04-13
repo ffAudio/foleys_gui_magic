@@ -59,7 +59,7 @@ StyleColourPropertyComponent::StyleColourPropertyComponent (MagicGUIBuilder& bui
         {
             if (label->getText().isNotEmpty())
             {
-                currentColour = builder.getStylesheet().parseColour (label->getText());
+                currentColour = Stylesheet::parseColour (label->getText());
             }
             else
             {
@@ -144,7 +144,7 @@ void StyleColourPropertyComponent::getLookAndFeelColourFallback()
 
 void StyleColourPropertyComponent::valueChanged (juce::Value& value)
 {
-    auto colour = builder.getStylesheet().parseColour (value.getValue().toString());
+    auto colour = Stylesheet::parseColour (value.getValue().toString());
     setColourDisplay (colour);
 }
 

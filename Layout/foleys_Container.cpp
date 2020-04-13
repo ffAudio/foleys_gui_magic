@@ -150,11 +150,11 @@ void Container::updateTabbedButtons()
     updateSelectedTab();
 }
 
-void Container::configureFlexBox (const Stylesheet& stylesheet, const juce::ValueTree& node)
+void Container::configureFlexBox (const juce::ValueTree& node)
 {
     flexBox = juce::FlexBox();
 
-    const auto direction = stylesheet.getStyleProperty (IDs::flexDirection, node).toString();
+    const auto direction = magicBuilder.getStyleProperty (IDs::flexDirection, node).toString();
     if (direction == IDs::flexDirRow)
         flexBox.flexDirection = juce::FlexBox::Direction::row;
     else if (direction == IDs::flexDirRowReverse)
@@ -164,7 +164,7 @@ void Container::configureFlexBox (const Stylesheet& stylesheet, const juce::Valu
     else if (direction == IDs::flexDirColumnReverse)
         flexBox.flexDirection = juce::FlexBox::Direction::columnReverse;
 
-    const auto wrap = stylesheet.getStyleProperty (IDs::flexWrap, node).toString();
+    const auto wrap = magicBuilder.getStyleProperty (IDs::flexWrap, node).toString();
     if (wrap == IDs::flexWrapNormal)
         flexBox.flexWrap = juce::FlexBox::Wrap::wrap;
     else if (wrap == IDs::flexWrapReverse)
@@ -172,7 +172,7 @@ void Container::configureFlexBox (const Stylesheet& stylesheet, const juce::Valu
     else
         flexBox.flexWrap = juce::FlexBox::Wrap::noWrap;
 
-    const auto alignContent = stylesheet.getStyleProperty (IDs::flexAlignContent, node).toString();
+    const auto alignContent = magicBuilder.getStyleProperty (IDs::flexAlignContent, node).toString();
     if (alignContent == IDs::flexStart)
         flexBox.alignContent = juce::FlexBox::AlignContent::flexStart;
     else if (alignContent == IDs::flexEnd)
@@ -186,7 +186,7 @@ void Container::configureFlexBox (const Stylesheet& stylesheet, const juce::Valu
     else
         flexBox.alignContent = juce::FlexBox::AlignContent::stretch;
 
-    const auto alignItems = stylesheet.getStyleProperty (IDs::flexAlignItems, node).toString();
+    const auto alignItems = magicBuilder.getStyleProperty (IDs::flexAlignItems, node).toString();
     if (alignItems == IDs::flexStart)
         flexBox.alignItems = juce::FlexBox::AlignItems::flexStart;
     else if (alignItems == IDs::flexEnd)
@@ -196,7 +196,7 @@ void Container::configureFlexBox (const Stylesheet& stylesheet, const juce::Valu
     else
         flexBox.alignItems = juce::FlexBox::AlignItems::stretch;
 
-    const auto justify = stylesheet.getStyleProperty (IDs::flexJustifyContent, node).toString();
+    const auto justify = magicBuilder.getStyleProperty (IDs::flexJustifyContent, node).toString();
     if (justify == IDs::flexEnd)
         flexBox.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
     else if (justify == IDs::flexCenter)

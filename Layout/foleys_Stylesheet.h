@@ -95,7 +95,7 @@ public:
 
      @param name a string representing the colour, can be an actual name or a RGB tuple or ARGB tuple.
      */
-    juce::Colour parseColour (const juce::String& name) const;
+    static juce::Colour parseColour (const juce::String& name);
 
     juce::ValueTree getCurrentStyle() const;
 
