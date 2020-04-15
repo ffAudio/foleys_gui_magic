@@ -170,23 +170,30 @@ void PropertiesEditor::addNodeProperties()
 
     if (stylesheet.isClassNode (styleItem))
     {
-        array.add (new StyleBoolPropertyComponent (builder, IDs::recursive, styleItem));
+        array.add (new juce::BooleanPropertyComponent (styleItem.getPropertyAsValue (IDs::recursive, &undo), IDs::recursive.toString(), {}));
 
         auto media = styleItem.getOrCreateChildWithName (IDs::media, &undo);
-        array.add (new StyleTextPropertyComponent (builder, IDs::minWidth, media));
-        array.add (new StyleTextPropertyComponent (builder, IDs::maxWidth, media));
-        array.add (new StyleTextPropertyComponent (builder, IDs::minHeight, media));
-        array.add (new StyleTextPropertyComponent (builder, IDs::maxHeight, media));
+        array.add (new juce::TextPropertyComponent (media.getPropertyAsValue (IDs::minWidth, &undo), IDs::minWidth.toString(), 10, false));
+        array.add (new juce::TextPropertyComponent (media.getPropertyAsValue (IDs::maxWidth, &undo), IDs::maxWidth.toString(), 10, false));
+        array.add (new juce::TextPropertyComponent (media.getPropertyAsValue (IDs::minHeight, &undo), IDs::minHeight.toString(), 10, false));
+        array.add (new juce::TextPropertyComponent (media.getPropertyAsValue (IDs::maxHeight, &undo), IDs::maxHeight.toString(), 10, false));
         properties.addSection ("Class", array, false);
+        return;
     }
-    else
-    {
-        array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::id, &undo, true), IDs::id.toString(), 64, false, true));
 
-        auto classNames = builder.getStylesheet().getAllClassesNames();
-        array.add (new MultiListPropertyComponent (styleItem.getPropertyAsValue (IDs::styleClass, &undo, true), IDs::styleClass.toString(), classNames));
-        properties.addSection ("Node", array, false);
+    array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::id, &undo, true), IDs::id.toString(), 64, false, true));
+
+    if (styleItem == builder.getGuiRootNode())
+    {
+        array.add (new juce::BooleanPropertyComponent (styleItem.getPropertyAsValue (IDs::resizable, &undo), IDs::resizable.toString(), {}));
+        array.add (new juce::BooleanPropertyComponent (styleItem.getPropertyAsValue (IDs::resizeCorner, &undo), IDs::resizeCorner.toString(), {}));
+        array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::width, &undo), IDs::width.toString(), 8, false));
+        array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::height, &undo), IDs::height.toString(), 8, false));
     }
+
+    auto classNames = builder.getStylesheet().getAllClassesNames();
+    array.add (new MultiListPropertyComponent (styleItem.getPropertyAsValue (IDs::styleClass, &undo, true), IDs::styleClass.toString(), classNames));
+    properties.addSection ("Node", array, false);
 }
 
 void PropertiesEditor::addDecoratorProperties()

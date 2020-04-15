@@ -4,6 +4,7 @@ PluginGuiMagic - Versions history
 1.1.2
 -----
 
+- Resizable can be switched on and off, together with default size
 - Added class conditions to allow responsive layouts (media tag)
 - Bugfix: Selected Tab will stay when changes are made via editor
 

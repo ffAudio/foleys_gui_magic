@@ -35,6 +35,8 @@ namespace foleys
 namespace IDs
 {
     static juce::Identifier magic        { "magic" };
+    static juce::Identifier resizable    { "resizable" };
+    static juce::Identifier resizeCorner { "resize-corner" };
     static juce::Identifier styles       { "Styles" };
     static juce::Identifier style        { "Style" };
     static juce::Identifier view         { "View" };
