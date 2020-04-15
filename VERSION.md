@@ -1,8 +1,8 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.1.2
------
+1.1.2 - 16.04.2020
+------------------
 
 - Resizable can be switched on and off, together with default size
 - Added class conditions to allow responsive layouts (media tag)
@@ -20,7 +20,7 @@ PluginGuiMagic - Versions history
 - Added note of the dual licensing
 - Label can display a dynamic text
 - Added font-size and justification to Label
-- Toolbox an be detached and set always on top (thanks Benedikt)
+- Toolbox can be detached and set always on top (thanks Benedikt)
 
 1.0.9 - 30.03.2020
 ------------------
