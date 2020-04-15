@@ -450,6 +450,11 @@ MagicProcessorState* MagicGUIBuilder::getProcessorState()
     return magicState;
 }
 
+juce::UndoManager& MagicGUIBuilder::getUndoManager()
+{
+    return undo;
+}
+
 void MagicGUIBuilder::createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree)
 {
     for (const auto& sub : tree.getSubgroups (false))
@@ -634,11 +639,6 @@ ToolBox& MagicGUIBuilder::getMagicToolBox()
     jassert (magicToolBox.get() != nullptr);
 
     return *magicToolBox;
-}
-
-juce::UndoManager& MagicGUIBuilder::getUndoManager()
-{
-    return undo;
 }
 
 #endif

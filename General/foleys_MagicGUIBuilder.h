@@ -208,6 +208,8 @@ public:
 
     MagicProcessorState* getProcessorState();
 
+    juce::UndoManager& getUndoManager();
+
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     void attachToolboxToWindow (juce::Component& window);
 
@@ -223,7 +225,6 @@ public:
     void draggedItemOnto (juce::ValueTree dropped, juce::ValueTree target, int index=-1);
 
     ToolBox& getMagicToolBox();
-    juce::UndoManager& getUndoManager();
 #endif
 
 private:
