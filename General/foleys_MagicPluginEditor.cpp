@@ -96,20 +96,30 @@ std::unique_ptr<MagicGUIBuilder> MagicPluginEditor::createBuilderInstance()
 
 void MagicPluginEditor::updateSize()
 {
-    int width = builder->getStyleProperty (IDs::width, builder->getGuiRootNode());
-    if (width < 10) width = 600;
-    int height = builder->getStyleProperty (IDs::height, builder->getGuiRootNode());
-    if (height < 10) height = 400;
+    const auto rootNode = builder->getGuiRootNode();
+
+    int width = rootNode.getProperty (IDs::width, 600);
+    int height = rootNode.getProperty (IDs::height, 400);
 
     bool resizable = builder->getStyleProperty (IDs::resizable, builder->getGuiRootNode());
     bool resizeCorner = builder->getStyleProperty (IDs::resizeCorner, builder->getGuiRootNode());
 
-#if !JUCE_IOS
-    setResizable (resizable, resizeCorner);
+#if JUCE_IOS
+    resizable = false;
+    resizeCorner = false;
 #endif
 
     if (resizable)
+    {
         processorState.getLastEditorSize (width, height);
+
+        int minWidth = rootNode.getProperty (IDs::minWidth, 10);
+        int minHeight = rootNode.getProperty (IDs::minHeight, 10);
+        int maxWidth = rootNode.getProperty (IDs::maxWidth, std::numeric_limits<int>::max());
+        int maxHeight = rootNode.getProperty (IDs::maxHeight, std::numeric_limits<int>::max());
+        setResizeLimits (minWidth, minHeight, maxWidth, maxHeight);
+        setResizable (resizable, resizeCorner);
+    }
 
     setSize (width, height);
 }
