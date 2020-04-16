@@ -1,6 +1,11 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.1.3
+-----
+
+- Added minimum and maximum size for the editor
+
 1.1.2 - 16.04.2020
 ------------------
 

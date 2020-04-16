@@ -189,6 +189,10 @@ void PropertiesEditor::addNodeProperties()
         array.add (new juce::BooleanPropertyComponent (styleItem.getPropertyAsValue (IDs::resizeCorner, &undo), IDs::resizeCorner.toString(), {}));
         array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::width, &undo), IDs::width.toString(), 8, false));
         array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::height, &undo), IDs::height.toString(), 8, false));
+        array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::minWidth, &undo), IDs::minWidth.toString(), 8, false));
+        array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::maxWidth, &undo), IDs::maxWidth.toString(), 8, false));
+        array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::minHeight, &undo), IDs::minHeight.toString(), 8, false));
+        array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::maxHeight, &undo), IDs::maxHeight.toString(), 8, false));
     }
 
     auto classNames = builder.getStylesheet().getAllClassesNames();
