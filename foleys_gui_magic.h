@@ -30,7 +30,7 @@
 
     ID:            foleys_gui_magic
     vendor:        Foleys Finest Audio Ltd.
-    version:       1.1.2
+    version:       1.1.3
     name:          Foleys GUI magic
     description:   This module allows to create GUI with a drag and drop editor
     dependencies:  juce_core, juce_audio_basics, juce_audio_devices, juce_audio_formats,
