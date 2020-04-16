@@ -37,7 +37,40 @@ void Stylesheet::setStyle (const juce::ValueTree& node)
     currentStyle = node;
 }
 
-juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::ValueTree& node, bool inherit, juce::ValueTree* definedHere) const
+bool Stylesheet::setMediaSize (int width, int height)
+{
+    mediaWidth = width;
+    mediaHeight = height;
+
+    return (validMediaRanges.width.contains (width) &&
+            validMediaRanges.height.contains (height));
+}
+
+void Stylesheet::updateValidRanges()
+{
+    validMediaRanges = Stylesheet::SizeRange();
+
+    for (const auto& styleClass : currentStyle.getChildWithName (IDs::classes))
+    {
+        auto range = getStyleClassRange (styleClass);
+
+        if (mediaWidth < range.width.getStart())
+            validMediaRanges.width.setEnd (std::min (validMediaRanges.width.getEnd(), range.width.getStart()));
+        else if (mediaWidth < range.width.getEnd())
+            validMediaRanges.width = validMediaRanges.width.getIntersectionWith (range.width);
+        else
+            validMediaRanges.width.setStart (std::max (validMediaRanges.width.getStart(), range.width.getEnd()));
+
+        if (mediaHeight < range.height.getStart())
+            validMediaRanges.height.setEnd (std::min (validMediaRanges.height.getEnd(), range.height.getStart()));
+        else if (mediaHeight < range.height.getEnd())
+            validMediaRanges.height = validMediaRanges.height.getIntersectionWith (range.height);
+        else
+            validMediaRanges.height.setStart (std::max (validMediaRanges.height.getStart(), range.height.getEnd()));
+    }
+}
+
+juce::var Stylesheet::getStyleProperty (const juce::Identifier& name, const juce::ValueTree& node, bool inherit, juce::ValueTree* definedHere) const
 {
     if (inherit && node.hasProperty (name))
     {
@@ -68,30 +101,38 @@ juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::Val
 
         auto classesNode = currentStyle.getChildWithName (IDs::classes);
         auto classNode = classesNode.getChildWithName (className);
-        if (classNode.hasProperty (name))
-        {
-            if (definedHere)
-                *definedHere = classNode;
 
-            return classNode.getProperty (name);
+        if (bool (classNode.getProperty (IDs::recursive, false)) == false && !inherit)
+            continue;
+
+        auto media = getStyleClassRange (classNode);
+        if (media.width.contains (mediaWidth) && media.height.contains (mediaHeight))
+        {
+            if (classNode.hasProperty (name))
+            {
+                if (definedHere)
+                    *definedHere = classNode;
+
+                return classNode.getProperty (name);
+            }
         }
-    }
 
-    if (inherit)
-    {
-        auto typeNode = currentStyle.getChildWithName (IDs::types).getChildWithName (node.getType());
-        if (typeNode.isValid() && typeNode.hasProperty (name))
+        if (inherit)
         {
-            if (definedHere)
-                *definedHere = typeNode;
+            auto typeNode = currentStyle.getChildWithName (IDs::types).getChildWithName (node.getType());
+            if (typeNode.isValid() && typeNode.hasProperty (name))
+            {
+                if (definedHere)
+                    *definedHere = typeNode;
 
-            return typeNode.getProperty (name);
+                return typeNode.getProperty (name);
+            }
         }
     }
 
     auto parent = node.getParent();
     if (parent.isValid() && parent.getType() != IDs::magic)
-        return getProperty (name, parent, false, definedHere);
+        return getStyleProperty (name, parent, false, definedHere);
 
     if (definedHere)
         *definedHere = juce::ValueTree();
@@ -99,14 +140,31 @@ juce::var Stylesheet::getProperty (const juce::Identifier& name, const juce::Val
     return {};
 }
 
-juce::Colour Stylesheet::parseColour (const juce::String& name) const
+juce::Colour Stylesheet::parseColour (const juce::String& name)
 {
     return juce::Colours::findColourForName (name, juce::Colour::fromString (name.length() < 8 ? "ff" + name : name));
 }
 
+Stylesheet::SizeRange Stylesheet::getStyleClassRange (const juce::ValueTree& styleClass) const
+{
+    auto media = styleClass.getChildWithName (IDs::media);
+    if (media.isValid())
+    {
+        return
+        {
+            { int (media.getProperty (IDs::minWidth, 0)),
+                int (media.getProperty (IDs::maxWidth, std::numeric_limits<int>::max())) },
+            { int (media.getProperty (IDs::minHeight, 0)),
+                int (media.getProperty (IDs::maxHeight, std::numeric_limits<int>::max())) }
+        };
+    }
+
+    return Stylesheet::SizeRange();
+}
+
 juce::LookAndFeel* Stylesheet::getLookAndFeel (const juce::ValueTree& node) const
 {
-    auto lnf = getProperty (IDs::lookAndFeel, node).toString();
+    auto lnf = getStyleProperty (IDs::lookAndFeel, node).toString();
     if (lnf.isNotEmpty())
     {
         const auto& it = lookAndFeels.find (lnf);
@@ -128,7 +186,7 @@ juce::StringArray Stylesheet::getLookAndFeelNames() const
 
 juce::Image Stylesheet::getBackgroundImage (const juce::ValueTree& node) const
 {
-    auto name = getProperty (IDs::backgroundImage, node);
+    auto name = getStyleProperty (IDs::backgroundImage, node);
     if (name.isVoid())
         return {};
 
@@ -137,7 +195,7 @@ juce::Image Stylesheet::getBackgroundImage (const juce::ValueTree& node) const
 
 juce::Array<juce::Colour> Stylesheet::getBackgroundGradient (const juce::ValueTree& node) const
 {
-    auto text = getProperty (IDs::backgroundGradient, node).toString();
+    auto text = getStyleProperty (IDs::backgroundGradient, node).toString();
 
     if (text.startsWith (IDs::linearGradient))
     {
@@ -147,7 +205,7 @@ juce::Array<juce::Colour> Stylesheet::getBackgroundGradient (const juce::ValueTr
 
         juce::Array<juce::Colour> colours;
         for (int i=0; i < parameters.size(); ++i)
-            colours.add (parseColour (parameters [i].trim()));
+            colours.add (Stylesheet::parseColour (parameters [i].trim()));
 
         return colours;
     }
@@ -197,114 +255,6 @@ void Stylesheet::registerLookAndFeel (juce::String name, std::unique_ptr<juce::L
     }
 
     lookAndFeels [name] = std::move (lookAndFeel);
-}
-
-void Stylesheet::configureFlexBox (juce::FlexBox& flexBox, const juce::ValueTree& node) const
-{
-    const auto direction = getProperty (IDs::flexDirection, node).toString();
-    if (direction == IDs::flexDirRow)
-        flexBox.flexDirection = juce::FlexBox::Direction::row;
-    else if (direction == IDs::flexDirRowReverse)
-        flexBox.flexDirection = juce::FlexBox::Direction::rowReverse;
-    else if (direction == IDs::flexDirColumn)
-        flexBox.flexDirection = juce::FlexBox::Direction::column;
-    else if (direction == IDs::flexDirColumnReverse)
-        flexBox.flexDirection = juce::FlexBox::Direction::columnReverse;
-
-    const auto wrap = getProperty (IDs::flexWrap, node).toString();
-    if (wrap == IDs::flexWrapNormal)
-        flexBox.flexWrap = juce::FlexBox::Wrap::wrap;
-    else if (wrap == IDs::flexWrapReverse)
-        flexBox.flexWrap = juce::FlexBox::Wrap::wrapReverse;
-    else
-        flexBox.flexWrap = juce::FlexBox::Wrap::noWrap;
-
-    const auto alignContent = getProperty (IDs::flexAlignContent, node).toString();
-    if (alignContent == IDs::flexStart)
-        flexBox.alignContent = juce::FlexBox::AlignContent::flexStart;
-    else if (alignContent == IDs::flexEnd)
-        flexBox.alignContent = juce::FlexBox::AlignContent::flexEnd;
-    else if (alignContent == IDs::flexCenter)
-        flexBox.alignContent = juce::FlexBox::AlignContent::center;
-    else if (alignContent == IDs::flexSpaceAround)
-        flexBox.alignContent = juce::FlexBox::AlignContent::spaceAround;
-    else if (alignContent == IDs::flexSpaceBetween)
-        flexBox.alignContent = juce::FlexBox::AlignContent::spaceBetween;
-    else
-        flexBox.alignContent = juce::FlexBox::AlignContent::stretch;
-
-    const auto alignItems = getProperty (IDs::flexAlignItems, node).toString();
-    if (alignItems == IDs::flexStart)
-        flexBox.alignItems = juce::FlexBox::AlignItems::flexStart;
-    else if (alignItems == IDs::flexEnd)
-        flexBox.alignItems = juce::FlexBox::AlignItems::flexEnd;
-    else if (alignItems == IDs::flexCenter)
-        flexBox.alignItems = juce::FlexBox::AlignItems::center;
-    else
-        flexBox.alignItems = juce::FlexBox::AlignItems::stretch;
-
-    const auto justify = getProperty (IDs::flexJustifyContent, node).toString();
-    if (justify == IDs::flexEnd)
-        flexBox.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
-    else if (justify == IDs::flexCenter)
-        flexBox.justifyContent = juce::FlexBox::JustifyContent::center;
-    else if (justify == IDs::flexSpaceAround)
-        flexBox.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
-    else if (justify == IDs::flexSpaceBetween)
-        flexBox.justifyContent = juce::FlexBox::JustifyContent::spaceBetween;
-    else
-        flexBox.justifyContent = juce::FlexBox::JustifyContent::flexStart;
-}
-
-void Stylesheet::configureFlexBoxItem (juce::FlexItem& item, const juce::ValueTree& node) const
-{
-    const auto minWidth = getProperty (IDs::minWidth, node);
-    if (! minWidth.isVoid())
-        item.minWidth = minWidth;
-
-    const auto maxWidth = getProperty (IDs::maxWidth, node);
-    if (! maxWidth.isVoid())
-        item.maxWidth = maxWidth;
-
-    const auto minHeight = getProperty (IDs::minHeight, node);
-    if (! minHeight.isVoid())
-        item.minHeight = minHeight;
-
-    const auto maxHeight = getProperty (IDs::maxHeight, node);
-    if (! maxHeight.isVoid())
-        item.maxHeight = maxHeight;
-
-    const auto width = getProperty (IDs::width, node);
-    if (! width.isVoid())
-        item.width = width;
-
-    const auto height = getProperty (IDs::height, node);
-    if (! height.isVoid())
-        item.height = height;
-
-    auto grow = getProperty (IDs::flexGrow, node);
-    if (! grow.isVoid())
-        item.flexGrow = grow;
-
-    const auto flexShrink = getProperty (IDs::flexShrink, node);
-    if (! flexShrink.isVoid())
-        item.flexShrink = flexShrink;
-
-    const auto flexOrder = getProperty (IDs::flexOrder, node);
-    if (! flexOrder.isVoid())
-        item.order = flexOrder;
-
-    const auto alignSelf = getProperty (IDs::flexAlignSelf, node).toString();
-    if (alignSelf == IDs::flexStart)
-        item.alignSelf = juce::FlexItem::AlignSelf::flexStart;
-    else if (alignSelf == IDs::flexEnd)
-        item.alignSelf = juce::FlexItem::AlignSelf::flexEnd;
-    else if (alignSelf == IDs::flexCenter)
-        item.alignSelf = juce::FlexItem::AlignSelf::center;
-    else if (alignSelf == IDs::flexAuto)
-        item.alignSelf = juce::FlexItem::AlignSelf::autoAlign;
-    else
-        item.alignSelf = juce::FlexItem::AlignSelf::stretch;
 }
 
 bool Stylesheet::isClassNode (const juce::ValueTree& node) const

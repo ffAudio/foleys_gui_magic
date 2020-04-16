@@ -75,6 +75,8 @@ public:
      */
     virtual void updateLayout();
 
+    void configureFlexBoxItem (const juce::ValueTree& node);
+
     /**
      Allows accessing the Component inside that Decorator. Don't keep this pointer!
      */
@@ -114,11 +116,12 @@ protected:
 
     juce::Rectangle<int> getClientBounds() const;
 
+    MagicGUIBuilder&            magicBuilder;
+
 private:
 
     void valueChanged (juce::Value& source) override;
 
-    MagicGUIBuilder&            magicBuilder;
     juce::ValueTree             configNode;
     juce::Value                 visibility { true };
 

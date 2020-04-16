@@ -35,6 +35,8 @@ namespace foleys
 namespace IDs
 {
     static juce::Identifier magic        { "magic" };
+    static juce::Identifier resizable    { "resizable" };
+    static juce::Identifier resizeCorner { "resize-corner" };
     static juce::Identifier styles       { "Styles" };
     static juce::Identifier style        { "Style" };
     static juce::Identifier view         { "View" };
@@ -134,6 +136,8 @@ namespace IDs
     static juce::String     flexSpaceAround     { "space-around" };
     static juce::String     flexAuto            { "auto" };
 
+    static juce::Identifier media       { "media" };
+    static juce::Identifier recursive   { "recursive" };
     static juce::Identifier minWidth    { "min-width" };
     static juce::Identifier maxWidth    { "max-width" };
     static juce::Identifier minHeight   { "min-height" };

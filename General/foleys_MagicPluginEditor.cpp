@@ -96,21 +96,36 @@ std::unique_ptr<MagicGUIBuilder> MagicPluginEditor::createBuilderInstance()
 
 void MagicPluginEditor::updateSize()
 {
-    int width = 600;
-    int height = 400;
+    int width = builder->getStyleProperty (IDs::width, builder->getGuiRootNode());
+    if (width < 10) width = 600;
+    int height = builder->getStyleProperty (IDs::height, builder->getGuiRootNode());
+    if (height < 10) height = 400;
+
+    bool resizable = builder->getStyleProperty (IDs::resizable, builder->getGuiRootNode());
+    bool resizeCorner = builder->getStyleProperty (IDs::resizeCorner, builder->getGuiRootNode());
 
 #if !JUCE_IOS
-    setResizable (true, true);
+    setResizable (resizable, resizeCorner);
 #endif
 
-    processorState.getLastEditorSize (width, height);
+    if (resizable)
+        processorState.getLastEditorSize (width, height);
+
     setSize (width, height);
 }
 
 void MagicPluginEditor::setConfigTree (const juce::ValueTree& gui)
 {
+    // Set default values
+    auto rootNode = gui.getChildWithName (IDs::view);
+    auto& undo = builder->getUndoManager();
+    if (! rootNode.hasProperty (IDs::resizable)) rootNode.setProperty (IDs::resizable, true, &undo);
+    if (! rootNode.hasProperty (IDs::resizeCorner)) rootNode.setProperty (IDs::resizeCorner, true, &undo);
+
     builder->setConfigTree (gui);
     builder->restoreGUI (*this);
+
+    updateSize();
 }
 
 void MagicPluginEditor::setConfigTree (const char* data, const int dataSize)

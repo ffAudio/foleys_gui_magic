@@ -29,30 +29,48 @@
 
 #pragma once
 
-
 namespace foleys
 {
 
-class LookAndFeel : public juce::LookAndFeel_V4
+/**
+ The AtomicValueAttachment allows to read from a Value in a thread safe manner.
+ You attach to a Value and call get() to read the current value.
+ */
+template<typename T>
+class AtomicValueAttachment : private juce::Value::Listener
 {
 public:
-    LookAndFeel() = default;
+    AtomicValueAttachment()
+    {
+        internalValue.addListener (this);
+    }
 
-    void drawRotarySlider (juce::Graphics&, int x, int y, int width, int height,
-                           float sliderPosProportional, float rotaryStartAngle,
-                           float rotaryEndAngle, juce::Slider&) override;
+    /**
+     Let the attachment refer to the value.
+     */
+    void attachToValue (const juce::Value& value)
+    {
+        internalValue.referTo (value);
+        atomicValue.store (static_cast<T>(internalValue.getValue()));
+    }
 
-    //==============================================================================
-
-    void drawComboBox (juce::Graphics&, int width, int height, bool isButtonDown,
-                       int buttonX, int buttonY, int buttonW, int buttonH,
-                       juce::ComboBox&) override;
-
-    void positionComboBoxText (juce::ComboBox&, juce::Label& labelToPosition) override;
+    /**
+     Return the current value of the property.
+     */
+    T get() const
+    {
+        return atomicValue.load();
+    }
 
 private:
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LookAndFeel)
+    void valueChanged (juce::Value&) override
+    {
+        atomicValue.store (static_cast<T>(internalValue.getValue()));
+    }
+
+    juce::Value    internalValue;
+    std::atomic<T> atomicValue;
 };
 
-} // namespace foleys
+}

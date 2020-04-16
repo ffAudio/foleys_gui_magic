@@ -56,7 +56,7 @@ MultiListPropertyComponent::MultiListPropertyComponent (const juce::Value& value
         for (const auto& name : choices)
             if (! strings.contains (name))
                 popup.addItem (name, [&]
-                               {
+                {
                     if (! strings.contains (name))
                     {
                         strings.add (name);

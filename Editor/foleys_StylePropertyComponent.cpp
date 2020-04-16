@@ -90,7 +90,7 @@ StylePropertyComponent::StylePropertyComponent (MagicGUIBuilder& builderToUse, j
 
 juce::var StylePropertyComponent::lookupValue()
 {
-    const auto value = builder.getStylesheet().getProperty (property, node, true, &inheritedFrom);
+    const auto value = builder.getStylesheet().getStyleProperty (property, node, true, &inheritedFrom);
 
     const auto& s = builder.getStylesheet();
 

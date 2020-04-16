@@ -132,4 +132,28 @@ void LookAndFeel::drawRotarySlider (juce::Graphics& g, int x, int y, int width, 
     g.strokePath (p, juce::PathStrokeType (lineW, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
 }
 
+//==============================================================================
+
+void LookAndFeel::drawComboBox (juce::Graphics& g, int width, int height, bool,
+                                int, int, int, int, juce::ComboBox& box)
+{
+    auto cornerSize = box.findParentComponentOfClass<juce::ChoicePropertyComponent>() != nullptr ? 0.0f : 3.0f;
+    juce::Rectangle<int> boxBounds (0, 0, width, height);
+
+    g.setColour (box.findColour (juce::ComboBox::backgroundColourId));
+    g.fillRoundedRectangle (boxBounds.toFloat(), cornerSize);
+
+    g.setColour (box.findColour (juce::ComboBox::outlineColourId));
+    g.drawRoundedRectangle (boxBounds.toFloat().reduced (0.5f, 0.5f), cornerSize, 1.0f);
+}
+
+void LookAndFeel::positionComboBoxText (juce::ComboBox& box, juce::Label& label)
+{
+    label.setBounds (1, 1,
+                     box.getWidth() - 2,
+                     box.getHeight() - 2);
+
+    label.setFont (getComboBoxFont (box));
+}
+
 } // namespace foleys

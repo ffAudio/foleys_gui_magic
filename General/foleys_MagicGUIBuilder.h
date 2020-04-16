@@ -125,6 +125,14 @@ public:
     void setColourTranslation (juce::Identifier type, std::vector<std::pair<juce::String, int>> mapping);
 
     /**
+     This method traverses the dom and checks each style, if that property was defined.
+
+     @param name the name of the property.
+     @param node is the node in the DOM. This is used for inheritance by traversing upwards.
+     */
+    juce::var getStyleProperty (const juce::Identifier& name, const juce::ValueTree& node) const;
+
+    /**
      Looks up the ColourId for a given type
      */
     int findColourId (juce::Identifier type, juce::Identifier name);
@@ -200,6 +208,8 @@ public:
 
     MagicProcessorState* getProcessorState();
 
+    juce::UndoManager& getUndoManager();
+
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     void attachToolboxToWindow (juce::Component& window);
 
@@ -215,7 +225,6 @@ public:
     void draggedItemOnto (juce::ValueTree dropped, juce::ValueTree target, int index=-1);
 
     ToolBox& getMagicToolBox();
-    juce::UndoManager& getUndoManager();
 #endif
 
 private:

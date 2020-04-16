@@ -91,6 +91,8 @@ void MagicGUIBuilder::updateStylesheet()
     {
         stylesheet.setStyle (stylesNode.getChild (0));
     }
+
+    stylesheet.updateValidRanges();
 }
 
 void MagicGUIBuilder::clearGUI()
@@ -171,31 +173,28 @@ void MagicGUIBuilder::updateProperties (Decorator& item)
     const auto& configNode = item.getConfigNode();
 
     item.configureDecorator (stylesheet, configNode);
-
     item.configureComponent (stylesheet, configNode);
-
-    stylesheet.configureFlexBoxItem (item.flexItem, configNode);
+    item.configureFlexBoxItem (configNode);
 
     const auto translation = colourTranslations.find (configNode.getType());
     if (translation != colourTranslations.end() && item.getWrappedComponent() != nullptr)
     {
         for (auto& pair : translation->second)
         {
-            auto colour = stylesheet.getProperty (pair.first, configNode).toString();
+            auto colour = getStyleProperty (pair.first, configNode).toString();
             if (colour.isNotEmpty())
-                item.getWrappedComponent()->setColour (pair.second, stylesheet.parseColour (colour));
+                item.getWrappedComponent()->setColour (pair.second, Stylesheet::parseColour (colour));
         }
     }
 
     if (auto* container = dynamic_cast<Container*>(&item))
     {
-        stylesheet.configureFlexBoxItem (item.flexItem, configNode);
-        stylesheet.configureFlexBox (container->flexBox, configNode);
+        container->configureFlexBox (configNode);
 
         for (auto& child : *container)
             updateProperties (*child);
 
-        const auto display = stylesheet.getProperty (IDs::display, configNode).toString();
+        const auto display = getStyleProperty (IDs::display, configNode).toString();
         if (display == IDs::contents)
             container->setLayoutMode (Container::Layout::Contents);
         else if (display == IDs::tabbed)
@@ -203,7 +202,7 @@ void MagicGUIBuilder::updateProperties (Decorator& item)
         else
             container->setLayoutMode (Container::Layout::FlexBox);
 
-        auto throttle = stylesheet.getProperty (IDs::throttle, configNode).toString();
+        auto throttle = getStyleProperty (IDs::throttle, configNode).toString();
         if (throttle.isNotEmpty())
             container->setMaxFPSrate (throttle.getIntValue());
     }
@@ -216,6 +215,12 @@ void MagicGUIBuilder::updateLayout()
 
     if (root.get() != nullptr)
     {
+        if (! stylesheet.setMediaSize (parent->getWidth(), parent->getHeight()))
+        {
+            stylesheet.updateValidRanges();
+            updateProperties (*root);
+        }
+
         if (root->getBounds() == parent->getLocalBounds())
             root->updateLayout();
         else
@@ -283,6 +288,11 @@ void MagicGUIBuilder::setColourTranslation (juce::Identifier type, std::vector<s
     }
 
     colourTranslations [type] = mapping;
+}
+
+juce::var MagicGUIBuilder::getStyleProperty (const juce::Identifier& name, const juce::ValueTree& node) const
+{
+    return stylesheet.getStyleProperty (name, node);
 }
 
 int MagicGUIBuilder::findColourId (juce::Identifier type, juce::Identifier name)
@@ -440,6 +450,11 @@ MagicProcessorState* MagicGUIBuilder::getProcessorState()
     return magicState;
 }
 
+juce::UndoManager& MagicGUIBuilder::getUndoManager()
+{
+    return undo;
+}
+
 void MagicGUIBuilder::createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree)
 {
     for (const auto& sub : tree.getSubgroups (false))
@@ -517,7 +532,10 @@ void MagicGUIBuilder::createDefaultGUITree (bool keepExisting)
 void MagicGUIBuilder::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
 {
     if (root)
+    {
+        stylesheet.updateValidRanges();
         updateProperties (*root);
+    }
 
     updateLayout();
 }
@@ -621,11 +639,6 @@ ToolBox& MagicGUIBuilder::getMagicToolBox()
     jassert (magicToolBox.get() != nullptr);
 
     return *magicToolBox;
-}
-
-juce::UndoManager& MagicGUIBuilder::getUndoManager()
-{
-    return undo;
 }
 
 #endif
