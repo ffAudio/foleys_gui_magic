@@ -37,8 +37,8 @@ Daniel Walz
 Contributors
 -----------
 
-Yuri Witte
-Benedikt
+Yuri Witte    
+Benedikt    
 
 TBC
 
