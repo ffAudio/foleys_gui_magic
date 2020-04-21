@@ -5,6 +5,7 @@ PluginGuiMagic - Versions history
 -----
 
 - Added minimum and maximum size for the editor
+- Bugfix: Avoid assert when an item is dropped on itself
 
 1.1.2 - 16.04.2020
 ------------------
