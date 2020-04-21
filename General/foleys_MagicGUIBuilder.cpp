@@ -614,6 +614,9 @@ const juce::ValueTree& MagicGUIBuilder::getSelectedNode() const
 
 void MagicGUIBuilder::draggedItemOnto (juce::ValueTree dragged, juce::ValueTree target, int index)
 {
+    if (dragged == target)
+        return;
+
     undo.beginNewTransaction();
 
     auto targetParent  = target.getParent();
