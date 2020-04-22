@@ -37,7 +37,8 @@ namespace foleys
  The MagicGUIBuilder is responsible to recreate the GUI from a single ValueTree.
  You can add your own factories to the builder to allow additional components.
  */
-class MagicGUIBuilder : private juce::ValueTree::Listener
+class MagicGUIBuilder : public juce::ChangeListener,
+                        private juce::ValueTree::Listener
 {
 public:
     MagicGUIBuilder (MagicProcessorState* magicStateToUse);
@@ -200,6 +201,8 @@ public:
     void populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const;
 
     static juce::NamedValueSet makeJustificationsChoices();
+
+    void changeListenerCallback (juce::ChangeBroadcaster* sender) override;
 
     /**
      Lookup the default value of the property

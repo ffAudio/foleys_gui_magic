@@ -92,6 +92,7 @@ void MagicGUIBuilder::updateStylesheet()
         stylesheet.setStyle (stylesNode.getChild (0));
     }
 
+    stylesheet.updateStyleClasses (*this);
     stylesheet.updateValidRanges();
 }
 
@@ -445,6 +446,14 @@ juce::NamedValueSet MagicGUIBuilder::makeJustificationsChoices()
     return choices;
 }
 
+void MagicGUIBuilder::changeListenerCallback (juce::ChangeBroadcaster*)
+{
+    if (root.get() != nullptr)
+        updateProperties (*root);
+
+    updateLayout();
+}
+
 MagicProcessorState* MagicGUIBuilder::getProcessorState()
 {
     return magicState;
@@ -529,8 +538,11 @@ void MagicGUIBuilder::createDefaultGUITree (bool keepExisting)
     }
 }
 
-void MagicGUIBuilder::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
+void MagicGUIBuilder::valueTreePropertyChanged (juce::ValueTree& node, const juce::Identifier&)
 {
+    if (node.isAChildOf (stylesheet.getCurrentStyle()))
+        stylesheet.updateStyleClasses (*this);
+
     if (root)
     {
         stylesheet.updateValidRanges();

@@ -4,6 +4,7 @@ PluginGuiMagic - Versions history
 1.1.3
 -----
 
+- Added conditional style classes, that react to dynamic properties
 - Added minimum and maximum size for the editor
 - Bugfix: Avoid assert when an item is dropped on itself
 

@@ -171,6 +171,7 @@ void PropertiesEditor::addNodeProperties()
     if (stylesheet.isClassNode (styleItem))
     {
         array.add (new juce::BooleanPropertyComponent (styleItem.getPropertyAsValue (IDs::recursive, &undo), IDs::recursive.toString(), {}));
+        array.add (new StyleChoicePropertyComponent (builder, IDs::active, styleItem, SettableProperty::Property));
 
         auto media = styleItem.getOrCreateChildWithName (IDs::media, &undo);
         array.add (new juce::TextPropertyComponent (media.getPropertyAsValue (IDs::minWidth, &undo), IDs::minWidth.toString(), 10, false));
