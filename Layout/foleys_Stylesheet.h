@@ -32,6 +32,8 @@
 namespace foleys
 {
 
+class MagicGUIBuilder;
+
 /**
  The Stylesheet class represents all style information. It is organised in
  types, which corresponds to the Components created, classes that can be
@@ -61,6 +63,13 @@ public:
      Reads the range, in which the properties won't change due to conditional classes
      */
     void updateValidRanges();
+
+    /**
+     Read the style classes and connect variables
+
+     @param builder is the managed builder instance, so the style class can connect to the variables
+     */
+    void updateStyleClasses (MagicGUIBuilder& builder);
 
     /**
      This method traverses the dom and checks each style, if that property was defined.
@@ -144,13 +153,36 @@ private:
         juce::Range<int> height { 0, std::numeric_limits<int>::max() };
     };
 
-    SizeRange getStyleClassRange (const juce::ValueTree& styleClass) const;
+    class StyleClass  : public juce::ChangeBroadcaster,
+                        private juce::Value::Listener
+    {
+    public:
+        StyleClass (juce::ValueTree style);
+
+        void setActiveProperty (juce::Value& source);
+        bool isActive() const;
+        bool isRecursive() const;
+        bool isValidForSize (int width, int height) const;
+
+        SizeRange getValidSizeRange() const;
+
+    private:
+        void valueChanged (juce::Value &value) override;
+
+        juce::ValueTree styleNode;
+
+        juce::Value activeFlag { true };
+
+        SizeRange   validRange;
+        bool        recursive  { false };
+    };
 
     juce::StringArray getParameters (const juce::String& text) const;
 
     juce::ValueTree   currentStyle;
 
     std::map<juce::String, std::unique_ptr<juce::LookAndFeel>> lookAndFeels;
+    std::map<juce::String, std::unique_ptr<StyleClass>> styleClasses;
 
     int mediaWidth = 0;
     int mediaHeight = 0;

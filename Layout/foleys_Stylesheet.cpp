@@ -50,9 +50,9 @@ void Stylesheet::updateValidRanges()
 {
     validMediaRanges = Stylesheet::SizeRange();
 
-    for (const auto& styleClass : currentStyle.getChildWithName (IDs::classes))
+    for (const auto& styleClass : styleClasses)
     {
-        auto range = getStyleClassRange (styleClass);
+        const auto range = styleClass.second->getValidSizeRange();
 
         if (mediaWidth < range.width.getStart())
             validMediaRanges.width.setEnd (std::min (validMediaRanges.width.getEnd(), range.width.getStart()));
@@ -67,6 +67,28 @@ void Stylesheet::updateValidRanges()
             validMediaRanges.height = validMediaRanges.height.getIntersectionWith (range.height);
         else
             validMediaRanges.height.setStart (std::max (validMediaRanges.height.getStart(), range.height.getEnd()));
+    }
+}
+
+void Stylesheet::updateStyleClasses (MagicGUIBuilder& builder)
+{
+    styleClasses.clear();
+
+    for (const auto& styleNode : currentStyle.getChildWithName (IDs::classes))
+    {
+        auto styleClass = std::make_unique<StyleClass>(styleNode);
+        if (styleNode.hasProperty (IDs::active))
+        {
+            if (auto* magicState = builder.getProcessorState())
+            {
+                auto activePropertyName = styleNode.getProperty (IDs::active);
+                auto p = magicState->getPropertyAsValue (activePropertyName.toString());
+                styleClass->setActiveProperty (p);
+                styleClass->addChangeListener (&builder);
+            }
+        }
+
+        styleClasses [styleNode.getType().toString()] = std::move (styleClass);
     }
 }
 
@@ -99,14 +121,20 @@ juce::var Stylesheet::getStyleProperty (const juce::Identifier& name, const juce
         if (className.isEmpty())
             continue;
 
+        const auto& sc = styleClasses.find (className);
+        if (sc == styleClasses.end())
+            continue;
+
+        const auto& styleClass = sc->second;
+
         auto classesNode = currentStyle.getChildWithName (IDs::classes);
         auto classNode = classesNode.getChildWithName (className);
 
-        if (bool (classNode.getProperty (IDs::recursive, false)) == false && !inherit)
+        if (!styleClass->isRecursive() && !inherit)
             continue;
 
-        auto media = getStyleClassRange (classNode);
-        if (media.width.contains (mediaWidth) && media.height.contains (mediaHeight))
+        if (styleClass->isActive() &&
+            styleClass->isValidForSize (mediaWidth, mediaHeight))
         {
             if (classNode.hasProperty (name))
             {
@@ -143,23 +171,6 @@ juce::var Stylesheet::getStyleProperty (const juce::Identifier& name, const juce
 juce::Colour Stylesheet::parseColour (const juce::String& name)
 {
     return juce::Colours::findColourForName (name, juce::Colour::fromString (name.length() < 8 ? "ff" + name : name));
-}
-
-Stylesheet::SizeRange Stylesheet::getStyleClassRange (const juce::ValueTree& styleClass) const
-{
-    auto media = styleClass.getChildWithName (IDs::media);
-    if (media.isValid())
-    {
-        return
-        {
-            { int (media.getProperty (IDs::minWidth, 0)),
-                int (media.getProperty (IDs::maxWidth, std::numeric_limits<int>::max())) },
-            { int (media.getProperty (IDs::minHeight, 0)),
-                int (media.getProperty (IDs::maxHeight, std::numeric_limits<int>::max())) }
-        };
-    }
-
-    return Stylesheet::SizeRange();
 }
 
 juce::LookAndFeel* Stylesheet::getLookAndFeel (const juce::ValueTree& node) const
@@ -328,6 +339,53 @@ juce::StringArray Stylesheet::getAllClassesNames() const
             names.add (child.getType().toString());
 
     return names;
+}
+
+//==============================================================================
+
+Stylesheet::StyleClass::StyleClass (juce::ValueTree style)
+  : styleNode (style)
+{
+    recursive = styleNode.getProperty (IDs::recursive, false);
+
+    const auto media = styleNode.getChildWithName (IDs::media);
+    if (media.isValid())
+    {
+        validRange.width.setStart (media.getProperty (IDs::minWidth, 0));
+        validRange.width.setEnd (media.getProperty (IDs::maxWidth, std::numeric_limits<int>::max()));
+        validRange.height.setStart (media.getProperty (IDs::minHeight, 0));
+        validRange.height.setEnd (media.getProperty (IDs::maxHeight, std::numeric_limits<int>::max()));
+    }
+}
+
+bool Stylesheet::StyleClass::isRecursive() const
+{
+    return recursive;
+}
+
+bool Stylesheet::StyleClass::isValidForSize (int width, int height) const
+{
+    return validRange.width.contains (width) && validRange.height.contains (height);
+}
+
+bool Stylesheet::StyleClass::isActive() const
+{
+    return activeFlag.getValue();
+}
+Stylesheet::SizeRange Stylesheet::StyleClass::getValidSizeRange() const
+{
+    return validRange;
+}
+
+void Stylesheet::StyleClass::setActiveProperty (juce::Value& source)
+{
+    activeFlag.referTo (source);
+    activeFlag.addListener (this);
+}
+
+void Stylesheet::StyleClass::valueChanged (juce::Value&)
+{
+    sendChangeMessage();
 }
 
 
