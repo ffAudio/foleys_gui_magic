@@ -156,4 +156,88 @@ void LookAndFeel::positionComboBoxText (juce::ComboBox& box, juce::Label& label)
     label.setFont (getComboBoxFont (box));
 }
 
+//==============================================================================
+
+void LookAndFeel::drawTabButton (juce::TabBarButton& button, juce::Graphics& g, bool isMouseOver, bool isMouseDown)
+{
+    const auto activeArea = button.getActiveArea();
+
+    const auto o = button.getTabbedButtonBar().getOrientation();
+
+    const auto bkg = button.getTabBackgroundColour();
+
+    juce::Point<int> p1, p2;
+
+    switch (o)
+    {
+        case juce::TabbedButtonBar::TabsAtBottom:   p1 = activeArea.getBottomLeft(); p2 = activeArea.getTopLeft();    break;
+        case juce::TabbedButtonBar::TabsAtTop:      p1 = activeArea.getTopLeft();    p2 = activeArea.getBottomLeft(); break;
+        case juce::TabbedButtonBar::TabsAtRight:    p1 = activeArea.getTopRight();   p2 = activeArea.getTopLeft();    break;
+        case juce::TabbedButtonBar::TabsAtLeft:     p1 = activeArea.getTopLeft();    p2 = activeArea.getTopRight();   break;
+        default:                              jassertfalse; break;
+    }
+
+    if (button.getToggleState())
+    {
+        g.setGradientFill (juce::ColourGradient (bkg.brighter (0.1f), p1.toFloat(),
+                                                 bkg.darker   (0.2f), p2.toFloat(), false));
+    }
+    else
+    {
+        g.setGradientFill (juce::ColourGradient (bkg.darker (0.2f), p1.toFloat(),
+                                                 bkg.darker (0.5f), p2.toFloat(), false));
+    }
+
+    g.fillRect (activeArea);
+
+    g.setColour (button.findColour (juce::TabbedButtonBar::tabOutlineColourId));
+
+    auto r = activeArea;
+
+    if (o != juce::TabbedButtonBar::TabsAtBottom)   g.fillRect (r.removeFromTop (1));
+    if (o != juce::TabbedButtonBar::TabsAtTop)      g.fillRect (r.removeFromBottom (1));
+    if (o != juce::TabbedButtonBar::TabsAtRight)    g.fillRect (r.removeFromLeft (1));
+    if (o != juce::TabbedButtonBar::TabsAtLeft)     g.fillRect (r.removeFromRight (1));
+
+    const auto alpha = button.isEnabled() ? ((isMouseOver || isMouseDown) ? 1.0f : 0.8f) : 0.3f;
+
+    auto col = bkg.contrasting().withMultipliedAlpha (alpha);
+
+    if (juce::TabbedButtonBar* bar = button.findParentComponentOfClass<juce::TabbedButtonBar>())
+    {
+        juce::TabbedButtonBar::ColourIds colID = button.isFrontTab() ? juce::TabbedButtonBar::frontTextColourId
+                                                                     : juce::TabbedButtonBar::tabTextColourId;
+
+        if (bar->isColourSpecified (colID))
+            col = bar->findColour (colID);
+        else if (isColourSpecified (colID))
+            col = findColour (colID);
+    }
+
+    const auto area = button.getTextArea().toFloat();
+
+    float length = area.getWidth();
+    float depth  = area.getHeight();
+
+    if (button.getTabbedButtonBar().isVertical())
+        std::swap (length, depth);
+
+    juce::TextLayout textLayout;
+    createTabTextLayout (button, length, depth, col, textLayout);
+
+    juce::AffineTransform t;
+
+    switch (o)
+    {
+        case juce::TabbedButtonBar::TabsAtLeft:   t = t.rotated (juce::MathConstants<float>::pi * -0.5f).translated (area.getX(), area.getBottom()); break;
+        case juce::TabbedButtonBar::TabsAtRight:  t = t.rotated (juce::MathConstants<float>::pi *  0.5f).translated (area.getRight(), area.getY()); break;
+        case juce::TabbedButtonBar::TabsAtTop:
+        case juce::TabbedButtonBar::TabsAtBottom: t = t.translated (area.getX(), area.getY()); break;
+        default:                                  jassertfalse; break;
+    }
+
+    g.addTransform (t);
+    textLayout.draw (g, juce::Rectangle<float> (length, depth));
+}
+
 } // namespace foleys

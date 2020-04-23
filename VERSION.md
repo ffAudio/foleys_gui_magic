@@ -1,8 +1,13 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.1.3
+1.1.4
 -----
+
+- Let Tabbed View use the LookAndFeel
+
+1.1.3 - 22.04.2020
+------------------
 
 - Added conditional style classes, that react to dynamic properties
 - Added minimum and maximum size for the editor

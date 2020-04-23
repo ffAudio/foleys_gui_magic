@@ -50,6 +50,10 @@ public:
 
     void positionComboBoxText (juce::ComboBox&, juce::Label& labelToPosition) override;
 
+    //==============================================================================
+
+    void drawTabButton (juce::TabBarButton&, juce::Graphics&, bool isMouseOver, bool isMouseDown) override;
+
 private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LookAndFeel)
