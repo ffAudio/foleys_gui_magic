@@ -42,7 +42,7 @@ public:
     void refresh() override;
 
 private:
-    void initialiseComboBox();
+    void initialiseComboBox (bool editable);
 
     void valueChanged (juce::Value& value) override;
 
