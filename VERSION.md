@@ -5,6 +5,7 @@ PluginGuiMagic - Versions history
 -----
 
 - Allow to create dynamic properties by editing the combobox
+- Refactor of MagicPlotComponent to redraw only with defined FPS
 - Let Tabbed View use the LookAndFeel
 
 1.1.3 - 22.04.2020

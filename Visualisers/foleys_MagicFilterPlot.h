@@ -68,21 +68,19 @@ public:
     void pushSamples (const juce::AudioBuffer<float>& buffer) override;
 
     /**
-     This is the callback that draws the frequency plot.
+     This is the callback that creates the plot for drawing.
 
-     @param g the Graphics context to draw onto
+     @param path is the path instance that is constructed by the MagicPlotSource
+     @param filledPath is the path instance that is constructed by the MagicPlotSource to be filled
      @param bounds the bounds of the plot
      @param component grants access to the plot component, e.g. to find the colours from it
      */
-    void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component) override;
+    void createPlotPaths (juce::Path& path, juce::Path& filledPath, juce::Rectangle<float> bounds, MagicPlotComponent& component) override;
 
     void prepareToPlay (double sampleRate, int samplesPerBlockExpected) override;
 
 private:
     juce::ReadWriteLock     plotLock;
-    bool                    plotChanged = true;
-    juce::Path              path;
-    juce::Rectangle<float>  lastBounds;
 
     std::vector<double>     frequencies;
     std::vector<double>     magnitudes;

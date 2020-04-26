@@ -53,13 +53,14 @@ public:
     void pushSamples (const juce::AudioBuffer<float>& buffer) override;
 
     /**
-     This is the callback that draws the frequency plot.
+     This is the callback that creates the frequency plot for drawing.
 
-     @param g the Graphics context to draw onto
-     @param bounds the bounds of the plot
-     @param component grants access to the plot component, e.g. to find the colours from it
-     */
-    void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component) override;
+      @param path is the path instance that is constructed by the MagicPlotSource
+      @param filledPath is the path instance that is constructed by the MagicPlotSource to be filled
+      @param bounds the bounds of the plot
+      @param component grants access to the plot component, e.g. to find the colours from it
+      */
+    void createPlotPaths (juce::Path& path, juce::Path& filledPath, juce::Rectangle<float> bounds, MagicPlotComponent& component) override;
 
     void prepareToPlay (double sampleRate, int samplesPerBlockExpected) override;
 
@@ -69,8 +70,6 @@ private:
 
     juce::AudioBuffer<float> samples;
     std::atomic<int>         writePosition;
-
-    juce::Path               path;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicOscilloscope)
 };
