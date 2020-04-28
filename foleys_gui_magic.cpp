@@ -47,7 +47,6 @@
 #include "Layout/foleys_Container.cpp"
 
 #include "Visualisers/foleys_MagicLevelSource.cpp"
-#include "Visualisers/foleys_MagicPlotSource.cpp"
 #include "Visualisers/foleys_MagicFilterPlot.cpp"
 #include "Visualisers/foleys_MagicAnalyser.cpp"
 #include "Visualisers/foleys_MagicOscilloscope.cpp"

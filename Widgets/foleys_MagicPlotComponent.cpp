@@ -44,19 +44,11 @@ MagicPlotComponent::MagicPlotComponent()
 
 MagicPlotComponent::~MagicPlotComponent()
 {
-    if (plotSource != nullptr)
-        plotSource->removeChangeListener (this);
 }
 
 void MagicPlotComponent::setPlotSource (MagicPlotSource* source)
 {
-    if (plotSource != nullptr)
-        plotSource->removeChangeListener (this);
-
     plotSource = source;
-
-    if (plotSource != nullptr)
-        plotSource->addChangeListener (this);
 }
 
 void MagicPlotComponent::setDecayFactor (float decayFactor)
@@ -70,10 +62,37 @@ void MagicPlotComponent::paint (juce::Graphics& g)
     if (plotSource == nullptr)
         return;
 
+    const auto lastUpdate = plotSource->getLastDataUpdate();
+    if (lastUpdate > lastDataTimestamp)
+    {
+        plotSource->createPlotPaths (path, filledPath, getLocalBounds().toFloat(), *this);
+        lastDataTimestamp = lastUpdate;
+    }
+
     if (! glowBuffer.isNull())
         drawPlotGlowing (g);
     else
-        plotSource->drawPlot (g, getLocalBounds().toFloat(), *this);
+    {
+        drawPlot (g);
+    }
+}
+
+void MagicPlotComponent::drawPlot (juce::Graphics& g)
+{
+    const auto active = plotSource->isActive();
+    auto colour = findColour (active ? plotFillColourId : plotInactiveFillColourId);
+    if (colour.isTransparent() == false)
+    {
+        g.setColour (colour);
+        g.fillPath (filledPath);
+    }
+
+    colour = findColour (active ? plotColourId : plotInactiveColourId);
+    if (colour.isTransparent() == false)
+    {
+        g.setColour (colour);
+        g.strokePath (path, juce::PathStrokeType (2.0));
+    }
 }
 
 void MagicPlotComponent::drawPlotGlowing (juce::Graphics& g)
@@ -82,7 +101,8 @@ void MagicPlotComponent::drawPlotGlowing (juce::Graphics& g)
         glowBuffer.multiplyAllAlphas (decay);
 
     juce::Graphics glow (glowBuffer);
-    plotSource->drawPlot (glow, glow.getClipBounds().toFloat(), *this);
+    drawPlot (glow);
+
     g.drawImageAt (glowBuffer, 0, 0);
 }
 
@@ -102,20 +122,15 @@ void MagicPlotComponent::updateGlowBufferSize()
     }
 }
 
+bool MagicPlotComponent::needsUpdate() const
+{
+    return plotSource ? (lastDataTimestamp < plotSource->getLastDataUpdate()) : false;
+}
+
 void MagicPlotComponent::resized()
 {
+    lastDataTimestamp = 0;
     updateGlowBufferSize();
-}
-
-void MagicPlotComponent::changeListenerCallback (juce::ChangeBroadcaster*)
-{
-    triggerAsyncUpdate();
-}
-
-void MagicPlotComponent::handleAsyncUpdate()
-{
-    if (auto* container = findParentComponentOfClass<Container>())
-        container->setChildNeedsRepaint();
 }
 
 

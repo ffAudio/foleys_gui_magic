@@ -34,9 +34,7 @@ namespace foleys
 
 /**
  */
-class MagicPlotComponent  : public juce::Component,
-                            private juce::AsyncUpdater,
-                            private juce::ChangeListener
+class MagicPlotComponent  : public juce::Component
 {
 public:
 
@@ -57,17 +55,20 @@ public:
     void paint (juce::Graphics& g) override;
     void resized() override;
 
-    void changeListenerCallback (juce::ChangeBroadcaster *source) override;
-    void handleAsyncUpdate() override;
+    bool hitTest (int, int) override { return false; }
 
-    bool hitTest (int, int) override
-    { return false; }
+    bool needsUpdate() const;
 
 private:
+    void drawPlot (juce::Graphics& g);
     void drawPlotGlowing (juce::Graphics& g);
     void updateGlowBufferSize();
 
     juce::WeakReference<MagicPlotSource> plotSource;
+    juce::Path  path;
+    juce::Path  filledPath;
+
+    juce::int64 lastDataTimestamp = 0;
     juce::Image glowBuffer;
     float       decay = 0.0f;
 

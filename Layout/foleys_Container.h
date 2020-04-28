@@ -32,13 +32,16 @@
 namespace foleys
 {
 
+class MagicPlotComponent;
+
 /**
  The Container is a Decorator, that can hold multiple Components.
  In the editor it is seen as "View". With the setting "display"
  the layout strategy can be chosen.
  */
 class Container   : public Decorator,
-                    private juce::ChangeListener
+                    private juce::ChangeListener,
+                    private juce::Timer
 {
 public:
     enum class Layout
@@ -57,19 +60,6 @@ public:
 
     std::vector<std::unique_ptr<Decorator>>::iterator begin();
     std::vector<std::unique_ptr<Decorator>>::iterator end();
-
-    /**
-     A child component can call this method instead of repaint(),
-     and the container will make sure, that repaints only happen
-     at a configurable max FPS rate.
-     */
-    void setChildNeedsRepaint (bool checkOnly=false);
-
-    /**
-     Sets the maximum frame rate. If more paint calls via setChildNeedsRepaint()
-     arrive, they will be delayed.
-     */
-    void setMaxFPSrate (int maxFPS);
 
     /**
      Sets the layout mode of the container
@@ -92,16 +82,28 @@ public:
      */
     void updateLayout() override;
 
+    void updateContinuousRedraw();
+
+    /**
+     If that container contains MacicPlotComponents, it will be repainted with that FPS.
+     The components will be checked, if a redraw is necessary.
+
+     @param refreshRate is the refresh rate to redraw
+     */
+    void setRefreshRate (int refreshRate);
+
     void configureFlexBox (const juce::ValueTree& node);
 
 private:
 
     void changeListenerCallback (juce::ChangeBroadcaster*) override;
+    void timerCallback() override;
 
     void updateTabbedButtons();
     void updateSelectedTab();
 
     int  currentTab = 0;
+    int  refreshRateHz = 30;
 
     Layout layout = Layout::FlexBox;
     juce::FlexBox flexBox;
@@ -109,10 +111,7 @@ private:
     std::unique_ptr<juce::TabbedButtonBar>  tabbedButtons;
     std::vector<std::unique_ptr<Decorator>> children;
 
-    int         minFPStimeOutMS = 40;
-    juce::int64 lastPaint = 0;
-    bool        needsUpdate = false;
-
+    std::vector<juce::Component::SafePointer<MagicPlotComponent>> plotComponents;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Container)
 };

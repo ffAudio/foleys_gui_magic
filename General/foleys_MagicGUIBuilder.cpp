@@ -203,9 +203,9 @@ void MagicGUIBuilder::updateProperties (Decorator& item)
         else
             container->setLayoutMode (Container::Layout::FlexBox);
 
-        auto throttle = getStyleProperty (IDs::throttle, configNode).toString();
-        if (throttle.isNotEmpty())
-            container->setMaxFPSrate (throttle.getIntValue());
+        auto repaintHz = getStyleProperty (IDs::repaintHz, configNode).toString();
+        if (repaintHz.isNotEmpty())
+            container->setRefreshRate (repaintHz.getIntValue());
     }
 }
 
@@ -382,6 +382,8 @@ std::unique_ptr<Decorator> MagicGUIBuilder::restoreNode (juce::Component& compon
             item->addChildItem (restoreNode (*item, childNode));
 
         component.addAndMakeVisible (item.get());
+
+        item->updateContinuousRedraw();
 
         // Xcode 8 needs the move for returning a derrived class
         return std::move (item);

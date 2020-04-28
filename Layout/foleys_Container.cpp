@@ -37,8 +37,8 @@ Container::Container (MagicGUIBuilder& builder, juce::ValueTree node)
 
 void Container::addChildItem (std::unique_ptr<Decorator> child)
 {
-    children.push_back (std::move (child));
     addAndMakeVisible (child.get());
+    children.push_back (std::move (child));
 }
 
 void Container::setLayoutMode (Layout layoutToUse)
@@ -54,35 +54,6 @@ void Container::setLayoutMode (Layout layoutToUse)
         for (auto& child : children)
             child->setVisible (true);
     }
-}
-
-void Container::setChildNeedsRepaint (bool checkOnly)
-{
-    if (checkOnly && needsUpdate == false)
-        return;
-
-    const auto now = juce::Time::currentTimeMillis();
-    if (now - lastPaint > minFPStimeOutMS)
-    {
-        lastPaint = now;
-        repaint();
-        needsUpdate = false;
-    }
-    else
-    {
-        needsUpdate = true;
-        juce::Timer::callAfterDelay (minFPStimeOutMS - int (now - lastPaint),
-                                     [p = juce::Component::SafePointer<Container>(this)]() mutable
-        {
-            if (p != nullptr)
-                p->setChildNeedsRepaint (true);
-        });
-    }
-}
-
-void Container::setMaxFPSrate (int maxFPS)
-{
-    minFPStimeOutMS = (maxFPS > 0) ? int (1000 / maxFPS) : 0;
 }
 
 void Container::setEditMode (bool shouldEdit)
@@ -129,6 +100,25 @@ void Container::updateLayout()
 
     for (auto& child : children)
         child->updateLayout();
+}
+
+void Container::updateContinuousRedraw()
+{
+    stopTimer();
+    plotComponents.clear();
+
+    for (auto& child : children)
+        if (auto* p = dynamic_cast<MagicPlotComponent*>(child->getWrappedComponent()))
+            plotComponents.push_back (p);
+
+    if (! plotComponents.empty())
+        startTimerHz (refreshRateHz);
+}
+
+void Container::setRefreshRate (int refreshRate)
+{
+    refreshRateHz = refreshRate;
+    updateContinuousRedraw();
 }
 
 void Container::updateTabbedButtons()
@@ -207,6 +197,16 @@ void Container::configureFlexBox (const juce::ValueTree& node)
         flexBox.justifyContent = juce::FlexBox::JustifyContent::spaceBetween;
     else
         flexBox.justifyContent = juce::FlexBox::JustifyContent::flexStart;
+}
+
+void Container::timerCallback()
+{
+    auto needsRepaint = false;
+    for (auto p : plotComponents)
+        if (p) needsRepaint |= p->needsUpdate();
+
+    if (needsRepaint)
+        repaint();
 }
 
 void Container::changeListenerCallback (juce::ChangeBroadcaster*)

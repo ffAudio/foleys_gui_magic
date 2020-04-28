@@ -83,10 +83,10 @@ void MagicOscilloscope::pushSamples (const juce::AudioBuffer<float>& buffer)
     else
         writePosition.store (numSamples - available);
 
-    sendChangeMessage();
+    resetLastDataFlag();
 }
 
-void MagicOscilloscope::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component)
+void MagicOscilloscope::createPlotPaths (juce::Path& path, juce::Path& filledPath, juce::Rectangle<float> bounds, MagicPlotComponent&)
 {
     if (sampleRate < 20.0f)
         return;
@@ -132,8 +132,10 @@ void MagicOscilloscope::drawPlot (juce::Graphics& g, juce::Rectangle<float> boun
                      juce::jmap (data [pos], -1.0f, 1.0f,                 bounds.getBottom(), bounds.getY()));
     }
 
-    fillPlotPath (g, path, bounds, component);
-    strokePlotPath (g, path, component);
+    filledPath = path;
+    filledPath.lineTo (bounds.getBottomRight());
+    filledPath.lineTo (bounds.getBottomLeft());
+    filledPath.closeSubPath();
 }
 
 void MagicOscilloscope::prepareToPlay (double sampleRateToUse, int)

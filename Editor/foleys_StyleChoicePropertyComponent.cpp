@@ -40,7 +40,7 @@ StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicGUIBuilder& bui
   : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse),
     choices (choicesToUse)
 {
-    initialiseComboBox();
+    initialiseComboBox (false);
 }
 
 StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicGUIBuilder& builderToUse,
@@ -50,12 +50,13 @@ StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicGUIBuilder& bui
   : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse),
     type (typeToUse)
 {
-    initialiseComboBox();
+    initialiseComboBox (type == SettableProperty::Property);
 }
 
-void StyleChoicePropertyComponent::initialiseComboBox()
+void StyleChoicePropertyComponent::initialiseComboBox (bool editable)
 {
     auto combo = std::make_unique<juce::ComboBox>();
+    combo->setEditableText (editable);
 
     if (! choices.isEmpty())
     {

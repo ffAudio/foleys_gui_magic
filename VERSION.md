@@ -1,8 +1,21 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.1.3
------
+1.1.4 - 28.04.2020
+------------------
+
+- Allow to create dynamic properties by editing the combobox
+- Refactor of MagicPlotComponent to redraw only with defined FPS
+- Let Tabbed View use the LookAndFeel
+
+1.1.3 - 22.04.2020
+------------------
+
+BREAKING CHANGE:
+- Properties from parent's style class are no longer inherited by default.
+  This can be changed back by checking the "recursive" flag in the style class
+
+Changes:
 
 - Added conditional style classes, that react to dynamic properties
 - Added minimum and maximum size for the editor

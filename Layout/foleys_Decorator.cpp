@@ -55,6 +55,9 @@ void Decorator::setEditMode (bool shouldEdit)
 
 void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTree& node)
 {
+    if (auto* lookAndFeel = stylesheet.getLookAndFeel (node))
+        setLookAndFeel (lookAndFeel);
+
     auto* processorState = magicBuilder.getProcessorState();
 
     auto visibilityNode = magicBuilder.getStyleProperty (IDs::visibility, node);
@@ -123,9 +126,6 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
 
     if (component)
     {
-        if (auto* lnf = stylesheet.getLookAndFeel (node))
-            component->setLookAndFeel (lnf);
-
         if (auto* tooltipClient = dynamic_cast<juce::SettableTooltipClient*>(component.get()))
         {
             auto tooltip = magicBuilder.getStyleProperty (IDs::tooltip, node).toString();

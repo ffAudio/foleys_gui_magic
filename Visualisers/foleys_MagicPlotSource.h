@@ -38,7 +38,7 @@ class MagicPlotComponent;
  The MagicPlotSources act as an interface, so the GUI can visualise an arbitrary plot
  of data. To create a specific new plot, create a subclass and implement drawPlot.
  */
-class MagicPlotSource  : public juce::ChangeBroadcaster
+class MagicPlotSource
 {
 public:
 
@@ -52,32 +52,19 @@ public:
     virtual void pushSamples (const juce::AudioBuffer<float>& buffer)=0;
 
     /**
-     This is the callback that draws the plot.
+     This is the callback that creates the plot for drawing.
 
-     @param g the Graphics context to draw onto
+     @param path is the path instance that is constructed by the MagicPlotSource
+     @param filledPath is the path instance that is constructed by the MagicPlotSource to be filled
      @param bounds the bounds of the plot
      @param component grants access to the plot component, e.g. to find the colours from it
      */
-    virtual void drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component)=0;
+    virtual void createPlotPaths (juce::Path& path, juce::Path& filledPath, juce::Rectangle<float> bounds, MagicPlotComponent& component) = 0;
 
     /**
-     Your implementation of drawPlot should call this at the end.
-
-     @param g the Graphics context to draw onto
-     @param path the path to close
-     @param bounds the bounds of the plot
-     @param component grants access to the plot component, e.g. to find the colours from it
+     This method is called by the MagicProcessorState to allow the plot computation to be set up
      */
-    void fillPlotPath (juce::Graphics& g, const juce::Path& path, juce::Rectangle<float> bounds, MagicPlotComponent& component);
-
-    /**
-     Your implementation of drawPlot should call this at the end.
-
-     @param g the Graphics context to draw onto
-     @param path the path to close
-     @param component grants access to the plot component, e.g. to find the colours from it
-     */
-    void strokePlotPath (juce::Graphics& g, const juce::Path& path, MagicPlotComponent& component);
+    virtual void prepareToPlay (double sampleRate, int samplesPerBlockExpected)=0;
 
     /**
      You can add an active state to your plot to allow to paint in different colours
@@ -86,9 +73,14 @@ public:
     virtual void setActive (bool shouldBeActive) { active = shouldBeActive; }
 
     /**
-     This method is called by the MagicProcessorState to allow the plot computation to be set up
+     Use this information to invalidate your plot drawing
      */
-    virtual void prepareToPlay (double sampleRate, int samplesPerBlockExpected)=0;
+    juce::int64 getLastDataUpdate() const { return lastData.load(); }
+
+    /**
+     Call this to invalidate the lastData flag
+     */
+    void resetLastDataFlag() { lastData.store (juce::Time::currentTimeMillis()); }
 
     /**
      If your plot needs background processing, return here a pointer to your TimeSliceClient,
@@ -97,8 +89,8 @@ public:
     virtual juce::TimeSliceClient* getBackgroundJob() { return nullptr; }
 
 private:
+    std::atomic<juce::int64> lastData { 0 };
     bool active = true;
-    juce::Path filledPath;
 
     JUCE_DECLARE_WEAK_REFERENCEABLE (MagicPlotSource)
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicPlotSource)

@@ -124,7 +124,11 @@ juce::Value MagicProcessorState::getPropertyAsValue (const juce::String& pathToP
     for (int i = 0; i < path.size() - 1 && tree.isValid(); ++i)
         tree = tree.getOrCreateChildWithName (path [i], nullptr);
 
-    return tree.getPropertyAsValue (path [path.size()-1], nullptr);
+    auto propName = path [path.size()-1];
+    if (!tree.hasProperty (propName))
+        tree.setProperty (propName, {}, nullptr);
+
+    return tree.getPropertyAsValue (propName, nullptr);
 }
 
 juce::StringArray MagicProcessorState::getParameterNames() const

@@ -42,13 +42,11 @@ void MagicAnalyser::pushSamples (const juce::AudioBuffer<float>& buffer)
     analyserJob.pushSamples (buffer, channel);
 }
 
-void MagicAnalyser::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component)
+void MagicAnalyser::createPlotPaths (juce::Path& path, juce::Path& filledPath, juce::Rectangle<float> bounds, MagicPlotComponent&)
 {
     const float minFreq = 20.0f;
     const auto& data = analyserJob.getAnalyserData();
 
-    if (pathNeedsUpdate.load())
-    {
         path.clear();
         path.preallocateSpace (8 + data.getNumSamples() * 3);
 
@@ -60,11 +58,10 @@ void MagicAnalyser::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, 
         for (int i = 0; i < data.getNumSamples(); ++i)
             path.lineTo (bounds.getX() + factor * indexToX (i, minFreq), binToY (fftData [i], bounds));
 
-        pathNeedsUpdate.store (false);
-    }
-
-    fillPlotPath (g, path, bounds, component);
-    strokePlotPath (g, path, component);
+    filledPath = path;
+    filledPath.lineTo (bounds.getBottomRight());
+    filledPath.lineTo (bounds.getBottomLeft());
+    filledPath.closeSubPath();
 }
 
 void MagicAnalyser::prepareToPlay (double sampleRateToUse, int)
@@ -170,8 +167,7 @@ int MagicAnalyser::AnalyserJob::useTimeSlice()
         for (int i = 2; i < averager.getNumChannels(); ++i)
             averager.addFrom (0, 0, averager.getReadPointer (i), averager.getNumSamples());
 
-        owner.pathNeedsUpdate.store (true);
-        owner.sendChangeMessage();
+        owner.resetLastDataFlag();
     }
 
     return 1;

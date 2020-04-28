@@ -53,8 +53,7 @@ void MagicFilterPlot::setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::P
                                                  frequencies.size(),
                                                  sampleRate);
 
-    plotChanged = true;
-    sendChangeMessage();
+    resetLastDataFlag();
 }
 
 void MagicFilterPlot::setIIRCoefficients (float gain, std::vector<juce::dsp::IIR::Coefficients<float>::Ptr> coefficients, float maxDBToDisplay)
@@ -78,33 +77,28 @@ void MagicFilterPlot::setIIRCoefficients (float gain, std::vector<juce::dsp::IIR
         juce::FloatVectorOperations::multiply (magnitudes.data(), buffer.data(), int (magnitudes.size()));
     }
 
-    plotChanged = true;
-    sendChangeMessage();
+    resetLastDataFlag();
 }
 
 void MagicFilterPlot::pushSamples (const juce::AudioBuffer<float>&){}
 
-void MagicFilterPlot::drawPlot (juce::Graphics& g, juce::Rectangle<float> bounds, MagicPlotComponent& component)
+void MagicFilterPlot::createPlotPaths (juce::Path& path, juce::Path& filledPath, juce::Rectangle<float> bounds, MagicPlotComponent&)
 {
-    if (plotChanged || lastBounds != bounds)
-    {
-        const juce::ScopedReadLock readLock (plotLock);
+    const juce::ScopedReadLock readLock (plotLock);
 
-        const auto yFactor = 2.0f * bounds.getHeight() / juce::Decibels::decibelsToGain (maxDB);
-        const auto xFactor = static_cast<double> (bounds.getWidth()) / frequencies.size();
+    const auto yFactor = 2.0f * bounds.getHeight() / juce::Decibels::decibelsToGain (maxDB);
+    const auto xFactor = static_cast<double> (bounds.getWidth()) / frequencies.size();
 
-        path.clear();
-        path.startNewSubPath (bounds.getX(), float (magnitudes [0] > 0 ? bounds.getCentreY() - yFactor * std::log (magnitudes [0]) / std::log (2) : bounds.getBottom()));
-        for (size_t i=1; i < frequencies.size(); ++i)
-            path.lineTo (float (bounds.getX() + i * xFactor),
-                         float (magnitudes [i] > 0 ? bounds.getCentreY() - yFactor * std::log (magnitudes [i]) / std::log (2) : bounds.getBottom()));
+    path.clear();
+    path.startNewSubPath (bounds.getX(), float (magnitudes [0] > 0 ? bounds.getCentreY() - yFactor * std::log (magnitudes [0]) / std::log (2) : bounds.getBottom()));
+    for (size_t i=1; i < frequencies.size(); ++i)
+        path.lineTo (float (bounds.getX() + i * xFactor),
+                     float (magnitudes [i] > 0 ? bounds.getCentreY() - yFactor * std::log (magnitudes [i]) / std::log (2) : bounds.getBottom()));
 
-        lastBounds  = bounds;
-        plotChanged = false;
-    }
-
-    fillPlotPath (g, path, bounds, component);
-    strokePlotPath (g, path, component);
+    filledPath = path;
+    filledPath.lineTo (bounds.getBottomRight());
+    filledPath.lineTo (bounds.getBottomLeft());
+    filledPath.closeSubPath();
 }
 
 void MagicFilterPlot::prepareToPlay (double sampleRateToUse, int)
