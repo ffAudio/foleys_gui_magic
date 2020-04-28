@@ -1,8 +1,8 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.1.4
------
+1.1.4 - 28.04.2020
+------------------
 
 - Allow to create dynamic properties by editing the combobox
 - Refactor of MagicPlotComponent to redraw only with defined FPS
@@ -16,6 +16,7 @@ BREAKING CHANGE:
   This can be changed back by checking the "recursive" flag in the style class
 
 Changes:
+
 - Added conditional style classes, that react to dynamic properties
 - Added minimum and maximum size for the editor
 - Bugfix: Avoid assert when an item is dropped on itself
