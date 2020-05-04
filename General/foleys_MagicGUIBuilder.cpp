@@ -192,8 +192,12 @@ void MagicGUIBuilder::updateProperties (Decorator& item)
     {
         container->configureFlexBox (configNode);
 
+        auto stacked = container->getLayoutMode() == Container::Layout::Contents;
         for (auto& child : *container)
+        {
+            child->setOpaque (!stacked);
             updateProperties (*child);
+        }
 
         const auto display = getStyleProperty (IDs::display, configNode).toString();
         if (display == IDs::contents)
@@ -377,7 +381,7 @@ std::unique_ptr<Decorator> MagicGUIBuilder::restoreNode (juce::Component& compon
 {
     if (node.getType() == IDs::view)
     {
-        auto item = std::make_unique<Container>(*this, node);
+        auto item = std::make_unique<Container>(*this, node, dynamic_cast<Container*>(&component));
         for (auto childNode : node)
             item->addChildItem (restoreNode (*item, childNode));
 
@@ -396,7 +400,7 @@ std::unique_ptr<Decorator> MagicGUIBuilder::restoreNode (juce::Component& compon
         DBG ("No factory for: " << node.getType().toString());
     }
 
-    auto item = std::make_unique<Decorator> (*this, node, factory ? factory (node) : nullptr);
+    auto item = std::make_unique<Decorator> (*this, node, factory ? factory (node) : nullptr, dynamic_cast<Container*>(&component));
     component.addAndMakeVisible (item.get());
 
     return item;

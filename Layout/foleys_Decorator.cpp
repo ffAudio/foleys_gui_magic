@@ -30,13 +30,12 @@
 namespace foleys
 {
 
-Decorator::Decorator (MagicGUIBuilder& builder, juce::ValueTree node, std::unique_ptr<juce::Component> wrapped)
+Decorator::Decorator (MagicGUIBuilder& builder, juce::ValueTree node, std::unique_ptr<juce::Component> wrapped, Container* parentToUse)
   : magicBuilder (builder),
+    parent (parentToUse),
     configNode (node),
     component (std::move (wrapped))
 {
-    setOpaque (false);
-
     visibility.addListener (this);
 
     setInterceptsMouseClicks (false, true);
@@ -204,6 +203,9 @@ void Decorator::configureFlexBoxItem (const juce::ValueTree& node)
 void Decorator::paint (juce::Graphics& g)
 {
     juce::Graphics::ScopedSaveState stateSave (g);
+
+    if (parent && isOpaque())
+        parent->paintClientBackground (g, getBounds());
 
     const auto bounds = getLocalBounds().toFloat().reduced (margin);
 

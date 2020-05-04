@@ -30,8 +30,8 @@
 namespace foleys
 {
 
-Container::Container (MagicGUIBuilder& builder, juce::ValueTree node)
-  : Decorator (builder, node)
+Container::Container (MagicGUIBuilder& builder, juce::ValueTree node, Container* parentToUse)
+  : Decorator (builder, node, {}, parentToUse)
 {
 }
 
@@ -54,6 +54,11 @@ void Container::setLayoutMode (Layout layoutToUse)
         for (auto& child : children)
             child->setVisible (true);
     }
+}
+
+Container::Layout Container::getLayoutMode() const
+{
+    return layout;
 }
 
 void Container::setEditMode (bool shouldEdit)
@@ -197,6 +202,21 @@ void Container::configureFlexBox (const juce::ValueTree& node)
         flexBox.justifyContent = juce::FlexBox::JustifyContent::spaceBetween;
     else
         flexBox.justifyContent = juce::FlexBox::JustifyContent::flexStart;
+}
+
+void Container::paintClientBackground (juce::Graphics& g, juce::Rectangle<int> bounds)
+{
+    if (parent)
+    {
+        if (! backgroundColour.isOpaque())
+            parent->paintClientBackground (g, getBounds());
+
+        g.fillAll (backgroundColour);
+    }
+    else
+    {
+        g.fillAll (juce::Colours::black);
+    }
 }
 
 void Container::timerCallback()

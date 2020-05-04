@@ -51,7 +51,7 @@ public:
         Tabbed
     };
 
-    Container (MagicGUIBuilder& builder, juce::ValueTree node);
+    Container (MagicGUIBuilder& builder, juce::ValueTree node, Container* parent);
 
     /**
      Append a child item. To change the order the flexbox.order is used.
@@ -65,6 +65,7 @@ public:
      Sets the layout mode of the container
      */
     void setLayoutMode (Layout layout);
+    Layout getLayoutMode() const;
 
     /**
      This switches this node and all it's descendents in the edit
@@ -93,6 +94,8 @@ public:
     void setRefreshRate (int refreshRate);
 
     void configureFlexBox (const juce::ValueTree& node);
+
+    void paintClientBackground (juce::Graphics& g, juce::Rectangle<int> bounds);
 
 private:
 
