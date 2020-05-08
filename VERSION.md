@@ -1,6 +1,11 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.1.5
+-----
+
+- Add context menu option to XY-Dragger
+
 1.1.4 - 28.04.2020
 ------------------
 

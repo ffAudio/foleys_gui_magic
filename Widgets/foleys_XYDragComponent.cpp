@@ -103,6 +103,11 @@ void XYDragComponent::setParameterY (const juce::String& paramID)
     yAttachment.attachToParameter (paramID);
 }
 
+void XYDragComponent::setRightClickParameter (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)
+{
+    contextMenuParameter = state.getParameter (paramID);
+}
+
 void XYDragComponent::updateWhichToDrag (juce::Point<float> pos)
 {
     const auto centre = juce::Point<int> (getXposition(), getYposition()).toFloat();
@@ -133,6 +138,30 @@ bool XYDragComponent::hitTest (int x, int y)
 
 void XYDragComponent::mouseDown (const juce::MouseEvent& event)
 {
+    if (contextMenuParameter && (event.mods.isPopupMenu()))
+    {
+        juce::PopupMenu menu;
+        int id = 0;
+        auto current = contextMenuParameter->getCurrentValueAsText();
+
+        for (const auto& item : contextMenuParameter->getAllValueStrings())
+            menu.addItem (++id, item, true, item == current);
+
+        menu.showMenuAsync (juce::PopupMenu::Options()
+                            .withTargetComponent (this)
+                            .withTargetScreenArea ({event.getScreenX(), event.getScreenY(), 1, 1}),
+                            [=](int selected)
+        {
+            const auto& range = contextMenuParameter->getNormalisableRange();
+            auto value = range.start + (selected-1) * range.interval;
+            contextMenuParameter->beginChangeGesture();
+            contextMenuParameter->setValueNotifyingHost (contextMenuParameter->convertTo0to1 (value));
+            contextMenuParameter->endChangeGesture();
+        });
+
+        return;
+    }
+
     updateWhichToDrag (event.position);
 
     if (mouseOverX || mouseOverDot)

@@ -449,6 +449,18 @@ void MagicGUIBuilder::registerJUCEFactories()
 
     addSettableProperty (IDs::xyDragComponent,
                          std::make_unique<SettableChoiceProperty>
+                         (IDs::parameterRightClick,
+                          [&] (juce::Component* component, juce::var value, const juce::NamedValueSet&)
+                          {
+                              if (magicState)
+                                  if (auto* xydrag = dynamic_cast<XYDragComponent*>(component))
+                                      xydrag->setRightClickParameter (value.toString(), magicState->getValueTreeState());
+                          },
+                          juce::String(),
+                          SettableProperty::Parameter));
+
+    addSettableProperty (IDs::xyDragComponent,
+                         std::make_unique<SettableChoiceProperty>
                          (
                           "xy-crosshair",
                           [] (juce::Component* component, juce::var value, const auto& options)

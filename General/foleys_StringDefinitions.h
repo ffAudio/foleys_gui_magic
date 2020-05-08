@@ -61,6 +61,7 @@ namespace IDs
     static juce::Identifier parameter    { "parameter" };
     static juce::Identifier parameterX   { "parameter-x" };
     static juce::Identifier parameterY   { "parameter-y" };
+    static juce::Identifier parameterRightClick { "parameter-right-click" };
     static juce::Identifier source       { "source" };
 
     static juce::Identifier name         { "name" };

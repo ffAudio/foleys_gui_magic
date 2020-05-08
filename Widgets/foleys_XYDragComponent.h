@@ -57,6 +57,9 @@ public:
     void setParameterX (const juce::String& paramID);
     void setParameterY (const juce::String& paramID);
 
+    void setRightClickParameter (const juce::String& paramID,
+                                 juce::AudioProcessorValueTreeState& state);
+
     bool hitTest (int x, int y) override;
     void mouseDown (const juce::MouseEvent&) override;
     void mouseMove (const juce::MouseEvent&) override;
@@ -81,6 +84,8 @@ private:
 
     ParameterAttachment<float> xAttachment;
     ParameterAttachment<float> yAttachment;
+
+    juce::RangedAudioParameter* contextMenuParameter = nullptr;
 
     static float radius;
 
