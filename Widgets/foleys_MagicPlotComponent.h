@@ -47,7 +47,6 @@ public:
     };
 
     MagicPlotComponent();
-    ~MagicPlotComponent();
 
     void setPlotSource (MagicPlotSource* source);
     void setDecayFactor (float decayFactor);
