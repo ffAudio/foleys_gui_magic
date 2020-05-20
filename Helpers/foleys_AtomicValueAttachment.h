@@ -70,7 +70,7 @@ private:
     }
 
     juce::Value    internalValue;
-    std::atomic<T> atomicValue;
+    std::atomic<T> atomicValue { T (0) };
 };
 
 }
