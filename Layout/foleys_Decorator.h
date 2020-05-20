@@ -112,9 +112,12 @@ public:
     void itemDropped (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails) override;
 #endif
 
-protected:
-
-    juce::Rectangle<int> getClientBounds() const;
+    struct ClientBounds
+    {
+        juce::Rectangle<int> client;
+        juce::Rectangle<int> caption;
+    };
+    ClientBounds getClientBounds() const;
 
     MagicGUIBuilder&            magicBuilder;
 

@@ -5,6 +5,7 @@ PluginGuiMagic - Versions history
 -----
 
 - Add context menu option to XY-Dragger
+- Allowed caption to appear centred-left or centred-right on the side of a widget
 - Bugfix: Fixed uninitialized atomic in AtomicParameterAttachment
 
 1.1.4 - 28.04.2020

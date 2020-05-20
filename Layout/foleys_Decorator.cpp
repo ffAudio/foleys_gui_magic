@@ -105,6 +105,8 @@ void Decorator::configureDecorator (Stylesheet& stylesheet, const juce::ValueTre
     auto placementVar = magicBuilder.getStyleProperty (IDs::captionPlacement, node);
     if (! placementVar.isVoid())
         justification = juce::Justification (MagicGUIBuilder::makeJustificationsChoices()[placementVar.toString()]);
+    else
+        justification = juce::Justification::centredTop;
 
     backgroundImage = stylesheet.getBackgroundImage (node);
     backgroundFill  = stylesheet.getBackgroundGradient (node);
@@ -239,30 +241,39 @@ void Decorator::paint (juce::Graphics& g)
 
     if (caption.isNotEmpty())
     {
-        g.setColour (captionColour);
-        auto box = getLocalBounds().reduced (int (margin + padding));
-        if (justification.getOnlyVerticalFlags() & juce::Justification::top)
-            box.setHeight (int (captionSize));
-        else
-            box.setTop (int (box.getBottom() - captionSize));
+        auto clientBounds = getClientBounds();
 
-        g.setFont (box.getHeight() * 0.8f);
-        g.drawFittedText (caption, box, justification.getOnlyHorizontalFlags(), 1);
+        g.setColour (captionColour);
+
+        g.setFont (captionSize * 0.8f);
+        g.drawFittedText (caption, clientBounds.caption, justification.getOnlyHorizontalFlags(), 1);
     }
 }
 
-juce::Rectangle<int> Decorator::getClientBounds() const
+Decorator::ClientBounds Decorator::getClientBounds() const
 {
     auto box = getLocalBounds().reduced (juce::roundToInt (margin + padding));
+    juce::Rectangle<int> captionBox;
+
     if (caption.isNotEmpty())
     {
         if (justification.getOnlyVerticalFlags() & juce::Justification::top)
-            box.removeFromTop (int (captionSize));
+            captionBox = box.removeFromTop (int (captionSize));
+        else if (justification.getOnlyVerticalFlags() & juce::Justification::bottom)
+            captionBox = box.removeFromBottom (int (captionSize));
         else
-            box.removeFromBottom (int (captionSize));
+        {
+            juce::Font f (captionSize * 0.8f);
+            auto w = f.getStringWidth (caption);
+
+            if (justification.getOnlyHorizontalFlags() & juce::Justification::left)
+                captionBox = box.removeFromLeft (w);
+            else if (justification.getOnlyHorizontalFlags() & juce::Justification::right)
+                captionBox = box.removeFromRight (w);
+        }
     }
 
-    return box;
+    return { box, captionBox };
 }
 
 void Decorator::resized()
@@ -270,16 +281,7 @@ void Decorator::resized()
     if (component.get() == nullptr)
         return;
 
-    auto box = getLocalBounds().reduced (int (margin + padding));
-    if (caption.isNotEmpty())
-    {
-        if (justification.getOnlyVerticalFlags() & juce::Justification::top)
-            box.removeFromTop (int (captionSize));
-        else
-            box.removeFromBottom (int (captionSize));
-    }
-
-    component->setBounds (box);
+    component->setBounds (getClientBounds().client);
 }
 
 void Decorator::updateLayout()
