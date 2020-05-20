@@ -40,10 +40,7 @@ MagicPlotComponent::MagicPlotComponent()
     setColour (plotInactiveFillColourId, juce::Colours::orange.darker().withAlpha (0.5f));
 
     setOpaque (false);
-}
-
-MagicPlotComponent::~MagicPlotComponent()
-{
+    setPaintingIsUnclipped (true);
 }
 
 void MagicPlotComponent::setPlotSource (MagicPlotSource* source)

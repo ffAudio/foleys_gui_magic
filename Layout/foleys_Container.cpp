@@ -74,28 +74,28 @@ void Container::updateLayout()
     if (children.empty())
         return;
 
+    auto clientBounds = getClientBounds();
+
     if (layout == Layout::FlexBox)
     {
         flexBox.items.clear();
         for (auto& child : children)
             flexBox.items.add (child->flexItem);
 
-        flexBox.performLayout (getClientBounds());
+        flexBox.performLayout (clientBounds.client);
     }
     else
     {
-        auto box = getClientBounds();
-
         if (layout == Layout::Tabbed)
         {
             updateTabbedButtons();
-            tabbedButtons->setBounds (box.removeFromTop (30));
+            tabbedButtons->setBounds (clientBounds.client.removeFromTop (30));
         }
         else
             tabbedButtons.reset();
 
         for (auto& child : children)
-            child->setBounds (box);
+            child->setBounds (clientBounds.client);
     }
 
     for (auto& child : children)
