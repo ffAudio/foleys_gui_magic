@@ -43,7 +43,7 @@ class Stylesheet
 {
 public:
 
-    Stylesheet() = default;
+    Stylesheet (MagicGUIBuilder& builder);
 
     /**
      The Stylesheet node in the XML can contain several Styles to select from.
@@ -69,7 +69,7 @@ public:
 
      @param builder is the managed builder instance, so the style class can connect to the variables
      */
-    void updateStyleClasses (MagicGUIBuilder& builder);
+    void updateStyleClasses();
 
     /**
      This method traverses the dom and checks each style, if that property was defined.
@@ -178,6 +178,8 @@ private:
     };
 
     juce::StringArray getParameters (const juce::String& text) const;
+
+    MagicGUIBuilder&  builder;
 
     juce::ValueTree   currentStyle;
 
