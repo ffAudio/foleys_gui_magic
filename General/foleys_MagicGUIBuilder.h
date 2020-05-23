@@ -236,7 +236,7 @@ private:
 
     juce::UndoManager undo;
     juce::ValueTree   config;
-    Stylesheet        stylesheet;
+    Stylesheet        stylesheet { *this };
 
     std::map<juce::Identifier, std::vector<std::pair<juce::String, int>>> colourTranslations;
 

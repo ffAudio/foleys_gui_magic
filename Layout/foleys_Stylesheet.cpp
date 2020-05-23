@@ -31,6 +31,9 @@
 namespace foleys
 {
 
+Stylesheet::Stylesheet (MagicGUIBuilder& builderToUse) : builder (builderToUse)
+{
+}
 
 void Stylesheet::setStyle (const juce::ValueTree& node)
 {
@@ -70,7 +73,7 @@ void Stylesheet::updateValidRanges()
     }
 }
 
-void Stylesheet::updateStyleClasses (MagicGUIBuilder& builder)
+void Stylesheet::updateStyleClasses()
 {
     styleClasses.clear();
 
@@ -165,7 +168,7 @@ juce::var Stylesheet::getStyleProperty (const juce::Identifier& name, const juce
     if (definedHere)
         *definedHere = juce::ValueTree();
 
-    return {};
+    return builder.getPropertyDefaultValue (node.getType(), name);
 }
 
 juce::Colour Stylesheet::parseColour (const juce::String& name)

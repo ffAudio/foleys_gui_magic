@@ -92,7 +92,7 @@ void MagicGUIBuilder::updateStylesheet()
         stylesheet.setStyle (stylesNode.getChild (0));
     }
 
-    stylesheet.updateStyleClasses (*this);
+    stylesheet.updateStyleClasses();
     stylesheet.updateValidRanges();
 }
 
@@ -430,6 +430,9 @@ juce::var MagicGUIBuilder::getPropertyDefaultValue (juce::Identifier type, juce:
     if (property == IDs::minHeight) return 0.0;
     if (property == IDs::display) return IDs::flexbox;
 
+    if (property == IDs::captionPlacement) return "centred-top";
+    if (property == IDs::lookAndFeel) return "FoleysFinest";
+
     return {};
 }
 
@@ -543,7 +546,7 @@ void MagicGUIBuilder::createDefaultGUITree (bool keepExisting)
 void MagicGUIBuilder::valueTreePropertyChanged (juce::ValueTree& node, const juce::Identifier&)
 {
     if (node.isAChildOf (stylesheet.getCurrentStyle()))
-        stylesheet.updateStyleClasses (*this);
+        stylesheet.updateStyleClasses();
 
     if (root)
     {
