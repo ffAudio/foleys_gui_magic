@@ -1,8 +1,16 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.1.5
+1.2.0
 -----
+
+BREAKING CHANGE:
+- Objects such as PlotSources and LevelMeters are in a flat list, so their names have to be unique
+- Any other kind of object can be stored and advertised to the GUI, eg. ListBoxModels
+- addPlotSource() is now createAndAddObject<MagicAnalyser>(), MagicLevelSource works similar
+
+1.1.5 - 20.05.2020
+------------------
 
 - Add context menu option to XY-Dragger
 - Allowed caption to appear centred-left or centred-right on the side of a widget

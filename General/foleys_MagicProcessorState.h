@@ -40,6 +40,21 @@ namespace foleys
  */
 class MagicProcessorState   : private juce::Timer
 {
+    struct ObjectBase {
+        virtual ~ObjectBase() noexcept = default;
+    };
+
+    template <typename ToErase> class ErasedObject : public ObjectBase, public ToErase {
+    public:
+        template <typename... Ts>
+        explicit ErasedObject(Ts &&... ts) : ToErase{std::forward<Ts>(ts)...} {}
+    };
+
+    template <typename T, typename... Ts>
+    std::unique_ptr<ErasedObject<T>> makeErased(Ts &&... t) {
+      return std::make_unique<ErasedObject<T>>(std::forward<Ts>(t)...);
+    }
+
 public:
     /**
      Create a MagicProcessorState to let the generated GUI communicate with the
@@ -49,26 +64,6 @@ public:
                          juce::AudioProcessorValueTreeState& stateToUse);
 
     ~MagicProcessorState();
-
-    /**
-     Add a MagicLevelSource to measure the level at any point in your DSP. For instance you can have
-     one MagicLevelSource at the beginning of your processing and one at the end to show the user
-     the input and output level.
-     */
-    MagicLevelSource* addLevelSource (const juce::Identifier& sourceID, std::unique_ptr<MagicLevelSource> source);
-    MagicLevelSource* getLevelSource (const juce::Identifier& sourceID);
-
-    /**
-     Add a MagicPlotSource to generate a plot for visualisation. There are some plots ready made
-     like the MagicFilterPlot to show an IIR frequency response plot.
-     */
-    MagicPlotSource* addPlotSource (const juce::Identifier& sourceID, std::unique_ptr<MagicPlotSource> source);
-
-    /**
-     Use this to lookup a MagicPlotSource. Since they can only be added and never removed, it makes
-     sense to have the result as member pointer so you can push the data there.
-     */
-    MagicPlotSource* getPlotSource (const juce::Identifier& sourceID);
 
     /**
      Add a function to be connected to e.g. Buttons
@@ -93,19 +88,60 @@ public:
     juce::StringArray getParameterNames() const;
 
     /**
-     Returns the IDs of MagicLevelSources for selection
-     */
-    juce::StringArray getLevelSourcesNames() const;
-
-    /**
-     Returns the IDs of MagicPlotSources for selection
-     */
-    juce::StringArray getPlotSourcesNames() const;
-
-    /**
      Populates a menu with options from SettableProperty
      */
     void populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const;
+
+    /**
+     Create and add an object. The type to create needs to be added as template parameter, the arguments will be forwarded to the constructor.
+     */
+    template <typename T, typename... Ts>
+    T* createAndAddObject (const juce::Identifier& objectID, Ts &&... t)
+    {
+        const auto& present = advertisedObjects.find (objectID);
+        if (present != advertisedObjects.cend())
+        {
+            // You tried to add two MagicPlotSources with the same sourceID
+            jassertfalse;
+            return nullptr;
+        }
+
+        auto o = std::make_unique<ErasedObject<T>>(std::forward<Ts>(t)...);
+        auto* pointerToReturn = o.get();
+        advertisedObjects [objectID] = std::move (o);
+
+        return pointerToReturn;
+    }
+
+    /**
+     Returns all identifiers of objects, that can be casted to the given type.
+     */
+    template <typename ObjectType>
+    juce::StringArray getObjectIDsByType() const
+    {
+        juce::StringArray identifiers;
+        for (const auto& object : advertisedObjects)
+            if (dynamic_cast<ObjectType*>(object.second.get()))
+                identifiers.add (object.first.toString());
+
+        return identifiers;
+    }
+
+    /**
+     Return an object by objectID. The returned type needs to be specified as template parameter.
+     If there is no object with that objectID, or the object is not of the selected type, this will return a nullptr.
+
+     @param objectID is the ID to identify the object.
+     */
+    template <typename ObjectType>
+    ObjectType* getObjectWithType (juce::Identifier objectID)
+    {
+        const auto& object = advertisedObjects.find (objectID);
+        if (object != advertisedObjects.cend())
+            return dynamic_cast<ObjectType*>(object->second.get());
+
+        return nullptr;
+    }
 
     /**
      Call this method in your prepareToPlay implementation, to allow th visualisers to be
@@ -122,6 +158,10 @@ public:
      */
     void processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents=true);
 
+    /**
+     Registers background processing
+     */
+    void addBackgroundProcessing (MagicPlotSource* source);
 
     /**
      Calling this in the processBlock() will store the values from AudioPlayHead into the state, so it can be used in the GUI.
@@ -175,9 +215,9 @@ private:
 
     juce::MidiKeyboardState keyboardState;
 
-    std::map<juce::Identifier, std::unique_ptr<MagicLevelSource>> levelSources;
-    std::map<juce::Identifier, std::unique_ptr<MagicPlotSource>>  plotSources;
     std::map<juce::Identifier, std::function<void()>>             triggers;
+
+    std::map<juce::Identifier, std::unique_ptr<ObjectBase>>       advertisedObjects;
 
     std::atomic<double> bpm;
     std::atomic<int>    timeSigNumerator;

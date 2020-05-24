@@ -43,58 +43,13 @@ MagicProcessorState::~MagicProcessorState()
     visualiserThread.stopThread (1000);
 }
 
-MagicLevelSource* MagicProcessorState::addLevelSource (const juce::Identifier& sourceID, std::unique_ptr<MagicLevelSource> source)
+void MagicProcessorState::addBackgroundProcessing (MagicPlotSource* source)
 {
-    const auto& present = levelSources.find (sourceID);
-    if (present != levelSources.cend())
-    {
-        // You tried to add two MagicLevelSources with the same sourceID
-        jassertfalse;
-        return present->second.get();
-    }
-
-    auto* pointer = source.get();
-    levelSources [sourceID] = std::move (source);
-    return pointer;
-}
-
-MagicLevelSource* MagicProcessorState::getLevelSource (const juce::Identifier& sourceID)
-{
-    auto it = levelSources.find (sourceID);
-    if (it == levelSources.end())
-        return nullptr;
-
-    return it->second.get();
-}
-
-MagicPlotSource* MagicProcessorState::addPlotSource (const juce::Identifier& sourceID, std::unique_ptr<MagicPlotSource> source)
-{
-    const auto& present = plotSources.find (sourceID);
-    if (present != plotSources.cend())
-    {
-        // You tried to add two MagicPlotSources with the same sourceID
-        jassertfalse;
-        return present->second.get();
-    }
-
     if (auto* job = source->getBackgroundJob())
     {
         visualiserThread.addTimeSliceClient (job);
         visualiserThread.startThread (3);
     }
-
-    auto* pointer = source.get();
-    plotSources [sourceID] = std::move (source);
-    return pointer;
-}
-
-MagicPlotSource* MagicProcessorState::getPlotSource (const juce::Identifier& sourceID)
-{
-    auto it = plotSources.find (sourceID);
-    if (it == plotSources.end())
-        return nullptr;
-
-    return it->second.get();
 }
 
 void MagicProcessorState::addTrigger (const juce::Identifier& triggerID, std::function<void()> function)
@@ -141,24 +96,6 @@ juce::StringArray MagicProcessorState::getParameterNames() const
     return names;
 }
 
-juce::StringArray MagicProcessorState::getLevelSourcesNames() const
-{
-    juce::StringArray names;
-    for (const auto& p : levelSources)
-        names.add (p.first.toString());
-
-    return names;
-}
-
-juce::StringArray MagicProcessorState::getPlotSourcesNames() const
-{
-    juce::StringArray names;
-    for (const auto& p : plotSources)
-        names.add (p.first.toString());
-
-    return names;
-}
-
 void MagicProcessorState::populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const
 {
     int index = 0;
@@ -169,13 +106,13 @@ void MagicProcessorState::populateSettableOptionsMenu (juce::ComboBox& comboBox,
             break;
 
         case SettableProperty::LevelSource:
-            for (const auto& p : levelSources)
-                comboBox.addItem (p.first.toString(), ++index);
+            for (const auto& p : getObjectIDsByType<MagicLevelSource>())
+                comboBox.addItem (p, ++index);
             break;
 
         case SettableProperty::PlotSource:
-            for (const auto& p : plotSources)
-                comboBox.addItem (p.first.toString(), ++index);
+            for (const auto& p : getObjectIDsByType<MagicPlotSource>())
+                comboBox.addItem (p, ++index);
             break;
 
         case SettableProperty::Justification:
@@ -242,8 +179,9 @@ void MagicProcessorState::addPropertiesToMenu (const juce::ValueTree& tree, juce
 
 void MagicProcessorState::prepareToPlay (double sampleRate, int samplesPerBlockExpected)
 {
-    for (auto& plot : plotSources)
-        plot.second->prepareToPlay (sampleRate, samplesPerBlockExpected);
+    for (auto& plot : advertisedObjects)
+        if (auto* source = dynamic_cast<MagicPlotSource*>(plot.second.get()))
+            source->prepareToPlay (sampleRate, samplesPerBlockExpected);
 }
 
 void MagicProcessorState::processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents)
