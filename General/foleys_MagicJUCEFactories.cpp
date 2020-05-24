@@ -391,7 +391,7 @@ void MagicGUIBuilder::registerJUCEFactories()
                           {
                               if (magicState)
                                   if (auto* plotComponent = dynamic_cast<MagicPlotComponent*>(component))
-                                      plotComponent->setPlotSource (magicState->getPlotSource (value.toString()));
+                                      plotComponent->setPlotSource (magicState->getObjectWithType<MagicPlotSource>(value.toString()));
                           },
                           juce::String(),
                           SettableProperty::PlotSource));
@@ -571,7 +571,7 @@ void MagicGUIBuilder::registerJUCEFactories()
                           {
                               if (magicState)
                                   if (auto* meter = dynamic_cast<MagicLevelMeter*>(component))
-                                      meter->setLevelSource (magicState->getLevelSource (value.toString()));
+                                      meter->setLevelSource (magicState->getObjectWithType<MagicLevelSource>(value.toString()));
                           },
                           juce::String(),
                           SettableProperty::LevelSource));

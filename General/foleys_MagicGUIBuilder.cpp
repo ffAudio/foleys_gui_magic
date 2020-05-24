@@ -506,7 +506,7 @@ void MagicGUIBuilder::createDefaultGUITree (bool keepExisting)
 
     if (magicState)
     {
-        auto plotNames = magicState->getPlotSourcesNames();
+        auto plotNames = magicState->getObjectIDsByType<MagicPlotSource>();
 
         if (plotNames.isEmpty() == false)
         {
