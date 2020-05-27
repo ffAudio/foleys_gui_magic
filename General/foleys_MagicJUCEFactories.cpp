@@ -576,6 +576,34 @@ void MagicGUIBuilder::registerJUCEFactories()
                           juce::String(),
                           SettableProperty::LevelSource));
 
+    //==============================================================================
+
+    registerFactory ("ListBox",
+                     [&] (const juce::ValueTree&)
+                     {
+                         auto listBox = std::make_unique<juce::ListBox>();
+                         if (magicState)
+                             if (auto* model = magicState->getObjectWithType<juce::ListBoxModel>("presets"))
+                                 listBox->setModel (model);
+
+                         return listBox;
+                     });
+
+    addSettableProperty ("ListBox",
+                         std::make_unique<SettableObjectProperty<juce::ListBoxModel>>
+                         (
+                          "list-box-model",
+                          [&] (juce::Component* component, juce::var value)
+                          {
+                              if (auto* listbox = dynamic_cast<juce::ListBox*>(component))
+                              {
+                                  if (auto* model = magicState->getObjectWithType<juce::ListBoxModel>(value.toString()))
+                                      listbox->setModel (model);
+                              }
+                          },
+                          juce::String(),
+                          juce::NamedValueSet()));
+
 }
 
 } // namespace foleys
