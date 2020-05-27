@@ -69,9 +69,6 @@ void MagicGUIBuilder::updateAll()
 
     updateLayout();
 
-    if (root)
-        updateProperties (*root);
-
     config.addListener (this);
 }
 
