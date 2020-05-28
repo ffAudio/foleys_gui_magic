@@ -65,6 +65,9 @@ StylePropertyComponent* StylePropertyComponent::createComponent (MagicGUIBuilder
         property.type == SettableProperty::AssetFile)
         return new StyleChoicePropertyComponent (builder, property.name, node, property.type);
 
+    if (property.type == SettableProperty::Object)
+        return new StyleChoicePropertyComponent (builder, property.name, node, property.getOptionsNames());
+
     jassertfalse;
     return nullptr;
 }
