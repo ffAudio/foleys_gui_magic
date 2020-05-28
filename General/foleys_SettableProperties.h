@@ -63,6 +63,15 @@ struct SettableProperty
     virtual juce::NamedValueSet getOptions() const { return {}; }
     virtual void set (juce::Component*, juce::var) const = 0;
 
+    juce::StringArray getOptionsNames() const
+    {
+        juce::StringArray names;
+        for (const auto& namedValue : getOptions())
+            names.add (namedValue.name.toString());
+
+        return names;
+    }
+
     const juce::Identifier name;
     const PropertyType     type;
     const juce::var        defaultValue;
