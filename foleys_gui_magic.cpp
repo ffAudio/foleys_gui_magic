@@ -45,6 +45,7 @@
 #include "Layout/foleys_Stylesheet.cpp"
 #include "Layout/foleys_Decorator.cpp"
 #include "Layout/foleys_Container.cpp"
+#include "Layout/foleys_GuiItem.cpp"
 
 #include "Visualisers/foleys_MagicLevelSource.cpp"
 #include "Visualisers/foleys_MagicFilterPlot.cpp"

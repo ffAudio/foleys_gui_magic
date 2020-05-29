@@ -32,57 +32,34 @@
 namespace foleys
 {
 
-class MagicGUIBuilder;
-
-/**
- The Decorator class will draw borders and descriptions around widgets, if defined.
- It also owns the Component and the Attachment, in case the Component is connected
- to an AudioProcessorValueTreeState.
- */
-class Decorator   : public juce::Component,
-                    private juce::Value::Listener
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-                , public juce::DragAndDropTarget
-#endif
+class Decorator
 {
 public:
-    Decorator (MagicGUIBuilder& builder, juce::ValueTree node, std::unique_ptr<juce::Component> wrapped = {});
 
-    /**
-     This method sets the GUI in edit mode, that allows to drag the components around.
-     */
-    virtual void setEditMode (bool shouldEdit);
+    Decorator() = default;
 
     /**
      This will get the necessary information from the stylesheet, using inheritance
-     of nodes if needed, to set the margins/borders etc. for the Decorator.
+     of nodes if needed, to set the margins/borders etc. for the GuiItem.
      */
-    void configureDecorator (Stylesheet& stylesheet, const juce::ValueTree& node);
+    void configure (MagicGUIBuilder& builder, const juce::ValueTree& node);
 
-    /**
-     This will get the necessary information from the stylesheet, using inheritance
-     of nodes if needed, to set specific properties for the wrapped component.
-     */
-    void configureComponent (Stylesheet& stylesheet, const juce::ValueTree& node);
+    void reset();
 
-    void paint (juce::Graphics& g) override;
-    void resized() override;
+    void drawDecorator (juce::Graphics& g, juce::Rectangle<int> bounds);
 
-    virtual bool isContainer() const { return false; }
+    struct ClientBounds
+    {
+        juce::Rectangle<int> client;
+        juce::Rectangle<int> caption;
+    };
+    
+    Decorator::ClientBounds getClientBounds (juce::Rectangle<int> overallBounds) const;
 
-    /**
-     This will trigger a recalculation of the children layout regardless of resized
-     */
-    virtual void updateLayout();
+    juce::String getTabCaption (const juce::String& defaultName) const;
+    juce::Colour getTabColour() const;
 
-    void configureFlexBoxItem (const juce::ValueTree& node);
-
-    /**
-     Allows accessing the Component inside that Decorator. Don't keep this pointer!
-     */
-    juce::Component* getWrappedComponent();
-
-    const juce::ValueTree& getConfigNode() const;
+private:
 
     juce::Colour backgroundColour { juce::Colours::darkgrey };
     juce::Colour borderColour     { juce::Colours::silver };
@@ -100,36 +77,6 @@ public:
     juce::String        tabCaption;
     juce::Colour        tabColour;
 
-    juce::FlexItem flexItem { juce::FlexItem (*this).withFlex (1.0f) };
-
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-    void paintOverChildren (juce::Graphics& g) override;
-    void mouseDown (const juce::MouseEvent& event) override;
-
-    void mouseDrag (const juce::MouseEvent& event) override;
-
-    bool isInterestedInDragSource (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails) override;
-    void itemDropped (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails) override;
-#endif
-
-    struct ClientBounds
-    {
-        juce::Rectangle<int> client;
-        juce::Rectangle<int> caption;
-    };
-    ClientBounds getClientBounds() const;
-
-    MagicGUIBuilder&            magicBuilder;
-
-private:
-
-    void valueChanged (juce::Value& source) override;
-
-    juce::ValueTree             configNode;
-    juce::Value                 visibility { true };
-
-    std::unique_ptr<juce::Component> component;
-
     juce::Image                 backgroundImage;
     float                       backgroundAlpha = 1.0f;
     juce::RectanglePlacement    backgroundPlacement = juce::RectanglePlacement::centred;
@@ -138,4 +85,4 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Decorator)
 };
 
-} // namespace foleys
+}

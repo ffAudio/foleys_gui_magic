@@ -91,7 +91,7 @@ public:
     /**
      Updates the colours and properties for all components
      */
-    void updateProperties (Decorator& item);
+    void updateProperties (GuiItem& item);
 
     /**
      Recalculates the layout of all components
@@ -232,7 +232,7 @@ public:
 
 private:
 
-    std::unique_ptr<Decorator> restoreNode (juce::Component& component, const juce::ValueTree& node);
+    std::unique_ptr<GuiItem> restoreNode (juce::Component& component, const juce::ValueTree& node);
 
     juce::UndoManager undo;
     juce::ValueTree   config;
@@ -256,7 +256,7 @@ private:
 
     MagicProcessorState* magicState;
 
-    std::unique_ptr<Decorator> root;
+    std::unique_ptr<GuiItem> root;
 
     std::unique_ptr<juce::Component> overlayDialog;
 

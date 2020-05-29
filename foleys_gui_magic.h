@@ -97,6 +97,7 @@
 
 #include "Layout/foleys_Stylesheet.h"
 #include "Layout/foleys_Decorator.h"
+#include "Layout/foleys_GuiItem.h"
 #include "Layout/foleys_Container.h"
 
 #include "LookAndFeels/foleys_LookAndFeel.h"
