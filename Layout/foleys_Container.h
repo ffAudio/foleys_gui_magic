@@ -35,11 +35,11 @@ namespace foleys
 class MagicPlotComponent;
 
 /**
- The Container is a Decorator, that can hold multiple Components.
+ The Container is a GuiItem, that can hold multiple Components.
  In the editor it is seen as "View". With the setting "display"
  the layout strategy can be chosen.
  */
-class Container   : public Decorator,
+class Container   : public GuiItem,
                     private juce::ChangeListener,
                     private juce::Timer
 {
@@ -56,10 +56,10 @@ public:
     /**
      Append a child item. To change the order the flexbox.order is used.
      */
-    void addChildItem (std::unique_ptr<Decorator> child);
+    void addChildItem (std::unique_ptr<GuiItem> child);
 
-    std::vector<std::unique_ptr<Decorator>>::iterator begin();
-    std::vector<std::unique_ptr<Decorator>>::iterator end();
+    std::vector<std::unique_ptr<GuiItem>>::iterator begin();
+    std::vector<std::unique_ptr<GuiItem>>::iterator end();
 
     /**
      Sets the layout mode of the container
@@ -109,7 +109,7 @@ private:
     juce::FlexBox flexBox;
 
     std::unique_ptr<juce::TabbedButtonBar>  tabbedButtons;
-    std::vector<std::unique_ptr<Decorator>> children;
+    std::vector<std::unique_ptr<GuiItem>> children;
 
     std::vector<juce::Component::SafePointer<MagicPlotComponent>> plotComponents;
 

@@ -31,11 +31,11 @@ namespace foleys
 {
 
 Container::Container (MagicGUIBuilder& builder, juce::ValueTree node)
-  : Decorator (builder, node)
+  : GuiItem (builder, node)
 {
 }
 
-void Container::addChildItem (std::unique_ptr<Decorator> child)
+void Container::addChildItem (std::unique_ptr<GuiItem> child)
 {
     addAndMakeVisible (child.get());
     children.push_back (std::move (child));
@@ -61,7 +61,7 @@ void Container::setEditMode (bool shouldEdit)
     for (auto& child : children)
         child->setEditMode (shouldEdit);
 
-    Decorator::setEditMode (shouldEdit);
+    GuiItem::setEditMode (shouldEdit);
 }
 
 void Container::resized()
@@ -82,20 +82,20 @@ void Container::updateLayout()
         for (auto& child : children)
             flexBox.items.add (child->flexItem);
 
-        flexBox.performLayout (clientBounds.client);
+        flexBox.performLayout (clientBounds);
     }
     else
     {
         if (layout == Layout::Tabbed)
         {
             updateTabbedButtons();
-            tabbedButtons->setBounds (clientBounds.client.removeFromTop (30));
+            tabbedButtons->setBounds (clientBounds.removeFromTop (30));
         }
         else
             tabbedButtons.reset();
 
         for (auto& child : children)
-            child->setBounds (clientBounds.client);
+            child->setBounds (clientBounds);
     }
 
     for (auto& child : children)
@@ -128,11 +128,8 @@ void Container::updateTabbedButtons()
 
     for (auto& child : children)
     {
-        auto caption = child->tabCaption.isNotEmpty() ? child->tabCaption
-                                                      : child->caption.isNotEmpty() ? child->caption
-                                                                                    : "Tab " + juce::String (tabbedButtons->getNumTabs());
-
-        tabbedButtons->addTab (caption, child->tabColour, -1);
+        tabbedButtons->addTab (child->getTabCaption ("Tab " + juce::String (tabbedButtons->getNumTabs())),
+                               child->getTabColour(), -1);
     }
 
     tabbedButtons->addChangeListener (this);
@@ -222,12 +219,12 @@ void Container::updateSelectedTab()
         child->setVisible (currentTab == index++);
 }
 
-std::vector<std::unique_ptr<Decorator>>::iterator Container::begin()
+std::vector<std::unique_ptr<GuiItem>>::iterator Container::begin()
 {
     return children.begin();
 }
 
-std::vector<std::unique_ptr<Decorator>>::iterator Container::end()
+std::vector<std::unique_ptr<GuiItem>>::iterator Container::end()
 {
     return children.end();
 }

@@ -166,13 +166,11 @@ void MagicGUIBuilder::updateComponents()
 #endif
 }
 
-void MagicGUIBuilder::updateProperties (Decorator& item)
+void MagicGUIBuilder::updateProperties (GuiItem& item)
 {
-    const auto& configNode = item.getConfigNode();
+    item.update();
 
-    item.configureDecorator (stylesheet, configNode);
-    item.configureComponent (stylesheet, configNode);
-    item.configureFlexBoxItem (configNode);
+    const auto& configNode = item.getConfigNode();
 
     const auto translation = colourTranslations.find (configNode.getType());
     if (translation != colourTranslations.end() && item.getWrappedComponent() != nullptr)
@@ -370,7 +368,7 @@ const std::vector<std::unique_ptr<SettableProperty>>& MagicGUIBuilder::getSettab
     return emptyPropertyList;
 }
 
-std::unique_ptr<Decorator> MagicGUIBuilder::restoreNode (juce::Component& component, const juce::ValueTree& node)
+std::unique_ptr<GuiItem> MagicGUIBuilder::restoreNode (juce::Component& component, const juce::ValueTree& node)
 {
     if (node.getType() == IDs::view)
     {
@@ -393,7 +391,7 @@ std::unique_ptr<Decorator> MagicGUIBuilder::restoreNode (juce::Component& compon
         DBG ("No factory for: " << node.getType().toString());
     }
 
-    auto item = std::make_unique<Decorator> (*this, node, factory ? factory (node) : nullptr);
+    auto item = std::make_unique<GuiItem> (*this, node, factory ? factory (node) : nullptr);
     component.addAndMakeVisible (item.get());
 
     return item;
