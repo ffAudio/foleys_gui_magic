@@ -69,13 +69,6 @@ public:
      */
     void setLayoutMode (Layout layout);
 
-    /**
-     This switches this node and all it's descendents in the edit
-     mode, which means, the components don't react, but instead you
-     can move them around.
-     */
-    void setEditMode (bool shouldEdit) override;
-
     void resized() override;
 
     bool isContainer() const override { return true; }
@@ -88,6 +81,15 @@ public:
     void updateContinuousRedraw();
 
     void configureFlexBox (const juce::ValueTree& node);
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    /**
+     This switches this node and all it's descendents in the edit
+     mode, which means, the components don't react, but instead you
+     can move them around.
+     */
+    void setEditMode (bool shouldEdit) override;
+#endif
 
 private:
 
