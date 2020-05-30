@@ -35,6 +35,32 @@ Container::Container (MagicGUIBuilder& builder, juce::ValueTree node)
 {
 }
 
+void Container::update()
+{
+    GuiItem::update();
+
+    configureFlexBox (configNode);
+
+    for (auto& child : *this)
+        child->update();
+
+    const auto display = magicBuilder.getStyleProperty (IDs::display, configNode).toString();
+    if (display == IDs::contents)
+        setLayoutMode (Container::Layout::Contents);
+    else if (display == IDs::tabbed)
+        setLayoutMode (Container::Layout::Tabbed);
+    else
+        setLayoutMode (Container::Layout::FlexBox);
+
+    auto repaintHz = magicBuilder.getStyleProperty (IDs::repaintHz, configNode).toString();
+    if (repaintHz.isNotEmpty())
+    {
+        refreshRateHz = repaintHz.getIntValue();
+        updateContinuousRedraw();
+    }
+
+}
+
 void Container::addChildItem (std::unique_ptr<GuiItem> child)
 {
     addAndMakeVisible (child.get());
@@ -113,12 +139,6 @@ void Container::updateContinuousRedraw()
 
     if (! plotComponents.empty())
         startTimerHz (refreshRateHz);
-}
-
-void Container::setRefreshRate (int refreshRate)
-{
-    refreshRateHz = refreshRate;
-    updateContinuousRedraw();
 }
 
 void Container::updateTabbedButtons()

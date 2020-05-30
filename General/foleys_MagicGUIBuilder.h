@@ -89,9 +89,9 @@ public:
     void updateComponents();
 
     /**
-     Updates the colours and properties for all components
+     Updates the colours and properties for the component
      */
-    void updateProperties (GuiItem& item);
+    void updateColours (GuiItem& item, const juce::ValueTree& node);
 
     /**
      Recalculates the layout of all components
@@ -152,6 +152,8 @@ public:
      This method returns the names of colours for a certain Component type
      */
     juce::StringArray getColourNames (juce::Identifier type) const;
+
+    std::vector<std::pair<juce::String, int>> getColourTranslationMap() const;
 
     /**
      This method collects all names of colours, so the style editor can show a control to edit the colours

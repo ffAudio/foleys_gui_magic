@@ -53,6 +53,9 @@ public:
 
     Container (MagicGUIBuilder& builder, juce::ValueTree node);
 
+
+    void update() override;
+
     /**
      Append a child item. To change the order the flexbox.order is used.
      */
@@ -83,14 +86,6 @@ public:
     void updateLayout() override;
 
     void updateContinuousRedraw();
-
-    /**
-     If that container contains MacicPlotComponents, it will be repainted with that FPS.
-     The components will be checked, if a redraw is necessary.
-
-     @param refreshRate is the refresh rate to redraw
-     */
-    void setRefreshRate (int refreshRate);
 
     void configureFlexBox (const juce::ValueTree& node);
 
