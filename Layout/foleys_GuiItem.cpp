@@ -59,14 +59,6 @@ void GuiItem::update()
     configureFlexBoxItem (configNode);
 }
 
-void GuiItem::setEditMode (bool shouldEdit)
-{
-    setInterceptsMouseClicks (shouldEdit, true);
-
-    if (component.get() != nullptr)
-        component->setInterceptsMouseClicks (!shouldEdit, !shouldEdit);
-}
-
 void GuiItem::configureComponent (Stylesheet& stylesheet)
 {
     if (component.get() == nullptr)
@@ -197,6 +189,15 @@ void GuiItem::valueChanged (juce::Value& source)
 }
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+
+void GuiItem::setEditMode (bool shouldEdit)
+{
+    setInterceptsMouseClicks (shouldEdit, true);
+
+    if (component.get() != nullptr)
+        component->setInterceptsMouseClicks (!shouldEdit, !shouldEdit);
+}
+
 void GuiItem::paintOverChildren (juce::Graphics& g)
 {
     if (magicBuilder.isEditModeOn() && magicBuilder.getSelectedNode() == configNode)

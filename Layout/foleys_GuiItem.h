@@ -53,11 +53,6 @@ public:
      */
     virtual void update();
 
-    /**
-     This method sets the GUI in edit mode, that allows to drag the components around.
-     */
-    virtual void setEditMode (bool shouldEdit);
-
     void paint (juce::Graphics& g) override;
     void resized() override;
 
@@ -85,6 +80,11 @@ public:
     juce::FlexItem flexItem { juce::FlexItem (*this).withFlex (1.0f) };
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    /**
+     This method sets the GUI in edit mode, that allows to drag the components around.
+     */
+    virtual void setEditMode (bool shouldEdit);
+
     void paintOverChildren (juce::Graphics& g) override;
     void mouseDown (const juce::MouseEvent& event) override;
 

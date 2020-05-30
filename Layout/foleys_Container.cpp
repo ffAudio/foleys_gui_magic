@@ -82,14 +82,6 @@ void Container::setLayoutMode (Layout layoutToUse)
     }
 }
 
-void Container::setEditMode (bool shouldEdit)
-{
-    for (auto& child : children)
-        child->setEditMode (shouldEdit);
-
-    GuiItem::setEditMode (shouldEdit);
-}
-
 void Container::resized()
 {
     updateLayout();
@@ -248,5 +240,15 @@ std::vector<std::unique_ptr<GuiItem>>::iterator Container::end()
 {
     return children.end();
 }
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+void Container::setEditMode (bool shouldEdit)
+{
+    for (auto& child : children)
+        child->setEditMode (shouldEdit);
+
+    GuiItem::setEditMode (shouldEdit);
+}
+#endif
 
 } // namespace foleys
