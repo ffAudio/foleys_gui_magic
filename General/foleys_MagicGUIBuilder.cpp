@@ -65,7 +65,7 @@ void MagicGUIBuilder::updateAll()
     updateComponents();
 
     if (root)
-        updateProperties (*root);
+        root->update();
 
     updateLayout();
 
@@ -166,41 +166,21 @@ void MagicGUIBuilder::updateComponents()
 #endif
 }
 
-void MagicGUIBuilder::updateProperties (GuiItem& item)
+void MagicGUIBuilder::updateColours (GuiItem& item, const juce::ValueTree& node)
 {
-    item.update();
+    auto* component = item.getWrappedComponent();
+    if (component == nullptr)
+        return;
 
-    const auto& configNode = item.getConfigNode();
-
-    const auto translation = colourTranslations.find (configNode.getType());
-    if (translation != colourTranslations.end() && item.getWrappedComponent() != nullptr)
+    const auto translation = colourTranslations.find (node.getType());
+    if (translation != colourTranslations.end())
     {
         for (auto& pair : translation->second)
         {
-            auto colour = getStyleProperty (pair.first, configNode).toString();
+            auto colour = getStyleProperty (pair.first, node).toString();
             if (colour.isNotEmpty())
-                item.getWrappedComponent()->setColour (pair.second, Stylesheet::parseColour (colour));
+                component->setColour (pair.second, Stylesheet::parseColour (colour));
         }
-    }
-
-    if (auto* container = dynamic_cast<Container*>(&item))
-    {
-        container->configureFlexBox (configNode);
-
-        for (auto& child : *container)
-            updateProperties (*child);
-
-        const auto display = getStyleProperty (IDs::display, configNode).toString();
-        if (display == IDs::contents)
-            container->setLayoutMode (Container::Layout::Contents);
-        else if (display == IDs::tabbed)
-            container->setLayoutMode (Container::Layout::Tabbed);
-        else
-            container->setLayoutMode (Container::Layout::FlexBox);
-
-        auto repaintHz = getStyleProperty (IDs::repaintHz, configNode).toString();
-        if (repaintHz.isNotEmpty())
-            container->setRefreshRate (repaintHz.getIntValue());
     }
 }
 
@@ -214,7 +194,7 @@ void MagicGUIBuilder::updateLayout()
         if (! stylesheet.setMediaSize (parent->getWidth(), parent->getHeight()))
         {
             stylesheet.updateValidRanges();
-            updateProperties (*root);
+            root->update();
         }
 
         if (root->getBounds() == parent->getLocalBounds())
@@ -449,7 +429,7 @@ juce::NamedValueSet MagicGUIBuilder::makeJustificationsChoices()
 void MagicGUIBuilder::changeListenerCallback (juce::ChangeBroadcaster*)
 {
     if (root.get() != nullptr)
-        updateProperties (*root);
+        root->update();
 
     updateLayout();
 }
@@ -546,7 +526,7 @@ void MagicGUIBuilder::valueTreePropertyChanged (juce::ValueTree& node, const juc
     if (root)
     {
         stylesheet.updateValidRanges();
-        updateProperties (*root);
+        root->update();
     }
 
     updateLayout();

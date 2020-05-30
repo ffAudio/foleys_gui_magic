@@ -55,7 +55,7 @@ void GuiItem::update()
         setLookAndFeel (lookAndFeel);
 
     decorator.configure (magicBuilder, configNode);
-    configureComponent (stylesheet, configNode);
+    configureComponent (stylesheet);
     configureFlexBoxItem (configNode);
 }
 
@@ -67,26 +67,28 @@ void GuiItem::setEditMode (bool shouldEdit)
         component->setInterceptsMouseClicks (!shouldEdit, !shouldEdit);
 }
 
-void GuiItem::configureComponent (Stylesheet& stylesheet, const juce::ValueTree& node)
+void GuiItem::configureComponent (Stylesheet& stylesheet)
 {
     if (component.get() == nullptr)
         return;
 
-    for (const auto& p : magicBuilder.getSettableProperties (node.getType()))
+    for (const auto& p : magicBuilder.getSettableProperties (configNode.getType()))
     {
-        auto value = stylesheet.getStyleProperty (p->name, node);
+        auto value = stylesheet.getStyleProperty (p->name, configNode);
         if (value.isVoid() == false)
             p->set (component.get(), value);
     }
 
     if (auto* tooltipClient = dynamic_cast<juce::SettableTooltipClient*>(component.get()))
     {
-        auto tooltip = magicBuilder.getStyleProperty (IDs::tooltip, node).toString();
+        auto tooltip = magicBuilder.getStyleProperty (IDs::tooltip, configNode).toString();
         if (tooltip.isNotEmpty())
             tooltipClient->setTooltip (tooltip);
     }
 
-    auto  visibilityNode = magicBuilder.getStyleProperty (IDs::visibility, node);
+    magicBuilder.updateColours (*this, configNode);
+
+    auto  visibilityNode = magicBuilder.getStyleProperty (IDs::visibility, configNode);
     auto* processorState = magicBuilder.getProcessorState();
     if (! visibilityNode.isVoid() && processorState)
         visibility.referTo (processorState->getPropertyAsValue (visibilityNode.toString()));

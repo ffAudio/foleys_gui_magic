@@ -48,18 +48,15 @@ class GuiItem   : public juce::Component,
 public:
     GuiItem (MagicGUIBuilder& builder, juce::ValueTree node, std::unique_ptr<juce::Component> wrapped = {});
 
-    void update();
+    /**
+     Reread properties from the config ValueTree
+     */
+    virtual void update();
 
     /**
      This method sets the GUI in edit mode, that allows to drag the components around.
      */
     virtual void setEditMode (bool shouldEdit);
-
-    /**
-     This will get the necessary information from the stylesheet, using inheritance
-     of nodes if needed, to set specific properties for the wrapped component.
-     */
-    void configureComponent (Stylesheet& stylesheet, const juce::ValueTree& node);
 
     void paint (juce::Graphics& g) override;
     void resized() override;
@@ -100,14 +97,23 @@ public:
 
     MagicGUIBuilder& magicBuilder;
 
+protected:
+
+    juce::ValueTree configNode;
+
 private:
 
     void valueChanged (juce::Value& source) override;
 
-    Decorator       decorator;
+    /**
+     This will get the necessary information from the stylesheet, using inheritance
+     of nodes if needed, to set specific properties for the wrapped component.
+     */
+    void configureComponent (Stylesheet& stylesheet);
 
-    juce::ValueTree configNode;
     juce::Value     visibility { true };
+
+    Decorator       decorator;
 
     std::unique_ptr<juce::Component> component;
 
