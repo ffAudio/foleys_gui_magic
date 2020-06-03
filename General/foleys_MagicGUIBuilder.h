@@ -51,6 +51,11 @@ public:
     void setConfigTree (const juce::ValueTree& config);
 
     /**
+     Create a node from the description
+     */
+    std::unique_ptr<GuiItem> createGuiItem (const juce::ValueTree& node);
+
+    /**
      This triggers the rebuild of the GUI with setting the parent component
      */
     void restoreGUI (juce::Component& parent);
@@ -89,11 +94,6 @@ public:
     void updateComponents();
 
     /**
-     Updates the colours and properties for the component
-     */
-    void updateColours (GuiItem& item, const juce::ValueTree& node);
-
-    /**
      Recalculates the layout of all components
      */
     void updateLayout();
@@ -101,7 +101,7 @@ public:
     /**
      Register a factory for Components to be available in the GUI editor. If you need a reference to the application, you can capture that in the factory lambda.
      */
-    void registerFactory (juce::Identifier type, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&)> factory);
+    void registerFactory (juce::Identifier type, std::unique_ptr<GuiItem>(*factory)(MagicGUIBuilder& builder, const juce::ValueTree&));
 
     /**
      With that method you can register your custom LookAndFeel class and apply it to different components.
@@ -120,28 +120,12 @@ public:
     void registerJUCEFactories();
 
     /**
-     For each factory you can register a translation table, which will forward the colours from the
-     Stylesheet to the Components.
-     */
-    void setColourTranslation (juce::Identifier type, std::vector<std::pair<juce::String, int>> mapping);
-
-    /**
      This method traverses the dom and checks each style, if that property was defined.
 
      @param name the name of the property.
      @param node is the node in the DOM. This is used for inheritance by traversing upwards.
      */
     juce::var getStyleProperty (const juce::Identifier& name, const juce::ValueTree& node) const;
-
-    /**
-     Looks up the ColourId for a given type
-     */
-    int findColourId (juce::Identifier type, juce::Identifier name);
-
-    /**
-     Looks up the ColourId in all types. Finds only the first hit, if the names are not unique.
-     */
-    int findColourId (juce::Identifier name);
 
     /**
      This will go through all nodes and delete the reference to a class
@@ -151,14 +135,7 @@ public:
     /**
      This method returns the names of colours for a certain Component type
      */
-    juce::StringArray getColourNames (juce::Identifier type) const;
-
-    std::vector<std::pair<juce::String, int>> getColourTranslationMap() const;
-
-    /**
-     This method collects all names of colours, so the style editor can show a control to edit the colours
-     */
-    juce::StringArray getAllColourNames() const;
+    juce::StringArray getColourNames (juce::Identifier type);
 
     /**
      This resets the GUI to show a single empty container
@@ -240,8 +217,6 @@ private:
     juce::ValueTree   config;
     Stylesheet        stylesheet { *this };
 
-    std::map<juce::Identifier, std::vector<std::pair<juce::String, int>>> colourTranslations;
-
     void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override;
 
     void valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&) override;
@@ -262,7 +237,8 @@ private:
 
     std::unique_ptr<juce::Component> overlayDialog;
 
-    std::map<juce::Identifier, std::function<std::unique_ptr<juce::Component>(const juce::ValueTree&)>> factories;
+    std::map<juce::Identifier, std::unique_ptr<GuiItem>(*)(MagicGUIBuilder& builder, const juce::ValueTree&)> factories;
+
     std::map<juce::Identifier, std::vector<std::unique_ptr<SettableProperty>>> settableProperties;
     const std::vector<std::unique_ptr<SettableProperty>> emptyPropertyList;
 
@@ -275,6 +251,12 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicGUIBuilder)
 };
+
+#define FOLEYS_DECLARE_GUI_FACTORY(itemName) \
+static inline std::unique_ptr<GuiItem> factory (foleys::MagicGUIBuilder& builder, const juce::ValueTree& node)\
+{\
+    return std::make_unique<itemName>(builder, node);\
+}
 
 
 } // namespace foleys

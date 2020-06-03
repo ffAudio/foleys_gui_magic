@@ -54,7 +54,7 @@ public:
     Container (MagicGUIBuilder& builder, juce::ValueTree node);
 
 
-    void update() override;
+    void updateInternal() override;
 
     /**
      Append a child item. To change the order the flexbox.order is used.
@@ -81,6 +81,8 @@ public:
     void updateContinuousRedraw();
 
     void configureFlexBox (const juce::ValueTree& node);
+
+    juce::Component* getWrappedComponent() override { return nullptr; }
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     /**

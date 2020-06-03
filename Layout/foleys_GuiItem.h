@@ -46,12 +46,40 @@ class GuiItem   : public juce::Component,
 #endif
 {
 public:
-    GuiItem (MagicGUIBuilder& builder, juce::ValueTree node, std::unique_ptr<juce::Component> wrapped = {});
+    GuiItem (MagicGUIBuilder& builder, juce::ValueTree node);
+
+    /**
+     Allows accessing the Component inside that GuiItem. Don't keep this pointer!
+     */
+    virtual juce::Component* getWrappedComponent() = 0;
+
+    /**
+     In update() the ValueTree properties should be used to set all properties to the component.
+     You can use the magicBuilder to resolve properties from CSS.
+     The Colours will be handled by default.
+     */
+    virtual void update() {}
+
+    /**
+     For each factory you can register a translation table, which will forward the colours from the
+     Stylesheet to the Components.
+     */
+    void setColourTranslation (std::vector<std::pair<juce::String, int>> mapping);
+
+    /**
+     Return the names of configurable colours
+     */
+    juce::StringArray getColourNames() const;
+
+    /**
+     Look up a value through the DOM and CSS
+     */
+    juce::var getProperty (const juce::Identifier& property);
 
     /**
      Reread properties from the config ValueTree
      */
-    virtual void update();
+    virtual void updateInternal();
 
     void paint (juce::Graphics& g) override;
     void resized() override;
@@ -65,10 +93,6 @@ public:
 
     void configureFlexBoxItem (const juce::ValueTree& node);
 
-    /**
-     Allows accessing the Component inside that GuiItem. Don't keep this pointer!
-     */
-    juce::Component* getWrappedComponent();
 
     juce::Rectangle<int> getClientBounds() const;
 
@@ -94,12 +118,13 @@ public:
     void itemDropped (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails) override;
 #endif
 
-
     MagicGUIBuilder& magicBuilder;
 
 protected:
 
     juce::ValueTree configNode;
+
+    std::vector<std::pair<juce::String, int>> colourTranslation;
 
 private:
 
@@ -114,8 +139,6 @@ private:
     juce::Value     visibility { true };
 
     Decorator       decorator;
-
-    std::unique_ptr<juce::Component> component;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GuiItem)
 };

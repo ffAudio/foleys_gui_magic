@@ -39,11 +39,13 @@ namespace IDs
     static juce::Identifier resizeCorner { "resize-corner" };
     static juce::Identifier styles       { "Styles" };
     static juce::Identifier style        { "Style" };
+    static juce::Identifier dummyItem    { "Dummy" };
     static juce::Identifier view         { "View" };
     static juce::Identifier slider       { "Slider" };
     static juce::Identifier textButton   { "TextButton" };
     static juce::Identifier toggleButton { "ToggleButton" };
     static juce::Identifier label        { "Label" };
+    static juce::Identifier listBox      { "ListBox" };
     static juce::Identifier comboBox     { "ComboBox" };
     static juce::Identifier meter        { "Meter" };
     static juce::Identifier plot         { "Plot" };

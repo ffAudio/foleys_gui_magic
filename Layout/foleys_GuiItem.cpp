@@ -30,24 +30,37 @@
 namespace foleys
 {
 
-GuiItem::GuiItem (MagicGUIBuilder& builder, juce::ValueTree node, std::unique_ptr<juce::Component> wrapped)
+GuiItem::GuiItem (MagicGUIBuilder& builder, juce::ValueTree node)
   : magicBuilder (builder),
-    configNode (node),
-    component (std::move (wrapped))
+    configNode (node)
 {
     setOpaque (false);
-
-    update();
-
-    visibility.addListener (this);
-
     setInterceptsMouseClicks (false, true);
 
-    if (component.get() != nullptr)
-        addAndMakeVisible (component.get());
+    visibility.addListener (this);
 }
 
-void GuiItem::update()
+void GuiItem::setColourTranslation (std::vector<std::pair<juce::String, int>> mapping)
+{
+    colourTranslation = mapping;
+}
+
+juce::StringArray GuiItem::getColourNames() const
+{
+    juce::StringArray names;
+
+    for (const auto& pair : colourTranslation)
+        names.addIfNotAlreadyThere (pair.first);
+
+    return names;
+}
+
+juce::var GuiItem::getProperty (const juce::Identifier& property)
+{
+    return magicBuilder.getStyleProperty (property, configNode);
+}
+
+void GuiItem::updateInternal()
 {
     auto& stylesheet = magicBuilder.getStylesheet();
 
@@ -57,28 +70,36 @@ void GuiItem::update()
     decorator.configure (magicBuilder, configNode);
     configureComponent (stylesheet);
     configureFlexBoxItem (configNode);
+
+    update();
 }
 
 void GuiItem::configureComponent (Stylesheet& stylesheet)
 {
-    if (component.get() == nullptr)
+    auto* component = getWrappedComponent();
+    if (component == nullptr)
         return;
 
     for (const auto& p : magicBuilder.getSettableProperties (configNode.getType()))
     {
         auto value = stylesheet.getStyleProperty (p->name, configNode);
         if (value.isVoid() == false)
-            p->set (component.get(), value);
+            p->set (component, value);
     }
 
-    if (auto* tooltipClient = dynamic_cast<juce::SettableTooltipClient*>(component.get()))
+    if (auto* tooltipClient = dynamic_cast<juce::SettableTooltipClient*>(component))
     {
         auto tooltip = magicBuilder.getStyleProperty (IDs::tooltip, configNode).toString();
         if (tooltip.isNotEmpty())
             tooltipClient->setTooltip (tooltip);
     }
 
-    magicBuilder.updateColours (*this, configNode);
+    for (auto& pair : colourTranslation)
+    {
+        auto colour = magicBuilder.getStyleProperty (pair.first, configNode).toString();
+        if (colour.isNotEmpty())
+            component->setColour (pair.second, Stylesheet::parseColour (colour));
+    }
 
     auto  visibilityNode = magicBuilder.getStyleProperty (IDs::visibility, configNode);
     auto* processorState = magicBuilder.getProcessorState();
@@ -151,20 +172,13 @@ juce::Rectangle<int> GuiItem::getClientBounds() const
 
 void GuiItem::resized()
 {
-    if (component.get() == nullptr)
-        return;
-
-    component->setBounds (getClientBounds());
+    if (auto* component = getWrappedComponent())
+        component->setBounds (getClientBounds());
 }
 
 void GuiItem::updateLayout()
 {
     resized();
-}
-
-juce::Component* GuiItem::getWrappedComponent()
-{
-    return component.get();
 }
 
 juce::String GuiItem::getTabCaption (const juce::String& defaultName) const
@@ -194,7 +208,7 @@ void GuiItem::setEditMode (bool shouldEdit)
 {
     setInterceptsMouseClicks (shouldEdit, true);
 
-    if (component.get() != nullptr)
+    if (auto* component = getWrappedComponent())
         component->setInterceptsMouseClicks (!shouldEdit, !shouldEdit);
 }
 
