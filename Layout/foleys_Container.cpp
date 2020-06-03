@@ -35,14 +35,14 @@ Container::Container (MagicGUIBuilder& builder, juce::ValueTree node)
 {
 }
 
-void Container::update()
+void Container::updateInternal()
 {
-    GuiItem::update();
+    GuiItem::updateInternal();
 
     configureFlexBox (configNode);
 
     for (auto& child : *this)
-        child->update();
+        child->updateInternal();
 
     const auto display = magicBuilder.getStyleProperty (IDs::display, configNode).toString();
     if (display == IDs::contents)
@@ -58,7 +58,6 @@ void Container::update()
         refreshRateHz = repaintHz.getIntValue();
         updateContinuousRedraw();
     }
-
 }
 
 void Container::addChildItem (std::unique_ptr<GuiItem> child)

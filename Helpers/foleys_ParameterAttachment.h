@@ -178,7 +178,7 @@ private:
 
     juce::AudioProcessorValueTreeState& state;
     juce::RangedAudioParameter*         parameter = nullptr;
-    std::atomic<ValueType>              value;
+    std::atomic<ValueType>              value { ValueType() };
     juce::String                        paramID;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParameterAttachment)
