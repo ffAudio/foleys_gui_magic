@@ -56,28 +56,14 @@ struct SettableProperty
         AssetFile       /*< Shows embedded asset files to choose from (BinaryData) */
     };
 
-    SettableProperty (const juce::Identifier& n, PropertyType t, juce::var defaultToUse)
-    : name (n), type (t), defaultValue (defaultToUse) {}
-    virtual ~SettableProperty() = default;
-
-    virtual juce::NamedValueSet getOptions() const { return {}; }
-    virtual void set (juce::Component*, juce::var) const = 0;
-
-    juce::StringArray getOptionsNames() const
-    {
-        juce::StringArray names;
-        for (const auto& namedValue : getOptions())
-            names.add (namedValue.name.toString());
-
-        return names;
-    }
-
+    const juce::ValueTree  node;
     const juce::Identifier name;
     const PropertyType     type;
     const juce::var        defaultValue;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettableProperty)
+    const juce::PopupMenu  menu;
 };
+
+#if 0
 
 struct SettableChoiceProperty : public SettableProperty
 {
@@ -219,5 +205,7 @@ struct SettableValueProperty : public SettableProperty
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettableValueProperty)
 };
+
+#endif
 
 } // namespace foleys

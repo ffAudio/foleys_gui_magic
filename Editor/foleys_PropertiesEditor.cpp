@@ -171,7 +171,7 @@ void PropertiesEditor::addNodeProperties()
     if (stylesheet.isClassNode (styleItem))
     {
         array.add (new juce::BooleanPropertyComponent (styleItem.getPropertyAsValue (IDs::recursive, &undo), IDs::recursive.toString(), {}));
-        array.add (new StyleChoicePropertyComponent (builder, IDs::active, styleItem, SettableProperty::Property));
+//        array.add (new StyleChoicePropertyComponent (builder, IDs::active, styleItem, SettableProperty::Property));
 
         auto media = styleItem.getOrCreateChildWithName (IDs::media, &undo);
         array.add (new juce::TextPropertyComponent (media.getPropertyAsValue (IDs::minWidth, &undo), IDs::minWidth.toString(), 10, false));
@@ -204,11 +204,11 @@ void PropertiesEditor::addNodeProperties()
 void PropertiesEditor::addDecoratorProperties()
 {
     juce::Array<juce::PropertyComponent*> array;
-    array.add (new StyleChoicePropertyComponent (builder, IDs::visibility, styleItem, SettableProperty::Property));
+//    array.add (new StyleChoicePropertyComponent (builder, IDs::visibility, styleItem, SettableProperty::Property));
     array.add (new StyleTextPropertyComponent (builder, IDs::caption, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::captionSize, styleItem));
     array.add (new StyleColourPropertyComponent (builder, IDs::captionColour, styleItem));
-    array.add (new StyleChoicePropertyComponent (builder, IDs::captionPlacement, styleItem, SettableProperty::Justification));
+//    array.add (new StyleChoicePropertyComponent (builder, IDs::captionPlacement, styleItem, SettableProperty::Justification));
     array.add (new StyleTextPropertyComponent (builder, IDs::tooltip, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::margin, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::padding, styleItem));
@@ -233,15 +233,19 @@ void PropertiesEditor::addTypeProperties (juce::Identifier type, juce::Array<juc
 
     array.addArray (additional);
 
-    for (const auto& p : builder.getSettableProperties (type))
+    juce::ValueTree node (type);
+    if (auto item = builder.createGuiItem (node))
     {
-        if (auto* component = StylePropertyComponent::createComponent (builder, *p, styleItem))
-            array.add (component);
-    }
+        for (auto& p : item->getSettableProperties())
+        {
+            if (auto* component = StylePropertyComponent::createComponent (builder, p, styleItem))
+                array.add (component);
+        }
 
-    for (auto colour : builder.getColourNames (type))
-    {
-        array.add (new StyleColourPropertyComponent (builder, colour, styleItem));
+        for (auto colour : item->getColourNames())
+        {
+            array.add (new StyleColourPropertyComponent (builder, colour, styleItem));
+        }
     }
 
     properties.addSection (type.toString(), array, false);

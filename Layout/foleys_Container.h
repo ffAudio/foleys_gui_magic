@@ -53,8 +53,10 @@ public:
 
     Container (MagicGUIBuilder& builder, juce::ValueTree node);
 
-
-    void updateInternal() override;
+    /**
+     Updates the layout fo children
+     */
+    void update() override;
 
     /**
      Append a child item. To change the order the flexbox.order is used.

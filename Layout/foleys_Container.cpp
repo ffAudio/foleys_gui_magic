@@ -35,10 +35,8 @@ Container::Container (MagicGUIBuilder& builder, juce::ValueTree node)
 {
 }
 
-void Container::updateInternal()
+void Container::update()
 {
-    GuiItem::updateInternal();
-
     configureFlexBox (configNode);
 
     for (auto& child : *this)

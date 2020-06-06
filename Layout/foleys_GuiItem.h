@@ -58,7 +58,12 @@ public:
      You can use the magicBuilder to resolve properties from CSS.
      The Colours will be handled by default.
      */
-    virtual void update() {}
+    virtual void update() = 0;
+
+    /**
+     Override this to return each settable option the designer should be able to configure on your component.
+     */
+    virtual std::vector<SettableProperty> getSettableProperties() const { return {}; }
 
     /**
      For each factory you can register a translation table, which will forward the colours from the
@@ -79,9 +84,9 @@ public:
     /**
      Reread properties from the config ValueTree
      */
-    virtual void updateInternal();
+    void updateInternal();
 
-    void paint (juce::Graphics& g) override;
+    void paint (juce::Graphics& g) final;
     void resized() override;
 
     virtual bool isContainer() const { return false; }

@@ -80,13 +80,6 @@ void GuiItem::configureComponent (Stylesheet& stylesheet)
     if (component == nullptr)
         return;
 
-    for (const auto& p : magicBuilder.getSettableProperties (configNode.getType()))
-    {
-        auto value = stylesheet.getStyleProperty (p->name, configNode);
-        if (value.isVoid() == false)
-            p->set (component, value);
-    }
-
     if (auto* tooltipClient = dynamic_cast<juce::SettableTooltipClient*>(component))
     {
         auto tooltip = magicBuilder.getStyleProperty (IDs::tooltip, configNode).toString();

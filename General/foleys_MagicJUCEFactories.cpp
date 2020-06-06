@@ -33,32 +33,13 @@
 namespace foleys
 {
 
-
-class DummyItem  : public GuiItem
-{
-public:
-    FOLEYS_DECLARE_GUI_FACTORY (DummyItem)
-
-    DummyItem (MagicGUIBuilder& builder, const juce::ValueTree& node) : GuiItem (builder, node)
-    {
-        addAndMakeVisible (label);
-    }
-
-    juce::Component* getWrappedComponent() override
-    {
-        return &label;
-    }
-
-private:
-    juce::Label label { {}, "Dummy" };
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DummyItem)
-};
-
 class SliderItem : public GuiItem
 {
+
 public:
     FOLEYS_DECLARE_GUI_FACTORY (SliderItem)
+
+    static inline juce::Identifier sliderType { "slider-type" };
 
     SliderItem (MagicGUIBuilder& builder, const juce::ValueTree& node) : GuiItem (builder, node)
     {
@@ -84,7 +65,7 @@ public:
         if (parameter.isNotEmpty() && magicBuilder.getProcessorState())
             slider.attachToParameter (parameter, magicBuilder.getProcessorState()->getValueTreeState());
 
-        auto type = getProperty ("slider-type").toString();
+        auto type = getProperty (sliderType).toString();
         slider.setAutoOrientation (type.isEmpty() || type == "auto");
         if (type == "linear-horizontal")
             slider.setSliderStyle (juce::Slider::LinearHorizontal);
@@ -108,6 +89,21 @@ public:
             slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, slider.getTextBoxWidth(), slider.getTextBoxHeight());
     }
 
+    std::vector<SettableProperty> getSettableProperties() const override
+    {
+        juce::PopupMenu sliderTypes;
+        sliderTypes.addItem (1, "auto");
+        sliderTypes.addItem (2, "linear-horizontal");
+        sliderTypes.addItem (3, "linear-vertical");
+        sliderTypes.addItem (4, "rotary");
+        sliderTypes.addItem (5, "inc-dec-buttons");
+
+        std::vector<SettableProperty> properties;
+        properties.push_back ({ configNode, sliderType, SettableProperty::Choice, "auto", sliderTypes });
+
+        return properties;
+    }
+
     juce::Component* getWrappedComponent() override
     {
         return &slider;
@@ -118,6 +114,8 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliderItem)
 };
+
+//==============================================================================
 
 class ComboBoxItem : public GuiItem
 {
@@ -175,6 +173,8 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ComboBoxItem)
 };
 
+//==============================================================================
+
 class TextButtonItem : public GuiItem
 {
 public:
@@ -223,6 +223,8 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TextButtonItem)
 };
+
+//==============================================================================
 
 class ToggleButtonItem : public GuiItem
 {
@@ -276,6 +278,8 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToggleButtonItem)
 };
 
+//==============================================================================
+
 class LabelItem : public GuiItem
 {
 public:
@@ -322,6 +326,8 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LabelItem)
 };
 
+//==============================================================================
+
 class PlotItem : public GuiItem
 {
 public:
@@ -363,6 +369,8 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlotItem)
 };
+
+//==============================================================================
 
 class XYDraggerItem : public GuiItem
 {
@@ -416,6 +424,8 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (XYDraggerItem)
 };
 
+//==============================================================================
+
 class KeyboardItem : public GuiItem
 {
 public:
@@ -462,6 +472,8 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (KeyboardItem)
 };
 
+//==============================================================================
+
 class LevelMeterItem : public GuiItem
 {
 public:
@@ -502,6 +514,8 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LevelMeterItem)
 };
 
+//==============================================================================
+
 class ListBoxItem : public GuiItem
 {
 public:
@@ -529,6 +543,8 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ListBoxItem)
 };
+
+//==============================================================================
 
 #if JUCE_MODULE_AVAILABLE_juce_gui_extra && JUCE_WEB_BROWSER
 class WebBrowserItem : public GuiItem
@@ -560,7 +576,6 @@ private:
 
 void MagicGUIBuilder::registerJUCEFactories()
 {
-    registerFactory (IDs::dummyItem, &DummyItem::factory);
     registerFactory (IDs::slider, &SliderItem::factory);
     registerFactory (IDs::comboBox, &ComboBoxItem::factory);
     registerFactory (IDs::textButton, &TextButtonItem::factory);

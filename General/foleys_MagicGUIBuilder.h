@@ -171,9 +171,6 @@ public:
      */
     juce::StringArray getFactoryNames() const;
 
-    void addSettableProperty (juce::Identifier type, std::unique_ptr<SettableProperty> property);
-    const std::vector<std::unique_ptr<SettableProperty>>& getSettableProperties (juce::Identifier type) const;
-
     /**
      Return the list of options
      */
