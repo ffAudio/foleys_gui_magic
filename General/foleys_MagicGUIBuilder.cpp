@@ -279,20 +279,6 @@ juce::StringArray MagicGUIBuilder::getColourNames (juce::Identifier type)
     return {};
 }
 
-void MagicGUIBuilder::addSettableProperty (juce::Identifier type, std::unique_ptr<SettableProperty> property)
-{
-    settableProperties [type].push_back (std::move (property));
-}
-
-const std::vector<std::unique_ptr<SettableProperty>>& MagicGUIBuilder::getSettableProperties (juce::Identifier type) const
-{
-    const auto& it = settableProperties.find (type);
-    if (it != settableProperties.end())
-        return it->second;
-
-    return emptyPropertyList;
-}
-
 std::unique_ptr<GuiItem> MagicGUIBuilder::restoreNode (juce::Component& component, const juce::ValueTree& node)
 {
     if (node.getType() == IDs::view)
@@ -327,12 +313,6 @@ void MagicGUIBuilder::populateSettableOptionsMenu (juce::ComboBox& comboBox, Set
 
 juce::var MagicGUIBuilder::getPropertyDefaultValue (juce::Identifier type, juce::Identifier property) const
 {
-    const auto& properties = getSettableProperties (type);
-
-    const auto& settableProperty = std::find_if (properties.begin(), properties.end(), [property] (const auto& element) { return element->name == property; });
-    if (settableProperty != properties.end())
-        return settableProperty->get()->defaultValue;
-
     // flexbox
     if (property == IDs::flexDirection) return IDs::flexDirRow;
     if (property == IDs::flexWrap)      return IDs::flexNoWrap;
