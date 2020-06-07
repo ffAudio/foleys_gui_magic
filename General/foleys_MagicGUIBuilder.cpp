@@ -311,6 +311,28 @@ void MagicGUIBuilder::populateSettableOptionsMenu (juce::ComboBox& comboBox, Set
         return magicState->populateSettableOptionsMenu (comboBox, type);
 }
 
+juce::PopupMenu MagicGUIBuilder::createParameterMenu() const
+{
+    if (magicState)
+        return magicState->createParameterMenu();
+
+    return {};
+}
+
+juce::PopupMenu MagicGUIBuilder::createPropertiesMenu() const
+{
+    // FIXME
+    return {};
+}
+
+juce::PopupMenu MagicGUIBuilder::createTriggerMenu() const
+{
+    if (magicState)
+        return magicState->createTriggerMenu();
+
+    return {};
+}
+
 juce::var MagicGUIBuilder::getPropertyDefaultValue (juce::Identifier type, juce::Identifier property) const
 {
     // flexbox
@@ -331,21 +353,6 @@ juce::var MagicGUIBuilder::getPropertyDefaultValue (juce::Identifier type, juce:
     if (property == IDs::lookAndFeel) return "FoleysFinest";
 
     return {};
-}
-
-juce::NamedValueSet MagicGUIBuilder::makeJustificationsChoices()
-{
-    juce::NamedValueSet choices;
-    choices.set ("centred",         juce::Justification::centred);
-    choices.set ("top-left",        juce::Justification::topLeft);
-    choices.set ("centred-left",    juce::Justification::centredLeft);
-    choices.set ("bottom-left",     juce::Justification::bottomLeft);
-    choices.set ("centred-top",     juce::Justification::centredTop);
-    choices.set ("centred-bottom",  juce::Justification::centredBottom);
-    choices.set ("top-right",       juce::Justification::topRight);
-    choices.set ("centred-right",   juce::Justification::centredRight);
-    choices.set ("bottom-right",    juce::Justification::bottomRight);
-    return choices;
 }
 
 void MagicGUIBuilder::changeListenerCallback (juce::ChangeBroadcaster*)

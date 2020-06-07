@@ -48,19 +48,8 @@ StylePropertyComponent* StylePropertyComponent::createComponent (MagicGUIBuilder
     if (property.type == SettableProperty::Choice)
         return new StyleChoicePropertyComponent (builder, property.name, node, property.menu);
 
-/*
-    if (property.type == SettableProperty::Parameter ||
-        property.type == SettableProperty::LevelSource ||
-        property.type == SettableProperty::PlotSource ||
-        property.type == SettableProperty::Trigger ||
-        property.type == SettableProperty::Property ||
-        property.type == SettableProperty::Justification ||
-        property.type == SettableProperty::AssetFile)
-        return new StyleChoicePropertyComponent (builder, property.name, node, property.type);
-
-    if (property.type == SettableProperty::Object)
-        return new StyleChoicePropertyComponent (builder, property.name, node, property.getOptionsNames());
-*/
+//    if (property.type == SettableProperty::Property)
+//        return new StyleChoicePropertyComponent (builder, property.name, node, property.type);
 
     jassertfalse;
     return nullptr;

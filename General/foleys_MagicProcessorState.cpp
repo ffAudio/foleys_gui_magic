@@ -98,45 +98,50 @@ juce::StringArray MagicProcessorState::getParameterNames() const
 
 void MagicProcessorState::populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const
 {
-    int index = 0;
     switch (type)
     {
-        case SettableProperty::Parameter:
-            addParametersToMenu (processor.getParameterTree(), *comboBox.getRootMenu(), index);
-            break;
-
-        case SettableProperty::LevelSource:
-            for (const auto& p : getObjectIDsByType<MagicLevelSource>())
-                comboBox.addItem (p, ++index);
-            break;
-
-        case SettableProperty::PlotSource:
-            for (const auto& p : getObjectIDsByType<MagicPlotSource>())
-                comboBox.addItem (p, ++index);
-            break;
-
-        case SettableProperty::Justification:
-            for (const auto& p : MagicGUIBuilder::makeJustificationsChoices())
-                comboBox.addItem (p.name.toString(), ++index);
-            break;
-
-        case SettableProperty::Trigger:
-            for (const auto& p : triggers)
-                comboBox.addItem (p.first.toString(), ++index);
-            break;
-
         case SettableProperty::Property:
             addPropertiesToMenu (getPropertyRoot(), comboBox, *comboBox.getRootMenu(), {});
-            break;
-
-        case SettableProperty::AssetFile:
-            for (const auto& name : Resources::getResourceFileNames())
-                comboBox.addItem (name, ++index);
             break;
 
         default:
             break;
     }
+}
+
+juce::PopupMenu MagicProcessorState::createParameterMenu() const
+{
+    juce::PopupMenu menu;
+    int index = 0;
+    addParametersToMenu (processor.getParameterTree(), menu, index);
+    return menu;
+}
+
+juce::PopupMenu MagicProcessorState::createPropertiesMenu (juce::ComboBox& combo) const
+{
+    juce::PopupMenu menu;
+    addPropertiesToMenu (getPropertyRoot(), combo, menu, {});
+    return menu;
+}
+
+juce::PopupMenu MagicProcessorState::createTriggerMenu() const
+{
+    juce::PopupMenu menu;
+    int index = 0;
+    for (const auto& trigger : triggers)
+        menu.addItem (++index, trigger.first.toString());
+
+    return menu;
+}
+
+juce::PopupMenu MagicProcessorState::createAssetFilesMenu() const
+{
+    juce::PopupMenu menu;
+    int index = 0;
+    for (const auto& name : Resources::getResourceFileNames())
+        menu.addItem (++index, name);
+
+    return menu;
 }
 
 void MagicProcessorState::addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const

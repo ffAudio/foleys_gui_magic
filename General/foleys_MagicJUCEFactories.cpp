@@ -39,7 +39,11 @@ class SliderItem : public GuiItem
 public:
     FOLEYS_DECLARE_GUI_FACTORY (SliderItem)
 
-    static inline juce::Identifier sliderType { "slider-type" };
+    static const juce::Identifier  pSliderType;
+    static const juce::StringArray pSliderTypes;
+
+    static const juce::Identifier  pSliderTextBox;
+    static const juce::StringArray pTextBoxPositions;
 
     SliderItem (MagicGUIBuilder& builder, const juce::ValueTree& node) : GuiItem (builder, node)
     {
@@ -65,41 +69,38 @@ public:
         if (parameter.isNotEmpty() && magicBuilder.getProcessorState())
             slider.attachToParameter (parameter, magicBuilder.getProcessorState()->getValueTreeState());
 
-        auto type = getProperty (sliderType).toString();
-        slider.setAutoOrientation (type.isEmpty() || type == "auto");
-        if (type == "linear-horizontal")
+        auto type = getProperty (pSliderType).toString();
+        slider.setAutoOrientation (type.isEmpty() || type == pSliderTypes [0]);
+
+        if (type == pSliderTypes [1])
             slider.setSliderStyle (juce::Slider::LinearHorizontal);
-        else if (type == "linear-vertical")
+        else if (type == pSliderTypes [2])
             slider.setSliderStyle (juce::Slider::LinearVertical);
-        else if (type == "rotary")
+        else if (type == pSliderTypes [3])
             slider.setSliderStyle (juce::Slider::Rotary);
-        else if (type == "inc-dec-buttons")
+        else if (type == pSliderTypes [4])
             slider.setSliderStyle (juce::Slider::IncDecButtons);
 
-        auto textbox = getProperty ("slider-textbox").toString();
-        if (textbox == "no-textbox")
+        auto textbox = getProperty (pSliderTextBox).toString();
+        if (textbox == pTextBoxPositions [0])
             slider.setTextBoxStyle (juce::Slider::NoTextBox, false, slider.getTextBoxWidth(), slider.getTextBoxHeight());
-        else if (textbox == "textbox-left")
-            slider.setTextBoxStyle (juce::Slider::TextBoxLeft, false, slider.getTextBoxWidth(), slider.getTextBoxHeight());
-        else if (textbox == "textbox-right")
-            slider.setTextBoxStyle (juce::Slider::TextBoxRight, false, slider.getTextBoxWidth(), slider.getTextBoxHeight());
-        else if (textbox == "textbox-above")
+        else if (textbox == pTextBoxPositions [1])
             slider.setTextBoxStyle (juce::Slider::TextBoxAbove, false, slider.getTextBoxWidth(), slider.getTextBoxHeight());
+        else if (textbox == pTextBoxPositions [3])
+            slider.setTextBoxStyle (juce::Slider::TextBoxLeft, false, slider.getTextBoxWidth(), slider.getTextBoxHeight());
+        else if (textbox == pTextBoxPositions [4])
+            slider.setTextBoxStyle (juce::Slider::TextBoxRight, false, slider.getTextBoxWidth(), slider.getTextBoxHeight());
         else
             slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, slider.getTextBoxWidth(), slider.getTextBoxHeight());
     }
 
     std::vector<SettableProperty> getSettableProperties() const override
     {
-        juce::PopupMenu sliderTypes;
-        sliderTypes.addItem (1, "auto");
-        sliderTypes.addItem (2, "linear-horizontal");
-        sliderTypes.addItem (3, "linear-vertical");
-        sliderTypes.addItem (4, "rotary");
-        sliderTypes.addItem (5, "inc-dec-buttons");
-
         std::vector<SettableProperty> properties;
-        properties.push_back ({ configNode, sliderType, SettableProperty::Choice, "auto", sliderTypes });
+
+        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenu() });
+        properties.push_back ({ configNode, pSliderType, SettableProperty::Choice, pSliderTypes [0], makePopupMenu (pSliderTypes) });
+        properties.push_back ({ configNode, pSliderTextBox, SettableProperty::Choice, pTextBoxPositions [2], makePopupMenu (pTextBoxPositions) });
 
         return properties;
     }
@@ -114,6 +115,11 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliderItem)
 };
+const juce::Identifier  SliderItem::pSliderType   { "slider-type" };
+const juce::StringArray SliderItem::pSliderTypes  { "auto", "linear-horizontal", "linear-vertical", "rotary", "inc-dec-buttons" };
+const juce::Identifier  SliderItem::pSliderTextBox    { "slider-textbox" };
+const juce::StringArray SliderItem::pTextBoxPositions { "no-textbox", "textbox-above", "textbox-below", "textbox-left", "textbox-right" };
+
 
 //==============================================================================
 
@@ -161,6 +167,13 @@ public:
         }
     }
 
+    std::vector<SettableProperty> getSettableProperties() const override
+    {
+        std::vector<SettableProperty> properties;
+        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenu() });
+        return properties;
+    }
+
     juce::Component* getWrappedComponent() override
     {
         return &comboBox;
@@ -179,6 +192,9 @@ class TextButtonItem : public GuiItem
 {
 public:
     FOLEYS_DECLARE_GUI_FACTORY (TextButtonItem)
+
+    static const juce::Identifier pText;
+    static const juce::Identifier pOnClick;
 
     TextButtonItem (MagicGUIBuilder& builder, const juce::ValueTree& node) : GuiItem (builder, node)
     {
@@ -206,10 +222,25 @@ public:
             attachment.reset();
         }
 
-        button.setButtonText (magicBuilder.getStyleProperty ("text", configNode));
+        button.setButtonText (magicBuilder.getStyleProperty (pText, configNode));
 
         if (auto* state = magicBuilder.getProcessorState())
-            button.onClick = state->getTrigger (getProperty ("onClick").toString());
+        {
+            auto triggerID = getProperty (pOnClick).toString();
+            if (triggerID.isNotEmpty())
+                button.onClick = state->getTrigger (triggerID);
+        }
+    }
+
+    std::vector<SettableProperty> getSettableProperties() const override
+    {
+        std::vector<SettableProperty> properties;
+
+        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenu() });
+        properties.push_back ({ configNode, pText, SettableProperty::Text, {}, {} });
+        properties.push_back ({ configNode, pOnClick, SettableProperty::Choice, {}, magicBuilder.createTriggerMenu() });
+
+        return properties;
     }
 
     juce::Component* getWrappedComponent() override
@@ -223,6 +254,9 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TextButtonItem)
 };
+const juce::Identifier TextButtonItem::pText    { "text" };
+const juce::Identifier TextButtonItem::pOnClick { "onClick" };
+
 
 //==============================================================================
 
@@ -230,6 +264,9 @@ class ToggleButtonItem : public GuiItem
 {
 public:
     FOLEYS_DECLARE_GUI_FACTORY (ToggleButtonItem)
+
+    static const juce::Identifier pText;
+    static const juce::Identifier pValue;
 
     ToggleButtonItem (MagicGUIBuilder& builder, const juce::ValueTree& node) : GuiItem (builder, node)
     {
@@ -256,14 +293,21 @@ public:
             attachment.reset();
         }
 
-        button.setButtonText (magicBuilder.getStyleProperty ("text", configNode));
+        button.setButtonText (magicBuilder.getStyleProperty (pText, configNode));
 
         if (auto* state = magicBuilder.getProcessorState())
         {
-            auto propertyID = getProperty ("value").toString();
+            auto propertyID = getProperty (pValue).toString();
             if (propertyID.isNotEmpty())
                 button.getToggleStateValue().referTo (state->getPropertyAsValue (propertyID));
         }
+    }
+
+    std::vector<SettableProperty> getSettableProperties() const override
+    {
+        std::vector<SettableProperty> properties;
+        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenu() });
+        return properties;
     }
 
     juce::Component* getWrappedComponent() override
@@ -277,6 +321,9 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToggleButtonItem)
 };
+const juce::Identifier ToggleButtonItem::pText  { "text" };
+const juce::Identifier ToggleButtonItem::pValue { "value" };
+
 
 //==============================================================================
 
@@ -284,6 +331,12 @@ class LabelItem : public GuiItem
 {
 public:
     FOLEYS_DECLARE_GUI_FACTORY (LabelItem)
+
+    static const juce::Identifier  pText;
+    static const juce::Identifier  pJustification;
+    static const juce::Identifier  pFontSize;
+    static const juce::Identifier  pEditable;
+    static const juce::Identifier  pValue;
 
     LabelItem (MagicGUIBuilder& builder, const juce::ValueTree& node) : GuiItem (builder, node)
     {
@@ -302,17 +355,36 @@ public:
 
     void update() override
     {
-        label.setText (magicBuilder.getStyleProperty ("text", configNode), juce::dontSendNotification);
+        label.setText (magicBuilder.getStyleProperty (pText, configNode), juce::dontSendNotification);
 
-        auto justifications = MagicGUIBuilder::makeJustificationsChoices();
-        label.setJustificationType (juce::Justification (justifications.getWithDefault (getProperty ("justification").toString(), juce::Justification::centredLeft)));
+        auto justifications = makeJustificationsChoices();
+        auto justification = getProperty (pJustification).toString();
+        if (justification.isNotEmpty())
+            label.setJustificationType (juce::Justification (justifications.getWithDefault (justification, juce::Justification::centredLeft)));
+        else
+            label.setJustificationType (juce::Justification::centredLeft);
 
-        label.setFont (juce::Font (getProperty ("font-size")));
+        label.setFont (juce::Font (getProperty (pFontSize)));
 
-        label.setEditable (getProperty ("editable"));
+        label.setEditable (getProperty (pEditable));
 
         if (auto* state = magicBuilder.getProcessorState())
-            label.getTextValue().referTo (state->getPropertyAsValue (getProperty ("value").toString()));
+        {
+            auto propertyPath = getProperty (pValue).toString();
+            if (propertyPath.isNotEmpty())
+                label.getTextValue().referTo (state->getPropertyAsValue (propertyPath));
+        }
+    }
+
+    std::vector<SettableProperty> getSettableProperties() const override
+    {
+        std::vector<SettableProperty> properties;
+        properties.push_back ({ configNode, pText, SettableProperty::Text, {}, {} });
+        properties.push_back ({ configNode, pJustification, SettableProperty::Choice, {}, makePopupMenu (getAllKeyNames (makeJustificationsChoices())) });
+        properties.push_back ({ configNode, pFontSize, SettableProperty::Number, {}, {} });
+        properties.push_back ({ configNode, pEditable, SettableProperty::Toggle, {}, {} });
+        properties.push_back ({ configNode, pValue, SettableProperty::Property, {}, {} });
+        return properties;
     }
 
     juce::Component* getWrappedComponent() override
@@ -325,6 +397,11 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LabelItem)
 };
+const juce::Identifier  LabelItem::pText            { "text" };
+const juce::Identifier  LabelItem::pJustification   { "justification" };
+const juce::Identifier  LabelItem::pFontSize        { "font-size" };
+const juce::Identifier  LabelItem::pEditable        { "editable" };
+const juce::Identifier  LabelItem::pValue           { "value" };
 
 //==============================================================================
 
@@ -332,6 +409,8 @@ class PlotItem : public GuiItem
 {
 public:
     FOLEYS_DECLARE_GUI_FACTORY (PlotItem)
+
+    static const juce::Identifier  pDecay;
 
     PlotItem (MagicGUIBuilder& builder, const juce::ValueTree& node) : GuiItem (builder, node)
     {
@@ -355,8 +434,16 @@ public:
                 plot.setPlotSource (processorState->getObjectWithType<MagicPlotSource>(sourceID));
         }
 
-        auto decay = double (getProperty ("plot-decay"));
+        auto decay = double (getProperty (pDecay));
         plot.setDecayFactor (decay);
+    }
+
+    std::vector<SettableProperty> getSettableProperties() const override
+    {
+        std::vector<SettableProperty> properties;
+        properties.push_back ({ configNode, IDs::source, SettableProperty::Choice, {}, magicBuilder.createObjectMenu<MagicPlotSource>() });
+        properties.push_back ({ configNode, pDecay,      SettableProperty::Number, {}, {} });
+        return properties;
     }
 
     juce::Component* getWrappedComponent() override
@@ -369,6 +456,7 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlotItem)
 };
+const juce::Identifier  PlotItem::pDecay {"plot-decay"};
 
 //==============================================================================
 
@@ -411,6 +499,18 @@ public:
             dragger.setCrossHair (false, true);
         else
             dragger.setCrossHair (true, true);
+    }
+
+    std::vector<SettableProperty> getSettableProperties() const override
+    {
+        std::vector<SettableProperty> properties;
+
+        properties.push_back ({ configNode, IDs::parameterX, SettableProperty::Choice, {}, magicBuilder.createParameterMenu() });
+        properties.push_back ({ configNode, IDs::parameterY, SettableProperty::Choice, {}, magicBuilder.createParameterMenu() });
+        properties.push_back ({ configNode, "right-click", SettableProperty::Choice, {}, magicBuilder.createParameterMenu() });
+        properties.push_back ({ configNode, "xy-crosshair", SettableProperty::Choice, {}, makePopupMenu ({  }) });
+
+        return properties;
     }
 
     juce::Component* getWrappedComponent() override
@@ -503,6 +603,13 @@ public:
         }
     }
 
+    std::vector<SettableProperty> getSettableProperties() const override
+    {
+        std::vector<SettableProperty> properties;
+        properties.push_back ({ configNode, IDs::source, SettableProperty::Choice, {}, magicBuilder.createObjectMenu<MagicLevelSource>() });
+        return properties;
+    }
+
     juce::Component* getWrappedComponent() override
     {
         return &meter;
@@ -529,8 +636,25 @@ public:
     void update() override
     {
         if (auto* processorState = magicBuilder.getProcessorState())
-            if (auto* model = processorState->getObjectWithType<juce::ListBoxModel>(configNode.getProperty ("list-box-model", juce::String()).toString()))
-                listBox.setModel (model);
+        {
+            auto modelID = configNode.getProperty ("list-box-model", juce::String()).toString();
+            if (modelID.isNotEmpty())
+            {
+                if (auto* model = processorState->getObjectWithType<juce::ListBoxModel>(modelID))
+                    listBox.setModel (model);
+            }
+            else
+            {
+                listBox.setModel (nullptr);
+            }
+        }
+    }
+
+    std::vector<SettableProperty> getSettableProperties() const override
+    {
+        std::vector<SettableProperty> properties;
+        properties.push_back ({ configNode, "list-box-model", SettableProperty::Choice, {}, magicBuilder.createObjectMenu<juce::ListBoxModel>() });
+        return properties;
     }
 
     juce::Component* getWrappedComponent() override
