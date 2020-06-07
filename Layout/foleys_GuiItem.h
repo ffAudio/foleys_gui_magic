@@ -139,7 +139,7 @@ private:
      This will get the necessary information from the stylesheet, using inheritance
      of nodes if needed, to set specific properties for the wrapped component.
      */
-    void configureComponent (Stylesheet& stylesheet);
+    void configureComponent();
 
     juce::Value     visibility { true };
 

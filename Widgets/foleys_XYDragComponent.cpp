@@ -152,6 +152,9 @@ void XYDragComponent::mouseDown (const juce::MouseEvent& event)
                             .withTargetScreenArea ({event.getScreenX(), event.getScreenY(), 1, 1}),
                             [=](int selected)
         {
+            if (selected <= 0)
+                return;
+
             const auto& range = contextMenuParameter->getNormalisableRange();
             auto value = range.start + (selected-1) * range.interval;
             contextMenuParameter->beginChangeGesture();
@@ -185,8 +188,11 @@ void XYDragComponent::mouseDrag (const juce::MouseEvent& event)
         yAttachment.setNormalisedValue (1.0f - event.position.getY() / float (getHeight()));
 }
 
-void XYDragComponent::mouseUp (const juce::MouseEvent&)
+void XYDragComponent::mouseUp (const juce::MouseEvent& event)
 {
+    if (contextMenuParameter && (event.mods.isPopupMenu()))
+        return;
+
     if (mouseOverX || mouseOverDot)
         xAttachment.endGesture();
 

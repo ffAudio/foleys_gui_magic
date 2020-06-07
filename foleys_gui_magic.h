@@ -90,6 +90,7 @@
 #include "General/foleys_SettableProperties.h"
 #include "General/foleys_Resources.h"
 
+#include "Helpers/foleys_PopupMenuHelper.h"
 #include "Helpers/foleys_MouseLambdas.h"
 #include "Helpers/foleys_ParameterAttachment.h"
 #include "Helpers/foleys_AtomicValueAttachment.h"

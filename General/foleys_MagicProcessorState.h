@@ -92,6 +92,14 @@ public:
      */
     void populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const;
 
+    juce::PopupMenu createParameterMenu() const;
+
+    juce::PopupMenu createPropertiesMenu (juce::ComboBox& combo) const;
+
+    juce::PopupMenu createTriggerMenu() const;
+
+    juce::PopupMenu createAssetFilesMenu() const;
+
     /**
      Create and add an object. The type to create needs to be added as template parameter, the arguments will be forwarded to the constructor.
      */

@@ -160,7 +160,7 @@ void Decorator::configure (MagicGUIBuilder& builder, const juce::ValueTree& node
 
     auto placementVar = builder.getStyleProperty (IDs::captionPlacement, node);
     if (! placementVar.isVoid())
-        justification = juce::Justification (MagicGUIBuilder::makeJustificationsChoices()[placementVar.toString()]);
+        justification = juce::Justification (makeJustificationsChoices()[placementVar.toString()]);
     else
         justification = juce::Justification::centredTop;
 

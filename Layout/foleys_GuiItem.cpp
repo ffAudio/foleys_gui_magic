@@ -68,13 +68,13 @@ void GuiItem::updateInternal()
         setLookAndFeel (lookAndFeel);
 
     decorator.configure (magicBuilder, configNode);
-    configureComponent (stylesheet);
+    configureComponent();
     configureFlexBoxItem (configNode);
 
     update();
 }
 
-void GuiItem::configureComponent (Stylesheet& stylesheet)
+void GuiItem::configureComponent()
 {
     auto* component = getWrappedComponent();
     if (component == nullptr)

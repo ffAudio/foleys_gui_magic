@@ -47,13 +47,7 @@ struct SettableProperty
         Justification,  /*< Offer a list of the different justification options */
         Toggle,         /*< Show a toggle for bool properties */
         Choice,         /*< Shows choices provided */
-        Parameter,      /*< Shows available parameters as choice */
-        LevelSource,    /*< Shows available LevelSources as choice */
-        PlotSource,     /*< Shows available PlotSources as choice */
-        Object,         /*< Shows available Objects of a certain type as choice */
-        Trigger,        /*< Shows available Triggers as choice */
-        Property,       /*< Shows available properties in the state tree to connect to */
-        AssetFile       /*< Shows embedded asset files to choose from (BinaryData) */
+        Property        /*< Shows available properties in the state tree to connect to */
     };
 
     const juce::ValueTree  node;

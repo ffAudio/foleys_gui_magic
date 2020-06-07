@@ -176,7 +176,27 @@ public:
      */
     void populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const;
 
-    static juce::NamedValueSet makeJustificationsChoices();
+    juce::PopupMenu createParameterMenu() const;
+
+    juce::PopupMenu createPropertiesMenu() const;
+
+    juce::PopupMenu createTriggerMenu() const;
+
+    template<typename ObjectType>
+    juce::PopupMenu createObjectMenu() const
+    {
+        if (magicState)
+        {
+            juce::PopupMenu menu;
+            int index = 0;
+            for (const auto& name : magicState->getObjectIDsByType<ObjectType>())
+                menu.addItem (++index, name);
+
+            return menu;
+        }
+
+        return {};
+    }
 
     void changeListenerCallback (juce::ChangeBroadcaster* sender) override;
 
@@ -235,9 +255,6 @@ private:
     std::unique_ptr<juce::Component> overlayDialog;
 
     std::map<juce::Identifier, std::unique_ptr<GuiItem>(*)(MagicGUIBuilder& builder, const juce::ValueTree&)> factories;
-
-    std::map<juce::Identifier, std::vector<std::unique_ptr<SettableProperty>>> settableProperties;
-    const std::vector<std::unique_ptr<SettableProperty>> emptyPropertyList;
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     bool editMode = false;

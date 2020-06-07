@@ -104,13 +104,16 @@ public:
 
         paramID = parameterID;
 
-        parameter = dynamic_cast<juce::RangedAudioParameter*>(state.getParameter (paramID));
-        // Oh uh, tried to attach to a non existing parameter
-        jassert (parameter != nullptr);
+        if (paramID.isNotEmpty())
+        {
+            parameter = dynamic_cast<juce::RangedAudioParameter*>(state.getParameter (paramID));
+            // Oh uh, tried to attach to a non existing parameter
+            jassert (parameter != nullptr);
 
-        initialUpdate();
+            initialUpdate();
 
-        state.addParameterListener (paramID, this);
+            state.addParameterListener (paramID, this);
+        }
     }
 
     void detachFromParameter()
