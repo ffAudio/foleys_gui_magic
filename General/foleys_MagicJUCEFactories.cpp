@@ -65,9 +65,10 @@ public:
 
     void update() override
     {
-        auto parameter = configNode.getProperty (IDs::parameter, juce::String()).toString();
-        if (parameter.isNotEmpty() && magicBuilder.getProcessorState())
-            slider.attachToParameter (parameter, magicBuilder.getProcessorState()->getValueTreeState());
+        attachment.reset();
+        auto paramID = configNode.getProperty (IDs::parameter, juce::String()).toString();
+        if (paramID.isNotEmpty() && magicBuilder.getProcessorState())
+            attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(magicBuilder.getProcessorState()->getValueTreeState(), paramID, slider);
 
         auto type = getProperty (pSliderType).toString();
         slider.setAutoOrientation (type.isEmpty() || type == pSliderTypes [0]);
@@ -111,7 +112,8 @@ public:
     }
 
 private:
-    AttachableSlider slider;
+    AutoOrientationSlider slider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliderItem)
 };
@@ -623,7 +625,8 @@ private:
 
 //==============================================================================
 
-class ListBoxItem : public GuiItem
+class ListBoxItem : public GuiItem,
+                    public juce::ChangeListener
 {
 public:
     FOLEYS_DECLARE_GUI_FACTORY (ListBoxItem)
@@ -637,11 +640,18 @@ public:
     {
         if (auto* processorState = magicBuilder.getProcessorState())
         {
+            if (auto* m = dynamic_cast<juce::ChangeBroadcaster*>(listBox.getModel()))
+                m->removeChangeListener (this);
+
             auto modelID = configNode.getProperty ("list-box-model", juce::String()).toString();
             if (modelID.isNotEmpty())
             {
                 if (auto* model = processorState->getObjectWithType<juce::ListBoxModel>(modelID))
+                {
                     listBox.setModel (model);
+                    if (auto* m = dynamic_cast<juce::ChangeBroadcaster*>(model))
+                        m->addChangeListener (this);
+                }
             }
             else
             {
@@ -660,6 +670,11 @@ public:
     juce::Component* getWrappedComponent() override
     {
         return &listBox;
+    }
+
+    void changeListenerCallback (juce::ChangeBroadcaster*) override
+    {
+        listBox.updateContent();
     }
 
 private:
