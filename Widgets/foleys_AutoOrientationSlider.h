@@ -35,17 +35,11 @@ namespace foleys
 /**
  This is a Slider, that holds an attachment to the AudioProcessorValueTreeState
  */
-class AttachableSlider  : public juce::Slider
+class AutoOrientationSlider  : public juce::Slider
 {
 public:
 
-    AttachableSlider() = default;
-
-    void attachToParameter (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)
-    {
-        attachment.reset();
-        attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(state, paramID, *this);
-    }
+    AutoOrientationSlider() = default;
 
     void setAutoOrientation (bool shouldAutoOrient)
     {
@@ -75,68 +69,7 @@ private:
 
     bool autoOrientation = true;
 
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachment;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AttachableSlider)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AutoOrientationSlider)
 };
-
-/**
- This is a standard ComboBox, which has it's own ComboBoxAttachment member.
- */
-class AttachableComboBox  : public juce::ComboBox
-{
-public:
-
-    AttachableComboBox() = default;
-
-    void attachToParameter (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)
-    {
-        attachment.reset();
-
-        if (auto* parameter = state.getParameter (paramID))
-        {
-            clear();
-            addItemList (parameter->getAllValueStrings(), 1);
-        }
-
-        attachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(state, paramID, *this);
-    }
-
-private:
-
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> attachment;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AttachableComboBox)
-};
-
-/**
- This is an extension to Buttons, that adds an attachment to the AudioProcessorValueTreeState
- */
-template<class ButtonType>
-class ButtonAttacher  : public ButtonType
-{
-public:
-
-    ButtonAttacher() = default;
-
-    void attachToParameter (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)
-    {
-        if (auto* button = dynamic_cast<juce::Button*>(this))
-        {
-            attachment.reset();
-
-            button->setClickingTogglesState (true);
-            attachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(state, paramID, *button);
-        }
-    }
-
-private:
-
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> attachment;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ButtonAttacher)
-};
-
-using AttachableToggleButton=ButtonAttacher<juce::ToggleButton>;
-using AttachableTextButton=ButtonAttacher<juce::TextButton>;
-
 
 } // namespace foleys
