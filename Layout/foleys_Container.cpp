@@ -64,6 +64,26 @@ void Container::addChildItem (std::unique_ptr<GuiItem> child)
     children.push_back (std::move (child));
 }
 
+void Container::createSubComponents()
+{
+    children.clear();
+
+    for (auto childNode : configNode)
+    {
+        auto childItem = magicBuilder.createGuiItem (childNode);
+        if (childItem)
+        {
+            addAndMakeVisible (childItem.get());
+            childItem->createSubComponents();
+
+            children.push_back (std::move (childItem));
+        }
+    }
+
+    updateLayout();
+    updateContinuousRedraw();
+}
+
 void Container::setLayoutMode (Layout layoutToUse)
 {
     layout = layoutToUse;
@@ -77,6 +97,8 @@ void Container::setLayoutMode (Layout layoutToUse)
         for (auto& child : children)
             child->setVisible (true);
     }
+
+    updateLayout();
 }
 
 void Container::resized()
@@ -95,7 +117,7 @@ void Container::updateLayout()
     {
         flexBox.items.clear();
         for (auto& child : children)
-            flexBox.items.add (child->flexItem);
+            flexBox.items.add (child->getFlexItem());
 
         flexBox.performLayout (clientBounds);
     }

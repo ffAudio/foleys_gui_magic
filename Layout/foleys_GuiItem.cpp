@@ -38,6 +38,7 @@ GuiItem::GuiItem (MagicGUIBuilder& builder, juce::ValueTree node)
     setInterceptsMouseClicks (false, true);
 
     visibility.addListener (this);
+    configNode.addListener (this);
 }
 
 void GuiItem::setColourTranslation (std::vector<std::pair<juce::String, int>> mapping)
@@ -193,6 +194,36 @@ void GuiItem::valueChanged (juce::Value& source)
 {
     if (source == visibility)
         setVisible (visibility.getValue());
+}
+
+void GuiItem::valueTreePropertyChanged (juce::ValueTree& treeThatChanged, const juce::Identifier&)
+{
+    if (treeThatChanged == configNode)
+        updateInternal();
+}
+
+void GuiItem::valueTreeChildAdded (juce::ValueTree& treeThatChanged, juce::ValueTree&)
+{
+    if (treeThatChanged == configNode)
+        createSubComponents();
+}
+
+void GuiItem::valueTreeChildRemoved (juce::ValueTree& treeThatChanged, juce::ValueTree&, int)
+{
+    if (treeThatChanged == configNode)
+        createSubComponents();
+}
+
+void GuiItem::valueTreeChildOrderChanged (juce::ValueTree& treeThatChanged, int, int)
+{
+    if (treeThatChanged == configNode)
+        createSubComponents();
+}
+
+void GuiItem::valueTreeParentChanged (juce::ValueTree& treeThatChanged)
+{
+    if (treeThatChanged == configNode)
+        updateInternal();
 }
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE

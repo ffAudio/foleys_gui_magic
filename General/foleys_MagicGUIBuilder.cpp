@@ -39,11 +39,6 @@ MagicGUIBuilder::MagicGUIBuilder (MagicProcessorState* state)
     updateStylesheet();
 }
 
-MagicGUIBuilder::~MagicGUIBuilder()
-{
-    config.removeListener (this);
-}
-
 Stylesheet& MagicGUIBuilder::getStylesheet()
 {
     return stylesheet;
@@ -61,6 +56,14 @@ juce::ValueTree MagicGUIBuilder::getGuiRootNode()
 
 std::unique_ptr<GuiItem> MagicGUIBuilder::createGuiItem (const juce::ValueTree& node)
 {
+    if (node.getType() == IDs::view)
+    {
+        auto item = std::make_unique<Container>(*this, node);
+        item->updateInternal();
+        item->createSubComponents();
+        return item;
+    }
+
     auto factory = factories.find (node.getType());
     if (factory != factories.end())
     {
@@ -71,20 +74,6 @@ std::unique_ptr<GuiItem> MagicGUIBuilder::createGuiItem (const juce::ValueTree& 
 
     DBG ("No factory for: " << node.getType().toString());
     return {};
-}
-
-
-void MagicGUIBuilder::updateAll()
-{
-    updateStylesheet();
-    updateComponents();
-
-    if (root)
-        root->updateInternal();
-
-    updateLayout();
-
-    config.addListener (this);
 }
 
 void MagicGUIBuilder::updateStylesheet()
@@ -150,14 +139,14 @@ void MagicGUIBuilder::setConfigTree (const juce::ValueTree& gui)
     }
 
     undo.clearUndoHistory();
-    updateAll();
+    updateComponents();
 }
 
-void MagicGUIBuilder::restoreGUI (juce::Component& parentToUse)
+void MagicGUIBuilder::createGUI (juce::Component& parentToUse)
 {
     parent = &parentToUse;
 
-    updateAll();
+    updateComponents();
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     if (magicToolBox.get() != nullptr)
@@ -171,11 +160,16 @@ void MagicGUIBuilder::updateComponents()
         return;
 
     createDefaultGUITree (true);
+    updateStylesheet();
 
     auto rootNode = config.getOrCreateChildWithName (IDs::view, &undo);
-    root = restoreNode (*parent, rootNode);
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    root = createGuiItem (rootNode);
+    parent->addAndMakeVisible (root.get());
+
+    root->setBounds (parent->getLocalBounds());
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE6
     if (root.get() != nullptr)
         root->setEditMode (editMode);
 #endif
@@ -277,32 +271,6 @@ juce::StringArray MagicGUIBuilder::getColourNames (juce::Identifier type)
         return item->getColourNames();
 
     return {};
-}
-
-std::unique_ptr<GuiItem> MagicGUIBuilder::restoreNode (juce::Component& component, const juce::ValueTree& node)
-{
-    if (node.getType() == IDs::view)
-    {
-        auto item = std::make_unique<Container>(*this, node);
-        for (auto childNode : node)
-        {
-            auto childItem = restoreNode (*item, childNode);
-            if (childItem)
-                item->addChildItem (std::move (childItem));
-        }
-
-        component.addAndMakeVisible (item.get());
-
-        item->updateContinuousRedraw();
-
-        // Xcode 8 needs the move for returning a derrived class
-        return std::move (item);
-    }
-
-    auto item = createGuiItem (node);
-    component.addAndMakeVisible (item.get());
-
-    return item;
 }
 
 void MagicGUIBuilder::populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const
@@ -445,40 +413,6 @@ void MagicGUIBuilder::createDefaultGUITree (bool keepExisting)
 
         createDefaultFromParameters (current, magicState->getProcessor().getParameterTree());
     }
-}
-
-void MagicGUIBuilder::valueTreePropertyChanged (juce::ValueTree& node, const juce::Identifier&)
-{
-    if (node.isAChildOf (stylesheet.getCurrentStyle()))
-        stylesheet.updateStyleClasses();
-
-    if (root)
-    {
-        stylesheet.updateValidRanges();
-        root->updateInternal();
-    }
-
-    updateLayout();
-}
-
-void MagicGUIBuilder::valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&)
-{
-    updateAll();
-}
-
-void MagicGUIBuilder::valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int)
-{
-    updateAll();
-}
-
-void MagicGUIBuilder::valueTreeChildOrderChanged (juce::ValueTree&, int, int)
-{
-    updateAll();
-}
-
-void MagicGUIBuilder::valueTreeParentChanged (juce::ValueTree&)
-{
-    updateAll();
 }
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE

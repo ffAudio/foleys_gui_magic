@@ -40,7 +40,8 @@ class MagicGUIBuilder;
  to an AudioProcessorValueTreeState.
  */
 class GuiItem   : public juce::Component,
-                  private juce::Value::Listener
+                  private juce::Value::Listener,
+                  private juce::ValueTree::Listener
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
                 , public juce::DragAndDropTarget
 #endif
@@ -91,6 +92,8 @@ public:
 
     virtual bool isContainer() const { return false; }
 
+    virtual void createSubComponents() {}
+
     /**
      This will trigger a recalculation of the children layout regardless of resized
      */
@@ -106,7 +109,7 @@ public:
 
     const juce::ValueTree& getConfigNode() const;
 
-    juce::FlexItem flexItem { juce::FlexItem (*this).withFlex (1.0f) };
+    juce::FlexItem& getFlexItem() { return flexItem; };
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     /**
@@ -129,11 +132,23 @@ protected:
 
     juce::ValueTree configNode;
 
+    juce::FlexItem flexItem { juce::FlexItem (*this).withFlex (1.0f) };
+
     std::vector<std::pair<juce::String, int>> colourTranslation;
 
 private:
 
     void valueChanged (juce::Value& source) override;
+
+    void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override;
+
+    void valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&) override;
+
+    void valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int) override;
+
+    void valueTreeChildOrderChanged (juce::ValueTree&, int, int) override;
+
+    void valueTreeParentChanged (juce::ValueTree&) override;
 
     /**
      This will get the necessary information from the stylesheet, using inheritance
