@@ -70,10 +70,7 @@ void MagicPluginEditor::initialise (const char* data, const int dataSize)
     else if (data != nullptr)
         setConfigTree (data, dataSize);
     else
-    {
-        builder->restoreGUI (*this);
-        builder->updateAll();
-    }
+        builder->createGUI (*this);
 
     updateSize();
 
@@ -133,7 +130,7 @@ void MagicPluginEditor::setConfigTree (const juce::ValueTree& gui)
     if (! rootNode.hasProperty (IDs::resizeCorner)) rootNode.setProperty (IDs::resizeCorner, true, &undo);
 
     builder->setConfigTree (gui);
-    builder->restoreGUI (*this);
+    builder->createGUI (*this);
 
     updateSize();
 }

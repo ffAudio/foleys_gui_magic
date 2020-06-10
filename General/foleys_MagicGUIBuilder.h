@@ -37,13 +37,12 @@ namespace foleys
  The MagicGUIBuilder is responsible to recreate the GUI from a single ValueTree.
  You can add your own factories to the builder to allow additional components.
  */
-class MagicGUIBuilder : public juce::ChangeListener,
-                        private juce::ValueTree::Listener
+class MagicGUIBuilder : public juce::ChangeListener
 {
 public:
     MagicGUIBuilder (MagicProcessorState* magicStateToUse);
 
-    virtual ~MagicGUIBuilder();
+    virtual ~MagicGUIBuilder() = default;
 
     /**
      Allows to set the GUI definition when reloading
@@ -58,7 +57,7 @@ public:
     /**
      This triggers the rebuild of the GUI with setting the parent component
      */
-    void restoreGUI (juce::Component& parent);
+    void createGUI (juce::Component& parent);
 
     /**
      Grant access to the stylesheet to look up visual and layout properties
@@ -74,11 +73,6 @@ public:
      Grants access to the GUI root node.
      */
     juce::ValueTree getGuiRootNode();
-
-    /**
-     Will call updateStylesheet(), updateComponents(), updateProperties() and updateLayout()
-     */
-    void updateAll();
 
     /**
      This selects the stylesheet node and sets it to the Stylesheet.
@@ -228,21 +222,9 @@ public:
 
 private:
 
-    std::unique_ptr<GuiItem> restoreNode (juce::Component& component, const juce::ValueTree& node);
-
     juce::UndoManager undo;
     juce::ValueTree   config;
     Stylesheet        stylesheet { *this };
-
-    void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override;
-
-    void valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&) override;
-
-    void valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int) override;
-
-    void valueTreeChildOrderChanged (juce::ValueTree&, int, int) override;
-
-    void valueTreeParentChanged (juce::ValueTree&) override;
 
     //==============================================================================
 
