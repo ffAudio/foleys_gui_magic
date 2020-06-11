@@ -168,7 +168,7 @@ juce::var Stylesheet::getStyleProperty (const juce::Identifier& name, const juce
     if (definedHere)
         *definedHere = juce::ValueTree();
 
-    return builder.getPropertyDefaultValue (node.getType(), name);
+    return builder.getPropertyDefaultValue (name);
 }
 
 juce::Colour Stylesheet::parseColour (const juce::String& name)

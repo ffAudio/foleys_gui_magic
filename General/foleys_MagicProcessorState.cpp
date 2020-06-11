@@ -73,7 +73,12 @@ juce::ValueTree MagicProcessorState::getPropertyRoot() const
 
 juce::Value MagicProcessorState::getPropertyAsValue (const juce::String& pathToProperty)
 {
-    const auto path = juce::StringArray::fromTokens (pathToProperty, ":", "");
+    auto path = juce::StringArray::fromTokens (pathToProperty, ":", "");
+    path.removeEmptyStrings();
+
+    if (path.size() == 0)
+        return {};
+
     auto tree = getPropertyRoot();
 
     for (int i = 0; i < path.size() - 1 && tree.isValid(); ++i)
@@ -96,17 +101,9 @@ juce::StringArray MagicProcessorState::getParameterNames() const
     return names;
 }
 
-void MagicProcessorState::populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const
+void MagicProcessorState::populatePropertiesMenu (juce::ComboBox& comboBox) const
 {
-    switch (type)
-    {
-        case SettableProperty::Property:
-            addPropertiesToMenu (getPropertyRoot(), comboBox, *comboBox.getRootMenu(), {});
-            break;
-
-        default:
-            break;
-    }
+    addPropertiesToMenu (getPropertyRoot(), comboBox, *comboBox.getRootMenu(), {});
 }
 
 juce::PopupMenu MagicProcessorState::createParameterMenu() const
@@ -180,6 +177,13 @@ void MagicProcessorState::addPropertiesToMenu (const juce::ValueTree& tree, juce
             combo.setText (t);
         });
     }
+
+    menu.addSeparator();
+    menu.addItem (NEEDS_TRANS ("New property"), [&combo, t = path]
+    {
+        combo.setText (t + ":");
+        combo.showEditor();
+    });
 }
 
 void MagicProcessorState::prepareToPlay (double sampleRate, int samplesPerBlockExpected)

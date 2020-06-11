@@ -88,9 +88,9 @@ public:
     juce::StringArray getParameterNames() const;
 
     /**
-     Populates a menu with options from SettableProperty
+     Populates a menu with properties found in the persistent ValueTree
      */
-    void populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const;
+    void populatePropertiesMenu (juce::ComboBox& comboBox) const;
 
     juce::PopupMenu createParameterMenu() const;
 

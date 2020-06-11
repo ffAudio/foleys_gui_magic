@@ -168,7 +168,7 @@ public:
     /**
      Return the list of options
      */
-    void populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const;
+    void populatePropertiesMenu (juce::ComboBox& comboBox) const;
 
     juce::PopupMenu createParameterMenu() const;
 
@@ -197,7 +197,7 @@ public:
     /**
      Lookup the default value of the property
      */
-    juce::var getPropertyDefaultValue (juce::Identifier type, juce::Identifier property) const;
+    juce::var getPropertyDefaultValue (juce::Identifier property) const;
 
     MagicProcessorState* getProcessorState();
 
