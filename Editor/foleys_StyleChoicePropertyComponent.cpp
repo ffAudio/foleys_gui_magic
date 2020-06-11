@@ -50,6 +50,16 @@ StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicGUIBuilder& bui
   : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse),
     menu (menuToUse)
 {
+    initialiseComboBox (false);
+}
+
+StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicGUIBuilder& builderToUse,
+                                                            juce::Identifier propertyToUse,
+                                                            juce::ValueTree& nodeToUse,
+                                                            SettableProperty::PropertyType typeToUse)
+  : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse),
+    type (typeToUse)
+{
     initialiseComboBox (type == SettableProperty::Property);
 }
 
@@ -70,6 +80,11 @@ void StyleChoicePropertyComponent::initialiseComboBox (bool editable)
     {
         *combo->getRootMenu() = menu;
     }
+    else if (type == SettableProperty::Property)
+    {
+        builder.populatePropertiesMenu (*combo);
+    }
+
     addAndMakeVisible (combo.get());
 
     combo->onChange = [&]

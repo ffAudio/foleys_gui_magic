@@ -273,10 +273,10 @@ juce::StringArray MagicGUIBuilder::getColourNames (juce::Identifier type)
     return {};
 }
 
-void MagicGUIBuilder::populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const
+void MagicGUIBuilder::populatePropertiesMenu (juce::ComboBox& comboBox) const
 {
     if (magicState)
-        return magicState->populateSettableOptionsMenu (comboBox, type);
+        return magicState->populatePropertiesMenu (comboBox);
 }
 
 juce::PopupMenu MagicGUIBuilder::createParameterMenu() const
@@ -301,7 +301,7 @@ juce::PopupMenu MagicGUIBuilder::createTriggerMenu() const
     return {};
 }
 
-juce::var MagicGUIBuilder::getPropertyDefaultValue (juce::Identifier type, juce::Identifier property) const
+juce::var MagicGUIBuilder::getPropertyDefaultValue (juce::Identifier property) const
 {
     // flexbox
     if (property == IDs::flexDirection) return IDs::flexDirRow;

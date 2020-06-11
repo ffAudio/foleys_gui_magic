@@ -48,8 +48,8 @@ StylePropertyComponent* StylePropertyComponent::createComponent (MagicGUIBuilder
     if (property.type == SettableProperty::Choice)
         return new StyleChoicePropertyComponent (builder, property.name, node, property.menu);
 
-//    if (property.type == SettableProperty::Property)
-//        return new StyleChoicePropertyComponent (builder, property.name, node, property.type);
+    if (property.type == SettableProperty::Property)
+        return new StyleChoicePropertyComponent (builder, property.name, node, property.type);
 
     jassertfalse;
     return nullptr;
@@ -96,7 +96,7 @@ juce::var StylePropertyComponent::lookupValue()
     remove.setEnabled (node == inheritedFrom);
 
     if (value.isVoid())
-        return builder.getPropertyDefaultValue (node.getType(), property);
+        return builder.getPropertyDefaultValue (property);
 
     return value;
 }
