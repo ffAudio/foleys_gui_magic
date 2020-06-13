@@ -67,8 +67,8 @@ public:
     {
         attachment.reset();
         auto paramID = configNode.getProperty (IDs::parameter, juce::String()).toString();
-        if (paramID.isNotEmpty() && magicBuilder.getProcessorState())
-            attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(magicBuilder.getProcessorState()->getValueTreeState(), paramID, slider);
+        if (paramID.isNotEmpty())
+            attachment = getMagicState().createAttachment (paramID, slider);
 
         auto type = getProperty (pSliderType).toString();
         slider.setAutoOrientation (type.isEmpty() || type == pSliderTypes [0]);
@@ -151,20 +151,16 @@ public:
 
     void update() override
     {
-        if (auto* state = magicBuilder.getProcessorState())
+        attachment.reset();
+
+        auto paramID = configNode.getProperty (IDs::parameter, juce::String()).toString();
+        if (paramID.isNotEmpty())
         {
-            auto paramID = configNode.getProperty (IDs::parameter, juce::String()).toString();
-            if (paramID.isNotEmpty())
+            if (auto* parameter = getMagicState().getParameter (paramID))
             {
-                auto* parameter = state->getValueTreeState().getParameter (paramID);
-                attachment.reset();
                 comboBox.clear();
                 comboBox.addItemList (parameter->getAllValueStrings(), 1);
-                attachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(state->getValueTreeState(), paramID, comboBox);
-            }
-            else
-            {
-                attachment.reset();
+                attachment = getMagicState().createAttachment (paramID, comboBox);
             }
         }
     }
@@ -213,25 +209,17 @@ public:
 
     void update() override
     {
+        attachment.reset();
+
         auto parameter = configNode.getProperty (IDs::parameter, juce::String()).toString();
-        if (parameter.isNotEmpty() && magicBuilder.getProcessorState())
-        {
-            attachment.reset();
-            attachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(magicBuilder.getProcessorState()->getValueTreeState(), parameter, button);
-        }
-        else
-        {
-            attachment.reset();
-        }
+        if (parameter.isNotEmpty())
+            attachment = getMagicState().createAttachment (parameter, button);
 
         button.setButtonText (magicBuilder.getStyleProperty (pText, configNode));
 
-        if (auto* state = magicBuilder.getProcessorState())
-        {
-            auto triggerID = getProperty (pOnClick).toString();
-            if (triggerID.isNotEmpty())
-                button.onClick = state->getTrigger (triggerID);
-        }
+        auto triggerID = getProperty (pOnClick).toString();
+        if (triggerID.isNotEmpty())
+            button.onClick = getMagicState().getTrigger (triggerID);
     }
 
     std::vector<SettableProperty> getSettableProperties() const override
@@ -284,25 +272,16 @@ public:
 
     void update() override
     {
+        attachment.reset();
         auto parameter = configNode.getProperty (IDs::parameter, juce::String()).toString();
-        if (parameter.isNotEmpty() && magicBuilder.getProcessorState())
-        {
-            attachment.reset();
-            attachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(magicBuilder.getProcessorState()->getValueTreeState(), parameter, button);
-        }
-        else
-        {
-            attachment.reset();
-        }
+        if (parameter.isNotEmpty())
+            attachment = getMagicState().createAttachment (parameter, button);
 
         button.setButtonText (magicBuilder.getStyleProperty (pText, configNode));
 
-        if (auto* state = magicBuilder.getProcessorState())
-        {
-            auto propertyID = getProperty (pValue).toString();
-            if (propertyID.isNotEmpty())
-                button.getToggleStateValue().referTo (state->getPropertyAsValue (propertyID));
-        }
+        auto propertyID = getProperty (pValue).toString();
+        if (propertyID.isNotEmpty())
+            button.getToggleStateValue().referTo (getMagicState().getPropertyAsValue (propertyID));
     }
 
     std::vector<SettableProperty> getSettableProperties() const override
@@ -370,12 +349,9 @@ public:
 
         label.setEditable (getProperty (pEditable));
 
-        if (auto* state = magicBuilder.getProcessorState())
-        {
-            auto propertyPath = getProperty (pValue).toString();
-            if (propertyPath.isNotEmpty())
-                label.getTextValue().referTo (state->getPropertyAsValue (propertyPath));
-        }
+        auto propertyPath = getProperty (pValue).toString();
+        if (propertyPath.isNotEmpty())
+            label.getTextValue().referTo (getMagicState().getPropertyAsValue (propertyPath));
     }
 
     std::vector<SettableProperty> getSettableProperties() const override
@@ -429,12 +405,9 @@ public:
 
     void update() override
     {
-        if (auto* processorState = magicBuilder.getProcessorState())
-        {
-            auto sourceID = configNode.getProperty (IDs::source, juce::String()).toString();
-            if (sourceID.isNotEmpty())
-                plot.setPlotSource (processorState->getObjectWithType<MagicPlotSource>(sourceID));
-        }
+        auto sourceID = configNode.getProperty (IDs::source, juce::String()).toString();
+        if (sourceID.isNotEmpty())
+            plot.setPlotSource (getMagicState().getObjectWithType<MagicPlotSource>(sourceID));
 
         auto decay = double (getProperty (pDecay));
         plot.setDecayFactor (decay);
@@ -468,8 +441,7 @@ public:
     FOLEYS_DECLARE_GUI_FACTORY (XYDraggerItem)
 
     XYDraggerItem (MagicGUIBuilder& builder, const juce::ValueTree& node)
-      : GuiItem (builder, node),
-        dragger (builder.getProcessorState()->getValueTreeState())
+      : GuiItem (builder, node)
     {
         setColourTranslation (
         {
@@ -486,11 +458,22 @@ public:
 
     void update() override
     {
-        dragger.setParameterX (configNode.getProperty (IDs::parameterX, juce::String()).toString());
-        dragger.setParameterY (configNode.getProperty (IDs::parameterY, juce::String()).toString());
+        auto xParamID = configNode.getProperty (IDs::parameterX, juce::String()).toString();
+        if (xParamID.isNotEmpty())
+            dragger.setParameterX (dynamic_cast<juce::RangedAudioParameter*>(getMagicState().getParameter (xParamID)));
+        else
+            dragger.setParameterX (nullptr);
 
-        if (auto* state = magicBuilder.getProcessorState())
-            dragger.setRightClickParameter (configNode.getProperty ("right-click", juce::String()), state->getValueTreeState());
+        auto yParamID = configNode.getProperty (IDs::parameterY, juce::String()).toString();
+        if (yParamID.isNotEmpty())
+            dragger.setParameterY (dynamic_cast<juce::RangedAudioParameter*>(getMagicState().getParameter (yParamID)));
+        else
+            dragger.setParameterY (nullptr);
+
+
+        auto rightParamID = configNode.getProperty ("right-click", juce::String()).toString();
+        if (rightParamID.isNotEmpty())
+            dragger.setRightClickParameter (dynamic_cast<juce::RangedAudioParameter*>(getMagicState().getParameter (rightParamID)));
 
         auto crosshair = getProperty ("xy-crosshair");
         if (crosshair == "no-crosshair")
@@ -535,7 +518,7 @@ public:
 
     KeyboardItem (MagicGUIBuilder& builder, const juce::ValueTree& node)
       : GuiItem (builder, node),
-        keyboard (builder.getProcessorState()->getKeyboardState(), juce::MidiKeyboardComponent::horizontalKeyboard)
+        keyboard (getMagicState().getKeyboardState(), juce::MidiKeyboardComponent::horizontalKeyboard)
     {
         setColourTranslation (
         {
@@ -597,12 +580,9 @@ public:
 
     void update() override
     {
-        if (auto* processorState = magicBuilder.getProcessorState())
-        {
-            auto sourceID = configNode.getProperty (IDs::source, juce::String()).toString();
-            if (sourceID.isNotEmpty())
-                meter.setLevelSource (processorState->getObjectWithType<MagicLevelSource>(sourceID));
-        }
+        auto sourceID = configNode.getProperty (IDs::source, juce::String()).toString();
+        if (sourceID.isNotEmpty())
+            meter.setLevelSource (getMagicState().getObjectWithType<MagicLevelSource>(sourceID));
     }
 
     std::vector<SettableProperty> getSettableProperties() const override
@@ -638,25 +618,22 @@ public:
 
     void update() override
     {
-        if (auto* processorState = magicBuilder.getProcessorState())
-        {
-            if (auto* m = dynamic_cast<juce::ChangeBroadcaster*>(listBox.getModel()))
-                m->removeChangeListener (this);
+        if (auto* m = dynamic_cast<juce::ChangeBroadcaster*>(listBox.getModel()))
+            m->removeChangeListener (this);
 
-            auto modelID = configNode.getProperty ("list-box-model", juce::String()).toString();
-            if (modelID.isNotEmpty())
+        auto modelID = configNode.getProperty ("list-box-model", juce::String()).toString();
+        if (modelID.isNotEmpty())
+        {
+            if (auto* model = getMagicState().getObjectWithType<juce::ListBoxModel>(modelID))
             {
-                if (auto* model = processorState->getObjectWithType<juce::ListBoxModel>(modelID))
-                {
-                    listBox.setModel (model);
-                    if (auto* m = dynamic_cast<juce::ChangeBroadcaster*>(model))
-                        m->addChangeListener (this);
-                }
+                listBox.setModel (model);
+                if (auto* m = dynamic_cast<juce::ChangeBroadcaster*>(model))
+                    m->addChangeListener (this);
             }
-            else
-            {
-                listBox.setModel (nullptr);
-            }
+        }
+        else
+        {
+            listBox.setModel (nullptr);
         }
     }
 

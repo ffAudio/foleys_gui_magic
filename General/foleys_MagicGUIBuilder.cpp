@@ -31,7 +31,7 @@ namespace foleys
 {
 
 
-MagicGUIBuilder::MagicGUIBuilder (MagicProcessorState* state)
+MagicGUIBuilder::MagicGUIBuilder (MagicProcessorState& state)
   : magicState (state)
 {
     config = juce::ValueTree (IDs::magic);
@@ -275,16 +275,12 @@ juce::StringArray MagicGUIBuilder::getColourNames (juce::Identifier type)
 
 void MagicGUIBuilder::populatePropertiesMenu (juce::ComboBox& comboBox) const
 {
-    if (magicState)
-        return magicState->populatePropertiesMenu (comboBox);
+    return magicState.populatePropertiesMenu (comboBox);
 }
 
 juce::PopupMenu MagicGUIBuilder::createParameterMenu() const
 {
-    if (magicState)
-        return magicState->createParameterMenu();
-
-    return {};
+    return magicState.createParameterMenu();
 }
 
 juce::PopupMenu MagicGUIBuilder::createPropertiesMenu() const
@@ -295,10 +291,7 @@ juce::PopupMenu MagicGUIBuilder::createPropertiesMenu() const
 
 juce::PopupMenu MagicGUIBuilder::createTriggerMenu() const
 {
-    if (magicState)
-        return magicState->createTriggerMenu();
-
-    return {};
+    return magicState.createTriggerMenu();
 }
 
 juce::var MagicGUIBuilder::getPropertyDefaultValue (juce::Identifier property) const
@@ -331,7 +324,7 @@ void MagicGUIBuilder::changeListenerCallback (juce::ChangeBroadcaster*)
     updateLayout();
 }
 
-MagicProcessorState* MagicGUIBuilder::getProcessorState()
+MagicProcessorState& MagicGUIBuilder::getMagicState()
 {
     return magicState;
 }
@@ -379,40 +372,37 @@ void MagicGUIBuilder::createDefaultGUITree (bool keepExisting)
 
     auto current = rootNode;
 
-    if (magicState)
+    auto plotNames = magicState.getObjectIDsByType<MagicPlotSource>();
+
+    if (plotNames.isEmpty() == false)
     {
-        auto plotNames = magicState->getObjectIDsByType<MagicPlotSource>();
+        juce::StringArray colours { "orange", "blue", "red", "silver", "green", "cyan", "brown", "white" };
+        int nextColour = 0;
 
-        if (plotNames.isEmpty() == false)
+        auto child = juce::ValueTree (IDs::view, {
+            { IDs::id, "plot-view" },
+            { IDs::styleClass, "plot-view" }});
+
+        for (auto plotName : plotNames)
         {
-            juce::StringArray colours { "orange", "blue", "red", "silver", "green", "cyan", "brown", "white" };
-            int nextColour = 0;
+            child.appendChild ({IDs::plot, {
+                { IDs::source, plotName },
+                { "plot-color", colours [nextColour++] }}}, nullptr);
 
-            auto child = juce::ValueTree (IDs::view, {
-                { IDs::id, "plot-view" },
-                { IDs::styleClass, "plot-view" }});
-
-            for (auto plotName : plotNames)
-            {
-                child.appendChild ({IDs::plot, {
-                    { IDs::source, plotName },
-                    { "plot-color", colours [nextColour++] }}}, nullptr);
-
-                if (nextColour >= colours.size())
-                    nextColour = 0;
-            }
-
-            current.appendChild (child, nullptr);
-
-            juce::ValueTree parameters { IDs::view, {
-                { IDs::styleClass, "parameters nomargin" }}};
-
-            current.appendChild (parameters, nullptr);
-            current = parameters;
+            if (nextColour >= colours.size())
+                nextColour = 0;
         }
 
-        createDefaultFromParameters (current, magicState->getProcessor().getParameterTree());
+        current.appendChild (child, nullptr);
+
+        juce::ValueTree parameters { IDs::view, {
+            { IDs::styleClass, "parameters nomargin" }}};
+
+        current.appendChild (parameters, nullptr);
+        current = parameters;
     }
+
+    createDefaultFromParameters (current, magicState.getProcessor().getParameterTree());
 }
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE

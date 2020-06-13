@@ -33,7 +33,8 @@ namespace foleys
 
 MagicProcessorState::MagicProcessorState (juce::AudioProcessor& processorToUse,
                                           juce::AudioProcessorValueTreeState& stateToUse)
-  : processor (processorToUse),
+  : MagicGUIState(),
+    processor (processorToUse),
     state (stateToUse)
 {
 }
@@ -43,52 +44,9 @@ MagicProcessorState::~MagicProcessorState()
     visualiserThread.stopThread (1000);
 }
 
-void MagicProcessorState::addBackgroundProcessing (MagicPlotSource* source)
-{
-    if (auto* job = source->getBackgroundJob())
-    {
-        visualiserThread.addTimeSliceClient (job);
-        visualiserThread.startThread (3);
-    }
-}
-
-void MagicProcessorState::addTrigger (const juce::Identifier& triggerID, std::function<void()> function)
-{
-    triggers [triggerID] = function;
-}
-
-std::function<void()> MagicProcessorState::getTrigger (const juce::Identifier& triggerID)
-{
-    auto it = triggers.find (triggerID);
-    if (it == triggers.end())
-        return nullptr;
-
-    return it->second;
-}
-
 juce::ValueTree MagicProcessorState::getPropertyRoot() const
 {
     return state.state.getOrCreateChildWithName ("properties", nullptr);
-}
-
-juce::Value MagicProcessorState::getPropertyAsValue (const juce::String& pathToProperty)
-{
-    auto path = juce::StringArray::fromTokens (pathToProperty, ":", "");
-    path.removeEmptyStrings();
-
-    if (path.size() == 0)
-        return {};
-
-    auto tree = getPropertyRoot();
-
-    for (int i = 0; i < path.size() - 1 && tree.isValid(); ++i)
-        tree = tree.getOrCreateChildWithName (path [i], nullptr);
-
-    auto propName = path [path.size()-1];
-    if (!tree.hasProperty (propName))
-        tree.setProperty (propName, {}, nullptr);
-
-    return tree.getPropertyAsValue (propName, nullptr);
 }
 
 juce::StringArray MagicProcessorState::getParameterNames() const
@@ -101,43 +59,11 @@ juce::StringArray MagicProcessorState::getParameterNames() const
     return names;
 }
 
-void MagicProcessorState::populatePropertiesMenu (juce::ComboBox& comboBox) const
-{
-    addPropertiesToMenu (getPropertyRoot(), comboBox, *comboBox.getRootMenu(), {});
-}
-
 juce::PopupMenu MagicProcessorState::createParameterMenu() const
 {
     juce::PopupMenu menu;
     int index = 0;
     addParametersToMenu (processor.getParameterTree(), menu, index);
-    return menu;
-}
-
-juce::PopupMenu MagicProcessorState::createPropertiesMenu (juce::ComboBox& combo) const
-{
-    juce::PopupMenu menu;
-    addPropertiesToMenu (getPropertyRoot(), combo, menu, {});
-    return menu;
-}
-
-juce::PopupMenu MagicProcessorState::createTriggerMenu() const
-{
-    juce::PopupMenu menu;
-    int index = 0;
-    for (const auto& trigger : triggers)
-        menu.addItem (++index, trigger.first.toString());
-
-    return menu;
-}
-
-juce::PopupMenu MagicProcessorState::createAssetFilesMenu() const
-{
-    juce::PopupMenu menu;
-    int index = 0;
-    for (const auto& name : Resources::getResourceFileNames())
-        menu.addItem (++index, name);
-
     return menu;
 }
 
@@ -159,43 +85,24 @@ void MagicProcessorState::addParametersToMenu (const juce::AudioProcessorParamet
     }
 }
 
-void MagicProcessorState::addPropertiesToMenu (const juce::ValueTree& tree, juce::ComboBox& combo, juce::PopupMenu& menu, const juce::String& path) const
+juce::AudioProcessorParameter* MagicProcessorState::getParameter (const juce::String& paramID)
 {
-    for (const auto& child : tree)
-    {
-        const auto name = child.getType().toString();
-        juce::PopupMenu subMenu;
-        addPropertiesToMenu (child, combo, subMenu, path + name + ":");
-        menu.addSubMenu (name, subMenu);
-    }
-
-    for (int i=0; i < tree.getNumProperties(); ++i)
-    {
-        const auto name = tree.getPropertyName (i).toString();
-        menu.addItem (name, [&combo, t = path + name]
-        {
-            combo.setText (t);
-        });
-    }
-
-    menu.addSeparator();
-    menu.addItem (NEEDS_TRANS ("New property"), [&combo, t = path]
-    {
-        combo.setText (t + ":");
-        combo.showEditor();
-    });
+    return state.getParameter (paramID);
 }
 
-void MagicProcessorState::prepareToPlay (double sampleRate, int samplesPerBlockExpected)
+std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::Slider& slider)
 {
-    for (auto& plot : advertisedObjects)
-        if (auto* source = dynamic_cast<MagicPlotSource*>(plot.second.get()))
-            source->prepareToPlay (sampleRate, samplesPerBlockExpected);
+    return std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(state, paramID, slider);
 }
 
-void MagicProcessorState::processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents)
+std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::ComboBox& combobox)
 {
-    keyboardState.processNextMidiBuffer (buffer, 0, numSamples, injectIndirectEvents);
+    return std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(state, paramID, combobox);
+}
+
+std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::Button& button)
+{
+    return std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(state, paramID, button);
 }
 
 juce::AudioProcessor& MagicProcessorState::getProcessor()
@@ -287,11 +194,6 @@ void MagicProcessorState::timerCallback()
 juce::AudioProcessorValueTreeState& MagicProcessorState::getValueTreeState()
 {
     return state;
-}
-
-juce::MidiKeyboardState& MagicProcessorState::getKeyboardState()
-{
-    return keyboardState;
 }
 
 } // namespace foleys

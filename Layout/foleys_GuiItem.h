@@ -33,6 +33,7 @@ namespace foleys
 {
 
 class MagicGUIBuilder;
+class MagicGUIState;
 
 /**
  The GuiItem class will draw borders and descriptions around widgets, if defined.
@@ -81,6 +82,8 @@ public:
      Look up a value through the DOM and CSS
      */
     juce::var getProperty (const juce::Identifier& property);
+
+    MagicGUIState& getMagicState();
 
     /**
      Reread properties from the config ValueTree

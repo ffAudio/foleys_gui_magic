@@ -82,13 +82,10 @@ void Stylesheet::updateStyleClasses()
         auto styleClass = std::make_unique<StyleClass>(styleNode);
         if (styleNode.hasProperty (IDs::active))
         {
-            if (auto* magicState = builder.getProcessorState())
-            {
-                auto activePropertyName = styleNode.getProperty (IDs::active);
-                auto p = magicState->getPropertyAsValue (activePropertyName.toString());
-                styleClass->setActiveProperty (p);
-                styleClass->addChangeListener (&builder);
-            }
+            auto activePropertyName = styleNode.getProperty (IDs::active);
+            auto p = builder.getMagicState().getPropertyAsValue (activePropertyName.toString());
+            styleClass->setActiveProperty (p);
+            styleClass->addChangeListener (&builder);
         }
 
         styleClasses [styleNode.getType().toString()] = std::move (styleClass);

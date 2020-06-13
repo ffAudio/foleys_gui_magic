@@ -84,7 +84,7 @@ void MagicPluginEditor::initialise (const char* data, const int dataSize)
 
 std::unique_ptr<MagicGUIBuilder> MagicPluginEditor::createBuilderInstance()
 {
-    auto newBuilder = std::make_unique<MagicGUIBuilder>(&processorState);
+    auto newBuilder = std::make_unique<MagicGUIBuilder>(processorState);
     newBuilder->registerJUCEFactories();
     newBuilder->registerJUCELookAndFeels();
 

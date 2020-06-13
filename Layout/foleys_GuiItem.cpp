@@ -61,6 +61,11 @@ juce::var GuiItem::getProperty (const juce::Identifier& property)
     return magicBuilder.getStyleProperty (property, configNode);
 }
 
+MagicGUIState& GuiItem::getMagicState()
+{
+    return magicBuilder.getMagicState();
+}
+
 void GuiItem::updateInternal()
 {
     auto& stylesheet = magicBuilder.getStylesheet();
@@ -96,9 +101,8 @@ void GuiItem::configureComponent()
     }
 
     auto  visibilityNode = magicBuilder.getStyleProperty (IDs::visibility, configNode);
-    auto* processorState = magicBuilder.getProcessorState();
-    if (! visibilityNode.isVoid() && processorState)
-        visibility.referTo (processorState->getPropertyAsValue (visibilityNode.toString()));
+    if (! visibilityNode.isVoid())
+        visibility.referTo (magicBuilder.getMagicState().getPropertyAsValue (visibilityNode.toString()));
 }
 
 void GuiItem::configureFlexBoxItem (const juce::ValueTree& node)
