@@ -67,7 +67,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
         file.addItem ("Save XML", [&] { saveDialog(); });
         file.addSeparator();
         file.addItem ("Clear",    [&] { builder.clearGUI(); });
-        file.addItem ("Default",  [&] { builder.createDefaultGUITree (false); });
+        file.addItem ("Default",  [&] { builder.resetToDefaultGUI(); });
         file.show();
     };
 

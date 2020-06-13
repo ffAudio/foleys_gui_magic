@@ -76,6 +76,16 @@ public:
     virtual std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   createAttachment ([[maybe_unused]]const juce::String& paramID, juce::Button&) { return {}; }
 
     /**
+     Override this method to create a default Stylesheet, in case nothing was loaded
+     */
+    virtual juce::ValueTree createDefaultStylesheet() const;
+
+    /**
+     Override this to create a default GUI
+     */
+    virtual juce::ValueTree createDefaultGUITree() const;
+
+    /**
      Return a hierarchical menu of the AudioParameters
 
      Implemented in MagicPluginState

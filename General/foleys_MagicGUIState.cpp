@@ -65,6 +65,16 @@ juce::ValueTree MagicGUIState::getPropertyRoot() const
     return propertyRoot;
 }
 
+juce::ValueTree MagicGUIState::createDefaultStylesheet() const
+{
+    return Stylesheet::createDefaultStyle();
+}
+
+juce::ValueTree MagicGUIState::createDefaultGUITree() const
+{
+    return {"Label", {{"text", "Hello world!"}}};
+}
+
 juce::Value MagicGUIState::getPropertyAsValue (const juce::String& pathToProperty)
 {
     auto path = juce::StringArray::fromTokens (pathToProperty, ":", "");
