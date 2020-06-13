@@ -34,9 +34,7 @@ namespace foleys
 
 float XYDragComponent::radius = 4.0f;
 
-XYDragComponent::XYDragComponent (juce::AudioProcessorValueTreeState& state)
-  : xAttachment (state),
-    yAttachment (state)
+XYDragComponent::XYDragComponent()
 {
     setOpaque (false);
 
@@ -93,19 +91,19 @@ void XYDragComponent::paint (juce::Graphics& g)
     g.fillEllipse (x - radius, y - radius, 2 * radius, 2 * radius);
 }
 
-void XYDragComponent::setParameterX (const juce::String& paramID)
+void XYDragComponent::setParameterX (juce::RangedAudioParameter* parameter)
 {
-    xAttachment.attachToParameter (paramID);
+    xAttachment.attachToParameter (parameter);
 }
 
-void XYDragComponent::setParameterY (const juce::String& paramID)
+void XYDragComponent::setParameterY (juce::RangedAudioParameter* parameter)
 {
-    yAttachment.attachToParameter (paramID);
+    yAttachment.attachToParameter (parameter);
 }
 
-void XYDragComponent::setRightClickParameter (const juce::String& paramID, juce::AudioProcessorValueTreeState& state)
+void XYDragComponent::setRightClickParameter (juce::RangedAudioParameter* parameter)
 {
-    contextMenuParameter = state.getParameter (paramID);
+    contextMenuParameter = parameter;
 }
 
 void XYDragComponent::updateWhichToDrag (juce::Point<float> pos)

@@ -40,12 +40,11 @@ namespace foleys
  changes.
  */
 template<typename ValueType>
-class ParameterAttachment : private juce::AudioProcessorValueTreeState::Listener,
+class ParameterAttachment : private juce::AudioProcessorParameter::Listener,
                             private juce::AsyncUpdater
 {
 public:
-    ParameterAttachment (juce::AudioProcessorValueTreeState& stateToUse)
-      : state (stateToUse)
+    ParameterAttachment()
     {
     }
 
@@ -81,7 +80,7 @@ public:
         if (parameter)
             parameter->setValueNotifyingHost (parameter->getNormalisableRange().convertTo0to1 (newValue));
         else
-            parameterChanged (paramID, juce::jlimit (0.0f, 1.0f, newValue));
+            parameterValueChanged (0, juce::jlimit (0.0f, 1.0f, newValue));
     }
 
     /**
@@ -92,34 +91,30 @@ public:
         if (parameter)
             parameter->setValueNotifyingHost (newValue);
         else
-            parameterChanged (paramID, juce::jlimit (0.0f, 1.0f, newValue));
+            parameterValueChanged (0, juce::jlimit (0.0f, 1.0f, newValue));
     }
 
     /**
      Make this value attached to the parameter with the supplied parameterID.
      */
-    void attachToParameter (const juce::String& parameterID)
+    void attachToParameter (juce::RangedAudioParameter* parameterToUse)
     {
         detachFromParameter();
 
-        paramID = parameterID;
-
-        if (paramID.isNotEmpty())
+        if (parameterToUse)
         {
-            parameter = dynamic_cast<juce::RangedAudioParameter*>(state.getParameter (paramID));
-            // Oh uh, tried to attach to a non existing parameter
-            jassert (parameter != nullptr);
+            parameter = parameterToUse;
 
             initialUpdate();
 
-            state.addParameterListener (paramID, this);
+            parameter->addListener (this);
         }
     }
 
     void detachFromParameter()
     {
-        if (paramID.isNotEmpty())
-            state.removeParameterListener (paramID, this);
+        if (parameter)
+            parameter->removeListener (this);
     }
 
     /**
@@ -142,10 +137,13 @@ public:
             parameter->endChangeGesture();
     }
 
-    void parameterChanged (const juce::String& parameterID, float newValue) override
+    void parameterValueChanged (int parameterIndex, float newValue) override
     {
-        juce::ignoreUnused (parameterID);
-        value.store (ValueType (newValue));
+        juce::ignoreUnused (parameterIndex);
+        if (parameter)
+            value.store (ValueType (parameter->convertFrom0to1 (newValue)));
+        else
+            value.store (ValueType (newValue));
 
         if (onParameterChanged)
             onParameterChanged();
@@ -153,6 +151,8 @@ public:
         if (onParameterChangedAsync)
             triggerAsyncUpdate();
     }
+
+    void parameterGestureChanged ([[maybe_unused]]int parameterIndex, [[maybe_unused]]bool gestureIsStarting) override {}
 
     void handleAsyncUpdate() override
     {
@@ -174,15 +174,17 @@ private:
 
     void initialUpdate()
     {
-        value.store (ValueType (*state.getRawParameterValue (paramID)));
+        if (parameter)
+            value.store (ValueType (parameter->convertFrom0to1 (parameter->getValue())));
+        else
+            value.store (ValueType());
+
         if (onParameterChanged)
             onParameterChanged();
     }
 
-    juce::AudioProcessorValueTreeState& state;
     juce::RangedAudioParameter*         parameter = nullptr;
     std::atomic<ValueType>              value { ValueType() };
-    juce::String                        paramID;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParameterAttachment)
 };

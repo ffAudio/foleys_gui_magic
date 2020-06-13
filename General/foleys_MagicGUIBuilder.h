@@ -40,7 +40,7 @@ namespace foleys
 class MagicGUIBuilder : public juce::ChangeListener
 {
 public:
-    MagicGUIBuilder (MagicProcessorState* magicStateToUse);
+    MagicGUIBuilder (MagicProcessorState& magicStateToUse);
 
     virtual ~MagicGUIBuilder() = default;
 
@@ -179,17 +179,12 @@ public:
     template<typename ObjectType>
     juce::PopupMenu createObjectMenu() const
     {
-        if (magicState)
-        {
-            juce::PopupMenu menu;
-            int index = 0;
-            for (const auto& name : magicState->getObjectIDsByType<ObjectType>())
-                menu.addItem (++index, name);
+        juce::PopupMenu menu;
+        int index = 0;
+        for (const auto& name : magicState.getObjectIDsByType<ObjectType>())
+            menu.addItem (++index, name);
 
-            return menu;
-        }
-
-        return {};
+        return menu;
     }
 
     void changeListenerCallback (juce::ChangeBroadcaster* sender) override;
@@ -199,7 +194,7 @@ public:
      */
     juce::var getPropertyDefaultValue (juce::Identifier property) const;
 
-    MagicProcessorState* getProcessorState();
+    MagicProcessorState& getMagicState();
 
     juce::UndoManager& getUndoManager();
 
@@ -230,7 +225,7 @@ private:
 
     juce::Component::SafePointer<juce::Component> parent;
 
-    MagicProcessorState* magicState;
+    MagicProcessorState& magicState;
 
     std::unique_ptr<GuiItem> root;
 

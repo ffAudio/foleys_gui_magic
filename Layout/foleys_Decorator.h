@@ -53,7 +53,7 @@ public:
         juce::Rectangle<int> client;
         juce::Rectangle<int> caption;
     };
-    
+
     Decorator::ClientBounds getClientBounds (juce::Rectangle<int> overallBounds) const;
 
     juce::String getTabCaption (const juce::String& defaultName) const;

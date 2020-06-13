@@ -48,17 +48,16 @@ public:
         xyVerticalOverColourId
     };
 
-    XYDragComponent (juce::AudioProcessorValueTreeState& state);
+    XYDragComponent();
 
     void setCrossHair (bool horizontal, bool vertical);
 
     void paint (juce::Graphics& g) override;
 
-    void setParameterX (const juce::String& paramID);
-    void setParameterY (const juce::String& paramID);
+    void setParameterX (juce::RangedAudioParameter* parameter);
+    void setParameterY (juce::RangedAudioParameter* parameter);
 
-    void setRightClickParameter (const juce::String& paramID,
-                                 juce::AudioProcessorValueTreeState& state);
+    void setRightClickParameter (juce::RangedAudioParameter* parameter);
 
     bool hitTest (int x, int y) override;
     void mouseDown (const juce::MouseEvent&) override;
