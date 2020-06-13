@@ -107,12 +107,22 @@ public:
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> createAttachment (const juce::String& paramID, juce::ComboBox& combobox) override;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   createAttachment (const juce::String& paramID, juce::Button& button) override;
 
+    /**
+     Override this to create a default GUI
+     */
+    juce::ValueTree createDefaultGUITree() const override;
+
     juce::AudioProcessor& getProcessor();
     juce::AudioProcessorValueTreeState& getValueTreeState();
 
 private:
 
     void addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const;
+
+    /**
+     This creates a hierarchical DOM according to the parameters defined in an AudioProcessor
+     */
+    void createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree) const;
 
     void timerCallback() override;
 

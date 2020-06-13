@@ -31,7 +31,7 @@ namespace foleys
 {
 
 
-MagicGUIBuilder::MagicGUIBuilder (MagicProcessorState& state)
+MagicGUIBuilder::MagicGUIBuilder (MagicGUIState& state)
   : magicState (state)
 {
     config = juce::ValueTree (IDs::magic);
@@ -80,7 +80,7 @@ void MagicGUIBuilder::updateStylesheet()
 {
     auto stylesNode = config.getOrCreateChildWithName (IDs::styles, &undo);
     if (stylesNode.getNumChildren() == 0)
-        stylesNode.appendChild (Stylesheet::createDefaultStyle(), &undo);
+        stylesNode.appendChild (magicState.createDefaultStylesheet(), &undo);
 
     auto selectedName = stylesNode.getProperty (IDs::selected, {}).toString();
     if (selectedName.isNotEmpty())
@@ -102,6 +102,16 @@ void MagicGUIBuilder::clearGUI()
     auto guiNode = config.getOrCreateChildWithName (IDs::view, &undo);
     guiNode.removeAllChildren (&undo);
     guiNode.removeAllProperties (&undo);
+
+    updateComponents();
+}
+
+void MagicGUIBuilder::resetToDefaultGUI()
+{
+    config.removeChild (config.getChildWithName (IDs::view), &undo);
+    config.appendChild (magicState.createDefaultGUITree(), &undo);
+
+    updateComponents();
 }
 
 void MagicGUIBuilder::showOverlayDialog (std::unique_ptr<juce::Component> dialog)
@@ -159,8 +169,10 @@ void MagicGUIBuilder::updateComponents()
     if (parent == nullptr)
         return;
 
-    createDefaultGUITree (true);
     updateStylesheet();
+
+    if (config.getChildWithName (IDs::view).isValid() == false)
+        config.appendChild (magicState.createDefaultGUITree(), &undo);
 
     auto rootNode = config.getOrCreateChildWithName (IDs::view, &undo);
 
@@ -313,6 +325,8 @@ juce::var MagicGUIBuilder::getPropertyDefaultValue (juce::Identifier property) c
     if (property == IDs::captionPlacement) return "centred-top";
     if (property == IDs::lookAndFeel) return "FoleysFinest";
 
+    if (property == juce::Identifier ("font-size")) return 12.0;
+
     return {};
 }
 
@@ -324,7 +338,7 @@ void MagicGUIBuilder::changeListenerCallback (juce::ChangeBroadcaster*)
     updateLayout();
 }
 
-MagicProcessorState& MagicGUIBuilder::getMagicState()
+MagicGUIState& MagicGUIBuilder::getMagicState()
 {
     return magicState;
 }
@@ -332,77 +346,6 @@ MagicProcessorState& MagicGUIBuilder::getMagicState()
 juce::UndoManager& MagicGUIBuilder::getUndoManager()
 {
     return undo;
-}
-
-void MagicGUIBuilder::createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree)
-{
-    for (const auto& sub : tree.getSubgroups (false))
-    {
-        auto child = juce::ValueTree (IDs::view, {
-            {IDs::caption, sub->getName()},
-            {IDs::styleClass, "group"}});
-
-        createDefaultFromParameters (child, *sub);
-        node.appendChild (child, nullptr);
-    }
-
-    for (const auto& param : tree.getParameters (false))
-    {
-        auto child = juce::ValueTree (IDs::slider);
-        if (dynamic_cast<juce::AudioParameterChoice*>(param) != nullptr)
-            child = juce::ValueTree (IDs::comboBox);
-        else if (dynamic_cast<juce::AudioParameterBool*>(param) != nullptr)
-            child = juce::ValueTree (IDs::toggleButton);
-
-        child.setProperty (IDs::caption, param->getName (64), nullptr);
-        if (const auto* parameterWithID = dynamic_cast<juce::AudioProcessorParameterWithID*>(param))
-            child.setProperty (IDs::parameter, parameterWithID->paramID, nullptr);
-
-        node.appendChild (child, nullptr);
-    }
-}
-
-void MagicGUIBuilder::createDefaultGUITree (bool keepExisting)
-{
-    if (keepExisting && config.getChildWithName (IDs::view).isValid())
-        return;
-
-    auto rootNode = config.getOrCreateChildWithName (IDs::view, &undo);
-    rootNode.setProperty (IDs::id, IDs::root, &undo);
-
-    auto current = rootNode;
-
-    auto plotNames = magicState.getObjectIDsByType<MagicPlotSource>();
-
-    if (plotNames.isEmpty() == false)
-    {
-        juce::StringArray colours { "orange", "blue", "red", "silver", "green", "cyan", "brown", "white" };
-        int nextColour = 0;
-
-        auto child = juce::ValueTree (IDs::view, {
-            { IDs::id, "plot-view" },
-            { IDs::styleClass, "plot-view" }});
-
-        for (auto plotName : plotNames)
-        {
-            child.appendChild ({IDs::plot, {
-                { IDs::source, plotName },
-                { "plot-color", colours [nextColour++] }}}, nullptr);
-
-            if (nextColour >= colours.size())
-                nextColour = 0;
-        }
-
-        current.appendChild (child, nullptr);
-
-        juce::ValueTree parameters { IDs::view, {
-            { IDs::styleClass, "parameters nomargin" }}};
-
-        current.appendChild (parameters, nullptr);
-        current = parameters;
-    }
-
-    createDefaultFromParameters (current, magicState.getProcessor().getParameterTree());
 }
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE

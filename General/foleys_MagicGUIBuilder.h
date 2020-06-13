@@ -40,7 +40,7 @@ namespace foleys
 class MagicGUIBuilder : public juce::ChangeListener
 {
 public:
-    MagicGUIBuilder (MagicProcessorState& magicStateToUse);
+    MagicGUIBuilder (MagicGUIState& magicStateToUse);
 
     virtual ~MagicGUIBuilder() = default;
 
@@ -137,17 +137,9 @@ public:
     void clearGUI();
 
     /**
-     This will create a default GUI, in case of AudioProcessors from AudioProcessor::getParameterTree().
-
-     @param keepExisting if set to true, it will not change an existing root div tree,
-                         if set to false, it will replace any existing data.
+     Remove the current GUI and replaces it with a generated default
      */
-    void createDefaultGUITree (bool keepExisting);
-
-    /**
-     This creates a hierarchical DOM according to the parameters defined in an AudioProcessor
-     */
-    void createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree);
+    void resetToDefaultGUI();
 
     /**
      This is used to display a dialog box. It is called by the GUI editor, but in future it might be reached
@@ -194,7 +186,7 @@ public:
      */
     juce::var getPropertyDefaultValue (juce::Identifier property) const;
 
-    MagicProcessorState& getMagicState();
+    MagicGUIState& getMagicState();
 
     juce::UndoManager& getUndoManager();
 
@@ -225,7 +217,7 @@ private:
 
     juce::Component::SafePointer<juce::Component> parent;
 
-    MagicProcessorState& magicState;
+    MagicGUIState& magicState;
 
     std::unique_ptr<GuiItem> root;
 
