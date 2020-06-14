@@ -31,14 +31,57 @@ namespace foleys
 {
 
 Container::Container (MagicGUIBuilder& builder, juce::ValueTree node)
-  : Decorator (builder, node)
+  : GuiItem (builder, node)
 {
 }
 
-void Container::addChildItem (std::unique_ptr<Decorator> child)
+void Container::update()
+{
+    configureFlexBox (configNode);
+
+    for (auto& child : *this)
+        child->updateInternal();
+
+    const auto display = magicBuilder.getStyleProperty (IDs::display, configNode).toString();
+    if (display == IDs::contents)
+        setLayoutMode (Container::Layout::Contents);
+    else if (display == IDs::tabbed)
+        setLayoutMode (Container::Layout::Tabbed);
+    else
+        setLayoutMode (Container::Layout::FlexBox);
+
+    auto repaintHz = magicBuilder.getStyleProperty (IDs::repaintHz, configNode).toString();
+    if (repaintHz.isNotEmpty())
+    {
+        refreshRateHz = repaintHz.getIntValue();
+        updateContinuousRedraw();
+    }
+}
+
+void Container::addChildItem (std::unique_ptr<GuiItem> child)
 {
     addAndMakeVisible (child.get());
     children.push_back (std::move (child));
+}
+
+void Container::createSubComponents()
+{
+    children.clear();
+
+    for (auto childNode : configNode)
+    {
+        auto childItem = magicBuilder.createGuiItem (childNode);
+        if (childItem)
+        {
+            addAndMakeVisible (childItem.get());
+            childItem->createSubComponents();
+
+            children.push_back (std::move (childItem));
+        }
+    }
+
+    updateLayout();
+    updateContinuousRedraw();
 }
 
 void Container::setLayoutMode (Layout layoutToUse)
@@ -54,14 +97,8 @@ void Container::setLayoutMode (Layout layoutToUse)
         for (auto& child : children)
             child->setVisible (true);
     }
-}
 
-void Container::setEditMode (bool shouldEdit)
-{
-    for (auto& child : children)
-        child->setEditMode (shouldEdit);
-
-    Decorator::setEditMode (shouldEdit);
+    updateLayout();
 }
 
 void Container::resized()
@@ -80,22 +117,22 @@ void Container::updateLayout()
     {
         flexBox.items.clear();
         for (auto& child : children)
-            flexBox.items.add (child->flexItem);
+            flexBox.items.add (child->getFlexItem());
 
-        flexBox.performLayout (clientBounds.client);
+        flexBox.performLayout (clientBounds);
     }
     else
     {
         if (layout == Layout::Tabbed)
         {
             updateTabbedButtons();
-            tabbedButtons->setBounds (clientBounds.client.removeFromTop (30));
+            tabbedButtons->setBounds (clientBounds.removeFromTop (30));
         }
         else
             tabbedButtons.reset();
 
         for (auto& child : children)
-            child->setBounds (clientBounds.client);
+            child->setBounds (clientBounds);
     }
 
     for (auto& child : children)
@@ -115,12 +152,6 @@ void Container::updateContinuousRedraw()
         startTimerHz (refreshRateHz);
 }
 
-void Container::setRefreshRate (int refreshRate)
-{
-    refreshRateHz = refreshRate;
-    updateContinuousRedraw();
-}
-
 void Container::updateTabbedButtons()
 {
     tabbedButtons = std::make_unique<juce::TabbedButtonBar>(juce::TabbedButtonBar::TabsAtTop);
@@ -128,11 +159,8 @@ void Container::updateTabbedButtons()
 
     for (auto& child : children)
     {
-        auto caption = child->tabCaption.isNotEmpty() ? child->tabCaption
-                                                      : child->caption.isNotEmpty() ? child->caption
-                                                                                    : "Tab " + juce::String (tabbedButtons->getNumTabs());
-
-        tabbedButtons->addTab (caption, child->tabColour, -1);
+        tabbedButtons->addTab (child->getTabCaption ("Tab " + juce::String (tabbedButtons->getNumTabs())),
+                               child->getTabColour(), -1);
     }
 
     tabbedButtons->addChangeListener (this);
@@ -222,14 +250,24 @@ void Container::updateSelectedTab()
         child->setVisible (currentTab == index++);
 }
 
-std::vector<std::unique_ptr<Decorator>>::iterator Container::begin()
+std::vector<std::unique_ptr<GuiItem>>::iterator Container::begin()
 {
     return children.begin();
 }
 
-std::vector<std::unique_ptr<Decorator>>::iterator Container::end()
+std::vector<std::unique_ptr<GuiItem>>::iterator Container::end()
 {
     return children.end();
 }
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+void Container::setEditMode (bool shouldEdit)
+{
+    for (auto& child : children)
+        child->setEditMode (shouldEdit);
+
+    GuiItem::setEditMode (shouldEdit);
+}
+#endif
 
 } // namespace foleys

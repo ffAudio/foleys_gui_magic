@@ -46,23 +46,9 @@ StylePropertyComponent* StylePropertyComponent::createComponent (MagicGUIBuilder
         return new StyleBoolPropertyComponent (builder, property.name, node);
 
     if (property.type == SettableProperty::Choice)
-    {
-        juce::StringArray names;
+        return new StyleChoicePropertyComponent (builder, property.name, node, property.menu);
 
-        if (auto* choiceProperty = dynamic_cast<SettableChoiceProperty*>(&property))
-            for (const auto& pair : choiceProperty->options)
-                names.add (pair.name.toString());
-
-        return new StyleChoicePropertyComponent (builder, property.name, node, names);
-    }
-
-    if (property.type == SettableProperty::Parameter ||
-        property.type == SettableProperty::LevelSource ||
-        property.type == SettableProperty::PlotSource ||
-        property.type == SettableProperty::Trigger ||
-        property.type == SettableProperty::Property ||
-        property.type == SettableProperty::Justification ||
-        property.type == SettableProperty::AssetFile)
+    if (property.type == SettableProperty::Property)
         return new StyleChoicePropertyComponent (builder, property.name, node, property.type);
 
     jassertfalse;
@@ -110,7 +96,7 @@ juce::var StylePropertyComponent::lookupValue()
     remove.setEnabled (node == inheritedFrom);
 
     if (value.isVoid())
-        return builder.getPropertyDefaultValue (node.getType(), property);
+        return builder.getPropertyDefaultValue (property);
 
     return value;
 }

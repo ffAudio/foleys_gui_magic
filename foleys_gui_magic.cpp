@@ -38,6 +38,7 @@
 
 #include "General/foleys_MagicGUIBuilder.cpp"
 #include "General/foleys_MagicPluginEditor.cpp"
+#include "General/foleys_MagicGUIState.cpp"
 #include "General/foleys_MagicProcessorState.cpp"
 #include "General/foleys_Resources.cpp"
 #include "General/foleys_MagicJUCEFactories.cpp"
@@ -45,6 +46,7 @@
 #include "Layout/foleys_Stylesheet.cpp"
 #include "Layout/foleys_Decorator.cpp"
 #include "Layout/foleys_Container.cpp"
+#include "Layout/foleys_GuiItem.cpp"
 
 #include "Visualisers/foleys_MagicLevelSource.cpp"
 #include "Visualisers/foleys_MagicFilterPlot.cpp"

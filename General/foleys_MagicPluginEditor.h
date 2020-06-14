@@ -61,8 +61,7 @@ public:
      @code{.cpp}
      AudioProcessorEditor* MyAudioProcessor::createEditor()
      {
-         auto* editor = new foleys::MagicPluginEditor (magicState);
-         editor->restoreGUI (BinaryData::magic_xml, BinaryData::magic_xmlSize);
+         auto* editor = new foleys::MagicPluginEditor (magicState, BinaryData::magic_xml, BinaryData::magic_xmlSize);
          return editor;
      }
      @endcode

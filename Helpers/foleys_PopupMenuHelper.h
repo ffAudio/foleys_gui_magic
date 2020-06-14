@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019 Foleys Finest Audio Ltd. - Daniel Walz
+    Copyright (c) 2020 Foleys Finest Audio Ltd. - Daniel Walz
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without modification,
@@ -29,60 +29,43 @@
 
 #pragma once
 
+
 namespace foleys
 {
 
-class Decorator
+static inline juce::PopupMenu makePopupMenu (const juce::StringArray& strings, int offset=1)
 {
-public:
+    juce::PopupMenu menu;
 
-    Decorator() = default;
+    for (const auto& item : strings)
+        menu.addItem (offset++, item);
 
-    /**
-     This will get the necessary information from the stylesheet, using inheritance
-     of nodes if needed, to set the margins/borders etc. for the GuiItem.
-     */
-    void configure (MagicGUIBuilder& builder, const juce::ValueTree& node);
+    return menu;
+}
 
-    void reset();
+static inline juce::StringArray getAllKeyNames (const juce::NamedValueSet& valueSet)
+{
+    juce::StringArray names;
 
-    void drawDecorator (juce::Graphics& g, juce::Rectangle<int> bounds);
+    for (const auto& item : valueSet)
+        names.add (item.name.toString());
 
-    struct ClientBounds
-    {
-        juce::Rectangle<int> client;
-        juce::Rectangle<int> caption;
-    };
+    return names;
+}
 
-    Decorator::ClientBounds getClientBounds (juce::Rectangle<int> overallBounds) const;
-
-    juce::String getTabCaption (const juce::String& defaultName) const;
-    juce::Colour getTabColour() const;
-
-private:
-
-    juce::Colour backgroundColour { juce::Colours::darkgrey };
-    juce::Colour borderColour     { juce::Colours::silver };
-
-    float margin  = 5.0f;
-    float padding = 5.0f;
-    float border  = 0.0f;
-    float radius  = 5.0f;
-
-    juce::String        caption;
-    juce::Justification justification = juce::Justification::centredTop;
-    float               captionSize   = 20.0f;
-    juce::Colour        captionColour = juce::Colours::silver;
-
-    juce::String        tabCaption;
-    juce::Colour        tabColour;
-
-    juce::Image                 backgroundImage;
-    float                       backgroundAlpha = 1.0f;
-    juce::RectanglePlacement    backgroundPlacement = juce::RectanglePlacement::centred;
-    juce::Array<juce::Colour>   backgroundFill;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Decorator)
-};
+static inline juce::NamedValueSet makeJustificationsChoices()
+{
+    juce::NamedValueSet choices;
+    choices.set ("centred",         juce::Justification::centred);
+    choices.set ("top-left",        juce::Justification::topLeft);
+    choices.set ("centred-left",    juce::Justification::centredLeft);
+    choices.set ("bottom-left",     juce::Justification::bottomLeft);
+    choices.set ("centred-top",     juce::Justification::centredTop);
+    choices.set ("centred-bottom",  juce::Justification::centredBottom);
+    choices.set ("top-right",       juce::Justification::topRight);
+    choices.set ("centred-right",   juce::Justification::centredRight);
+    choices.set ("bottom-right",    juce::Justification::bottomRight);
+    return choices;
+}
 
 }

@@ -90,6 +90,7 @@
 #include "General/foleys_SettableProperties.h"
 #include "General/foleys_Resources.h"
 
+#include "Helpers/foleys_PopupMenuHelper.h"
 #include "Helpers/foleys_MouseLambdas.h"
 #include "Helpers/foleys_ParameterAttachment.h"
 #include "Helpers/foleys_AtomicValueAttachment.h"
@@ -97,6 +98,7 @@
 
 #include "Layout/foleys_Stylesheet.h"
 #include "Layout/foleys_Decorator.h"
+#include "Layout/foleys_GuiItem.h"
 #include "Layout/foleys_Container.h"
 
 #include "LookAndFeels/foleys_LookAndFeel.h"
@@ -108,7 +110,7 @@
 #include "Visualisers/foleys_MagicAnalyser.h"
 #include "Visualisers/foleys_MagicOscilloscope.h"
 
-#include "Widgets/foleys_AttachableComponent.h"
+#include "Widgets/foleys_AutoOrientationSlider.h"
 #include "Widgets/foleys_MagicLevelMeter.h"
 #include "Widgets/foleys_MagicPlotComponent.h"
 #include "Widgets/foleys_XYDragComponent.h"
@@ -140,6 +142,7 @@ namespace EditorColours
 
 #endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 
+#include "General/foleys_MagicGUIState.h"
 #include "General/foleys_MagicProcessorState.h"
 #include "General/foleys_MagicGUIBuilder.h"
 #include "General/foleys_MagicPluginEditor.h"

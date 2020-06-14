@@ -38,7 +38,8 @@ namespace foleys
  It is also the place, where the data for the visualisers is sent to, which are
  MagicPlotSources and MagicLevelSources.
  */
-class MagicProcessorState   : private juce::Timer
+class MagicProcessorState : public MagicGUIState,
+                            private juce::Timer
 {
 public:
     /**
@@ -51,77 +52,19 @@ public:
     ~MagicProcessorState();
 
     /**
-     Add a MagicLevelSource to measure the level at any point in your DSP. For instance you can have
-     one MagicLevelSource at the beginning of your processing and one at the end to show the user
-     the input and output level.
-     */
-    MagicLevelSource* addLevelSource (const juce::Identifier& sourceID, std::unique_ptr<MagicLevelSource> source);
-    MagicLevelSource* getLevelSource (const juce::Identifier& sourceID);
-
-    /**
-     Add a MagicPlotSource to generate a plot for visualisation. There are some plots ready made
-     like the MagicFilterPlot to show an IIR frequency response plot.
-     */
-    MagicPlotSource* addPlotSource (const juce::Identifier& sourceID, std::unique_ptr<MagicPlotSource> source);
-
-    /**
-     Use this to lookup a MagicPlotSource. Since they can only be added and never removed, it makes
-     sense to have the result as member pointer so you can push the data there.
-     */
-    MagicPlotSource* getPlotSource (const juce::Identifier& sourceID);
-
-    /**
-     Add a function to be connected to e.g. Buttons
-     */
-    void addTrigger (const juce::Identifier& triggerID, std::function<void()> function);
-
-    std::function<void()> getTrigger (const juce::Identifier& triggerID);
-
-    /**
-     Returns a property as value inside the ValueTreeState. The nodes are a colon separated list, the last component is the property name
-     */
-    juce::Value getPropertyAsValue (const juce::String& pathToProperty);
-
-    /**
      Returns the root node for exposed properties for the GUI
      */
-    juce::ValueTree getPropertyRoot() const;
+    juce::ValueTree getPropertyRoot() const override;
 
     /**
      Returns the IDs of AudioProcessorParameters for selection
      */
-    juce::StringArray getParameterNames() const;
+    juce::StringArray getParameterNames() const override;
 
     /**
-     Returns the IDs of MagicLevelSources for selection
+     Return a hierarchical menu of the AudioParameters
      */
-    juce::StringArray getLevelSourcesNames() const;
-
-    /**
-     Returns the IDs of MagicPlotSources for selection
-     */
-    juce::StringArray getPlotSourcesNames() const;
-
-    /**
-     Populates a menu with options from SettableProperty
-     */
-    void populateSettableOptionsMenu (juce::ComboBox& comboBox, SettableProperty::PropertyType type) const;
-
-    /**
-     Call this method in your prepareToPlay implementation, to allow th visualisers to be
-     properly setup
-     */
-    void prepareToPlay (double sampleRate, int samplesPerBlockExpected);
-
-    /**
-     Send the midi data to the keyboard. This is only needed, if you added a MidiKeyboardComponent.
-
-     @param buffer the midi buffer from processBlock
-     @param numSamples the number of samples in the corresponding audio buffer
-     @param injectIndirectEvents if true key presses from the GUI are added to the midi stream
-     */
-    void processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents=true);
-
+    juce::PopupMenu createParameterMenu() const override;
 
     /**
      Calling this in the processBlock() will store the values from AudioPlayHead into the state, so it can be used in the GUI.
@@ -159,25 +102,32 @@ public:
      */
     void setStateInformation (const void* data, int sizeInBytes, juce::AudioProcessorEditor* editor = nullptr);
 
+    juce::AudioProcessorParameter* getParameter (const juce::String& paramID) override;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>   createAttachment (const juce::String& paramID, juce::Slider& slider) override;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> createAttachment (const juce::String& paramID, juce::ComboBox& combobox) override;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   createAttachment (const juce::String& paramID, juce::Button& button) override;
+
+    /**
+     Override this to create a default GUI
+     */
+    juce::ValueTree createDefaultGUITree() const override;
+
     juce::AudioProcessor& getProcessor();
     juce::AudioProcessorValueTreeState& getValueTreeState();
-    juce::MidiKeyboardState& getKeyboardState();
 
 private:
 
     void addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const;
-    void addPropertiesToMenu (const juce::ValueTree& tree, juce::ComboBox& combo, juce::PopupMenu& menu, const juce::String& path) const;
+
+    /**
+     This creates a hierarchical DOM according to the parameters defined in an AudioProcessor
+     */
+    void createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree) const;
 
     void timerCallback() override;
 
     juce::AudioProcessor& processor;
     juce::AudioProcessorValueTreeState& state;
-
-    juce::MidiKeyboardState keyboardState;
-
-    std::map<juce::Identifier, std::unique_ptr<MagicLevelSource>> levelSources;
-    std::map<juce::Identifier, std::unique_ptr<MagicPlotSource>>  plotSources;
-    std::map<juce::Identifier, std::function<void()>>             triggers;
 
     std::atomic<double> bpm;
     std::atomic<int>    timeSigNumerator;
@@ -185,8 +135,6 @@ private:
     std::atomic<double> timeInSeconds;
     std::atomic<bool>   isPlaying;
     std::atomic<bool>   isRecording;
-
-    juce::TimeSliceThread visualiserThread { "Visualiser Thread" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicProcessorState)
 };
