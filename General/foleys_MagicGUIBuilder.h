@@ -50,6 +50,11 @@ public:
     void setConfigTree (const juce::ValueTree& config);
 
     /**
+     Convenience method to call setConfigTree directly from BinaryData
+     */
+    void setConfigTree (const char* data, const int dataSize);
+
+    /**
      Create a node from the description
      */
     std::unique_ptr<GuiItem> createGuiItem (const juce::ValueTree& node);

@@ -72,7 +72,14 @@ juce::ValueTree MagicGUIState::createDefaultStylesheet() const
 
 juce::ValueTree MagicGUIState::createDefaultGUITree() const
 {
-    return {"Label", {{"text", "Hello world!"}}};
+    return {IDs::view, {{"id", "root"}},
+        {
+            {"Label", {
+                {"text", "Hello world!"},
+                {"font-size", "25"},
+                {"justification", "centred"}
+            }}
+        }};
 }
 
 juce::Value MagicGUIState::getPropertyAsValue (const juce::String& pathToProperty)

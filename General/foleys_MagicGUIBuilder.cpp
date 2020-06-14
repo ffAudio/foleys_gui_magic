@@ -108,8 +108,10 @@ void MagicGUIBuilder::clearGUI()
 
 void MagicGUIBuilder::resetToDefaultGUI()
 {
-    config.removeChild (config.getChildWithName (IDs::view), &undo);
-    config.appendChild (magicState.createDefaultGUITree(), &undo);
+    auto guiNode = config.getOrCreateChildWithName (IDs::view, &undo);
+    guiNode.removeAllChildren (&undo);
+    guiNode.removeAllProperties (&undo);
+    guiNode.copyPropertiesAndChildrenFrom (magicState.createDefaultGUITree(), &undo);
 
     updateComponents();
 }
@@ -150,6 +152,13 @@ void MagicGUIBuilder::setConfigTree (const juce::ValueTree& gui)
 
     undo.clearUndoHistory();
     updateComponents();
+}
+
+void MagicGUIBuilder::setConfigTree (const char* data, const int dataSize)
+{
+    juce::String text (data, dataSize);
+    auto gui = juce::ValueTree::fromXml (text);
+    setConfigTree (gui);
 }
 
 void MagicGUIBuilder::createGUI (juce::Component& parentToUse)
