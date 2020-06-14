@@ -136,8 +136,6 @@ private:
     std::atomic<bool>   isPlaying;
     std::atomic<bool>   isRecording;
 
-    juce::TimeSliceThread visualiserThread { "Visualiser Thread" };
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicProcessorState)
 };
 

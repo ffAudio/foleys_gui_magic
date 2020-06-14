@@ -41,7 +41,6 @@ MagicProcessorState::MagicProcessorState (juce::AudioProcessor& processorToUse,
 
 MagicProcessorState::~MagicProcessorState()
 {
-    visualiserThread.stopThread (1000);
 }
 
 juce::ValueTree MagicProcessorState::getPropertyRoot() const
