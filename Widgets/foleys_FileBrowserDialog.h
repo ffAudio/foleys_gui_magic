@@ -32,7 +32,8 @@
 namespace foleys
 {
 
-class FileBrowserDialog : public juce::Component
+class FileBrowserDialog : public  juce::Component,
+                          private juce::FileBrowserListener
 {
 public:
     FileBrowserDialog (const juce::String cancelText,
@@ -50,6 +51,13 @@ public:
     juce::File getFile();
 
 private:
+    void fileDoubleClicked (const juce::File& file) override;
+
+    void selectionChanged() override {}
+    void fileClicked (const juce::File&, const juce::MouseEvent&) override {}
+    void browserRootChanged (const juce::File& newRoot) override {}
+
+
     std::unique_ptr<juce::FileFilter>           fileFilter;
     std::unique_ptr<juce::FileBrowserComponent> fileBrowser;
 
