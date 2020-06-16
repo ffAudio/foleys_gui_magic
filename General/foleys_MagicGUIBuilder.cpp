@@ -226,6 +226,14 @@ void MagicGUIBuilder::updateLayout()
     parent->repaint();
 }
 
+GuiItem* MagicGUIBuilder::findGuiItemWithId (const juce::String& name)
+{
+    if (root)
+        return root->findGuiItemWithId (name);
+
+    return nullptr;
+}
+
 void MagicGUIBuilder::registerFactory (juce::Identifier type, std::unique_ptr<GuiItem>(*factory)(MagicGUIBuilder& builder, const juce::ValueTree&))
 {
     if (factories.find (type) != factories.cend())

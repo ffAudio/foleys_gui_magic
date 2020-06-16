@@ -86,6 +86,12 @@ public:
     MagicGUIState& getMagicState();
 
     /**
+     Lookup a Component through the tree. It will return the first with that id regardless if there is another one.
+     We discourage using that function, because that Component can be deleted and recreated at any time without notice.
+     */
+    virtual GuiItem* findGuiItemWithId (const juce::String& name);
+
+    /**
      Reread properties from the config ValueTree
      */
     void updateInternal();
@@ -104,13 +110,14 @@ public:
 
     void configureFlexBoxItem (const juce::ValueTree& node);
 
-
+    /**
+     Returns the bounds of the wrapped Component. This is the GuiItems bounds
+     reduced by margin, padding and the caption, if one was set.
+     */
     juce::Rectangle<int> getClientBounds() const;
 
     juce::String getTabCaption (const juce::String& defaultName) const;
     juce::Colour getTabColour() const;
-
-    const juce::ValueTree& getConfigNode() const;
 
     juce::FlexItem& getFlexItem() { return flexItem; };
 

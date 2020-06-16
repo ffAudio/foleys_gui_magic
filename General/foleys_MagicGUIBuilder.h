@@ -80,6 +80,12 @@ public:
     juce::ValueTree getGuiRootNode();
 
     /**
+     Lookup a Component through the tree. It will return the first with that id regardless if there is another one.
+     We discourage using that function, because that Component can be deleted and recreated at any time without notice.
+     */
+    GuiItem* findGuiItemWithId (const juce::String& name);
+
+    /**
      This selects the stylesheet node and sets it to the Stylesheet.
      If no stylesheet is found, a default one is created.
      */

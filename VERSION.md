@@ -9,6 +9,11 @@ BREAKING CHANGE:
 - Any other kind of object can be stored and advertised to the GUI, eg. ListBoxModels
 - addPlotSource() is now createAndAddObject<MagicAnalyser>(), MagicLevelSource works similar
 
+Changes:
+
+- MagicGUIBuilder can be used in an JUCEApplication or any Component
+- Slider can be connected to a juce::Value
+
 1.1.5 - 20.05.2020
 ------------------
 

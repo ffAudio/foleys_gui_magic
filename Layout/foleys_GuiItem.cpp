@@ -66,6 +66,14 @@ MagicGUIState& GuiItem::getMagicState()
     return magicBuilder.getMagicState();
 }
 
+GuiItem* GuiItem::findGuiItemWithId (const juce::String& name)
+{
+    if (configNode.getProperty (IDs::id, juce::String()).toString() == name)
+        return this;
+
+    return nullptr;
+}
+
 void GuiItem::updateInternal()
 {
     auto& stylesheet = magicBuilder.getStylesheet();
@@ -85,6 +93,8 @@ void GuiItem::configureComponent()
     auto* component = getWrappedComponent();
     if (component == nullptr)
         return;
+
+    component->setComponentID (configNode.getProperty (IDs::id, juce::String()).toString());
 
     if (auto* tooltipClient = dynamic_cast<juce::SettableTooltipClient*>(component))
     {
@@ -187,11 +197,6 @@ juce::String GuiItem::getTabCaption (const juce::String& defaultName) const
 juce::Colour GuiItem::getTabColour() const
 {
     return decorator.getTabColour();
-}
-
-const juce::ValueTree& GuiItem::getConfigNode() const
-{
-    return configNode;
 }
 
 void GuiItem::valueChanged (juce::Value& source)
