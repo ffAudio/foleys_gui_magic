@@ -45,6 +45,10 @@ public:
     static const juce::Identifier  pSliderTextBox;
     static const juce::StringArray pTextBoxPositions;
 
+    static const juce::Identifier  pValue;
+    static const juce::Identifier  pMinValue;
+    static const juce::Identifier  pMaxValue;
+
     SliderItem (MagicGUIBuilder& builder, const juce::ValueTree& node) : GuiItem (builder, node)
     {
         setColourTranslation (
@@ -66,9 +70,6 @@ public:
     void update() override
     {
         attachment.reset();
-        auto paramID = configNode.getProperty (IDs::parameter, juce::String()).toString();
-        if (paramID.isNotEmpty())
-            attachment = getMagicState().createAttachment (paramID, slider);
 
         auto type = getProperty (pSliderType).toString();
         slider.setAutoOrientation (type.isEmpty() || type == pSliderTypes [0]);
@@ -93,6 +94,19 @@ public:
             slider.setTextBoxStyle (juce::Slider::TextBoxRight, false, slider.getTextBoxWidth(), slider.getTextBoxHeight());
         else
             slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, slider.getTextBoxWidth(), slider.getTextBoxHeight());
+
+        double minValue = getProperty (pMinValue);
+        double maxValue = getProperty (pMaxValue);
+        if (maxValue > minValue)
+            slider.setRange (minValue, maxValue);
+
+        auto valueID = configNode.getProperty (pValue, juce::String()).toString();
+        if (valueID.isNotEmpty())
+            slider.getValueObject().referTo (getMagicState().getPropertyAsValue (valueID));
+
+        auto paramID = configNode.getProperty (IDs::parameter, juce::String()).toString();
+        if (paramID.isNotEmpty())
+            attachment = getMagicState().createAttachment (paramID, slider);
     }
 
     std::vector<SettableProperty> getSettableProperties() const override
@@ -102,6 +116,9 @@ public:
         properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenu() });
         properties.push_back ({ configNode, pSliderType, SettableProperty::Choice, pSliderTypes [0], makePopupMenu (pSliderTypes) });
         properties.push_back ({ configNode, pSliderTextBox, SettableProperty::Choice, pTextBoxPositions [2], makePopupMenu (pTextBoxPositions) });
+        properties.push_back ({ configNode, pValue, SettableProperty::Property, 1.0f, {} });
+        properties.push_back ({ configNode, pMinValue, SettableProperty::Number, 0.0f, {} });
+        properties.push_back ({ configNode, pMaxValue, SettableProperty::Number, 2.0f, {} });
 
         return properties;
     }
@@ -121,6 +138,9 @@ const juce::Identifier  SliderItem::pSliderType   { "slider-type" };
 const juce::StringArray SliderItem::pSliderTypes  { "auto", "linear-horizontal", "linear-vertical", "rotary", "inc-dec-buttons" };
 const juce::Identifier  SliderItem::pSliderTextBox    { "slider-textbox" };
 const juce::StringArray SliderItem::pTextBoxPositions { "no-textbox", "textbox-above", "textbox-below", "textbox-left", "textbox-right" };
+const juce::Identifier  SliderItem::pValue      { "value" };
+const juce::Identifier  SliderItem::pMinValue   { "min-value" };
+const juce::Identifier  SliderItem::pMaxValue   { "max-value" };
 
 
 //==============================================================================

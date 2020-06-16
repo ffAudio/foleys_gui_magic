@@ -48,6 +48,7 @@ FileBrowserDialog::FileBrowserDialog (const juce::String cancelText,
                                                                fileFilter.get(),
                                                                nullptr);
     addAndMakeVisible (fileBrowser.get());
+    fileBrowser->addListener (this);
 }
 
 void FileBrowserDialog::resized()
@@ -81,6 +82,13 @@ void FileBrowserDialog::setAcceptFunction (std::function<void()> func)
 juce::File FileBrowserDialog::getFile()
 {
     return fileBrowser->getSelectedFile (0);
+}
+
+void FileBrowserDialog::fileDoubleClicked (const juce::File& file)
+{
+    juce::ignoreUnused (file);
+    if (accept.onClick)
+        accept.onClick();
 }
 
 } // namespace foleys
