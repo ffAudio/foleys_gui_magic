@@ -88,6 +88,12 @@ public:
 
     juce::Component* getWrappedComponent() override { return nullptr; }
 
+    /**
+     Lookup a Component through the tree. It will return the first with that id regardless if there is another one.
+     We discourage using that function, because that Component can be deleted and recreated at any time without notice.
+     */
+    GuiItem* findGuiItemWithId (const juce::String& name) override;
+
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     /**
      This switches this node and all it's descendents in the edit

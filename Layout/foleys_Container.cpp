@@ -84,6 +84,18 @@ void Container::createSubComponents()
     updateContinuousRedraw();
 }
 
+GuiItem* Container::findGuiItemWithId (const juce::String& name)
+{
+    if (configNode.getProperty (IDs::id, juce::String()).toString() == name)
+        return this;
+
+    for (auto& item : children)
+        if (auto* matching = item->findGuiItemWithId (name))
+            return matching;
+
+    return nullptr;
+}
+
 void Container::setLayoutMode (Layout layoutToUse)
 {
     layout = layoutToUse;

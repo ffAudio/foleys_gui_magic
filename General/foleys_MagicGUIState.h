@@ -33,8 +33,8 @@ namespace foleys
 {
 
 /**
- The MagicProcessorState is the docking station for the MagicPluginEditor.
- It grants access to the processor itself and the AudioProcessorValueTreeState.
+ The MagicGuiState is the docking station for the MagicGUIBuilder.
+ You can register properties or objects there, that your GuiItems will connect to.
  It is also the place, where the data for the visualisers is sent to, which are
  MagicPlotSources and MagicLevelSources.
  */
@@ -93,10 +93,13 @@ public:
     virtual juce::PopupMenu createParameterMenu() const { return {}; }
 
     /**
-     Add a function to be connected to e.g. Buttons
+     You can store a lambda that can be called from e.g. a TextButton.
      */
     void addTrigger (const juce::Identifier& triggerID, std::function<void()> function);
 
+    /**
+     Returns a lambda to be connected to your components
+     */
     std::function<void()> getTrigger (const juce::Identifier& triggerID);
 
     /**

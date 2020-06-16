@@ -33,11 +33,10 @@ namespace foleys
 {
 
 /**
- The MagicProcessorState is the docking station for the MagicPluginEditor.
- It grants access to the processor itself and the AudioProcessorValueTreeState.
- It is also the place, where the data for the visualisers is sent to, which are
- MagicPlotSources and MagicLevelSources.
- */
+The MagicProcessorState is a subclass of MagicGUIState, that adds AudioProcessor specific functionality.
+It allows for instance connecting to AudioProcessorParameters and supplies a default XML tree of components
+built from the getParameterTree() from the AudioProcessor.
+*/
 class MagicProcessorState : public MagicGUIState,
                             private juce::Timer
 {
@@ -108,7 +107,7 @@ public:
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   createAttachment (const juce::String& paramID, juce::Button& button) override;
 
     /**
-     Override this to create a default GUI
+     This override creates the ValueTree defining the GuiItems from the getParameterTree()
      */
     juce::ValueTree createDefaultGUITree() const override;
 
