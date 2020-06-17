@@ -215,7 +215,12 @@ void GuiItem::valueChanged (juce::Value& source)
 void GuiItem::valueTreePropertyChanged (juce::ValueTree& treeThatChanged, const juce::Identifier&)
 {
     if (treeThatChanged == configNode)
-        updateInternal();
+    {
+        if (auto* parent = dynamic_cast<GuiItem*>(getParentComponent()))
+            parent->updateInternal();
+        else
+            updateInternal();
+    }
 }
 
 void GuiItem::valueTreeChildAdded (juce::ValueTree& treeThatChanged, juce::ValueTree&)
@@ -239,7 +244,12 @@ void GuiItem::valueTreeChildOrderChanged (juce::ValueTree& treeThatChanged, int,
 void GuiItem::valueTreeParentChanged (juce::ValueTree& treeThatChanged)
 {
     if (treeThatChanged == configNode)
-        updateInternal();
+    {
+        if (auto* parent = dynamic_cast<GuiItem*>(getParentComponent()))
+            parent->updateInternal();
+        else
+            updateInternal();
+    }
 }
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE

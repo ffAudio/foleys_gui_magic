@@ -54,16 +54,16 @@ void MagicAnalyser::createPlotPaths (juce::Path& path, juce::Path& filledPath, j
     const float minFreq = 20.0f;
     const auto& data = analyserJob.getAnalyserData();
 
-        path.clear();
-        path.preallocateSpace (8 + data.getNumSamples() * 3);
+    path.clear();
+    path.preallocateSpace (8 + data.getNumSamples() * 3);
 
-        juce::ScopedLock lockedForReading (pathCreationLock);
-        const auto* fftData = data.getReadPointer (0);
-        const auto  factor  = bounds.getWidth() / 10.0f;
+    juce::ScopedLock lockedForReading (pathCreationLock);
+    const auto* fftData = data.getReadPointer (0);
+    const auto  factor  = bounds.getWidth() / 10.0f;
 
-        path.startNewSubPath (bounds.getX() + factor * indexToX (0, minFreq), binToY (fftData [0], bounds));
-        for (int i = 0; i < data.getNumSamples(); ++i)
-            path.lineTo (bounds.getX() + factor * indexToX (i, minFreq), binToY (fftData [i], bounds));
+    path.startNewSubPath (bounds.getX() + factor * indexToX (0, minFreq), binToY (fftData [0], bounds));
+    for (int i = 1; i < data.getNumSamples(); ++i)
+        path.lineTo (bounds.getX() + factor * indexToX (i, minFreq), binToY (fftData [i], bounds));
 
     filledPath = path;
     filledPath.lineTo (bounds.getBottomRight());
@@ -85,7 +85,7 @@ juce::TimeSliceClient* MagicAnalyser::getBackgroundJob()
 float MagicAnalyser::indexToX (int index, float minFreq) const
 {
     const auto freq = (sampleRate * index) / analyserJob.fft.getSize();
-    return (freq > 0.01f) ? static_cast<float> (std::log2 (freq / minFreq)) : 0.0f;
+    return (freq > 0.01f) ? static_cast<float> (std::log2 ((freq + minFreq) / minFreq)) : 0.0f;
 }
 
 float MagicAnalyser::binToY (float bin, const juce::Rectangle<float> bounds) const
