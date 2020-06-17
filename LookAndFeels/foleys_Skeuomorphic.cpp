@@ -1,7 +1,9 @@
 /*
  ==============================================================================
-    Copyright (c) 2019 Foleys Finest Audio Ltd. - Daniel Walz
+    Copyright (c) 2019-2020 Foleys Finest Audio Ltd. - Daniel Walz
     All rights reserved.
+
+    License for non-commercial projects:
 
     Redistribution and use in source and binary forms, with or without modification,
     are permitted provided that the following conditions are met:
@@ -13,6 +15,11 @@
     3. Neither the name of the copyright holder nor the names of its contributors
        may be used to endorse or promote products derived from this software without
        specific prior written permission.
+
+    License for commercial products:
+
+    To sell commercial products containing this module, you are required to buy a
+    License from https://foleysfinest.com/developer/pluginguimagic/
 
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
     ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
