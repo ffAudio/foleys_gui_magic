@@ -71,6 +71,11 @@ public:
      */
     void setConfigTree (const char* data, const int dataSize);
 
+    /**
+     Grants access to the MagicGUIBuilder
+     */
+    MagicGUIBuilder& getGUIBuilder();
+
     void paint (juce::Graphics& g) override;
 
     void resized() override;
