@@ -13,6 +13,7 @@ Changes:
 
 - MagicGUIBuilder can be used in an JUCEApplication or any Component
 - Slider can be connected to a juce::Value
+- Bugfix: Fixed small offset of the analyser
 
 1.1.5 - 20.05.2020
 ------------------
