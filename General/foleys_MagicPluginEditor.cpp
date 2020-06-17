@@ -142,6 +142,14 @@ void MagicPluginEditor::setConfigTree (const char* data, const int dataSize)
     setConfigTree (gui);
 }
 
+MagicGUIBuilder& MagicPluginEditor::getGUIBuilder()
+{
+    // This shouldn't be possible, since the builder instance is created if none was supplied...
+    jassert (builder);
+
+    return *builder;
+}
+
 void MagicPluginEditor::paint (juce::Graphics& g)
 {
     g.fillAll (juce::Colours::black);
