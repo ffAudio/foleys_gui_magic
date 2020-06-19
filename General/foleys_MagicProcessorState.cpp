@@ -111,9 +111,9 @@ std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> MagicProce
     return std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(state, paramID, button);
 }
 
-juce::AudioProcessor& MagicProcessorState::getProcessor()
+juce::AudioProcessor* MagicProcessorState::getProcessor()
 {
-    return processor;
+    return &processor;
 }
 
 void MagicProcessorState::setLastEditorSize (int  width, int  height)

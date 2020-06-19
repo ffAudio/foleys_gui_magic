@@ -62,7 +62,7 @@ private:
 
     void selectionChanged() override {}
     void fileClicked (const juce::File&, const juce::MouseEvent&) override {}
-    void browserRootChanged (const juce::File& newRoot) override {}
+    void browserRootChanged (const juce::File&) override {}
 
 
     std::unique_ptr<juce::FileFilter>           fileFilter;
