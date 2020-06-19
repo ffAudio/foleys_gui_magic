@@ -198,6 +198,11 @@ public:
 
     juce::MidiKeyboardState& getKeyboardState();
 
+    /**
+     Return the referenced AudioProcessor, if this state can provide one
+     */
+    virtual juce::AudioProcessor* getProcessor() { return nullptr; }
+
 private:
 
     void addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const;

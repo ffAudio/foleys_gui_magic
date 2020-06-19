@@ -1,8 +1,13 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.2.0
+1.2.1
 -----
+
+- Add the possibility to get the AudioProcessor in GuiItem from builder, if there is one
+
+1.2.0 - 17.06.2020
+------------------
 
 BREAKING CHANGE:
 - Objects such as PlotSources and LevelMeters are in a flat list, so their names have to be unique

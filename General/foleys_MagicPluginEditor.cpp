@@ -40,7 +40,7 @@ namespace foleys
 {
 
 MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, std::unique_ptr<MagicGUIBuilder> builderToUse)
-  : juce::AudioProcessorEditor (stateToUse.getProcessor()),
+  : juce::AudioProcessorEditor (*stateToUse.getProcessor()),
     processorState (stateToUse),
     builder (std::move (builderToUse))
 {
@@ -48,7 +48,7 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, std::uniq
 }
 
 MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const char* data, const int dataSize, std::unique_ptr<MagicGUIBuilder> builderToUse)
-  : juce::AudioProcessorEditor (stateToUse.getProcessor()),
+  : juce::AudioProcessorEditor (*stateToUse.getProcessor()),
     processorState (stateToUse),
     builder (std::move (builderToUse))
 {

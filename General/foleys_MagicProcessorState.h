@@ -118,7 +118,7 @@ public:
      */
     juce::ValueTree createDefaultGUITree() const override;
 
-    juce::AudioProcessor& getProcessor();
+    juce::AudioProcessor* getProcessor() override;
     juce::AudioProcessorValueTreeState& getValueTreeState();
 
 private:
