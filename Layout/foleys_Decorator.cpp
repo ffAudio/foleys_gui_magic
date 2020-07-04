@@ -42,7 +42,7 @@ void Decorator::drawDecorator (juce::Graphics& g, juce::Rectangle<int> bounds)
 {
     juce::Graphics::ScopedSaveState stateSave (g);
 
-    auto boundsf = bounds.reduced (margin).toFloat();
+    auto boundsf = bounds.toFloat().reduced (margin);
 
     {
         juce::Graphics::ScopedSaveState save (g);
@@ -71,7 +71,7 @@ void Decorator::drawDecorator (juce::Graphics& g, juce::Rectangle<int> bounds)
         if (radius > 0.0f)
             g.drawRoundedRectangle (boundsf, radius, border);
         else
-            g.drawRect (bounds, border);
+            g.drawRect (bounds, juce::roundToInt (border));
     }
 
     if (caption.isNotEmpty())

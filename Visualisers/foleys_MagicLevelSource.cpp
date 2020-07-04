@@ -42,7 +42,7 @@ void MagicLevelSource::pushSamples (const juce::AudioBuffer<float>& buffer)
 {
     for (int c=0; c < std::min (buffer.getNumChannels(), int (channelDatas.size())); ++c)
     {
-        auto& data = channelDatas [c];
+        auto& data = channelDatas [size_t (c)];
         data.overall.store (std::max (data.overall.load(), buffer.getMagnitude (c, 0, buffer.getNumSamples())));
 
         int  bufferPos = 0;
@@ -59,8 +59,8 @@ void MagicLevelSource::pushSamples (const juce::AudioBuffer<float>& buffer)
                 --data.maxCountDown;
             }
 
-            data.rmsHistory [data.rmsPointer++] = buffer.getRMSLevel (c, bufferPos,
-                                                                      std::min (64, buffer.getNumSamples() - bufferPos));
+            data.rmsHistory [size_t (data.rmsPointer++)] = buffer.getRMSLevel (c, bufferPos,
+                                                                               std::min (64, buffer.getNumSamples() - bufferPos));
             if (data.rmsPointer >= int (data.rmsHistory.size()))
                 data.rmsPointer = 0;
 
@@ -78,7 +78,7 @@ void MagicLevelSource::pushSamples (const juce::AudioBuffer<float>& buffer)
 float MagicLevelSource::getRMSvalue (int channel) const
 {
     if (juce::isPositiveAndBelow (channel, channelDatas.size()))
-        return channelDatas [channel].rms.load();
+        return channelDatas [size_t (channel)].rms.load();
 
     return 0.0f;
 }
@@ -86,7 +86,7 @@ float MagicLevelSource::getRMSvalue (int channel) const
 float MagicLevelSource::getMaxValue (int channel) const
 {
     if (juce::isPositiveAndBelow (channel, channelDatas.size()))
-        return channelDatas [channel].max.load();
+        return channelDatas [size_t (channel)].max.load();
 
     return 0.0f;
 }
@@ -101,10 +101,10 @@ void MagicLevelSource::setupSource (int numChannels, double sampleRate, int maxK
 
 void MagicLevelSource::setNumChannels (int numChannels)
 {
-    channelDatas.resize (numChannels);
+    channelDatas.resize (size_t (numChannels));
 
     for (auto& channel : channelDatas)
-        channel.rmsHistory.resize (rmsHistorySize / 64, 0.0f);
+        channel.rmsHistory.resize (size_t (rmsHistorySize / 64), 0.0f);
 }
 
 int MagicLevelSource::getNumChannels() const
@@ -118,7 +118,7 @@ void MagicLevelSource::setRmsLength (int numSamples)
 
     for (auto& channel : channelDatas)
     {
-        channel.rmsHistory.resize (numSamples / 64, 0.0f);
+        channel.rmsHistory.resize (size_t (numSamples / 64), 0.0f);
         if (channel.rmsPointer >= int (channel.rmsHistory.size()))
             channel.rmsPointer = 0;
     }

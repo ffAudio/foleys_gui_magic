@@ -76,7 +76,7 @@ public:
      @param data points to the binary data of the XML file
      @param dataSize the number of bytes
      */
-    void setConfigTree (const char* data, const int dataSize);
+    void setConfigTree (const char* data, int dataSize);
 
     /**
      Grants access to the MagicGUIBuilder
@@ -88,7 +88,7 @@ public:
     void resized() override;
 
 private:
-    void initialise (const char* data = nullptr, const int dataSize = 0);
+    void initialise (const char* data = nullptr, int dataSize = 0);
 
     std::unique_ptr<MagicGUIBuilder> createBuilderInstance();
 

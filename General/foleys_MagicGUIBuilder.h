@@ -49,8 +49,6 @@ class MagicGUIBuilder : public juce::ChangeListener
 public:
     MagicGUIBuilder (MagicGUIState& magicStateToUse);
 
-    virtual ~MagicGUIBuilder() = default;
-
     /**
      Allows to set the GUI definition when reloading
      */
@@ -59,7 +57,7 @@ public:
     /**
      Convenience method to call setConfigTree directly from BinaryData
      */
-    void setConfigTree (const char* data, const int dataSize);
+    void setConfigTree (const char* data, int dataSize);
 
     /**
      Create a node from the description

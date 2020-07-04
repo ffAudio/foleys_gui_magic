@@ -55,8 +55,6 @@ public:
     MagicProcessorState (juce::AudioProcessor& processorToUse,
                          juce::AudioProcessorValueTreeState& stateToUse);
 
-    ~MagicProcessorState();
-
     /**
      Returns the root node for exposed properties for the GUI
      */

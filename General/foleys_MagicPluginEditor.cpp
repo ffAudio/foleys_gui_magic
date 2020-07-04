@@ -62,7 +62,7 @@ MagicPluginEditor::~MagicPluginEditor()
 #endif
 }
 
-void MagicPluginEditor::initialise (const char* data, const int dataSize)
+void MagicPluginEditor::initialise (const char* data, int dataSize)
 {
 #if JUCE_MODULE_AVAILABLE_juce_opengl && FOLEYS_ENABLE_OPEN_GL_CONTEXT
     oglContext.attachTo (*this);
@@ -142,9 +142,9 @@ void MagicPluginEditor::setConfigTree (const juce::ValueTree& gui)
     updateSize();
 }
 
-void MagicPluginEditor::setConfigTree (const char* data, const int dataSize)
+void MagicPluginEditor::setConfigTree (const char* data, int dataSize)
 {
-    juce::String text (data, dataSize);
+    juce::String text (data, size_t (dataSize));
     auto gui = juce::ValueTree::fromXml (text);
     setConfigTree (gui);
 }

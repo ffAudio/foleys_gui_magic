@@ -53,8 +53,8 @@ StyleColourPropertyComponent::StyleColourPropertyComponent (MagicGUIBuilder& bui
     label->getTextValue().addListener (this);
     label->onTextChange = [&]
     {
-        if (auto* label = dynamic_cast<juce::Label*>(editor.get()))
-            node.setProperty (property, label->getText(), &builder.getUndoManager());
+        if (auto* l = dynamic_cast<juce::Label*>(editor.get()))
+            node.setProperty (property, l->getText(), &builder.getUndoManager());
 
         refresh();
     };
@@ -62,11 +62,11 @@ StyleColourPropertyComponent::StyleColourPropertyComponent (MagicGUIBuilder& bui
     mouseEvents.onMouseDown = [this](const juce::MouseEvent&)
     {
         auto currentColour = juce::Colours::black;
-        if (auto* label = dynamic_cast<juce::Label*>(editor.get()))
+        if (auto* l = dynamic_cast<juce::Label*>(editor.get()))
         {
-            if (label->getText().isNotEmpty())
+            if (l->getText().isNotEmpty())
             {
-                currentColour = Stylesheet::parseColour (label->getText());
+                currentColour = Stylesheet::parseColour (l->getText());
             }
             else
             {
@@ -225,12 +225,12 @@ int StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::getNu
 
 juce::Colour StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::getSwatchColour (int index) const
 {
-    return swatchColours [index];
+    return swatchColours [size_t (index)];
 }
 
 void StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::setSwatchColour (int index, const juce::Colour& colour)
 {
-    swatchColours [index] = colour;
+    swatchColours [size_t (index)] = colour;
 }
 
 void StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::loadSwatches()
@@ -241,7 +241,7 @@ void StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::load
                                                             : p->createXml (IDs::swatches);
 
         for (int i = 0; i < std::min (coloursNode->getNumChildElements(), int (swatchColours.size())); ++i)
-            swatchColours [i] = juce::Colour::fromString (coloursNode->getChildElement (i)->getAllSubText());
+            swatchColours [size_t (i)] = juce::Colour::fromString (coloursNode->getChildElement (i)->getAllSubText());
     }
 }
 
@@ -256,7 +256,7 @@ void StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::save
         for (int i = 0; i < int (swatchColours.size()); ++i)
         {
             auto* node = coloursNode->createNewChildElement (IDs::colour);
-            node->addTextElement (swatchColours [i].toDisplayString (true));
+            node->addTextElement (swatchColours [size_t (i)].toDisplayString (true));
         }
 
         p->setValue (IDs::swatches, coloursNode.get());

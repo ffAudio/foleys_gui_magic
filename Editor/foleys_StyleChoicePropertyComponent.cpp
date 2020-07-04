@@ -96,8 +96,8 @@ void StyleChoicePropertyComponent::initialiseComboBox (bool editable)
 
     combo->onChange = [&]
     {
-        if (auto* combo = dynamic_cast<juce::ComboBox*>(editor.get()))
-            node.setProperty (property, combo->getText(), &builder.getUndoManager());
+        if (auto* c = dynamic_cast<juce::ComboBox*>(editor.get()))
+            node.setProperty (property, c->getText(), &builder.getUndoManager());
 
         refresh();
     };

@@ -438,7 +438,7 @@ public:
         if (sourceID.isNotEmpty())
             plot.setPlotSource (getMagicState().getObjectWithType<MagicPlotSource>(sourceID));
 
-        auto decay = double (getProperty (pDecay));
+        auto decay = float (getProperty (pDecay));
         plot.setDecayFactor (decay);
     }
 

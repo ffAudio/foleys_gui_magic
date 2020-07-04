@@ -55,7 +55,7 @@ public:
             listenedComponent->addMouseListener (this, false);
     }
 
-    ~MouseLambdas()
+    ~MouseLambdas() override
     {
         listenedComponent->removeMouseListener (this);
     }

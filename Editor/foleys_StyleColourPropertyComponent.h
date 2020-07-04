@@ -45,7 +45,7 @@ class StyleColourPropertyComponent  : public StylePropertyComponent,
 {
 public:
     StyleColourPropertyComponent (MagicGUIBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse);
-    ~StyleColourPropertyComponent();
+    ~StyleColourPropertyComponent() override;
 
     void refresh() override;
 
@@ -66,7 +66,7 @@ private:
         {
         public:
             ColourSelectorWithSwatches();
-            ~ColourSelectorWithSwatches();
+            ~ColourSelectorWithSwatches() override;
 
             int getNumSwatches() const override;
             juce::Colour getSwatchColour (int index) const override;

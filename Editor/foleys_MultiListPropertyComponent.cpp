@@ -38,8 +38,8 @@
 namespace foleys
 {
 
-MultiListPropertyComponent::MultiListPropertyComponent (const juce::Value& valueToControl, const juce::String& propertyName, const juce::StringArray &choicesToUse, const juce::String& separatorToUse, int preferredHeight)
-  : juce::PropertyComponent (propertyName, preferredHeight),
+MultiListPropertyComponent::MultiListPropertyComponent (const juce::Value& valueToControl, const juce::String& propertyName, const juce::StringArray &choicesToUse, const juce::String& separatorToUse, int preferredHeightToUse)
+  : juce::PropertyComponent (propertyName, preferredHeightToUse),
     choices (choicesToUse),
     separator (separatorToUse)
 {

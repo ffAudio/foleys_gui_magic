@@ -126,7 +126,7 @@ public:
     juce::String getTabCaption (const juce::String& defaultName) const;
     juce::Colour getTabColour() const;
 
-    juce::FlexItem& getFlexItem() { return flexItem; };
+    juce::FlexItem& getFlexItem() { return flexItem; }
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     /**
