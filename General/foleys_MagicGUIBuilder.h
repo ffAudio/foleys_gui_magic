@@ -49,8 +49,6 @@ class MagicGUIBuilder : public juce::ChangeListener
 public:
     MagicGUIBuilder (MagicGUIState& magicStateToUse);
 
-    virtual ~MagicGUIBuilder() = default;
-
     /**
      Allows to set the GUI definition when reloading
      */
@@ -59,7 +57,7 @@ public:
     /**
      Convenience method to call setConfigTree directly from BinaryData
      */
-    void setConfigTree (const char* data, const int dataSize);
+    void setConfigTree (const char* data, int dataSize);
 
     /**
      Create a node from the description
@@ -109,6 +107,11 @@ public:
      Recalculates the layout of all components
      */
     void updateLayout();
+
+    /**
+     Resolve all colours fresh, in case the palette has changed
+     */
+    void updateColours();
 
     /**
      Register a factory for Components to be available in the GUI editor. If you need a reference to the application, you can capture that in the factory lambda.

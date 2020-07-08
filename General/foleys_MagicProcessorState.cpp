@@ -46,10 +46,6 @@ MagicProcessorState::MagicProcessorState (juce::AudioProcessor& processorToUse,
 {
 }
 
-MagicProcessorState::~MagicProcessorState()
-{
-}
-
 juce::ValueTree MagicProcessorState::getPropertyRoot() const
 {
     return state.state.getOrCreateChildWithName ("properties", nullptr);

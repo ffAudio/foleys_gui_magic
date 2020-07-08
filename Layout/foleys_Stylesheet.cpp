@@ -40,11 +40,13 @@ namespace foleys
 
 Stylesheet::Stylesheet (MagicGUIBuilder& builderToUse) : builder (builderToUse)
 {
+    setColourPalette();
 }
 
 void Stylesheet::setStyle (const juce::ValueTree& node)
 {
     currentStyle = node;
+    setColourPalette();
 }
 
 bool Stylesheet::setMediaSize (int width, int height)
@@ -54,6 +56,51 @@ bool Stylesheet::setMediaSize (int width, int height)
 
     return (validMediaRanges.width.contains (width) &&
             validMediaRanges.height.contains (height));
+}
+
+void Stylesheet::setColourPalette ()
+{
+    if (! currentStyle.isValid())
+        return;
+
+    auto* undo = &builder.getUndoManager();
+    auto palettesNode = currentStyle.getOrCreateChildWithName (IDs::palettes, undo);
+
+    if (palettesNode.getNumChildren() == 0)
+        palettesNode.appendChild (juce::ValueTree ("default"), undo);
+
+    currentPalette = palettesNode.getChild (0);
+    currentPalette.addListener (this);
+}
+
+void Stylesheet::addPaletteEntry (const juce::String& name, juce::Colour colour, bool keepIfExists)
+{
+    if (! currentPalette.isValid())
+        return;
+
+    if (! keepIfExists || ! currentPalette.hasProperty (name))
+        currentPalette.setProperty (name, colour.toString(), &builder.getUndoManager());
+}
+
+juce::StringArray Stylesheet::getPaletteEntryNames() const
+{
+    juce::StringArray names;
+
+    if (currentPalette.isValid())
+        for (int i = 0; i < currentPalette.getNumProperties(); ++i)
+            names.add (currentPalette.getPropertyName (i).toString());
+
+    return names;
+}
+
+juce::ValueTree Stylesheet::getCurrentPalette()
+{
+    return currentPalette;
+}
+
+void Stylesheet::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
+{
+    builder.updateColours();
 }
 
 void Stylesheet::updateValidRanges()
@@ -173,6 +220,25 @@ juce::var Stylesheet::getStyleProperty (const juce::Identifier& name, const juce
         *definedHere = juce::ValueTree();
 
     return builder.getPropertyDefaultValue (name);
+}
+
+juce::Colour Stylesheet::getColour (const juce::String& name) const
+{
+    if (name.isEmpty())
+        return juce::Colours::transparentBlack;
+
+    if (name [0] == '$')
+    {
+        if (currentPalette.isValid())
+        {
+            auto value = currentPalette.getProperty (name.substring (1), "00000000").toString();
+            return Stylesheet::parseColour (value);
+        }
+
+        return juce::Colours::transparentBlack;
+    }
+
+    return Stylesheet::parseColour (name);
 }
 
 juce::Colour Stylesheet::parseColour (const juce::String& name)
@@ -296,6 +362,15 @@ bool Stylesheet::isTypeNode (const juce::ValueTree& node) const
 bool Stylesheet::isIdNode (const juce::ValueTree& node) const
 {
     auto testParent = currentStyle.getChildWithName (IDs::nodes);
+    if (testParent.isValid())
+        return node.isAChildOf (testParent);
+
+    return false;
+}
+
+bool Stylesheet::isColourPaletteNode (const juce::ValueTree& node) const
+{
+    auto testParent = currentStyle.getChildWithName (IDs::palettes);
     if (testParent.isValid())
         return node.isAChildOf (testParent);
 

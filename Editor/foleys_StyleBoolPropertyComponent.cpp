@@ -52,8 +52,8 @@ StyleBoolPropertyComponent::StyleBoolPropertyComponent (MagicGUIBuilder& builder
 
     toggle->onClick = [&]
     {
-        if (auto* toggle = dynamic_cast<juce::ToggleButton*>(editor.get()))
-            node.setProperty (property, toggle->getToggleState(), &builder.getUndoManager());
+        if (auto* t = dynamic_cast<juce::ToggleButton*>(editor.get()))
+            node.setProperty (property, t->getToggleState(), &builder.getUndoManager());
 
         refresh();
     };

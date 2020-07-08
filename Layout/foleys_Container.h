@@ -89,6 +89,8 @@ public:
      */
     void updateLayout() override;
 
+    void updateColours() override;
+
     void updateContinuousRedraw();
 
     void configureFlexBox (const juce::ValueTree& node);

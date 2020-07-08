@@ -55,7 +55,7 @@ public:
     {
     }
 
-    virtual ~ParameterAttachment()
+    virtual ~ParameterAttachment() override
     {
         detachFromParameter();
     }

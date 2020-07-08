@@ -58,7 +58,7 @@ public:
      @param builder is the builder instance that manages the GUI
      */
     ToolBox (juce::Component* parent, MagicGUIBuilder& builder);
-    ~ToolBox();
+    ~ToolBox() override;
 
     enum PositionOption  { left, right, detached };
 

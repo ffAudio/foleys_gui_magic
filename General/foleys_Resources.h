@@ -55,6 +55,6 @@ namespace Resources
      */
     static inline juce::Image getImage (const juce::String& name);
 
-};
+}
 
 }

@@ -43,7 +43,10 @@ to the `foleys::MagicPluginState`:
 foleys::MagicPlotSource* analyser = nullptr;
 
 // Constructor
-analyser = magicState.addPlotSource ("input", std::make_unique<foleys::MagicAnalyser>());
+analyser = magicState.createAndAddObject<foleys::MagicAnalyser>("input");
+
+// prepareToPlay
+analyser->prepareToPlay (sampleRate, samplesPerBlockExpected);
 
 // e.g. in processBlock send the samples to the analyser:
 analyser->pushSamples (buffer);
@@ -101,6 +104,7 @@ are already available:
 - LevelMeter (displays different RMS / Max levels)
 - Label
 - MidiKeyboardComponent
+- ListBox
 - WebBrowserComponent
 
 All Components have the option to add margins/paddings and a border also with rounded corners.

@@ -50,23 +50,36 @@ StyleColourPropertyComponent::StyleColourPropertyComponent (MagicGUIBuilder& bui
 
     addAndMakeVisible (label.get());
 
+    variables.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
+    addAndMakeVisible (variables);
+
     label->getTextValue().addListener (this);
     label->onTextChange = [&]
     {
-        if (auto* label = dynamic_cast<juce::Label*>(editor.get()))
-            node.setProperty (property, label->getText(), &builder.getUndoManager());
+        if (auto* l = dynamic_cast<juce::Label*>(editor.get()))
+            node.setProperty (property, l->getText(), &builder.getUndoManager());
 
         refresh();
+    };
+
+    variables.onClick = [&]
+    {
+        juce::PopupMenu menu;
+        juce::Component::SafePointer<juce::Label> l = dynamic_cast<juce::Label*>(editor.get());
+        for (auto v : builder.getStylesheet().getPaletteEntryNames())
+            menu.addItem (v, [l, v]() mutable { if (l) l->setText ("$" + v, juce::sendNotification); });
+
+        menu.showAt (editor.get());
     };
 
     mouseEvents.onMouseDown = [this](const juce::MouseEvent&)
     {
         auto currentColour = juce::Colours::black;
-        if (auto* label = dynamic_cast<juce::Label*>(editor.get()))
+        if (auto* l = dynamic_cast<juce::Label*>(editor.get()))
         {
-            if (label->getText().isNotEmpty())
+            if (l->getText().isNotEmpty())
             {
-                currentColour = Stylesheet::parseColour (label->getText());
+                currentColour = builder.getStylesheet().getColour (l->getText());
             }
             else
             {
@@ -151,7 +164,7 @@ void StyleColourPropertyComponent::getLookAndFeelColourFallback()
 
 void StyleColourPropertyComponent::valueChanged (juce::Value& value)
 {
-    auto colour = Stylesheet::parseColour (value.getValue().toString());
+    auto colour = builder.getStylesheet().getColour (value.getValue().toString());
     setColourDisplay (colour);
 }
 
@@ -163,6 +176,15 @@ void StyleColourPropertyComponent::changeListenerCallback (juce::ChangeBroadcast
         node.setProperty (property, newColour, &builder.getUndoManager());
         refresh();
     }
+}
+void StyleColourPropertyComponent::resized()
+{
+    auto b = getLocalBounds().reduced (1).withLeft (getWidth() / 2);
+    remove.setBounds (b.removeFromRight (getHeight()));
+    variables.setBounds (b.removeFromRight (getHeight()));
+
+    if (editor)
+        editor->setBounds (b);
 }
 
 //==============================================================================
@@ -225,12 +247,12 @@ int StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::getNu
 
 juce::Colour StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::getSwatchColour (int index) const
 {
-    return swatchColours [index];
+    return swatchColours [size_t (index)];
 }
 
 void StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::setSwatchColour (int index, const juce::Colour& colour)
 {
-    swatchColours [index] = colour;
+    swatchColours [size_t (index)] = colour;
 }
 
 void StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::loadSwatches()
@@ -241,7 +263,7 @@ void StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::load
                                                             : p->createXml (IDs::swatches);
 
         for (int i = 0; i < std::min (coloursNode->getNumChildElements(), int (swatchColours.size())); ++i)
-            swatchColours [i] = juce::Colour::fromString (coloursNode->getChildElement (i)->getAllSubText());
+            swatchColours [size_t (i)] = juce::Colour::fromString (coloursNode->getChildElement (i)->getAllSubText());
     }
 }
 
@@ -256,7 +278,7 @@ void StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::save
         for (int i = 0; i < int (swatchColours.size()); ++i)
         {
             auto* node = coloursNode->createNewChildElement (IDs::colour);
-            node->addTextElement (swatchColours [i].toDisplayString (true));
+            node->addTextElement (swatchColours [size_t (i)].toDisplayString (true));
         }
 
         p->setValue (IDs::swatches, coloursNode.get());

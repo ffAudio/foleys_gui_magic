@@ -88,6 +88,8 @@ public:
         else if (type == pSliderTypes [3])
             slider.setSliderStyle (juce::Slider::Rotary);
         else if (type == pSliderTypes [4])
+            slider.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+        else if (type == pSliderTypes [5])
             slider.setSliderStyle (juce::Slider::IncDecButtons);
 
         auto textbox = getProperty (pSliderTextBox).toString();
@@ -142,7 +144,7 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliderItem)
 };
 const juce::Identifier  SliderItem::pSliderType   { "slider-type" };
-const juce::StringArray SliderItem::pSliderTypes  { "auto", "linear-horizontal", "linear-vertical", "rotary", "inc-dec-buttons" };
+const juce::StringArray SliderItem::pSliderTypes  { "auto", "linear-horizontal", "linear-vertical", "rotary", "rotary-horizontal-vertical", "inc-dec-buttons" };
 const juce::Identifier  SliderItem::pSliderTextBox    { "slider-textbox" };
 const juce::StringArray SliderItem::pTextBoxPositions { "no-textbox", "textbox-above", "textbox-below", "textbox-left", "textbox-right" };
 const juce::Identifier  SliderItem::pValue      { "value" };
@@ -436,7 +438,7 @@ public:
         if (sourceID.isNotEmpty())
             plot.setPlotSource (getMagicState().getObjectWithType<MagicPlotSource>(sourceID));
 
-        auto decay = double (getProperty (pDecay));
+        auto decay = float (getProperty (pDecay));
         plot.setDecayFactor (decay);
     }
 

@@ -161,9 +161,9 @@ void MagicGUIBuilder::setConfigTree (const juce::ValueTree& gui)
     updateComponents();
 }
 
-void MagicGUIBuilder::setConfigTree (const char* data, const int dataSize)
+void MagicGUIBuilder::setConfigTree (const char* data, int dataSize)
 {
-    juce::String text (data, dataSize);
+    juce::String text (data, size_t (dataSize));
     auto gui = juce::ValueTree::fromXml (text);
     setConfigTree (gui);
 }
@@ -231,6 +231,12 @@ void MagicGUIBuilder::updateLayout()
     }
 
     parent->repaint();
+}
+
+void MagicGUIBuilder::updateColours()
+{
+    if (root)
+        root->updateColours();
 }
 
 GuiItem* MagicGUIBuilder::findGuiItemWithId (const juce::String& name)

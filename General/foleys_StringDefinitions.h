@@ -99,6 +99,7 @@ namespace IDs
     static juce::Identifier nodes     { "Nodes"   };
     static juce::Identifier classes   { "Classes" };
     static juce::Identifier types     { "Types"   };
+    static juce::Identifier palettes  { "Palettes" };
 
     static juce::String dragSelected  { "selected" };
     static juce::String dragParameter { "parameter:" };

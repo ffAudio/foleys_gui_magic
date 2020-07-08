@@ -46,7 +46,7 @@ class MagicGUIBuilder;
  types, which corresponds to the Components created, classes that can be
  referenced by any node, and nodes referenced by id.
  */
-class Stylesheet
+class Stylesheet : private juce::ValueTree::Listener
 {
 public:
 
@@ -77,6 +77,19 @@ public:
      @param builder is the managed builder instance, so the style class can connect to the variables
      */
     void updateStyleClasses();
+
+    /**
+     Updates the colourPalette
+     */
+    void setColourPalette ();
+
+    void addPaletteEntry (const juce::String& name, juce::Colour colour, bool keepIfExists);
+    juce::ValueTree getCurrentPalette();
+
+    /**
+     Returns all variables for selection in colour values
+     */
+    juce::StringArray getPaletteEntryNames() const;
 
     /**
      This method traverses the dom and checks each style, if that property was defined.
@@ -112,6 +125,11 @@ public:
      @param name a string representing the colour, can be an actual name or a RGB tuple or ARGB tuple.
      */
     static juce::Colour parseColour (const juce::String& name);
+
+    /**
+     Lookup a colour. This will go through the colourPalette to catch variables like $text.
+     */
+    juce::Colour getColour (const juce::String& name) const;
 
     juce::ValueTree getCurrentStyle() const;
 
@@ -152,8 +170,17 @@ public:
     bool isClassNode (const juce::ValueTree& node) const;
     bool isTypeNode (const juce::ValueTree& node) const;
     bool isIdNode (const juce::ValueTree& node) const;
+    bool isColourPaletteNode (const juce::ValueTree& node) const;
 
 private:
+    void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override;
+
+    void valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&) override {}
+    void valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int) override {}
+    void valueTreeChildOrderChanged (juce::ValueTree&, int, int) override {}
+    void valueTreeParentChanged (juce::ValueTree&) override {}
+
+
     struct SizeRange
     {
         juce::Range<int> width  { 0, std::numeric_limits<int>::max() };
@@ -189,6 +216,7 @@ private:
     MagicGUIBuilder&  builder;
 
     juce::ValueTree   currentStyle;
+    juce::ValueTree   currentPalette;
 
     std::map<juce::String, std::unique_ptr<juce::LookAndFeel>> lookAndFeels;
     std::map<juce::String, std::unique_ptr<StyleClass>> styleClasses;

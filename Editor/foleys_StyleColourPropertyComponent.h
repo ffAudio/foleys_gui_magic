@@ -45,9 +45,10 @@ class StyleColourPropertyComponent  : public StylePropertyComponent,
 {
 public:
     StyleColourPropertyComponent (MagicGUIBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse);
-    ~StyleColourPropertyComponent();
+    ~StyleColourPropertyComponent() override;
 
     void refresh() override;
+    void resized() override;
 
 private:
 
@@ -66,7 +67,7 @@ private:
         {
         public:
             ColourSelectorWithSwatches();
-            ~ColourSelectorWithSwatches();
+            ~ColourSelectorWithSwatches() override;
 
             int getNumSwatches() const override;
             juce::Colour getSwatchColour (int index) const override;
@@ -99,6 +100,7 @@ private:
 
     MouseLambdas mouseEvents;
     juce::Component::SafePointer<ColourPanel> colourPanel;
+    juce::TextButton variables {"V"};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StyleColourPropertyComponent)
 };

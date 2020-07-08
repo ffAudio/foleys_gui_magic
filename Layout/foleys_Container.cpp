@@ -158,6 +158,14 @@ void Container::updateLayout()
         child->updateLayout();
 }
 
+void Container::updateColours()
+{
+    decorator.updateColours (magicBuilder, configNode);
+
+    for (auto& child : children)
+        child->updateColours();
+}
+
 void Container::updateContinuousRedraw()
 {
     stopTimer();
