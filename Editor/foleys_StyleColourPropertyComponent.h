@@ -48,6 +48,7 @@ public:
     ~StyleColourPropertyComponent() override;
 
     void refresh() override;
+    void resized() override;
 
 private:
 
@@ -99,6 +100,7 @@ private:
 
     MouseLambdas mouseEvents;
     juce::Component::SafePointer<ColourPanel> colourPanel;
+    juce::TextButton variables {"V"};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StyleColourPropertyComponent)
 };

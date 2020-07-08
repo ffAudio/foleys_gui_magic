@@ -1,10 +1,17 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.2.1
------
+1.2.2 - 08.07.2020
+------------------
+
+- Implemented ColourPalette
+
+
+1.2.1 - 19.06.2020
+------------------
 
 - Add the possibility to get the AudioProcessor in GuiItem from builder, if there is one
+
 
 1.2.0 - 17.06.2020
 ------------------

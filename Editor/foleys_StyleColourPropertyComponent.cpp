@@ -50,6 +50,9 @@ StyleColourPropertyComponent::StyleColourPropertyComponent (MagicGUIBuilder& bui
 
     addAndMakeVisible (label.get());
 
+    variables.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
+    addAndMakeVisible (variables);
+
     label->getTextValue().addListener (this);
     label->onTextChange = [&]
     {
@@ -57,6 +60,16 @@ StyleColourPropertyComponent::StyleColourPropertyComponent (MagicGUIBuilder& bui
             node.setProperty (property, l->getText(), &builder.getUndoManager());
 
         refresh();
+    };
+
+    variables.onClick = [&]
+    {
+        juce::PopupMenu menu;
+        juce::Component::SafePointer<juce::Label> l = dynamic_cast<juce::Label*>(editor.get());
+        for (auto v : builder.getStylesheet().getPaletteEntryNames())
+            menu.addItem (v, [l, v]() mutable { if (l) l->setText ("$" + v, juce::sendNotification); });
+
+        menu.showAt (editor.get());
     };
 
     mouseEvents.onMouseDown = [this](const juce::MouseEvent&)
@@ -163,6 +176,15 @@ void StyleColourPropertyComponent::changeListenerCallback (juce::ChangeBroadcast
         node.setProperty (property, newColour, &builder.getUndoManager());
         refresh();
     }
+}
+void StyleColourPropertyComponent::resized()
+{
+    auto b = getLocalBounds().reduced (1).withLeft (getWidth() / 2);
+    remove.setBounds (b.removeFromRight (getHeight()));
+    variables.setBounds (b.removeFromRight (getHeight()));
+
+    if (editor)
+        editor->setBounds (b);
 }
 
 //==============================================================================
