@@ -70,6 +70,11 @@ public:
     virtual void update() = 0;
 
     /**
+     Set colours in the wrapped Component to the value from the stylesheet and palette.
+     */
+    virtual void updateColours();
+
+    /**
      Override this to return each settable option the designer should be able to configure on your component.
      */
     virtual std::vector<SettableProperty> getSettableProperties() const { return {}; }
@@ -149,7 +154,9 @@ protected:
 
     juce::ValueTree configNode;
 
-    juce::FlexItem flexItem { juce::FlexItem (*this).withFlex (1.0f) };
+    Decorator       decorator;
+
+    juce::FlexItem  flexItem { juce::FlexItem (*this).withFlex (1.0f) };
 
     std::vector<std::pair<juce::String, int>> colourTranslation;
 
@@ -174,8 +181,6 @@ private:
     void configureComponent();
 
     juce::Value     visibility { true };
-
-    Decorator       decorator;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GuiItem)
 };

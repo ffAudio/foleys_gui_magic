@@ -109,6 +109,11 @@ public:
     void updateLayout();
 
     /**
+     Resolve all colours fresh, in case the palette has changed
+     */
+    void updateColours();
+
+    /**
      Register a factory for Components to be available in the GUI editor. If you need a reference to the application, you can capture that in the factory lambda.
      */
     void registerFactory (juce::Identifier type, std::unique_ptr<GuiItem>(*factory)(MagicGUIBuilder& builder, const juce::ValueTree&));

@@ -233,6 +233,12 @@ void MagicGUIBuilder::updateLayout()
     parent->repaint();
 }
 
+void MagicGUIBuilder::updateColours()
+{
+    if (root)
+        root->updateColours();
+}
+
 GuiItem* MagicGUIBuilder::findGuiItemWithId (const juce::String& name)
 {
     if (root)

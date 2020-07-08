@@ -97,6 +97,23 @@ juce::Colour Decorator::getTabColour() const
     return tabColour;
 }
 
+void Decorator::updateColours (MagicGUIBuilder& builder, const juce::ValueTree& node)
+{
+    auto& stylesheet = builder.getStylesheet();
+
+    auto bg = builder.getStyleProperty (IDs::backgroundColour, node);
+    if (! bg.isVoid())
+        backgroundColour = stylesheet.getColour (bg.toString());
+
+    auto bcVar = builder.getStyleProperty (IDs::borderColour, node);
+    if (! bcVar.isVoid())
+        borderColour = stylesheet.getColour (bcVar.toString());
+
+    auto ccVar = builder.getStyleProperty (IDs::captionColour, node);
+    if (! ccVar.isVoid())
+        captionColour = stylesheet.getColour (ccVar.toString());
+}
+
 Decorator::ClientBounds Decorator::getClientBounds (juce::Rectangle<int> overallBounds) const
 {
     auto box = overallBounds.reduced (juce::roundToInt (margin + padding));
@@ -125,15 +142,7 @@ Decorator::ClientBounds Decorator::getClientBounds (juce::Rectangle<int> overall
 
 void Decorator::configure (MagicGUIBuilder& builder, const juce::ValueTree& node)
 {
-    auto& stylesheet     = builder.getStylesheet();
-
-    auto bg = builder.getStyleProperty (IDs::backgroundColour, node);
-    if (! bg.isVoid())
-        backgroundColour = Stylesheet::parseColour (bg.toString());
-
-    auto bcVar = builder.getStyleProperty (IDs::borderColour, node);
-    if (! bcVar.isVoid())
-        borderColour = Stylesheet::parseColour (bcVar.toString());
+    auto& stylesheet = builder.getStylesheet();
 
     auto borderVar = builder.getStyleProperty (IDs::border, node);
     if (! borderVar.isVoid())
@@ -155,15 +164,11 @@ void Decorator::configure (MagicGUIBuilder& builder, const juce::ValueTree& node
     tabCaption = node.getProperty (IDs::tabCaption, juce::String());
     auto tc    = builder.getStyleProperty (IDs::tabColour, node);
     if (! tc.isVoid())
-        tabColour = Stylesheet::parseColour (tc.toString());
+        tabColour = stylesheet.getColour (tc.toString());
 
     auto sizeVar = builder.getStyleProperty (IDs::captionSize, node);
     if (! sizeVar.isVoid())
         captionSize = static_cast<float> (sizeVar);
-
-    auto ccVar = builder.getStyleProperty (IDs::captionColour, node);
-    if (! ccVar.isVoid())
-        captionColour = Stylesheet::parseColour (ccVar.toString());
 
     auto placementVar = builder.getStyleProperty (IDs::captionPlacement, node);
     if (! placementVar.isVoid())

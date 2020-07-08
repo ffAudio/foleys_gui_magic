@@ -61,6 +61,8 @@ public:
     void addFlexItemProperties();
     void addContainerProperties();
 
+    void addPaletteColours();
+
     void paint (juce::Graphics&) override;
     void resized() override;
 
@@ -88,6 +90,9 @@ private:
     juce::ComboBox      nodeSelect;
 
     juce::PropertyPanel properties;
+
+    juce::TextEditor    newItemName;
+    juce::TextButton    newItemButton { "+" };
 
     juce::ValueTree     style;
     juce::ValueTree     styleItem;

@@ -45,6 +45,20 @@ PropertiesEditor::PropertiesEditor (MagicGUIBuilder& builderToEdit)
 {
     addAndMakeVisible (nodeSelect);
     addAndMakeVisible (properties);
+    addAndMakeVisible (newItemName);
+    addAndMakeVisible (newItemButton);
+
+    newItemButton.setConnectedEdges (juce::TextButton::ConnectedOnLeft);
+    newItemButton.onClick = [&]
+    {
+        auto name = newItemName.getText();
+        if (name.isEmpty())
+            return;
+
+        auto& stylesheet = builder.getStylesheet();
+        stylesheet.addPaletteEntry (name, juce::Colours::silver, true);
+        setNodeToEdit (stylesheet.getCurrentPalette());
+    };
 
     nodeSelect.onChange = [&]()
     {
@@ -52,7 +66,12 @@ PropertiesEditor::PropertiesEditor (MagicGUIBuilder& builderToEdit)
             return;
 
         auto index = nodeSelect.getSelectedId();
-        if (index >= 3000)
+        if (index >= 4000)
+        {
+            auto node = style.getChildWithName (IDs::palettes).getChild (index - 4000);
+            setNodeToEdit (node);
+        }
+        else if (index >= 3000)
         {
             auto node = style.getChildWithName (IDs::classes).getChild (index - 3000);
             setNodeToEdit (node);
@@ -90,6 +109,12 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
 
     properties.clear();
 
+    if (stylesheet.isColourPaletteNode (styleItem))
+    {
+        addPaletteColours();
+        return;
+    }
+
     if (styleItem.isValid() == false)
     {
         nodeSelect.setText (TRANS ("Nothing selected"));
@@ -125,6 +150,8 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
         nodeSelect.setText (TRANS ("Type: ") + styleItem.getType().toString(), juce::dontSendNotification);
     else if (stylesheet.isIdNode (styleItem))
         nodeSelect.setText (TRANS ("Node: ") + styleItem.getType().toString(), juce::dontSendNotification);
+    else if (stylesheet.isColourPaletteNode (styleItem))
+        nodeSelect.setText (TRANS ("Palette: ") + styleItem.getType().toString(), juce::dontSendNotification);
     else
         nodeSelect.setText (TRANS ("Editing node"), juce::dontSendNotification);
 
@@ -292,6 +319,16 @@ void PropertiesEditor::addContainerProperties()
     properties.addSection ("Container", array, false);
 }
 
+void PropertiesEditor::addPaletteColours()
+{
+    juce::Array<juce::PropertyComponent*> array;
+
+    for (int i=0; i < styleItem.getNumProperties(); ++i)
+        array.add (new StyleColourPropertyComponent (builder, styleItem.getPropertyName (i), styleItem));
+
+    properties.addProperties (array);
+}
+
 //==============================================================================
 
 void PropertiesEditor::updatePopupMenu()
@@ -351,6 +388,16 @@ void PropertiesEditor::updatePopupMenu()
         popup->addSubMenu ("Classes", menu);
     }
 
+    auto palettesNode = style.getChildWithName (IDs::palettes);
+    if (palettesNode.isValid())
+    {
+        int index = 4000;
+        juce::PopupMenu menu;
+        for (const auto& child : palettesNode)
+            menu.addItem (juce::PopupMenu::Item ("Palette: " + child.getType().toString()).setID (index++));
+
+        popup->addSubMenu ("Colour Palettes", menu);
+    }
 }
 
 void PropertiesEditor::paint (juce::Graphics& g)
@@ -365,6 +412,10 @@ void PropertiesEditor::resized()
     auto bounds = getLocalBounds().reduced (1);
 
     nodeSelect.setBounds (bounds.removeFromTop (buttonHeight));
+
+    auto bottom = bounds.removeFromBottom (buttonHeight);
+    newItemButton.setBounds (bottom.removeFromRight (buttonHeight));
+    newItemName.setBounds (bottom);
 
     properties.setBounds (bounds.reduced (0, 2));
 }

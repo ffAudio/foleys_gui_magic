@@ -53,6 +53,8 @@ public:
 
     void reset();
 
+    void updateColours (MagicGUIBuilder& builder, const juce::ValueTree& node);
+
     void drawDecorator (juce::Graphics& g, juce::Rectangle<int> bounds);
 
     struct ClientBounds

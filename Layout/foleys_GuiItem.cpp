@@ -92,7 +92,25 @@ void GuiItem::updateInternal()
     configureComponent();
     configureFlexBoxItem (configNode);
 
+    updateColours();
+
     update();
+}
+
+void GuiItem::updateColours()
+{
+    decorator.updateColours (magicBuilder, configNode);
+
+    auto* component = getWrappedComponent();
+    if (component == nullptr)
+        return;
+
+    for (auto& pair : colourTranslation)
+    {
+        auto colour = magicBuilder.getStyleProperty (pair.first, configNode).toString();
+        if (colour.isNotEmpty())
+            component->setColour (pair.second, magicBuilder.getStylesheet().getColour (colour));
+    }
 }
 
 void GuiItem::configureComponent()
@@ -108,13 +126,6 @@ void GuiItem::configureComponent()
         auto tooltip = magicBuilder.getStyleProperty (IDs::tooltip, configNode).toString();
         if (tooltip.isNotEmpty())
             tooltipClient->setTooltip (tooltip);
-    }
-
-    for (auto& pair : colourTranslation)
-    {
-        auto colour = magicBuilder.getStyleProperty (pair.first, configNode).toString();
-        if (colour.isNotEmpty())
-            component->setColour (pair.second, Stylesheet::parseColour (colour));
     }
 
     auto  visibilityNode = magicBuilder.getStyleProperty (IDs::visibility, configNode);
