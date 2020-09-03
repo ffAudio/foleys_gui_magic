@@ -96,7 +96,11 @@ StyleColourPropertyComponent::StyleColourPropertyComponent (MagicGUIBuilder& bui
         newColourPanel->addChangeListener (this);
         newColourPanel->setSize (300, 500);
         colourPanel = newColourPanel.get();
+#if JUCE_VERSION > 0x60000
         juce::CallOutBox::launchAsynchronously (std::move (newColourPanel), getScreenBounds(), nullptr);
+#else
+        juce::CallOutBox::launchAsynchronously (newColourPanel.release(), getScreenBounds(), nullptr);
+#endif
     };
 
     label->getTextValue().addListener (this);
