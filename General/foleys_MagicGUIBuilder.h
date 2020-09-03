@@ -178,26 +178,21 @@ public:
      */
     juce::StringArray getFactoryNames() const;
 
-    /**
-     Return the list of options
-     */
-    void populatePropertiesMenu (juce::ComboBox& comboBox) const;
 
-    juce::PopupMenu createParameterMenu() const;
-
-    juce::PopupMenu createPropertiesMenu() const;
-
-    juce::PopupMenu createTriggerMenu() const;
+    std::function<void(juce::ComboBox&)> createChoicesMenuLambda (juce::StringArray choices) const;
+    std::function<void(juce::ComboBox&)> createParameterMenuLambda() const;
+    std::function<void(juce::ComboBox&)> createPropertiesMenuLambda() const;
+    std::function<void(juce::ComboBox&)> createTriggerMenuLambda() const;
 
     template<typename ObjectType>
-    juce::PopupMenu createObjectMenu() const
+    std::function<void(juce::ComboBox&)> createObjectsMenuLambda() const
     {
-        juce::PopupMenu menu;
-        int index = 0;
-        for (const auto& name : magicState.getObjectIDsByType<ObjectType>())
-            menu.addItem (++index, name);
-
-        return menu;
+        return [this](juce::ComboBox& combo)
+        {
+            int index = 0;
+            for (const auto& name : magicState.getObjectIDsByType<ObjectType>())
+                combo.addItem (name, ++index);
+        };
     }
 
     void changeListenerCallback (juce::ChangeBroadcaster* sender) override;

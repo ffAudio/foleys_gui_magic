@@ -315,25 +315,38 @@ juce::StringArray MagicGUIBuilder::getColourNames (juce::Identifier type)
     return {};
 }
 
-void MagicGUIBuilder::populatePropertiesMenu (juce::ComboBox& comboBox) const
+std::function<void(juce::ComboBox&)> MagicGUIBuilder::createChoicesMenuLambda (juce::StringArray choices) const
 {
-    return magicState.populatePropertiesMenu (comboBox);
+    return [choices](juce::ComboBox& combo)
+    {
+        int index = 0;
+        for (auto& choice : choices)
+            combo.addItem (choice, ++index);
+    };
 }
 
-juce::PopupMenu MagicGUIBuilder::createParameterMenu() const
+std::function<void(juce::ComboBox&)> MagicGUIBuilder::createParameterMenuLambda() const
 {
-    return magicState.createParameterMenu();
+    return [this](juce::ComboBox& combo)
+    {
+        *combo.getRootMenu() = magicState.createParameterMenu();
+    };
 }
 
-juce::PopupMenu MagicGUIBuilder::createPropertiesMenu() const
+std::function<void(juce::ComboBox&)> MagicGUIBuilder::createPropertiesMenuLambda() const
 {
-    // FIXME
-    return {};
+    return [this](juce::ComboBox& combo)
+    {
+        magicState.populatePropertiesMenu (combo);
+    };
 }
 
-juce::PopupMenu MagicGUIBuilder::createTriggerMenu() const
+std::function<void(juce::ComboBox&)> MagicGUIBuilder::createTriggerMenuLambda() const
 {
-    return magicState.createTriggerMenu();
+    return [this](juce::ComboBox& combo)
+    {
+        *combo.getRootMenu() = magicState.createTriggerMenu();
+    };
 }
 
 juce::var MagicGUIBuilder::getPropertyDefaultValue (juce::Identifier property) const

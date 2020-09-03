@@ -53,10 +53,7 @@ StylePropertyComponent* StylePropertyComponent::createComponent (MagicGUIBuilder
         return new StyleBoolPropertyComponent (builder, property.name, node);
 
     if (property.type == SettableProperty::Choice)
-        return new StyleChoicePropertyComponent (builder, property.name, node, property.menu);
-
-    if (property.type == SettableProperty::Property)
-        return new StyleChoicePropertyComponent (builder, property.name, node, property.type);
+        return new StyleChoicePropertyComponent (builder, property.name, node, property.menuCreationLambda);
 
     jassertfalse;
     return nullptr;
