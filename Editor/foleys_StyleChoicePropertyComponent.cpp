@@ -50,24 +50,11 @@ StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicGUIBuilder& bui
     initialiseComboBox (false);
 }
 
-StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicGUIBuilder& builderToUse,
-                                                            juce::Identifier propertyToUse,
-                                                            juce::ValueTree& nodeToUse,
-                                                            juce::PopupMenu menuToUse)
+StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicGUIBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse, std::function<void(juce::ComboBox&)> lambdaToUse)
   : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse),
-    menu (menuToUse)
+    menuCreationLambda (lambdaToUse)
 {
     initialiseComboBox (false);
-}
-
-StyleChoicePropertyComponent::StyleChoicePropertyComponent (MagicGUIBuilder& builderToUse,
-                                                            juce::Identifier propertyToUse,
-                                                            juce::ValueTree& nodeToUse,
-                                                            SettableProperty::PropertyType typeToUse)
-  : StylePropertyComponent (builderToUse, propertyToUse, nodeToUse),
-    type (typeToUse)
-{
-    initialiseComboBox (type == SettableProperty::Property);
 }
 
 void StyleChoicePropertyComponent::initialiseComboBox (bool editable)
@@ -83,13 +70,9 @@ void StyleChoicePropertyComponent::initialiseComboBox (bool editable)
             combo->addItem (name, ++index);
         }
     }
-    else if (menu.getNumItems() > 0)
+    else if (menuCreationLambda)
     {
-        *combo->getRootMenu() = menu;
-    }
-    else if (type == SettableProperty::Property)
-    {
-        builder.populatePropertiesMenu (*combo);
+        menuCreationLambda (*combo);
     }
 
     addAndMakeVisible (combo.get());

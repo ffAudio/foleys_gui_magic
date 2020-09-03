@@ -122,10 +122,10 @@ public:
     {
         std::vector<SettableProperty> properties;
 
-        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenu() });
-        properties.push_back ({ configNode, pSliderType, SettableProperty::Choice, pSliderTypes [0], makePopupMenu (pSliderTypes) });
-        properties.push_back ({ configNode, pSliderTextBox, SettableProperty::Choice, pTextBoxPositions [2], makePopupMenu (pTextBoxPositions) });
-        properties.push_back ({ configNode, pValue, SettableProperty::Property, 1.0f, {} });
+        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
+        properties.push_back ({ configNode, pSliderType, SettableProperty::Choice, pSliderTypes [0], magicBuilder.createChoicesMenuLambda (pSliderTypes) });
+        properties.push_back ({ configNode, pSliderTextBox, SettableProperty::Choice, pTextBoxPositions [2], magicBuilder.createChoicesMenuLambda (pTextBoxPositions) });
+        properties.push_back ({ configNode, pValue, SettableProperty::Choice, 1.0f, magicBuilder.createPropertiesMenuLambda() });
         properties.push_back ({ configNode, pMinValue, SettableProperty::Number, 0.0f, {} });
         properties.push_back ({ configNode, pMaxValue, SettableProperty::Number, 2.0f, {} });
 
@@ -197,7 +197,7 @@ public:
     std::vector<SettableProperty> getSettableProperties() const override
     {
         std::vector<SettableProperty> properties;
-        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenu() });
+        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
         return properties;
     }
 
@@ -255,9 +255,9 @@ public:
     {
         std::vector<SettableProperty> properties;
 
-        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenu() });
+        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
         properties.push_back ({ configNode, pText, SettableProperty::Text, {}, {} });
-        properties.push_back ({ configNode, pOnClick, SettableProperty::Choice, {}, magicBuilder.createTriggerMenu() });
+        properties.push_back ({ configNode, pOnClick, SettableProperty::Choice, {}, magicBuilder.createTriggerMenuLambda() });
 
         return properties;
     }
@@ -316,7 +316,8 @@ public:
     std::vector<SettableProperty> getSettableProperties() const override
     {
         std::vector<SettableProperty> properties;
-        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenu() });
+        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
+        properties.push_back ({ configNode, pValue, SettableProperty::Choice, {}, magicBuilder.createPropertiesMenuLambda() });
         return properties;
     }
 
@@ -387,10 +388,10 @@ public:
     {
         std::vector<SettableProperty> properties;
         properties.push_back ({ configNode, pText, SettableProperty::Text, {}, {} });
-        properties.push_back ({ configNode, pJustification, SettableProperty::Choice, {}, makePopupMenu (getAllKeyNames (makeJustificationsChoices())) });
+        properties.push_back ({ configNode, pJustification, SettableProperty::Choice, {}, magicBuilder.createChoicesMenuLambda (getAllKeyNames (makeJustificationsChoices())) });
         properties.push_back ({ configNode, pFontSize, SettableProperty::Number, {}, {} });
         properties.push_back ({ configNode, pEditable, SettableProperty::Toggle, {}, {} });
-        properties.push_back ({ configNode, pValue, SettableProperty::Property, {}, {} });
+        properties.push_back ({ configNode, pValue, SettableProperty::Choice, {}, magicBuilder.createPropertiesMenuLambda() });
         return properties;
     }
 
@@ -445,7 +446,7 @@ public:
     std::vector<SettableProperty> getSettableProperties() const override
     {
         std::vector<SettableProperty> properties;
-        properties.push_back ({ configNode, IDs::source, SettableProperty::Choice, {}, magicBuilder.createObjectMenu<MagicPlotSource>() });
+        properties.push_back ({ configNode, IDs::source, SettableProperty::Choice, {}, magicBuilder.createObjectsMenuLambda<MagicPlotSource>() });
         properties.push_back ({ configNode, pDecay,      SettableProperty::Number, {}, {} });
         return properties;
     }
@@ -468,6 +469,9 @@ class XYDraggerItem : public GuiItem
 {
 public:
     FOLEYS_DECLARE_GUI_FACTORY (XYDraggerItem)
+
+    static const juce::Identifier  pCrosshair;
+    static const juce::StringArray pCrosshairTypes;
 
     XYDraggerItem (MagicGUIBuilder& builder, const juce::ValueTree& node)
       : GuiItem (builder, node)
@@ -504,12 +508,12 @@ public:
         if (rightParamID.isNotEmpty())
             dragger.setRightClickParameter (dynamic_cast<juce::RangedAudioParameter*>(getMagicState().getParameter (rightParamID)));
 
-        auto crosshair = getProperty ("xy-crosshair");
-        if (crosshair == "no-crosshair")
+        auto crosshair = getProperty (pCrosshair);
+        if (crosshair == pCrosshairTypes [0])
             dragger.setCrossHair (false, false);
-        else if (crosshair == "vertical")
+        else if (crosshair == pCrosshairTypes [1])
             dragger.setCrossHair (true, false);
-        else if (crosshair == "horizontal")
+        else if (crosshair == pCrosshairTypes [2])
             dragger.setCrossHair (false, true);
         else
             dragger.setCrossHair (true, true);
@@ -519,10 +523,10 @@ public:
     {
         std::vector<SettableProperty> properties;
 
-        properties.push_back ({ configNode, IDs::parameterX, SettableProperty::Choice, {}, magicBuilder.createParameterMenu() });
-        properties.push_back ({ configNode, IDs::parameterY, SettableProperty::Choice, {}, magicBuilder.createParameterMenu() });
-        properties.push_back ({ configNode, "right-click", SettableProperty::Choice, {}, magicBuilder.createParameterMenu() });
-        properties.push_back ({ configNode, "xy-crosshair", SettableProperty::Choice, {}, makePopupMenu ({  }) });
+        properties.push_back ({ configNode, IDs::parameterX, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
+        properties.push_back ({ configNode, IDs::parameterY, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
+        properties.push_back ({ configNode, "right-click", SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
+        properties.push_back ({ configNode, pCrosshair, SettableProperty::Choice, {}, magicBuilder.createChoicesMenuLambda (pCrosshairTypes) });
 
         return properties;
     }
@@ -537,6 +541,8 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (XYDraggerItem)
 };
+const juce::Identifier  XYDraggerItem::pCrosshair       { "xy-crosshair" };
+const juce::StringArray XYDraggerItem::pCrosshairTypes  { "no-crosshair", "vertical", "horizontal", "crosshair" };
 
 //==============================================================================
 
@@ -617,7 +623,7 @@ public:
     std::vector<SettableProperty> getSettableProperties() const override
     {
         std::vector<SettableProperty> properties;
-        properties.push_back ({ configNode, IDs::source, SettableProperty::Choice, {}, magicBuilder.createObjectMenu<MagicLevelSource>() });
+        properties.push_back ({ configNode, IDs::source, SettableProperty::Choice, {}, magicBuilder.createObjectsMenuLambda<MagicLevelSource>() });
         return properties;
     }
 
@@ -669,7 +675,7 @@ public:
     std::vector<SettableProperty> getSettableProperties() const override
     {
         std::vector<SettableProperty> properties;
-        properties.push_back ({ configNode, "list-box-model", SettableProperty::Choice, {}, magicBuilder.createObjectMenu<juce::ListBoxModel>() });
+        properties.push_back ({ configNode, "list-box-model", SettableProperty::Choice, {}, magicBuilder.createObjectsMenuLambda<juce::ListBoxModel>() });
         return properties;
     }
 

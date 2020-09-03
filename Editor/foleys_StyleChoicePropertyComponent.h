@@ -44,8 +44,7 @@ class StyleChoicePropertyComponent  : public StylePropertyComponent,
 {
 public:
     StyleChoicePropertyComponent (MagicGUIBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse, juce::StringArray choices);
-    StyleChoicePropertyComponent (MagicGUIBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse, juce::PopupMenu menu);
-    StyleChoicePropertyComponent (MagicGUIBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse, SettableProperty::PropertyType type);
+    StyleChoicePropertyComponent (MagicGUIBuilder& builderToUse, juce::Identifier propertyToUse, juce::ValueTree& nodeToUse, std::function<void(juce::ComboBox&)> menuCreationLambda);
 
     void refresh() override;
 
@@ -56,7 +55,7 @@ private:
 
     SettableProperty::PropertyType  type = SettableProperty::Choice;
     juce::StringArray               choices;
-    juce::PopupMenu                 menu;
+    std::function<void(juce::ComboBox&)> menuCreationLambda;
     juce::Value                     proxy;
 
     bool                            updating = false;
