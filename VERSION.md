@@ -5,6 +5,7 @@ PluginGuiMagic - Versions history
 ------------------
 
 - Fixed property dropdown
+- Made Colour selector compatible with JUCE 6.0.1
 
 
 1.2.2 - 08.07.2020
