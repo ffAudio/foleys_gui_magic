@@ -75,6 +75,8 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
         file.addSeparator();
         file.addItem ("Clear",    [&] { builder.clearGUI(); });
         file.addItem ("Default",  [&] { builder.resetToDefaultGUI(); });
+        file.addSeparator();
+        file.addItem ("Refresh",  [&] { builder.updateComponents(); });
         file.show();
     };
 

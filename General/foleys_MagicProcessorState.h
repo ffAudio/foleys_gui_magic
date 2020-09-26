@@ -41,7 +41,7 @@ namespace foleys
 
 /**
 The MagicProcessorState is a subclass of MagicGUIState, that adds AudioProcessor specific functionality.
-It allows for instance connecting to AudioProcessorParameters and supplies a default XML tree of components
+ It allows for instance connecting to AudioProcessorParameters and supplies a default XML tree* of components
 built from the getParameterTree() from the AudioProcessor.
 */
 class MagicProcessorState : public MagicGUIState,
