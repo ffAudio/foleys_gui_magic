@@ -44,6 +44,7 @@ foleys::MagicPlotSource* analyser = nullptr;
 
 // Constructor
 analyser = magicState.createAndAddObject<foleys::MagicAnalyser>("input");
+magicState.addBackgroundProcessing (analyser);
 
 // prepareToPlay
 analyser->prepareToPlay (sampleRate, samplesPerBlockExpected);

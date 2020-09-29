@@ -62,8 +62,15 @@ void MagicAnalyser::createPlotPaths (juce::Path& path, juce::Path& filledPath, j
     const auto  factor  = bounds.getWidth() / 10.0f;
 
     path.startNewSubPath (bounds.getX() + factor * indexToX (0, minFreq), binToY (fftData [0], bounds));
-    for (int i = 1; i < data.getNumSamples(); ++i)
+    for (int i = 1, step = 1, count = 0; i < data.getNumSamples(); i += step, ++count)
+    {
         path.lineTo (bounds.getX() + factor * indexToX (i, minFreq), binToY (fftData [i], bounds));
+        if (count > 64)
+        {
+            ++step;
+            count = -0;
+        }
+    }
 
     filledPath = path;
     filledPath.lineTo (bounds.getBottomRight());
@@ -88,7 +95,7 @@ float MagicAnalyser::indexToX (int index, float minFreq) const
     return (freq > 0.01f) ? static_cast<float> (std::log2 ((freq + minFreq) / minFreq)) : 0.0f;
 }
 
-float MagicAnalyser::binToY (float bin, const juce::Rectangle<float> bounds) const
+float MagicAnalyser::binToY (float bin, juce::Rectangle<float> bounds) const
 {
     const float infinity = -100.0f;
     return juce::jmap (juce::Decibels::gainToDecibels (bin, infinity),
