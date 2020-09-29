@@ -1,6 +1,11 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.2.4 - 30.09.2020
+------------------
+
+- Reduced analyser painting in higher frequencies
+
 1.2.3 - 03.09.2020
 ------------------
 
