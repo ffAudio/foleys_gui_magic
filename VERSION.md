@@ -1,6 +1,12 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.2.5
+-----
+
+- Average over higher frequency bins instead of silently skipping
+- Some documentations
+
 1.2.4 - 30.09.2020
 ------------------
 
