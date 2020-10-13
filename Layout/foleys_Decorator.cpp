@@ -46,15 +46,22 @@ void Decorator::drawDecorator (juce::Graphics& g, juce::Rectangle<int> bounds)
 
     {
         juce::Graphics::ScopedSaveState save (g);
-        g.setColour (backgroundColour);
 
-        if (backgroundFill.size() > 1)
-            g.setGradientFill (juce::ColourGradient::vertical (backgroundFill.getFirst(), backgroundFill.getLast(), bounds));
-
-        if (radius > 0.0f)
-            g.fillRoundedRectangle (boundsf, radius);
+        if (! backgroundGradient.isEmpty())
+        {
+            juce::Path p;
+            p.addRoundedRectangle (boundsf, radius);
+            backgroundGradient.drawGradient (g, boundsf, p);
+        }
         else
-            g.fillRect (bounds);
+        {
+            g.setColour (backgroundColour);
+
+            if (radius > 0.0f)
+                g.fillRoundedRectangle (boundsf, radius);
+            else
+                g.fillRect (bounds);
+        }
     }
 
     if (! backgroundImage.isNull())
@@ -177,7 +184,7 @@ void Decorator::configure (MagicGUIBuilder& builder, const juce::ValueTree& node
         justification = juce::Justification::centredTop;
 
     backgroundImage = stylesheet.getBackgroundImage (node);
-    backgroundFill  = stylesheet.getBackgroundGradient (node);
+    backgroundGradient.setup (builder.getStyleProperty (IDs::backgroundGradient, node).toString(), stylesheet);
 
     auto alphaVar = builder.getStyleProperty (IDs::backgroundAlpha, node);
     if (! alphaVar.isVoid())
@@ -216,7 +223,7 @@ void Decorator::reset()
     backgroundImage = juce::Image();
     backgroundAlpha = 1.0f;
     backgroundPlacement = juce::RectanglePlacement::centred;
-    backgroundFill.clear();
+    backgroundGradient.clear();
 }
 
 }

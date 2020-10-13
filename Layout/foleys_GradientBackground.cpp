@@ -34,64 +34,79 @@
  ==============================================================================
  */
 
-#pragma once
 
 namespace foleys
 {
 
-class Decorator
+void GradientBackground::drawGradient (juce::Graphics& g, juce::Rectangle<float> bounds, const juce::Path& shape)
 {
-public:
+    if (isEmpty())
+        return;
 
-    Decorator() = default;
+    juce::Graphics::ScopedSaveState state (g);
 
-    /**
-     This will get the necessary information from the stylesheet, using inheritance
-     of nodes if needed, to set the margins/borders etc. for the GuiItem.
-     */
-    void configure (MagicGUIBuilder& builder, const juce::ValueTree& node);
+    auto vec = juce::Point<float>().getPointOnCircumference (bounds.getHeight() / 2, angle);
 
-    void reset();
+    auto p1 = bounds.getCentre() + vec;
+    auto p2 = bounds.getCentre() - vec;
 
-    void updateColours (MagicGUIBuilder& builder, const juce::ValueTree& node);
-
-    void drawDecorator (juce::Graphics& g, juce::Rectangle<int> bounds);
-
-    struct ClientBounds
+    if (gradient.point1 != p1 || gradient.point2 != p2)
     {
-        juce::Rectangle<int> client;
-        juce::Rectangle<int> caption;
-    };
+        gradient.clearColours();
+        gradient.point1 = p1;
+        gradient.point2 = p2;
+        gradient.isRadial = type == radial;
+        for (auto& c : colours)
+            gradient.addColour (c.first, c.second);
+    }
 
-    Decorator::ClientBounds getClientBounds (juce::Rectangle<int> overallBounds) const;
+    g.setFillType (gradient);
 
-    juce::String getTabCaption (const juce::String& defaultName) const;
-    juce::Colour getTabColour() const;
-
-private:
-
-    juce::Colour backgroundColour { juce::Colours::darkgrey };
-    juce::Colour borderColour     { juce::Colours::silver };
-
-    float margin  = 5.0f;
-    float padding = 5.0f;
-    float border  = 0.0f;
-    float radius  = 5.0f;
-
-    juce::String        caption;
-    juce::Justification justification = juce::Justification::centredTop;
-    float               captionSize   = 20.0f;
-    juce::Colour        captionColour = juce::Colours::silver;
-
-    juce::String        tabCaption;
-    juce::Colour        tabColour;
-
-    juce::Image                 backgroundImage;
-    float                       backgroundAlpha = 1.0f;
-    juce::RectanglePlacement    backgroundPlacement = juce::RectanglePlacement::centred;
-    GradientBackground          backgroundGradient;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Decorator)
-};
-
+    g.fillPath (shape);
 }
+
+void GradientBackground::setup (juce::String text, const Stylesheet& stylesheet)
+{
+    clear();
+
+    if (text.isEmpty())
+        return;
+
+    if (text.startsWith ("linear"))
+        type = linear;
+    else if (text.startsWith ("radial"))
+        type = radial;
+
+    text = text.fromFirstOccurrenceOf ("(", false, false).upToLastOccurrenceOf (")", false, false);
+
+    auto values = juce::StringArray::fromTokens (text, ",;", "\"");
+    if (values.size() < 2)
+        return;
+
+    if (type == linear)
+    {
+        angle = juce::degreesToRadians (values [0].getFloatValue());
+        values.remove (0);
+    }
+
+    auto step = 1.0f / (values.size() - 1.0f);
+    auto stop = 0.0f;
+    for (const auto& v : values)
+    {
+        colours [stop] = stylesheet.getColour (v);
+        stop += step;
+    }
+}
+
+void GradientBackground::clear()
+{
+    type = none;
+    colours.clear();
+}
+
+bool GradientBackground::isEmpty() const
+{
+    return type == none || colours.size() < 2;
+}
+
+} // namespace foleys

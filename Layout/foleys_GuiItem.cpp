@@ -95,6 +95,8 @@ void GuiItem::updateInternal()
     updateColours();
 
     update();
+
+    repaint();
 }
 
 void GuiItem::updateColours()

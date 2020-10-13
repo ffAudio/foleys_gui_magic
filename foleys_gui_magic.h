@@ -93,6 +93,8 @@
 #include <juce_gui_extra/juce_gui_extra.h>
 #endif
 
+#include <unordered_map>
+
 #include "General/foleys_StringDefinitions.h"
 #include "General/foleys_SettableProperties.h"
 #include "General/foleys_Resources.h"
@@ -103,6 +105,7 @@
 #include "Helpers/foleys_AtomicValueAttachment.h"
 #include "Helpers/foleys_Conversions.h"
 
+#include "Layout/foleys_GradientBackground.h"
 #include "Layout/foleys_Stylesheet.h"
 #include "Layout/foleys_Decorator.h"
 #include "Layout/foleys_GuiItem.h"

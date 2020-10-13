@@ -116,8 +116,6 @@ public:
      */
     juce::Image getBackgroundImage (const juce::ValueTree& node) const;
 
-    juce::Array<juce::Colour> getBackgroundGradient (const juce::ValueTree& node) const;
-
     /**
      This is a slightly more intelligent colour lookup than the JUCE one, as it allows to
      use colour names, as well as 6 digit colour tuples (JUCE will use red as alpha in that case)
@@ -210,8 +208,6 @@ private:
         SizeRange   validRange;
         bool        recursive  { false };
     };
-
-    juce::StringArray getParameters (const juce::String& text) const;
 
     MagicGUIBuilder&  builder;
 

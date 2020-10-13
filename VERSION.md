@@ -4,6 +4,7 @@ PluginGuiMagic - Versions history
 1.2.5
 -----
 
+- Refactored gradient drawing
 - Average over higher frequency bins instead of silently skipping
 - Some documentations
 
