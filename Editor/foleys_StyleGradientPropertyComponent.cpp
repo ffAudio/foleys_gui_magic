@@ -162,7 +162,8 @@ void StyleGradientPropertyComponent::resized()
 //==============================================================================
 
 StyleGradientPropertyComponent::GradientPanel::GradientPanel (GradientBackground& gradientToUse)
-  : gradient (gradientToUse)
+  : gradient (gradientToUse),
+    stopSelect (gradient)
 {
     typeSelect.addItemList ({"None", "linear", "radial"}, 1);
     addAndMakeVisible (typeSelect);
@@ -197,6 +198,7 @@ StyleGradientPropertyComponent::GradientPanel::GradientPanel (GradientBackground
 
     addAndMakeVisible (close);
     addAndMakeVisible (selector);
+    addAndMakeVisible (stopSelect);
 
     close.onClick = [this]
     {
@@ -212,6 +214,7 @@ void StyleGradientPropertyComponent::GradientPanel::resized()
     close.setBounds (header.removeFromRight (24));
     typeSelect.setBounds (header);
     angle.setBounds (area.removeFromTop (24));
+    stopSelect.setBounds (area.removeFromBottom (30));
 
     selector.setBounds (area);
 }
@@ -290,6 +293,30 @@ void StyleGradientPropertyComponent::GradientPanel::ColourSelectorWithSwatches::
 
         p->setValue (IDs::swatches, coloursNode.get());
         p->setNeedsToBeSaved (true);
+    }
+}
+
+//==============================================================================
+
+StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::GradientStopSelect (GradientBackground& gradientToUse)
+  : gradient (gradientToUse)
+{
+}
+
+void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::paint (juce::Graphics& g)
+{
+    auto gradientCopy = gradient;
+    gradientCopy.type  = GradientBackground::linear;
+    gradientCopy.angle = juce::degreesToRadians (90);
+
+    juce::Path p;
+    p.addRectangle (getLocalBounds().withTop (5).toFloat());
+    gradientCopy.drawGradient (g, getLocalBounds().toFloat(), p);
+
+    for (auto& c : gradientCopy.colours)
+    {
+        g.setColour (c.second.withAlpha (1.0f));
+        g.fillRect (std::min (juce::roundToInt (c.first * getWidth()), getWidth() - 2), 0, 2, getHeight());
     }
 }
 

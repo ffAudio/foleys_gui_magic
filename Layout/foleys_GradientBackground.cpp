@@ -45,7 +45,8 @@ void GradientBackground::drawGradient (juce::Graphics& g, juce::Rectangle<float>
 
     juce::Graphics::ScopedSaveState state (g);
 
-    auto vec = juce::Point<float>().getPointOnCircumference (bounds.getHeight() / 2, angle);
+    auto diag = std::sqrt (std::pow (bounds.getWidth() * std::sin (angle), 2.0f) + std::pow (bounds.getHeight() * std::cos (angle), 2.0f)) / 2.0f;
+    auto vec = juce::Point<float>().getPointOnCircumference (diag, angle);
 
     auto p1 = type == linear ? bounds.getCentre() + vec : bounds.getCentre();
     auto p2 = bounds.getCentre() - vec;

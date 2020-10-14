@@ -65,11 +65,12 @@ public:
     Type  type = none;
     float angle = 0.0f;
 
-private:
     std::map<float, juce::Colour> colours;
+
+private:
     juce::ColourGradient          gradient;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GradientBackground)
+    JUCE_LEAK_DETECTOR (GradientBackground)
 };
 
 } // namespace foleys

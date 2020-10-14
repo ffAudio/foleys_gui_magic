@@ -84,11 +84,25 @@ private:
             JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ColourSelectorWithSwatches)
         };
 
+        class GradientStopSelect : public juce::Component
+        {
+        public:
+            GradientStopSelect (GradientBackground& gradient);
+
+            void paint (juce::Graphics& g) override;
+
+        private:
+            GradientBackground& gradient;
+            JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GradientStopSelect)
+        };
+
+        GradientBackground&         gradient;
+
         juce::TextButton            close { "X" };
         juce::ComboBox              typeSelect;
         juce::Slider                angle { juce::Slider::LinearHorizontal, juce::Slider::TextBoxRight };
         ColourSelectorWithSwatches  selector;
-        GradientBackground&         gradient;
+        GradientStopSelect          stopSelect;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GradientPanel)
     };
