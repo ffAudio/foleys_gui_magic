@@ -42,6 +42,7 @@ class Stylesheet;
 
 class GradientBackground
 {
+public:
     enum Type
     {
         none = 0,
@@ -49,22 +50,24 @@ class GradientBackground
         radial
     };
 
-public:
     GradientBackground() = default;
 
     void drawGradient (juce::Graphics& g, juce::Rectangle<float> bounds, const juce::Path& shape);
 
     void setup (juce::String text, const Stylesheet& stylesheet);
 
+    juce::String toString() const;
+
     void clear();
 
     bool isEmpty() const;
 
+    Type  type = none;
+    float angle = 0.0f;
+
 private:
-    Type                          type = none;
     std::map<float, juce::Colour> colours;
     juce::ColourGradient          gradient;
-    float                         angle = 0.0f;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GradientBackground)
 };

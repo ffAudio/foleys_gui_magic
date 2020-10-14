@@ -256,7 +256,7 @@ void PropertiesEditor::addDecoratorProperties()
     array.add (new StyleChoicePropertyComponent (builder, IDs::backgroundImage, styleItem, Resources::getResourceFileNames()));
     array.add (new StyleChoicePropertyComponent (builder, IDs::imagePlacement, styleItem, { IDs::imageCentred, IDs::imageFill, IDs::imageStretch }));
     array.add (new StyleTextPropertyComponent (builder, IDs::backgroundAlpha, styleItem));
-    array.add (new StyleTextPropertyComponent (builder, IDs::backgroundGradient, styleItem));
+    array.add (new StyleGradientPropertyComponent (builder, IDs::backgroundGradient, styleItem));
 
     properties.addSection ("Decorator", array, false);
 }

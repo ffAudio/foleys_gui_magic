@@ -47,7 +47,7 @@ void GradientBackground::drawGradient (juce::Graphics& g, juce::Rectangle<float>
 
     auto vec = juce::Point<float>().getPointOnCircumference (bounds.getHeight() / 2, angle);
 
-    auto p1 = bounds.getCentre() + vec;
+    auto p1 = type == linear ? bounds.getCentre() + vec : bounds.getCentre();
     auto p2 = bounds.getCentre() - vec;
 
     if (gradient.point1 != p1 || gradient.point2 != p2)
@@ -98,10 +98,32 @@ void GradientBackground::setup (juce::String text, const Stylesheet& stylesheet)
     }
 }
 
+juce::String GradientBackground::toString() const
+{
+    if (type == none)
+        return {};
+
+    juce::String colourNames;
+
+    if (type == linear)
+        colourNames += juce::String (juce::roundToInt (juce::radiansToDegrees (angle))) + ",";
+
+    for (auto& c : colours)
+        colourNames += c.second.toString() + ",";
+
+    colourNames = colourNames.trimCharactersAtEnd (", ");
+
+    if (type == linear)
+        return "linear-gradient(" + colourNames + ")";
+    else
+        return "radial-gradient(" + colourNames + ")";
+}
+
 void GradientBackground::clear()
 {
     type = none;
     colours.clear();
+    gradient = juce::ColourGradient();
 }
 
 bool GradientBackground::isEmpty() const

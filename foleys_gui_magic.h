@@ -143,6 +143,7 @@ namespace EditorColours
 #include "Editor/foleys_StyleTextPropertyComponent.h"
 #include "Editor/foleys_StyleBoolPropertyComponent.h"
 #include "Editor/foleys_StyleColourPropertyComponent.h"
+#include "Editor/foleys_StyleGradientPropertyComponent.h"
 #include "Editor/foleys_StyleChoicePropertyComponent.h"
 
 #include "Editor/foleys_GUITreeEditor.h"

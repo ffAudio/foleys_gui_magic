@@ -51,7 +51,6 @@ struct SettableProperty
         Text,           /*< Plain text, e.g. for buttons */
         Number,         /*< A number, e.g. line width */
         Colour,         /*< Show the colour selector and palette names */
-        Justification,  /*< Offer a list of the different justification options */
         Toggle,         /*< Show a toggle for bool properties */
         Choice          /*< Shows choices provided */
     };

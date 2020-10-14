@@ -81,6 +81,7 @@
 #include "Editor/foleys_StyleTextPropertyComponent.cpp"
 #include "Editor/foleys_StyleBoolPropertyComponent.cpp"
 #include "Editor/foleys_StyleColourPropertyComponent.cpp"
+#include "Editor/foleys_StyleGradientPropertyComponent.cpp"
 #include "Editor/foleys_StyleChoicePropertyComponent.cpp"
 
 #endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
