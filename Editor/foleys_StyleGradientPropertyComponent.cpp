@@ -109,7 +109,7 @@ void StyleGradientPropertyComponent::valueChanged (juce::Value& value)
     gradient.setup (value.getValue().toString(), builder.getStylesheet());
 }
 
-void StyleGradientPropertyComponent::changeListenerCallback (juce::ChangeBroadcaster* sender)
+void StyleGradientPropertyComponent::changeListenerCallback (juce::ChangeBroadcaster*)
 {
     if (colourPanel)
         colourPanel->colourWasChanged();
@@ -160,7 +160,7 @@ StyleGradientPropertyComponent::GradientPanel::GradientPanel (GradientBackground
     angle.setValue (juce::radiansToDegrees (gradient.angle));
     angle.onValueChange = [&]
     {
-        gradient.angle = juce::degreesToRadians (angle.getValue());
+        gradient.angle = juce::degreesToRadians (float (angle.getValue()));
         selector.sendChangeMessage();
     };
 
@@ -334,7 +334,7 @@ void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseMov
 void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseDrag (const juce::MouseEvent& event)
 {
     auto& colours = owner.gradient.colours;
-    if (dragging > 0 && dragging < colours.size())
+    if (dragging > 0 && dragging < int (colours.size()))
     {
         auto it = std::next (colours.begin(), dragging);
         auto newPosition = juce::jlimit (0.0f, 1.0f, event.x / float (getWidth()));
@@ -348,7 +348,7 @@ void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseDra
     }
 }
 
-void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseUp (const juce::MouseEvent& event)
+void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseUp (const juce::MouseEvent&)
 {
     dragging = -1;
     repaint();
@@ -366,7 +366,7 @@ void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseDou
         owner.selector.sendChangeMessage();
         repaint();
     }
-    else if (clicked > 0 && clicked < colours.size() - 1)
+    else if (clicked > 0 && clicked < int (colours.size()) - 1)
     {
         colours.erase (std::next (colours.begin(), clicked));
         selected = 0;
