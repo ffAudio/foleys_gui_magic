@@ -89,7 +89,7 @@ private:
         class GradientStopSelect : public juce::Component
         {
         public:
-            GradientStopSelect (GradientBackground& gradient, juce::ColourSelector& selector);
+            GradientStopSelect (GradientPanel& owner);
 
             void paint (juce::Graphics& g) override;
             void mouseDown (const juce::MouseEvent& event) override;
@@ -103,10 +103,8 @@ private:
         private:
             int getDraggingIndex (int pos);
 
-            GradientBackground&     gradient;
-            juce::ColourSelector&   selector;
-
-            int                     dragging = -1;
+            GradientPanel& owner;
+            int            dragging = -1;
 
             JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GradientStopSelect)
         };

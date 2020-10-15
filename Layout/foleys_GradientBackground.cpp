@@ -38,6 +38,12 @@
 namespace foleys
 {
 
+GradientBackground::GradientBackground()
+{
+    colours [0.0f] = juce::Colours::black;
+    colours [1.0f] = juce::Colours::white;
+}
+
 void GradientBackground::drawGradient (juce::Graphics& g, juce::Rectangle<float> bounds, const juce::Path& shape)
 {
     if (isEmpty())
@@ -70,7 +76,11 @@ void GradientBackground::setup (juce::String text, const Stylesheet& stylesheet)
     clear();
 
     if (text.isEmpty())
+    {
+        colours [0.0f] = juce::Colours::black;
+        colours [1.0f] = juce::Colours::white;
         return;
+    }
 
     if (text.startsWith ("linear"))
         type = linear;
@@ -104,9 +114,6 @@ void GradientBackground::setup (juce::String text, const Stylesheet& stylesheet)
 
 juce::String GradientBackground::toString() const
 {
-    if (type == none)
-        return {};
-
     juce::String colourNames;
 
     if (type == linear)
@@ -119,8 +126,10 @@ juce::String GradientBackground::toString() const
 
     if (type == linear)
         return "linear-gradient(" + colourNames + ")";
-    else
+    else if (type == radial)
         return "radial-gradient(" + colourNames + ")";
+    else
+        return "none(" + colourNames + ")";
 }
 
 void GradientBackground::clear()

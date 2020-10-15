@@ -131,7 +131,7 @@ void StyleGradientPropertyComponent::resized()
 
 StyleGradientPropertyComponent::GradientPanel::GradientPanel (GradientBackground& gradientToUse)
   : gradient (gradientToUse),
-    stopSelect (gradient, selector)
+    stopSelect (*this)
 {
     typeSelect.addItemList ({"None", "linear", "radial"}, 1);
     addAndMakeVisible (typeSelect);
@@ -163,6 +163,9 @@ StyleGradientPropertyComponent::GradientPanel::GradientPanel (GradientBackground
         gradient.angle = juce::degreesToRadians (angle.getValue());
         selector.sendChangeMessage();
     };
+
+    if (!gradient.colours.empty())
+        selector.setCurrentColour (gradient.colours.begin()->second);
 
     addAndMakeVisible (close);
     addAndMakeVisible (selector);
@@ -268,15 +271,14 @@ void StyleGradientPropertyComponent::GradientPanel::ColourSelectorWithSwatches::
 
 //==============================================================================
 
-StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::GradientStopSelect (GradientBackground& gradientToUse, juce::ColourSelector& selectorToUse)
-  : gradient (gradientToUse),
-    selector (selectorToUse)
+StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::GradientStopSelect (GradientPanel& ownerToUse)
+  : owner (ownerToUse)
 {
 }
 
 void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::paint (juce::Graphics& g)
 {
-    auto gradientCopy = gradient;
+    auto gradientCopy = owner.gradient;
     gradientCopy.type  = GradientBackground::linear;
     gradientCopy.angle = juce::degreesToRadians (270.0f);
 
@@ -312,7 +314,7 @@ void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseDow
     if (dragging >= 0)
     {
         selected = dragging;
-        selector.setCurrentColour (std::next (gradient.colours.begin(), dragging)->second);
+        owner.selector.setCurrentColour (std::next (owner.gradient.colours.begin(), dragging)->second);
     }
 
     repaint();
@@ -331,13 +333,17 @@ void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseMov
 
 void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseDrag (const juce::MouseEvent& event)
 {
-    if (dragging > 0 && dragging < gradient.colours.size() - 1)
+    auto& colours = owner.gradient.colours;
+    if (dragging > 0 && dragging < colours.size())
     {
-        auto it = std::next (gradient.colours.begin(), dragging);
+        auto it = std::next (colours.begin(), dragging);
+        auto newPosition = juce::jlimit (0.0f, 1.0f, event.x / float (getWidth()));
         auto colour = it->second;
-        gradient.colours.erase (it);
-        gradient.colours [event.x / float (getWidth())] = colour;
-        selector.sendChangeMessage();
+        colours.erase (it);
+        colours [newPosition] = colour;
+        dragging = int (std::distance (colours.begin(), colours.find (newPosition)));
+        selected = dragging;
+        owner.selector.sendChangeMessage();
         repaint();
     }
 }
@@ -350,15 +356,21 @@ void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseUp 
 
 void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseDoubleClick (const juce::MouseEvent& event)
 {
+    auto& colours = owner.gradient.colours;
     auto clicked = getDraggingIndex (event.getPosition().x);
     if (clicked < 0)
     {
-        gradient.colours [event.x / float (getWidth())] = juce::Colours::red;
+        auto newPosition = juce::jlimit (0.0f, 1.0f, event.x / float (getWidth()));
+        colours [newPosition] = juce::Colours::red;
+        selected = int (std::distance (colours.begin(), colours.find (newPosition)));
+        owner.selector.sendChangeMessage();
+        repaint();
     }
-    else if (clicked > 0 && clicked < gradient.colours.size() - 1)
+    else if (clicked > 0 && clicked < colours.size() - 1)
     {
-        gradient.colours.erase (std::next (gradient.colours.begin(), clicked));
+        colours.erase (std::next (colours.begin(), clicked));
         selected = 0;
+        owner.selector.sendChangeMessage();
         repaint();
     }
 }
@@ -366,7 +378,7 @@ void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseDou
 int StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::getDraggingIndex (int pos)
 {
     int index = 0;
-    for (auto& c : gradient.colours)
+    for (auto& c : owner.gradient.colours)
     {
         if (std::abs (pos - c.first * getWidth()) < 3)
             return index;

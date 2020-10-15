@@ -50,7 +50,7 @@ public:
         radial
     };
 
-    GradientBackground() = default;
+    GradientBackground();
 
     void drawGradient (juce::Graphics& g, juce::Rectangle<float> bounds, const juce::Path& shape);
 
