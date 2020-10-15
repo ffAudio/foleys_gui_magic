@@ -93,8 +93,6 @@
 #include <juce_gui_extra/juce_gui_extra.h>
 #endif
 
-#include <unordered_map>
-
 #include "General/foleys_StringDefinitions.h"
 #include "General/foleys_SettableProperties.h"
 #include "General/foleys_Resources.h"

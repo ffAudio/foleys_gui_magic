@@ -214,7 +214,7 @@ void StyleGradientPropertyComponent::GradientPanel::resized()
     close.setBounds (header.removeFromRight (24));
     typeSelect.setBounds (header);
     angle.setBounds (area.removeFromTop (24));
-    stopSelect.setBounds (area.removeFromBottom (30));
+    stopSelect.setBounds (area.removeFromBottom (30).reduced (5, 0));
 
     selector.setBounds (area);
 }
@@ -307,7 +307,7 @@ void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::paint (j
 {
     auto gradientCopy = gradient;
     gradientCopy.type  = GradientBackground::linear;
-    gradientCopy.angle = juce::degreesToRadians (90);
+    gradientCopy.angle = juce::degreesToRadians (270.0f);
 
     juce::Path p;
     p.addRectangle (getLocalBounds().withTop (5).toFloat());
@@ -315,8 +315,12 @@ void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::paint (j
 
     for (auto& c : gradientCopy.colours)
     {
-        g.setColour (c.second.withAlpha (1.0f));
-        g.fillRect (std::min (juce::roundToInt (c.first * getWidth()), getWidth() - 2), 0, 2, getHeight());
+        auto x      = std::min (juce::roundToInt (c.first * getWidth()), getWidth() - 1);
+        auto colour = c.second.withAlpha (1.0f);
+        g.setColour (colour.darker());
+        g.fillRect (x-1, 0, 3, getHeight());
+        g.setColour (colour);
+        g.fillRect (x, 0, 1, getHeight());
     }
 }
 
