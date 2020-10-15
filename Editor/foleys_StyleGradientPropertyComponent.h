@@ -61,6 +61,8 @@ private:
         void addChangeListener (juce::ChangeListener*);
         void removeChangeListener (juce::ChangeListener*);
 
+        void colourWasChanged();
+
     private:
 
         class ColourSelectorWithSwatches  : public juce::ColourSelector
@@ -87,12 +89,25 @@ private:
         class GradientStopSelect : public juce::Component
         {
         public:
-            GradientStopSelect (GradientBackground& gradient);
+            GradientStopSelect (GradientBackground& gradient, juce::ColourSelector& selector);
 
             void paint (juce::Graphics& g) override;
+            void mouseDown (const juce::MouseEvent& event) override;
+            void mouseMove (const juce::MouseEvent& event) override;
+            void mouseDrag (const juce::MouseEvent& event) override;
+            void mouseUp (const juce::MouseEvent& event) override;
+            void mouseDoubleClick (const juce::MouseEvent& event) override;
+
+            int  selected =  0;
 
         private:
-            GradientBackground& gradient;
+            int getDraggingIndex (int pos);
+
+            GradientBackground&     gradient;
+            juce::ColourSelector&   selector;
+
+            int                     dragging = -1;
+
             JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GradientStopSelect)
         };
 
@@ -113,7 +128,6 @@ private:
 
     MouseLambdas                                mouseEvents;
     juce::Component::SafePointer<GradientPanel> colourPanel;
-    juce::TextButton                            variables {"V"};
     GradientBackground                          gradient;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StyleGradientPropertyComponent)

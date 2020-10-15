@@ -51,7 +51,7 @@ void GradientBackground::drawGradient (juce::Graphics& g, juce::Rectangle<float>
     auto p1 = type == linear ? bounds.getCentre() + vec : bounds.getCentre();
     auto p2 = bounds.getCentre() - vec;
 
-    if (gradient.point1 != p1 || gradient.point2 != p2)
+    if (gradient.point1 != p1 || gradient.point2 != p2 || gradient.getNumColours() != int (colours.size()))
     {
         gradient.clearColours();
         gradient.point1 = p1;
@@ -62,7 +62,6 @@ void GradientBackground::drawGradient (juce::Graphics& g, juce::Rectangle<float>
     }
 
     g.setFillType (gradient);
-
     g.fillPath (shape);
 }
 
@@ -94,7 +93,11 @@ void GradientBackground::setup (juce::String text, const Stylesheet& stylesheet)
     auto stop = 0.0f;
     for (const auto& v : values)
     {
-        colours [stop] = stylesheet.getColour (v);
+        auto items = juce::StringArray::fromTokens (v, " ", "\"");
+        if (items.size() > 1)
+            stop = items [0].getFloatValue() / 100.0f;
+
+        colours [stop] = stylesheet.getColour (items.strings.getLast());
         stop += step;
     }
 }
@@ -110,7 +113,7 @@ juce::String GradientBackground::toString() const
         colourNames += juce::String (juce::roundToInt (juce::radiansToDegrees (angle))) + ",";
 
     for (auto& c : colours)
-        colourNames += c.second.toString() + ",";
+        colourNames += juce::String (juce::roundToInt (c.first * 100.0f)) + "% " + c.second.toString() + ",";
 
     colourNames = colourNames.trimCharactersAtEnd (", ");
 

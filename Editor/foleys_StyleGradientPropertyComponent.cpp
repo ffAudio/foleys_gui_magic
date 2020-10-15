@@ -50,9 +50,6 @@ StyleGradientPropertyComponent::StyleGradientPropertyComponent (MagicGUIBuilder&
 
     addAndMakeVisible (label.get());
 
-    variables.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
-    addAndMakeVisible (variables);
-
     label->getTextValue().addListener (this);
     label->onTextChange = [&]
     {
@@ -62,39 +59,11 @@ StyleGradientPropertyComponent::StyleGradientPropertyComponent (MagicGUIBuilder&
         refresh();
     };
 
-    variables.onClick = [&]
-    {
-        juce::PopupMenu menu;
-        juce::Component::SafePointer<juce::Label> l = dynamic_cast<juce::Label*>(editor.get());
-        for (auto v : builder.getStylesheet().getPaletteEntryNames())
-            menu.addItem (v, [l, v]() mutable { if (l) l->setText ("$" + v, juce::sendNotification); });
-
-        menu.showAt (editor.get());
-    };
-
     mouseEvents.onMouseDown = [this](const juce::MouseEvent&)
     {
-        auto currentColour = juce::Colours::black;
-        if (auto* l = dynamic_cast<juce::Label*>(editor.get()))
-        {
-            if (l->getText().isNotEmpty())
-            {
-                currentColour = builder.getStylesheet().getColour (l->getText());
-            }
-            else
-            {
-                if (auto* lookandfeel = builder.getStylesheet().getLookAndFeel (node))
-                {
-//                    auto id = builder.findColourId (node.getType(), property);
-//                    if (id >= 0)
-//                        currentColour = lookandfeel->findColour (id);
-                }
-            }
-        }
-
         auto newColourPanel = std::make_unique<GradientPanel>(gradient);
         newColourPanel->addChangeListener (this);
-        newColourPanel->setSize (300, 500);
+        newColourPanel->setSize (360, 600);
         colourPanel = newColourPanel.get();
 #if JUCE_VERSION > 0x60001
         juce::CallOutBox::launchAsynchronously (std::move (newColourPanel), getScreenBounds(), nullptr);
@@ -142,18 +111,17 @@ void StyleGradientPropertyComponent::valueChanged (juce::Value& value)
 
 void StyleGradientPropertyComponent::changeListenerCallback (juce::ChangeBroadcaster* sender)
 {
-    if (auto* selector = dynamic_cast<juce::ColourSelector*>(sender))
-    {
-        node.setProperty (property, gradient.toString(), &builder.getUndoManager());
-        refresh();
-    }
+    if (colourPanel)
+        colourPanel->colourWasChanged();
+
+    node.setProperty (property, gradient.toString(), &builder.getUndoManager());
+    refresh();
 }
 
 void StyleGradientPropertyComponent::resized()
 {
     auto b = getLocalBounds().reduced (1).withLeft (getWidth() / 2);
     remove.setBounds (b.removeFromRight (getHeight()));
-    variables.setBounds (b.removeFromRight (getHeight()));
 
     if (editor)
         editor->setBounds (b);
@@ -163,7 +131,7 @@ void StyleGradientPropertyComponent::resized()
 
 StyleGradientPropertyComponent::GradientPanel::GradientPanel (GradientBackground& gradientToUse)
   : gradient (gradientToUse),
-    stopSelect (gradient)
+    stopSelect (gradient, selector)
 {
     typeSelect.addItemList ({"None", "linear", "radial"}, 1);
     addAndMakeVisible (typeSelect);
@@ -229,13 +197,15 @@ void StyleGradientPropertyComponent::GradientPanel::removeChangeListener (juce::
     selector.removeChangeListener (listener);
 }
 
-//==============================================================================
+void StyleGradientPropertyComponent::GradientPanel::colourWasChanged()
+{
+    if (juce::isPositiveAndBelow (stopSelect.selected, int (gradient.colours.size())))
+        std::next (gradient.colours.begin(), stopSelect.selected)->second = selector.getCurrentColour();
 
-//namespace IDs
-//{
-//    static juce::String swatches { "swatches" };
-//    static juce::String colour   { "colour" };
-//}
+    stopSelect.repaint();
+}
+
+//==============================================================================
 
 StyleGradientPropertyComponent::GradientPanel::ColourSelectorWithSwatches::ColourSelectorWithSwatches()
 {
@@ -298,8 +268,9 @@ void StyleGradientPropertyComponent::GradientPanel::ColourSelectorWithSwatches::
 
 //==============================================================================
 
-StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::GradientStopSelect (GradientBackground& gradientToUse)
-  : gradient (gradientToUse)
+StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::GradientStopSelect (GradientBackground& gradientToUse, juce::ColourSelector& selectorToUse)
+  : gradient (gradientToUse),
+    selector (selectorToUse)
 {
 }
 
@@ -313,15 +284,97 @@ void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::paint (j
     p.addRectangle (getLocalBounds().withTop (5).toFloat());
     gradientCopy.drawGradient (g, getLocalBounds().toFloat(), p);
 
+    int index = 0;
     for (auto& c : gradientCopy.colours)
     {
         auto x      = std::min (juce::roundToInt (c.first * getWidth()), getWidth() - 1);
         auto colour = c.second.withAlpha (1.0f);
-        g.setColour (colour.darker());
-        g.fillRect (x-1, 0, 3, getHeight());
-        g.setColour (colour);
-        g.fillRect (x, 0, 1, getHeight());
+        if (index++ == selected)
+        {
+            g.setColour (colour.darker());
+            g.fillRect (x-2, 0, 5, getHeight());
+            g.setColour (colour);
+            g.fillRect (x, 0, 2, getHeight());
+        }
+        else
+        {
+            g.setColour (colour.darker());
+            g.fillRect (x-1, 0, 3, getHeight());
+            g.setColour (colour);
+            g.fillRect (x, 0, 1, getHeight());
+        }
     }
+}
+
+void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseDown (const juce::MouseEvent& event)
+{
+    dragging = getDraggingIndex (event.getPosition().x);
+    if (dragging >= 0)
+    {
+        selected = dragging;
+        selector.setCurrentColour (std::next (gradient.colours.begin(), dragging)->second);
+    }
+
+    repaint();
+}
+
+void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseMove (const juce::MouseEvent& event)
+{
+    if (getDraggingIndex (event.getPosition().x) >= 0)
+    {
+        setMouseCursor (juce::MouseCursor::LeftRightResizeCursor);
+        return;
+    }
+
+    setMouseCursor (juce::MouseCursor::NormalCursor);
+}
+
+void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseDrag (const juce::MouseEvent& event)
+{
+    if (dragging > 0 && dragging < gradient.colours.size() - 1)
+    {
+        auto it = std::next (gradient.colours.begin(), dragging);
+        auto colour = it->second;
+        gradient.colours.erase (it);
+        gradient.colours [event.x / float (getWidth())] = colour;
+        selector.sendChangeMessage();
+        repaint();
+    }
+}
+
+void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseUp (const juce::MouseEvent& event)
+{
+    dragging = -1;
+    repaint();
+}
+
+void StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::mouseDoubleClick (const juce::MouseEvent& event)
+{
+    auto clicked = getDraggingIndex (event.getPosition().x);
+    if (clicked < 0)
+    {
+        gradient.colours [event.x / float (getWidth())] = juce::Colours::red;
+    }
+    else if (clicked > 0 && clicked < gradient.colours.size() - 1)
+    {
+        gradient.colours.erase (std::next (gradient.colours.begin(), clicked));
+        selected = 0;
+        repaint();
+    }
+}
+
+int StyleGradientPropertyComponent::GradientPanel::GradientStopSelect::getDraggingIndex (int pos)
+{
+    int index = 0;
+    for (auto& c : gradient.colours)
+    {
+        if (std::abs (pos - c.first * getWidth()) < 3)
+            return index;
+
+        ++index;
+    }
+
+    return -1;
 }
 
 
