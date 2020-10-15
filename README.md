@@ -5,10 +5,17 @@ This module allows to create GUIs without any coding. It is created with a DOM m
 that provides a hierarchical information, and a CSS cascading stylesheet to define
 rules for the appeareance of the GUI.
 
-There will be a drag and drop editor to add GUI elements, and to connect to
+There is a drag and drop editor to add GUI elements, and to connect to
 parameters of your AudioProcessorValueTreeState. Also an editor in the style of FireBug
 to investigate the individual properties, and how they were obtained/calculated.
 
+
+Support
+-------
+
+For the modules of Foleys Finest Audio there is a new forum where you can search for information 
+and ask questions: https://forum.foleysfinest.com
+All feedback is welcome.
 
 Setup
 -----

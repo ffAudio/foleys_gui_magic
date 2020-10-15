@@ -1,6 +1,14 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.2.5
+-----
+
+- Added editor for gradients, new gradients support stop positions
+- Refactored gradient drawing
+- Average over higher frequency bins instead of silently skipping
+- Some documentations
+
 1.2.4 - 30.09.2020
 ------------------
 

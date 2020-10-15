@@ -277,32 +277,6 @@ juce::Image Stylesheet::getBackgroundImage (const juce::ValueTree& node) const
     return Resources::getImage (name.toString());
 }
 
-juce::Array<juce::Colour> Stylesheet::getBackgroundGradient (const juce::ValueTree& node) const
-{
-    auto text = getStyleProperty (IDs::backgroundGradient, node).toString();
-
-    if (text.startsWith (IDs::linearGradient))
-    {
-        auto parameters = getParameters (text);
-        if (parameters.size() < 2)
-            return {};
-
-        juce::Array<juce::Colour> colours;
-        for (int i=0; i < parameters.size(); ++i)
-            colours.add (Stylesheet::parseColour (parameters [i].trim()));
-
-        return colours;
-    }
-
-    return {};
-}
-
-juce::StringArray Stylesheet::getParameters (const juce::String& text) const
-{
-    auto content = text.fromFirstOccurrenceOf ("(", false, true).upToFirstOccurrenceOf (")", false, true);
-    return juce::StringArray::fromTokens (content, ",", {});
-}
-
 juce::ValueTree Stylesheet::getCurrentStyle() const
 {
     return currentStyle;

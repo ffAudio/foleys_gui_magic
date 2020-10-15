@@ -64,7 +64,17 @@ void MagicAnalyser::createPlotPaths (juce::Path& path, juce::Path& filledPath, j
     path.startNewSubPath (bounds.getX() + factor * indexToX (0, minFreq), binToY (fftData [0], bounds));
     for (int i = 1, step = 1, count = 0; i < data.getNumSamples(); i += step, ++count)
     {
-        path.lineTo (bounds.getX() + factor * indexToX (i, minFreq), binToY (fftData [i], bounds));
+        auto avg = fftData [i];
+        if (step > 1)
+        {
+            for (int j = i+1; j < std::min (data.getNumSamples(), i + step); ++j)
+                avg += fftData [j];
+
+            avg = avg / step;
+        }
+
+        path.lineTo (bounds.getX() + factor * indexToX (i, minFreq), binToY (avg, bounds));
+
         if (count > 64)
         {
             ++step;

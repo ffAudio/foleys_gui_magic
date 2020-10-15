@@ -34,64 +34,43 @@
  ==============================================================================
  */
 
-#pragma once
 
 namespace foleys
 {
 
-class Decorator
+class Stylesheet;
+
+class GradientBackground
 {
 public:
-
-    Decorator() = default;
-
-    /**
-     This will get the necessary information from the stylesheet, using inheritance
-     of nodes if needed, to set the margins/borders etc. for the GuiItem.
-     */
-    void configure (MagicGUIBuilder& builder, const juce::ValueTree& node);
-
-    void reset();
-
-    void updateColours (MagicGUIBuilder& builder, const juce::ValueTree& node);
-
-    void drawDecorator (juce::Graphics& g, juce::Rectangle<int> bounds);
-
-    struct ClientBounds
+    enum Type
     {
-        juce::Rectangle<int> client;
-        juce::Rectangle<int> caption;
+        none = 0,
+        linear,
+        radial
     };
 
-    Decorator::ClientBounds getClientBounds (juce::Rectangle<int> overallBounds) const;
+    GradientBackground();
 
-    juce::String getTabCaption (const juce::String& defaultName) const;
-    juce::Colour getTabColour() const;
+    void drawGradient (juce::Graphics& g, juce::Rectangle<float> bounds, const juce::Path& shape);
+
+    void setup (juce::String text, const Stylesheet& stylesheet);
+
+    juce::String toString() const;
+
+    void clear();
+
+    bool isEmpty() const;
+
+    Type  type = none;
+    float angle = 0.0f;
+
+    std::map<float, juce::Colour> colours;
 
 private:
+    juce::ColourGradient          gradient;
 
-    juce::Colour backgroundColour { juce::Colours::darkgrey };
-    juce::Colour borderColour     { juce::Colours::silver };
-
-    float margin  = 5.0f;
-    float padding = 5.0f;
-    float border  = 0.0f;
-    float radius  = 5.0f;
-
-    juce::String        caption;
-    juce::Justification justification = juce::Justification::centredTop;
-    float               captionSize   = 20.0f;
-    juce::Colour        captionColour = juce::Colours::silver;
-
-    juce::String        tabCaption;
-    juce::Colour        tabColour;
-
-    juce::Image                 backgroundImage;
-    float                       backgroundAlpha = 1.0f;
-    juce::RectanglePlacement    backgroundPlacement = juce::RectanglePlacement::centred;
-    GradientBackground          backgroundGradient;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Decorator)
+    JUCE_LEAK_DETECTOR (GradientBackground)
 };
 
-}
+} // namespace foleys
