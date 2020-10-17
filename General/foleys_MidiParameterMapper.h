@@ -34,55 +34,32 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+#pragma once
 
-#include <stack>
-#include <numeric>
+namespace foleys
+{
 
-#if FOLEYS_ENABLE_BINARY_DATA
-#include "BinaryData.h"
-#endif
+/**
+ The MidiParameterMapper allows to connect CC values to RangedAudioParameters
+ */
+class MidiParameterMapper
+{
+public:
+    MidiParameterMapper() = default;
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicGUIState.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
-#include "General/foleys_Resources.cpp"
-#include "General/foleys_MagicJUCEFactories.cpp"
-#include "General/foleys_MidiParameterMapper.cpp"
+    void processMidiBuffer (juce::MidiBuffer& buffer);
 
-#include "Layout/foleys_GradientBackground.cpp"
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
-#include "Layout/foleys_GuiItem.cpp"
+    void mapMidiController (int cc, juce::RangedAudioParameter* parameter);
+    void unmapMidiController (int cc, const juce::String& parameterID);
+    void unmapAllMidiController (int cc);
 
-#include "Visualisers/foleys_MagicLevelSource.cpp"
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicAnalyser.cpp"
-#include "Visualisers/foleys_MagicOscilloscope.cpp"
+    int  getLastController() const;
 
-#include "Widgets/foleys_MagicLevelMeter.cpp"
-#include "Widgets/foleys_MagicPlotComponent.cpp"
-#include "Widgets/foleys_XYDragComponent.cpp"
-#include "Widgets/foleys_FileBrowserDialog.cpp"
+private:
+    std::atomic<int>                                        lastController { -1 };
+    std::map<int, std::vector<juce::RangedAudioParameter*>> midiMapper;
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
-#include "LookAndFeels/foleys_Skeuomorphic.cpp"
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiParameterMapper)
+};
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
-#include "Editor/foleys_Palette.cpp"
-
-#include "Editor/foleys_MultiListPropertyComponent.cpp"
-#include "Editor/foleys_StylePropertyComponent.cpp"
-#include "Editor/foleys_StyleTextPropertyComponent.cpp"
-#include "Editor/foleys_StyleBoolPropertyComponent.cpp"
-#include "Editor/foleys_StyleColourPropertyComponent.cpp"
-#include "Editor/foleys_StyleGradientPropertyComponent.cpp"
-#include "Editor/foleys_StyleChoicePropertyComponent.cpp"
-
-#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+} // namespace foleys

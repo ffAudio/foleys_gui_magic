@@ -198,11 +198,6 @@ void MagicGUIState::prepareToPlay (double sampleRate, int samplesPerBlockExpecte
             source->prepareToPlay (sampleRate, samplesPerBlockExpected);
 }
 
-void MagicGUIState::processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents)
-{
-    keyboardState.processNextMidiBuffer (buffer, 0, numSamples, injectIndirectEvents);
-}
-
 juce::MidiKeyboardState& MagicGUIState::getKeyboardState()
 {
     return keyboardState;

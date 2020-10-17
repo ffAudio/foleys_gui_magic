@@ -183,15 +183,6 @@ public:
     void prepareToPlay (double sampleRate, int samplesPerBlockExpected);
 
     /**
-     Send the midi data to the keyboard. This is only needed, if you added a MidiKeyboardComponent.
-
-     @param buffer the midi buffer from processBlock
-     @param numSamples the number of samples in the corresponding audio buffer
-     @param injectIndirectEvents if true key presses from the GUI are added to the midi stream
-     */
-    void processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents=true);
-
-    /**
      Registers background processing
      */
     void addBackgroundProcessing (MagicPlotSource* source);
@@ -212,9 +203,9 @@ private:
 
     juce::MidiKeyboardState keyboardState;
 
-    std::map<juce::Identifier, std::function<void()>>             triggers;
+    std::map<juce::Identifier, std::function<void()>>       triggers;
 
-    std::map<juce::Identifier, std::unique_ptr<ObjectBase>>       advertisedObjects;
+    std::map<juce::Identifier, std::unique_ptr<ObjectBase>> advertisedObjects;
 
     juce::TimeSliceThread visualiserThread { "Visualiser Thread" };
 

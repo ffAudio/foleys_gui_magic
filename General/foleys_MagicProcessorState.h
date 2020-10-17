@@ -119,6 +119,19 @@ public:
     juce::AudioProcessor* getProcessor() override;
     juce::AudioProcessorValueTreeState& getValueTreeState();
 
+    /**
+     Send the midi data to the keyboard. This is only needed, if you added a MidiKeyboardComponent.
+
+     @param buffer the midi buffer from processBlock
+     @param numSamples the number of samples in the corresponding audio buffer
+     @param injectIndirectEvents if true key presses from the GUI are added to the midi stream
+     */
+    void processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents=true);
+
+    void mapMidiController (int cc, const juce::String& parameterID);
+
+    int  getLastController() const;
+
 private:
 
     void addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const;
@@ -132,6 +145,8 @@ private:
 
     juce::AudioProcessor& processor;
     juce::AudioProcessorValueTreeState& state;
+
+    MidiParameterMapper midiMapper;
 
     std::atomic<double> bpm;
     std::atomic<int>    timeSigNumerator;

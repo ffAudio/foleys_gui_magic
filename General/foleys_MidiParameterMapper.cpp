@@ -34,55 +34,71 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+namespace foleys
+{
 
-#include <stack>
-#include <numeric>
+void MidiParameterMapper::processMidiBuffer (juce::MidiBuffer& buffer)
+{
+    for (auto m : buffer)
+    {
+        if (m.getMessage().isController())
+        {
+            auto number = m.getMessage().getControllerNumber();
+            auto value  = m.getMessage().getControllerValue() / 127.0f;
+            auto bin = midiMapper.find (number);
+            if (bin == midiMapper.end())
+                continue;
 
-#if FOLEYS_ENABLE_BINARY_DATA
-#include "BinaryData.h"
-#endif
+            for (auto p : bin->second)
+            {
+                p->beginChangeGesture();
+                p->setValueNotifyingHost (value);
+                p->endChangeGesture();
+            }
+            lastController.store (number);
+        }
+    }
+}
 
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicGUIState.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
-#include "General/foleys_Resources.cpp"
-#include "General/foleys_MagicJUCEFactories.cpp"
-#include "General/foleys_MidiParameterMapper.cpp"
+void MidiParameterMapper::mapMidiController (int cc, juce::RangedAudioParameter* parameter)
+{
+    if (parameter == nullptr)
+        return;
 
-#include "Layout/foleys_GradientBackground.cpp"
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
-#include "Layout/foleys_GuiItem.cpp"
+    auto bin = midiMapper.find (cc);
+    if (bin == midiMapper.end())
+    {
+        midiMapper [cc] = { parameter };
+    }
+    else
+    {
+        if (std::find (bin->second.begin(), bin->second.end(), parameter) != bin->second.end())
+            return;
 
-#include "Visualisers/foleys_MagicLevelSource.cpp"
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicAnalyser.cpp"
-#include "Visualisers/foleys_MagicOscilloscope.cpp"
+        bin->second.push_back (parameter);
+    }
+}
 
-#include "Widgets/foleys_MagicLevelMeter.cpp"
-#include "Widgets/foleys_MagicPlotComponent.cpp"
-#include "Widgets/foleys_XYDragComponent.cpp"
-#include "Widgets/foleys_FileBrowserDialog.cpp"
+void MidiParameterMapper::unmapMidiController (int cc, const juce::String& parameterID)
+{
+    auto bin = midiMapper.find (cc);
+    if (bin == midiMapper.end())
+        return;
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
-#include "LookAndFeels/foleys_Skeuomorphic.cpp"
+    auto& vector = bin->second;
+    vector.erase (std::remove_if (vector.begin(), vector.end(), [parameterID](auto& p) { return p->paramID == parameterID; }),
+                  vector.end());
+}
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+void MidiParameterMapper::unmapAllMidiController (int cc)
+{
+    midiMapper.erase (cc);
+}
 
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
-#include "Editor/foleys_Palette.cpp"
+int MidiParameterMapper::getLastController() const
+{
+    return lastController.load();
+}
 
-#include "Editor/foleys_MultiListPropertyComponent.cpp"
-#include "Editor/foleys_StylePropertyComponent.cpp"
-#include "Editor/foleys_StyleTextPropertyComponent.cpp"
-#include "Editor/foleys_StyleBoolPropertyComponent.cpp"
-#include "Editor/foleys_StyleColourPropertyComponent.cpp"
-#include "Editor/foleys_StyleGradientPropertyComponent.cpp"
-#include "Editor/foleys_StyleChoicePropertyComponent.cpp"
 
-#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+} // namespace foleys

@@ -151,6 +151,7 @@ namespace EditorColours
 
 #endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 
+#include "General/foleys_MidiParameterMapper.h"
 #include "General/foleys_MagicGUIState.h"
 #include "General/foleys_MagicProcessorState.h"
 #include "General/foleys_MagicGUIBuilder.h"

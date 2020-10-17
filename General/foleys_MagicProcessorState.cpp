@@ -183,6 +183,24 @@ void MagicProcessorState::setPlayheadUpdateFrequency (int frequency)
         stopTimer();
 }
 
+void MagicProcessorState::processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents)
+{
+    getKeyboardState().processNextMidiBuffer (buffer, 0, numSamples, injectIndirectEvents);
+
+    midiMapper.processMidiBuffer (buffer);
+}
+
+void MagicProcessorState::mapMidiController (int cc, const juce::String& parameterID)
+{
+    auto* parameter = state.getParameter (parameterID);
+    midiMapper.mapMidiController (cc, parameter);
+}
+
+int MagicProcessorState::getLastController() const
+{
+    return midiMapper.getLastController();
+}
+
 juce::ValueTree MagicProcessorState::createDefaultGUITree() const
 {
     juce::ValueTree rootNode {IDs::view, {{ IDs::id, IDs::root }}};
