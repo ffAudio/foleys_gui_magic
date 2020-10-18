@@ -640,6 +640,34 @@ private:
 
 //==============================================================================
 
+class MidiLearnItem : public GuiItem
+{
+public:
+    FOLEYS_DECLARE_GUI_FACTORY (MidiLearnItem)
+
+    MidiLearnItem (MagicGUIBuilder& builder, const juce::ValueTree& node) : GuiItem (builder, node)
+    {
+        if (auto* state = dynamic_cast<MagicProcessorState*>(&builder.getMagicState()))
+            midiLearn.setMagicProcessorState (state);
+
+        addAndMakeVisible (midiLearn);
+    }
+
+    void update() override {}
+
+    juce::Component* getWrappedComponent() override
+    {
+        return &midiLearn;
+    }
+
+private:
+    MidiLearnComponent midiLearn;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiLearnItem)
+};
+
+//==============================================================================
+
 class ListBoxItem : public GuiItem,
                     public juce::ChangeListener
 {
@@ -736,6 +764,7 @@ void MagicGUIBuilder::registerJUCEFactories()
     registerFactory (IDs::xyDragComponent, &XYDraggerItem::factory);
     registerFactory (IDs::keyboardComponent, &KeyboardItem::factory);
     registerFactory (IDs::meter, &LevelMeterItem::factory);
+    registerFactory ("MidiLearn", &MidiLearnItem::factory);
     registerFactory (IDs::listBox, &ListBoxItem::factory);
 
 #if JUCE_MODULE_AVAILABLE_juce_gui_extra && JUCE_WEB_BROWSER

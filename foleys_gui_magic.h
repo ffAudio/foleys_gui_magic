@@ -123,6 +123,7 @@
 #include "Widgets/foleys_MagicPlotComponent.h"
 #include "Widgets/foleys_XYDragComponent.h"
 #include "Widgets/foleys_FileBrowserDialog.h"
+#include "Widgets/foleys_MidiLearnComponent.h"
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 
