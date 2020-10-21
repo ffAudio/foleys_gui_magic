@@ -45,6 +45,8 @@ void MidiParameterMapper::processMidiBuffer (juce::MidiBuffer& buffer)
         {
             auto number = m.getMessage().getControllerNumber();
             auto value  = m.getMessage().getControllerValue() / 127.0f;
+            lastController.store (number);
+
             auto bin = midiMapper.find (number);
             if (bin == midiMapper.end())
                 continue;
@@ -55,7 +57,6 @@ void MidiParameterMapper::processMidiBuffer (juce::MidiBuffer& buffer)
                 p->setValueNotifyingHost (value);
                 p->endChangeGesture();
             }
-            lastController.store (number);
         }
     }
 }

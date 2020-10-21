@@ -113,7 +113,7 @@ public:
         if (valueID.isNotEmpty())
             slider.getValueObject().referTo (getMagicState().getPropertyAsValue (valueID));
 
-        auto paramID = configNode.getProperty (IDs::parameter, juce::String()).toString();
+        auto paramID = getControlledParameterID ({});
         if (paramID.isNotEmpty())
             attachment = getMagicState().createAttachment (paramID, slider);
     }
@@ -130,6 +130,11 @@ public:
         properties.push_back ({ configNode, pMaxValue, SettableProperty::Number, 2.0f, {} });
 
         return properties;
+    }
+
+    juce::String getControlledParameterID (juce::Point<int>) override
+    {
+        return configNode.getProperty (IDs::parameter, juce::String()).toString();
     }
 
     juce::Component* getWrappedComponent() override

@@ -393,17 +393,6 @@ juce::UndoManager& MagicGUIBuilder::getUndoManager()
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 
-void MagicGUIBuilder::attachToolboxToWindow (juce::Component& window)
-{
-    juce::Component::SafePointer<juce::Component> reference (&window);
-
-    juce::MessageManager::callAsync ([&, reference]
-                                     {
-                                         if (reference != nullptr)
-                                             magicToolBox = std::make_unique<ToolBox>(reference->getTopLevelComponent(), *this);
-                                     });
-}
-
 void MagicGUIBuilder::setEditMode (bool shouldEdit)
 {
     editMode = shouldEdit;
@@ -463,6 +452,17 @@ void MagicGUIBuilder::draggedItemOnto (juce::ValueTree dragged, juce::ValueTree 
         target.addChild (dragged, index, &undo);
     else
         targetParent.addChild (dragged, index, &undo);
+}
+
+void MagicGUIBuilder::attachToolboxToWindow (juce::Component& window)
+{
+    juce::Component::SafePointer<juce::Component> reference (&window);
+
+    juce::MessageManager::callAsync ([&, reference]
+                                     {
+                                         if (reference != nullptr)
+                                             magicToolBox = std::make_unique<ToolBox>(reference->getTopLevelComponent(), *this);
+                                     });
 }
 
 ToolBox& MagicGUIBuilder::getMagicToolBox()

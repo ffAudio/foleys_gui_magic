@@ -1,6 +1,11 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.2.6
+-----
+
+- Added Midi-Learn component to be dragged on knobs/controls
+
 1.2.5
 -----
 

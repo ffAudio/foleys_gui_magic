@@ -63,7 +63,9 @@ void MidiLearnComponent::mouseDrag (const juce::MouseEvent& event)
             return;
 
         if (auto* container = juce::DragAndDropContainer::findParentDragContainerFor (this))
-            container->startDragging ("CC:" + juce::String (cc), this);
+        {
+            container->startDragging (IDs::dragCC + juce::String (cc), this);
+        }
     }
 }
 

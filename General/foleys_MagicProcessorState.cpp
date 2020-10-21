@@ -87,7 +87,7 @@ void MagicProcessorState::addParametersToMenu (const juce::AudioProcessorParamet
     }
 }
 
-juce::AudioProcessorParameter* MagicProcessorState::getParameter (const juce::String& paramID)
+juce::RangedAudioParameter* MagicProcessorState::getParameter (const juce::String& paramID)
 {
     return state.getParameter (paramID);
 }

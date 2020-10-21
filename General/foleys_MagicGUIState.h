@@ -77,7 +77,7 @@ public:
      */
     virtual juce::StringArray getParameterNames() const;
 
-    virtual juce::AudioProcessorParameter* getParameter ([[maybe_unused]]const juce::String& paramID) { return nullptr; }
+    virtual juce::RangedAudioParameter* getParameter ([[maybe_unused]]const juce::String& paramID) { return nullptr; }
     virtual std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>   createAttachment ([[maybe_unused]]const juce::String& paramID, juce::Slider&) { return {}; }
     virtual std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> createAttachment ([[maybe_unused]]const juce::String& paramID, juce::ComboBox&) { return {}; }
     virtual std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   createAttachment ([[maybe_unused]]const juce::String& paramID, juce::Button&) { return {}; }
