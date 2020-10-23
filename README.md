@@ -3,7 +3,7 @@ foleys_gui_magic
 
 This module allows to create GUIs without any coding. It is created with a DOM model
 that provides a hierarchical information, and a CSS cascading stylesheet to define
-rules for the appeareance of the GUI.
+rules for the appearance of the GUI.
 
 There is a drag and drop editor to add GUI elements, and to connect to
 parameters of your AudioProcessorValueTreeState. Also an editor in the style of FireBug
@@ -42,7 +42,7 @@ AudioProcessorEditor* EqualizerExampleAudioProcessor::createEditor()
 Add Visualisations
 ------------------
 
-To add visualisations like an Analyser or Osciloscope to your plugin, add them in the constructor
+To add visualisations like an Analyser or Oscilloscope to your plugin, add them in the constructor
 to the `foleys::MagicPluginState`:
 
 ```
