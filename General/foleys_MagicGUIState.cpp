@@ -187,6 +187,7 @@ void MagicGUIState::addPropertiesToMenu (const juce::ValueTree& tree, juce::Comb
     menu.addItem (NEEDS_TRANS ("New property"), [&combo, t = path]
     {
         combo.setText (t + ":");
+        combo.setEditableText (true);
         combo.showEditor();
     });
 }

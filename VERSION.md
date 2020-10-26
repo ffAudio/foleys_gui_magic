@@ -5,6 +5,7 @@ PluginGuiMagic - Versions history
 -----
 
 - Added Midi-Learn component to be dragged on knobs/controls
+- Fixed missing text property for ToggleButton
 
 1.2.5
 -----

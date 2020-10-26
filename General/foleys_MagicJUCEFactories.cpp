@@ -321,6 +321,7 @@ public:
     std::vector<SettableProperty> getSettableProperties() const override
     {
         std::vector<SettableProperty> properties;
+        properties.push_back ({ configNode, pText, SettableProperty::Text, {}, {} });
         properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
         properties.push_back ({ configNode, pValue, SettableProperty::Choice, {}, magicBuilder.createPropertiesMenuLambda() });
         return properties;
