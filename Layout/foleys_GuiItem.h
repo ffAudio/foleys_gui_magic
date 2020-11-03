@@ -93,7 +93,7 @@ public:
      To allow multiple return values depending of the position where the drop arrived
      there is the drop position supplied.
      */
-    virtual juce::String getControlledParameterID ([[maybe_unused]]juce::Point<int> pos) { return {}; }
+    virtual juce::String getControlledParameterID (juce::Point<int>) { return {}; }
 
     /**
      Look up a value through the DOM and CSS

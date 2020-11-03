@@ -120,16 +120,16 @@ public:
 
     std::vector<SettableProperty> getSettableProperties() const override
     {
-        std::vector<SettableProperty> properties;
+        std::vector<SettableProperty> props;
 
-        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
-        properties.push_back ({ configNode, pSliderType, SettableProperty::Choice, pSliderTypes [0], magicBuilder.createChoicesMenuLambda (pSliderTypes) });
-        properties.push_back ({ configNode, pSliderTextBox, SettableProperty::Choice, pTextBoxPositions [2], magicBuilder.createChoicesMenuLambda (pTextBoxPositions) });
-        properties.push_back ({ configNode, pValue, SettableProperty::Choice, 1.0f, magicBuilder.createPropertiesMenuLambda() });
-        properties.push_back ({ configNode, pMinValue, SettableProperty::Number, 0.0f, {} });
-        properties.push_back ({ configNode, pMaxValue, SettableProperty::Number, 2.0f, {} });
+        props.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
+        props.push_back ({ configNode, pSliderType, SettableProperty::Choice, pSliderTypes [0], magicBuilder.createChoicesMenuLambda (pSliderTypes) });
+        props.push_back ({ configNode, pSliderTextBox, SettableProperty::Choice, pTextBoxPositions [2], magicBuilder.createChoicesMenuLambda (pTextBoxPositions) });
+        props.push_back ({ configNode, pValue, SettableProperty::Choice, 1.0f, magicBuilder.createPropertiesMenuLambda() });
+        props.push_back ({ configNode, pMinValue, SettableProperty::Number, 0.0f, {} });
+        props.push_back ({ configNode, pMaxValue, SettableProperty::Number, 2.0f, {} });
 
-        return properties;
+        return props;
     }
 
     juce::String getControlledParameterID (juce::Point<int>) override
@@ -201,9 +201,9 @@ public:
 
     std::vector<SettableProperty> getSettableProperties() const override
     {
-        std::vector<SettableProperty> properties;
-        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
-        return properties;
+        std::vector<SettableProperty> props;
+        props.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
+        return props;
     }
 
     juce::Component* getWrappedComponent() override
@@ -258,13 +258,13 @@ public:
 
     std::vector<SettableProperty> getSettableProperties() const override
     {
-        std::vector<SettableProperty> properties;
+        std::vector<SettableProperty> props;
 
-        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
-        properties.push_back ({ configNode, pText, SettableProperty::Text, {}, {} });
-        properties.push_back ({ configNode, pOnClick, SettableProperty::Choice, {}, magicBuilder.createTriggerMenuLambda() });
+        props.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
+        props.push_back ({ configNode, pText, SettableProperty::Text, {}, {} });
+        props.push_back ({ configNode, pOnClick, SettableProperty::Choice, {}, magicBuilder.createTriggerMenuLambda() });
 
-        return properties;
+        return props;
     }
 
     juce::Component* getWrappedComponent() override
@@ -320,11 +320,11 @@ public:
 
     std::vector<SettableProperty> getSettableProperties() const override
     {
-        std::vector<SettableProperty> properties;
-        properties.push_back ({ configNode, pText, SettableProperty::Text, {}, {} });
-        properties.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
-        properties.push_back ({ configNode, pValue, SettableProperty::Choice, {}, magicBuilder.createPropertiesMenuLambda() });
-        return properties;
+        std::vector<SettableProperty> props;
+        props.push_back ({ configNode, pText, SettableProperty::Text, {}, {} });
+        props.push_back ({ configNode, IDs::parameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
+        props.push_back ({ configNode, pValue, SettableProperty::Choice, {}, magicBuilder.createPropertiesMenuLambda() });
+        return props;
     }
 
     juce::Component* getWrappedComponent() override
@@ -392,13 +392,13 @@ public:
 
     std::vector<SettableProperty> getSettableProperties() const override
     {
-        std::vector<SettableProperty> properties;
-        properties.push_back ({ configNode, pText, SettableProperty::Text, {}, {} });
-        properties.push_back ({ configNode, pJustification, SettableProperty::Choice, {}, magicBuilder.createChoicesMenuLambda (getAllKeyNames (makeJustificationsChoices())) });
-        properties.push_back ({ configNode, pFontSize, SettableProperty::Number, {}, {} });
-        properties.push_back ({ configNode, pEditable, SettableProperty::Toggle, {}, {} });
-        properties.push_back ({ configNode, pValue, SettableProperty::Choice, {}, magicBuilder.createPropertiesMenuLambda() });
-        return properties;
+        std::vector<SettableProperty> props;
+        props.push_back ({ configNode, pText, SettableProperty::Text, {}, {} });
+        props.push_back ({ configNode, pJustification, SettableProperty::Choice, {}, magicBuilder.createChoicesMenuLambda (getAllKeyNames (makeJustificationsChoices())) });
+        props.push_back ({ configNode, pFontSize, SettableProperty::Number, {}, {} });
+        props.push_back ({ configNode, pEditable, SettableProperty::Toggle, {}, {} });
+        props.push_back ({ configNode, pValue, SettableProperty::Choice, {}, magicBuilder.createPropertiesMenuLambda() });
+        return props;
     }
 
     juce::Component* getWrappedComponent() override
@@ -451,10 +451,10 @@ public:
 
     std::vector<SettableProperty> getSettableProperties() const override
     {
-        std::vector<SettableProperty> properties;
-        properties.push_back ({ configNode, IDs::source, SettableProperty::Choice, {}, magicBuilder.createObjectsMenuLambda<MagicPlotSource>() });
-        properties.push_back ({ configNode, pDecay,      SettableProperty::Number, {}, {} });
-        return properties;
+        std::vector<SettableProperty> props;
+        props.push_back ({ configNode, IDs::source, SettableProperty::Choice, {}, magicBuilder.createObjectsMenuLambda<MagicPlotSource>() });
+        props.push_back ({ configNode, pDecay,      SettableProperty::Number, {}, {} });
+        return props;
     }
 
     juce::Component* getWrappedComponent() override
@@ -527,14 +527,14 @@ public:
 
     std::vector<SettableProperty> getSettableProperties() const override
     {
-        std::vector<SettableProperty> properties;
+        std::vector<SettableProperty> props;
 
-        properties.push_back ({ configNode, IDs::parameterX, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
-        properties.push_back ({ configNode, IDs::parameterY, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
-        properties.push_back ({ configNode, "right-click", SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
-        properties.push_back ({ configNode, pCrosshair, SettableProperty::Choice, {}, magicBuilder.createChoicesMenuLambda (pCrosshairTypes) });
+        props.push_back ({ configNode, IDs::parameterX, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
+        props.push_back ({ configNode, IDs::parameterY, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
+        props.push_back ({ configNode, "right-click", SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
+        props.push_back ({ configNode, pCrosshair, SettableProperty::Choice, {}, magicBuilder.createChoicesMenuLambda (pCrosshairTypes) });
 
-        return properties;
+        return props;
     }
 
     juce::Component* getWrappedComponent() override
@@ -628,9 +628,9 @@ public:
 
     std::vector<SettableProperty> getSettableProperties() const override
     {
-        std::vector<SettableProperty> properties;
-        properties.push_back ({ configNode, IDs::source, SettableProperty::Choice, {}, magicBuilder.createObjectsMenuLambda<MagicLevelSource>() });
-        return properties;
+        std::vector<SettableProperty> props;
+        props.push_back ({ configNode, IDs::source, SettableProperty::Choice, {}, magicBuilder.createObjectsMenuLambda<MagicLevelSource>() });
+        return props;
     }
 
     juce::Component* getWrappedComponent() override
@@ -708,9 +708,9 @@ public:
 
     std::vector<SettableProperty> getSettableProperties() const override
     {
-        std::vector<SettableProperty> properties;
-        properties.push_back ({ configNode, "list-box-model", SettableProperty::Choice, {}, magicBuilder.createObjectsMenuLambda<juce::ListBoxModel>() });
-        return properties;
+        std::vector<SettableProperty> props;
+        props.push_back ({ configNode, "list-box-model", SettableProperty::Choice, {}, magicBuilder.createObjectsMenuLambda<juce::ListBoxModel>() });
+        return props;
     }
 
     juce::Component* getWrappedComponent() override
