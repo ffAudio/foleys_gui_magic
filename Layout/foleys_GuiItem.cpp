@@ -359,11 +359,11 @@ void GuiItem::itemDropped (const juce::DragAndDropTarget::SourceDetails &dragSou
         magicBuilder.draggedItemOnto (dragged, configNode);
         return;
     }
-#endif
 
     auto node = juce::ValueTree::fromXml (dragSourceDetails.description.toString());
     if (node.isValid())
         magicBuilder.draggedItemOnto (node, configNode);
+#endif
 }
 
 

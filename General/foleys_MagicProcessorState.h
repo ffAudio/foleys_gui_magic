@@ -120,7 +120,7 @@ public:
     juce::AudioProcessorValueTreeState& getValueTreeState();
 
     /**
-     Send the midi data to the keyboard. This is only needed, if you added a MidiKeyboardComponent.
+     Send the midi data to the keyboard and to the MidiLearn mapper.
 
      @param buffer the midi buffer from processBlock
      @param numSamples the number of samples in the corresponding audio buffer
