@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2020 Foleys Finest Audio Ltd. - Daniel Walz
+    Copyright (c) 2020 Foleys Finest Audio Ltd. - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -32,51 +32,76 @@
     OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
     OF THE POSSIBILITY OF SUCH DAMAGE.
  ==============================================================================
- */
+*/
 
-#pragma once
 
 namespace foleys
 {
 
-/**
- The MidiParameterMapper allows to connect CC values to RangedAudioParameters
- */
-class MidiParameterMapper  : private juce::ValueTree::Listener
+ApplicationSettings::ApplicationSettings()
 {
-public:
-    MidiParameterMapper();
-    ~MidiParameterMapper() override;
+    settings.addListener (this);
+}
 
-    void processMidiBuffer (juce::MidiBuffer& buffer);
+ApplicationSettings::~ApplicationSettings()
+{
+    settings.removeListener (this);
+}
 
-    void mapMidiController (int cc, const juce::String& parameterID);
-    void unmapMidiController (int cc, const juce::String& parameterID);
-    void unmapAllMidiController (int cc);
+void ApplicationSettings::setFileName (juce::File file)
+{
+    if (file == settingsFile)
+        return;
 
-    int  getLastController() const;
+    settingsFile = file;
+    load();
+}
 
-    void setAudioProcessorValueTreeState (juce::AudioProcessorValueTreeState* state);
+void ApplicationSettings::load()
+{
+    juce::InterProcessLock lock (settingsFile.getFileName() + ".lock");
 
-private:
-    void recreateMidiMapper();
+    auto stream = settingsFile.createInputStream();
+    if (stream.get() == nullptr)
+        return;
 
-    void valueTreeChildAdded (juce::ValueTree& parentTree,
-                              juce::ValueTree& childWhichHasBeenAdded) override;
-    void valueTreeChildRemoved (juce::ValueTree& parentTree, juce::ValueTree&, int) override;
-    void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override;
+    auto tree = juce::ValueTree::fromXml (stream->readEntireStreamAsString());
+    if (! tree.isValid())
+        return;
 
+    settings.copyPropertiesAndChildrenFrom (tree, nullptr);
+}
 
-    using MidiMapping=std::map<int, std::vector<juce::RangedAudioParameter*>>;
+void ApplicationSettings::save()
+{
+    juce::InterProcessLock lock (settingsFile.getFileName() + ".lock");
 
-    SharedApplicationSettings           settings;
-    juce::CriticalSection               mappingLock;
+    auto parent = settingsFile.getParentDirectory();
+    parent.createDirectory();
 
-    juce::AudioProcessorValueTreeState* treeState = nullptr;
-    std::atomic<int>                    lastController { -1 };
-    MidiMapping                         midiMapper;
+    auto stream = settingsFile.createOutputStream();
+    if (stream.get() == nullptr)
+        return;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiParameterMapper)
-};
+    stream->setPosition (0);
+    stream->truncate();
+    stream->writeString (settings.toXmlString());
+}
 
-} // namespace foleys
+void ApplicationSettings::valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&)
+{
+    save();
+}
+
+void ApplicationSettings::valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int)
+{
+    save();
+}
+
+void ApplicationSettings::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
+{
+    save();
+}
+
+}
+

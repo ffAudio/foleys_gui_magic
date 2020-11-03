@@ -73,6 +73,11 @@ public:
     virtual juce::ValueTree getPropertyRoot() const;
 
     /**
+     Set a file to save common settings for all instances
+     */
+    void setApplicationSettingsFile (juce::File file);
+
+    /**
      Returns the IDs of AudioProcessorParameters for selection
      */
     virtual juce::StringArray getParameterNames() const;
@@ -198,6 +203,11 @@ private:
 
     void addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const;
     void addPropertiesToMenu (const juce::ValueTree& tree, juce::ComboBox& combo, juce::PopupMenu& menu, const juce::String& path) const;
+
+    /**
+     The ApplicationSettings is used for settings e.g. over many plugin instances.
+     */
+    SharedApplicationSettings settings;
 
     juce::ValueTree propertyRoot { "Properties" };
 

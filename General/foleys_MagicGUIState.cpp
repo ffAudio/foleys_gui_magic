@@ -72,6 +72,11 @@ juce::ValueTree MagicGUIState::getPropertyRoot() const
     return propertyRoot;
 }
 
+void MagicGUIState::setApplicationSettingsFile (juce::File file)
+{
+    settings->setFileName (file);
+}
+
 juce::ValueTree MagicGUIState::createDefaultStylesheet() const
 {
     return Stylesheet::createDefaultStyle();

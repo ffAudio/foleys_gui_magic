@@ -37,8 +37,27 @@
 namespace foleys
 {
 
+namespace IDs
+{
+    static juce::String mappings  { "mappings" };
+    static juce::String mapping   { "mapping" };
+    static juce::String cc        { "cc" };
+}
+
+MidiParameterMapper::MidiParameterMapper()
+{
+    settings->settings.addListener (this);
+}
+
+MidiParameterMapper::~MidiParameterMapper()
+{
+    settings->settings.removeListener (this);
+}
+
 void MidiParameterMapper::processMidiBuffer (juce::MidiBuffer& buffer)
 {
+    auto isLocked = mappingLock.tryEnter();
+
     for (auto m : buffer)
     {
         if (m.getMessage().isController())
@@ -47,53 +66,66 @@ void MidiParameterMapper::processMidiBuffer (juce::MidiBuffer& buffer)
             auto value  = m.getMessage().getControllerValue() / 127.0f;
             lastController.store (number);
 
-            auto bin = midiMapper.find (number);
-            if (bin == midiMapper.end())
-                continue;
-
-            for (auto p : bin->second)
+            if (isLocked)
             {
-                p->beginChangeGesture();
-                p->setValueNotifyingHost (value);
-                p->endChangeGesture();
+                auto bin = midiMapper.find (number);
+                if (bin == midiMapper.end())
+                    continue;
+
+                for (auto p : bin->second)
+                {
+                    p->beginChangeGesture();
+                    p->setValueNotifyingHost (value);
+                    p->endChangeGesture();
+                }
             }
         }
     }
+
+    if (isLocked)
+        mappingLock.exit();
 }
 
-void MidiParameterMapper::mapMidiController (int cc, juce::RangedAudioParameter* parameter)
+void MidiParameterMapper::mapMidiController (int cc, const juce::String& parameterID)
 {
-    if (parameter == nullptr)
-        return;
+    auto mappings = settings->settings.getOrCreateChildWithName (IDs::mappings, nullptr);
 
-    auto bin = midiMapper.find (cc);
-    if (bin == midiMapper.end())
-    {
-        midiMapper [cc] = { parameter };
-    }
-    else
-    {
-        if (std::find (bin->second.begin(), bin->second.end(), parameter) != bin->second.end())
-            return;
-
-        bin->second.push_back (parameter);
-    }
+    juce::ValueTree node { IDs::mapping, {{IDs::cc, cc}, {IDs::parameter, parameterID}} };
+    mappings.appendChild (node, nullptr);
 }
 
 void MidiParameterMapper::unmapMidiController (int cc, const juce::String& parameterID)
 {
-    auto bin = midiMapper.find (cc);
-    if (bin == midiMapper.end())
+    auto mappings = settings->settings.getChildWithName (IDs::mappings);
+    if (! mappings.isValid())
         return;
 
-    auto& vector = bin->second;
-    vector.erase (std::remove_if (vector.begin(), vector.end(), [parameterID](auto& p) { return p->paramID == parameterID; }),
-                  vector.end());
+    int index = 0;
+    while (index < mappings.getNumChildren())
+    {
+        const auto& child = mappings.getChild (index);
+        if (int (child.getProperty (IDs::cc, -1)) == cc && child.getProperty (IDs::parameter, juce::String()).toString() == parameterID)
+            mappings.removeChild (child, nullptr);
+        else
+            ++index;
+    }
 }
 
 void MidiParameterMapper::unmapAllMidiController (int cc)
 {
-    midiMapper.erase (cc);
+    auto mappings = settings->settings.getChildWithName (IDs::mappings);
+    if (! mappings.isValid())
+        return;
+
+    int index = 0;
+    while (index < mappings.getNumChildren())
+    {
+        const auto& child = mappings.getChild (index);
+        if (int (child.getProperty (IDs::cc, -1)) == cc)
+            mappings.removeChild (child, nullptr);
+        else
+            ++index;
+    }
 }
 
 int MidiParameterMapper::getLastController() const
@@ -101,5 +133,53 @@ int MidiParameterMapper::getLastController() const
     return lastController.load();
 }
 
+void MidiParameterMapper::setAudioProcessorValueTreeState (juce::AudioProcessorValueTreeState* state)
+{
+    treeState = state;
+}
+
+void MidiParameterMapper::recreateMidiMapper()
+{
+    if (treeState == nullptr)
+        return;
+
+    auto mappings = settings->settings.getChildWithName (IDs::mappings);
+    if (! mappings.isValid())
+        return;
+
+    MidiMapping newMapping;
+
+    for (auto item : mappings)
+    {
+        int  ccNum   = item.getProperty (IDs::cc, -1);
+        auto paramID = item.getProperty (IDs::parameter, juce::String()).toString();
+        if (ccNum < 1 || paramID.isEmpty())
+            continue;
+
+        auto* parameter = treeState->getParameter (paramID);
+        if (parameter == nullptr)
+            continue;
+
+        newMapping [ccNum].push_back (parameter);
+    }
+
+    juce::ScopedLock lock (mappingLock);
+    midiMapper = newMapping;
+}
+
+void MidiParameterMapper::valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&)
+{
+    recreateMidiMapper();
+}
+
+void MidiParameterMapper::valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int)
+{
+    recreateMidiMapper();
+}
+
+void MidiParameterMapper::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
+{
+    recreateMidiMapper();
+}
 
 } // namespace foleys

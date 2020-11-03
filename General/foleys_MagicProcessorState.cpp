@@ -44,6 +44,7 @@ MagicProcessorState::MagicProcessorState (juce::AudioProcessor& processorToUse,
     processor (processorToUse),
     state (stateToUse)
 {
+    midiMapper.setAudioProcessorValueTreeState (&state);
 }
 
 juce::ValueTree MagicProcessorState::getPropertyRoot() const
@@ -138,7 +139,7 @@ bool MagicProcessorState::getLastEditorSize (int& width, int& height)
 
 void MagicProcessorState::getStateInformation (juce::MemoryBlock& destData)
 {
-    juce::MemoryOutputStream stream(destData, false);
+    juce::MemoryOutputStream stream (destData, false);
     state.state.writeToStream (stream);
 }
 
@@ -192,8 +193,7 @@ void MagicProcessorState::processMidiBuffer (juce::MidiBuffer& buffer, int numSa
 
 void MagicProcessorState::mapMidiController (int cc, const juce::String& parameterID)
 {
-    auto* parameter = state.getParameter (parameterID);
-    midiMapper.mapMidiController (cc, parameter);
+    midiMapper.mapMidiController (cc, parameterID);
 }
 
 int MagicProcessorState::getLastController() const

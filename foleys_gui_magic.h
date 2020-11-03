@@ -94,6 +94,7 @@
 #endif
 
 #include "General/foleys_StringDefinitions.h"
+#include "General/foleys_ApplicationSettings.h"
 #include "General/foleys_SettableProperties.h"
 #include "General/foleys_Resources.h"
 

@@ -43,6 +43,7 @@
 #include "BinaryData.h"
 #endif
 
+#include "General/foleys_ApplicationSettings.cpp"
 #include "General/foleys_MagicGUIBuilder.cpp"
 #include "General/foleys_MagicPluginEditor.cpp"
 #include "General/foleys_MagicGUIState.cpp"
