@@ -34,57 +34,45 @@
  ==============================================================================
  */
 
-#include "foleys_gui_magic.h"
+namespace foleys
+{
 
-#include <stack>
-#include <numeric>
+void MidiLearnComponent::setMagicProcessorState (MagicProcessorState* state)
+{
+    processorState = state;
+    startTimerHz (4);
+}
 
-#if FOLEYS_ENABLE_BINARY_DATA
-#include "BinaryData.h"
-#endif
+void MidiLearnComponent::paint (juce::Graphics& g)
+{
+    if (processorState)
+    {
+        auto cc = processorState->getLastController();
+        g.setColour (juce::Colours::silver);
+        g.drawFittedText ("CC: " + (cc > 0 ? juce::String (cc) : "unknown"),
+                          getLocalBounds(), juce::Justification::centred, 1);
+    }
+}
 
-#include "General/foleys_ApplicationSettings.cpp"
-#include "General/foleys_MagicGUIBuilder.cpp"
-#include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicGUIState.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
-#include "General/foleys_Resources.cpp"
-#include "General/foleys_MagicJUCEFactories.cpp"
-#include "General/foleys_MidiParameterMapper.cpp"
+void MidiLearnComponent::mouseDrag (const juce::MouseEvent& event)
+{
+    if (processorState && event.mouseWasDraggedSinceMouseDown())
+    {
+        auto cc = processorState->getLastController();
+        if (cc < 1)
+            return;
 
-#include "Layout/foleys_GradientBackground.cpp"
-#include "Layout/foleys_Stylesheet.cpp"
-#include "Layout/foleys_Decorator.cpp"
-#include "Layout/foleys_Container.cpp"
-#include "Layout/foleys_GuiItem.cpp"
+        if (auto* container = juce::DragAndDropContainer::findParentDragContainerFor (this))
+        {
+            container->startDragging (IDs::dragCC + juce::String (cc), this);
+        }
+    }
+}
 
-#include "Visualisers/foleys_MagicLevelSource.cpp"
-#include "Visualisers/foleys_MagicFilterPlot.cpp"
-#include "Visualisers/foleys_MagicAnalyser.cpp"
-#include "Visualisers/foleys_MagicOscilloscope.cpp"
+void MidiLearnComponent::timerCallback()
+{
+    repaint();
+}
 
-#include "Widgets/foleys_MagicLevelMeter.cpp"
-#include "Widgets/foleys_MagicPlotComponent.cpp"
-#include "Widgets/foleys_XYDragComponent.cpp"
-#include "Widgets/foleys_FileBrowserDialog.cpp"
-#include "Widgets/foleys_MidiLearnComponent.cpp"
 
-#include "LookAndFeels/foleys_LookAndFeel.cpp"
-#include "LookAndFeels/foleys_Skeuomorphic.cpp"
-
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-
-#include "Editor/foleys_ToolBox.cpp"
-#include "Editor/foleys_GUITreeEditor.cpp"
-#include "Editor/foleys_PropertiesEditor.cpp"
-#include "Editor/foleys_Palette.cpp"
-
-#include "Editor/foleys_MultiListPropertyComponent.cpp"
-#include "Editor/foleys_StylePropertyComponent.cpp"
-#include "Editor/foleys_StyleTextPropertyComponent.cpp"
-#include "Editor/foleys_StyleBoolPropertyComponent.cpp"
-#include "Editor/foleys_StyleColourPropertyComponent.cpp"
-#include "Editor/foleys_StyleGradientPropertyComponent.cpp"
-#include "Editor/foleys_StyleChoicePropertyComponent.cpp"
-
-#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+}

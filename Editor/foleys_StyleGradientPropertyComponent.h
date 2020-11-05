@@ -57,6 +57,7 @@ private:
     public:
         GradientPanel (GradientBackground& gradient);
         void resized() override;
+        void paint (juce::Graphics& g) override;
 
         void addChangeListener (juce::ChangeListener*);
         void removeChangeListener (juce::ChangeListener*);
@@ -113,7 +114,7 @@ private:
 
         juce::TextButton            close { "X" };
         juce::ComboBox              typeSelect;
-        juce::Slider                angle { juce::Slider::LinearHorizontal, juce::Slider::TextBoxRight };
+        juce::Slider                angle { juce::Slider::LinearHorizontal, juce::Slider::TextBoxLeft };
         ColourSelectorWithSwatches  selector;
         GradientStopSelect          stopSelect;
 

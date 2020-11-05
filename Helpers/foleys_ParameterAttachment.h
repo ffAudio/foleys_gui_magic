@@ -159,7 +159,8 @@ public:
             triggerAsyncUpdate();
     }
 
-    void parameterGestureChanged ([[maybe_unused]]int parameterIndex, [[maybe_unused]]bool gestureIsStarting) override {}
+    void parameterGestureChanged (int parameterIndex, bool gestureIsStarting) override
+    { juce::ignoreUnused (parameterIndex); juce::ignoreUnused (gestureIsStarting); }
 
     void handleAsyncUpdate() override
     {

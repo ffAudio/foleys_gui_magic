@@ -265,6 +265,43 @@ void GuiItem::valueTreeParentChanged (juce::ValueTree& treeThatChanged)
     }
 }
 
+void GuiItem::itemDragEnter (const juce::DragAndDropTarget::SourceDetails& details)
+{
+    if (details.description.toString().startsWith (IDs::dragCC))
+    {
+        auto paramID = getControlledParameterID (details.localPosition);
+        if (paramID.isNotEmpty())
+            if (auto* parameter = magicBuilder.getMagicState().getParameter (paramID))
+                highlight = parameter->getName (64);
+
+        repaint();
+    }
+}
+
+void GuiItem::itemDragExit (const juce::DragAndDropTarget::SourceDetails& details)
+{
+    juce::ignoreUnused (details);
+    highlight.clear();
+    repaint();
+}
+
+void GuiItem::paintOverChildren (juce::Graphics& g)
+{
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    if (magicBuilder.isEditModeOn() && magicBuilder.getSelectedNode() == configNode)
+    {
+        g.setColour (juce::Colours::orange.withAlpha (0.5f));
+        g.fillRoundedRectangle (getLocalBounds().toFloat(), 5.0f);
+    }
+#endif
+
+    if (highlight.isNotEmpty())
+    {
+        g.setColour (juce::Colours::red);
+        g.drawFittedText (highlight, getLocalBounds(), juce::Justification::centred, 3);
+    }
+}
+
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 
 void GuiItem::setEditMode (bool shouldEdit)
@@ -273,15 +310,6 @@ void GuiItem::setEditMode (bool shouldEdit)
 
     if (auto* component = getWrappedComponent())
         component->setInterceptsMouseClicks (!shouldEdit, !shouldEdit);
-}
-
-void GuiItem::paintOverChildren (juce::Graphics& g)
-{
-    if (magicBuilder.isEditModeOn() && magicBuilder.getSelectedNode() == configNode)
-    {
-        g.setColour (juce::Colours::orange.withAlpha (0.5f));
-        g.fillRoundedRectangle (getLocalBounds().toFloat(), 5.0f);
-    }
 }
 
 void GuiItem::mouseDown (const juce::MouseEvent&)
@@ -297,6 +325,7 @@ void GuiItem::mouseDrag (const juce::MouseEvent& event)
         container->startDragging (IDs::dragSelected, this);
     }
 }
+#endif
 
 bool GuiItem::isInterestedInDragSource (const juce::DragAndDropTarget::SourceDetails &)
 {
@@ -305,6 +334,22 @@ bool GuiItem::isInterestedInDragSource (const juce::DragAndDropTarget::SourceDet
 
 void GuiItem::itemDropped (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails)
 {
+    highlight.clear();
+
+    auto dragString = dragSourceDetails.description.toString();
+    if (dragString.startsWith (IDs::dragCC))
+    {
+        auto number = dragString.substring (IDs::dragCC.length()).getIntValue();
+        auto parameterID = getControlledParameterID (dragSourceDetails.localPosition);
+        if (number > 0 && parameterID.isNotEmpty())
+            if (auto* procState = dynamic_cast<MagicProcessorState*>(&magicBuilder.getMagicState()))
+                procState->mapMidiController (number, parameterID);
+
+        repaint();
+        return;
+    }
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     if (dragSourceDetails.description == IDs::dragSelected)
     {
         auto dragged = magicBuilder.getSelectedNode();
@@ -312,13 +357,14 @@ void GuiItem::itemDropped (const juce::DragAndDropTarget::SourceDetails &dragSou
             return;
 
         magicBuilder.draggedItemOnto (dragged, configNode);
+        return;
     }
 
     auto node = juce::ValueTree::fromXml (dragSourceDetails.description.toString());
     if (node.isValid())
         magicBuilder.draggedItemOnto (node, configNode);
-}
 #endif
+}
 
 
 }

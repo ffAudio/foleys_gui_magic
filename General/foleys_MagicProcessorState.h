@@ -106,7 +106,7 @@ public:
      */
     void setStateInformation (const void* data, int sizeInBytes, juce::AudioProcessorEditor* editor = nullptr);
 
-    juce::AudioProcessorParameter* getParameter (const juce::String& paramID) override;
+    juce::RangedAudioParameter* getParameter (const juce::String& paramID) override;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>   createAttachment (const juce::String& paramID, juce::Slider& slider) override;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> createAttachment (const juce::String& paramID, juce::ComboBox& combobox) override;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   createAttachment (const juce::String& paramID, juce::Button& button) override;
@@ -118,6 +118,19 @@ public:
 
     juce::AudioProcessor* getProcessor() override;
     juce::AudioProcessorValueTreeState& getValueTreeState();
+
+    /**
+     Send the midi data to the keyboard and to the MidiLearn mapper.
+
+     @param buffer the midi buffer from processBlock
+     @param numSamples the number of samples in the corresponding audio buffer
+     @param injectIndirectEvents if true key presses from the GUI are added to the midi stream
+     */
+    void processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents=true);
+
+    void mapMidiController (int cc, const juce::String& parameterID);
+
+    int  getLastController() const;
 
 private:
 
@@ -132,6 +145,8 @@ private:
 
     juce::AudioProcessor& processor;
     juce::AudioProcessorValueTreeState& state;
+
+    MidiParameterMapper midiMapper;
 
     std::atomic<double> bpm;
     std::atomic<int>    timeSigNumerator;

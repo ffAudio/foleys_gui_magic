@@ -72,6 +72,11 @@ juce::ValueTree MagicGUIState::getPropertyRoot() const
     return propertyRoot;
 }
 
+void MagicGUIState::setApplicationSettingsFile (juce::File file)
+{
+    settings->setFileName (file);
+}
+
 juce::ValueTree MagicGUIState::createDefaultStylesheet() const
 {
     return Stylesheet::createDefaultStyle();
@@ -187,6 +192,7 @@ void MagicGUIState::addPropertiesToMenu (const juce::ValueTree& tree, juce::Comb
     menu.addItem (NEEDS_TRANS ("New property"), [&combo, t = path]
     {
         combo.setText (t + ":");
+        combo.setEditableText (true);
         combo.showEditor();
     });
 }
@@ -196,11 +202,6 @@ void MagicGUIState::prepareToPlay (double sampleRate, int samplesPerBlockExpecte
     for (auto& plot : advertisedObjects)
         if (auto* source = dynamic_cast<MagicPlotSource*>(plot.second.get()))
             source->prepareToPlay (sampleRate, samplesPerBlockExpected);
-}
-
-void MagicGUIState::processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents)
-{
-    keyboardState.processNextMidiBuffer (buffer, 0, numSamples, injectIndirectEvents);
 }
 
 juce::MidiKeyboardState& MagicGUIState::getKeyboardState()

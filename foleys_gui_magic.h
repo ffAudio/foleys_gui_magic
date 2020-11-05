@@ -37,7 +37,7 @@
 
     ID:            foleys_gui_magic
     vendor:        Foleys Finest Audio Ltd.
-    version:       1.2.5
+    version:       1.2.6
     name:          Foleys GUI magic
     description:   This module allows to create GUI with a drag and drop editor
     dependencies:  juce_core, juce_audio_basics, juce_audio_devices, juce_audio_formats,
@@ -94,6 +94,7 @@
 #endif
 
 #include "General/foleys_StringDefinitions.h"
+#include "General/foleys_ApplicationSettings.h"
 #include "General/foleys_SettableProperties.h"
 #include "General/foleys_Resources.h"
 
@@ -123,6 +124,7 @@
 #include "Widgets/foleys_MagicPlotComponent.h"
 #include "Widgets/foleys_XYDragComponent.h"
 #include "Widgets/foleys_FileBrowserDialog.h"
+#include "Widgets/foleys_MidiLearnComponent.h"
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 
@@ -151,6 +153,7 @@ namespace EditorColours
 
 #endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 
+#include "General/foleys_MidiParameterMapper.h"
 #include "General/foleys_MagicGUIState.h"
 #include "General/foleys_MagicProcessorState.h"
 #include "General/foleys_MagicGUIBuilder.h"

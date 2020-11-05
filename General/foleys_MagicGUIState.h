@@ -73,14 +73,23 @@ public:
     virtual juce::ValueTree getPropertyRoot() const;
 
     /**
+     Set a file to save common settings for all instances
+     */
+    void setApplicationSettingsFile (juce::File file);
+
+    /**
      Returns the IDs of AudioProcessorParameters for selection
      */
     virtual juce::StringArray getParameterNames() const;
 
-    virtual juce::AudioProcessorParameter* getParameter ([[maybe_unused]]const juce::String& paramID) { return nullptr; }
-    virtual std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>   createAttachment ([[maybe_unused]]const juce::String& paramID, juce::Slider&) { return {}; }
-    virtual std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> createAttachment ([[maybe_unused]]const juce::String& paramID, juce::ComboBox&) { return {}; }
-    virtual std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   createAttachment ([[maybe_unused]]const juce::String& paramID, juce::Button&) { return {}; }
+    virtual juce::RangedAudioParameter* getParameter ([[maybe_unused]]const juce::String& paramID)
+    { juce::ignoreUnused(paramID); return nullptr; }
+    virtual std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>   createAttachment (const juce::String& paramID, juce::Slider&)
+    { juce::ignoreUnused(paramID); return nullptr; }
+    virtual std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> createAttachment (const juce::String& paramID, juce::ComboBox&)
+    { juce::ignoreUnused(paramID); return nullptr; }
+    virtual std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   createAttachment (const juce::String& paramID, juce::Button&)
+    { juce::ignoreUnused(paramID); return nullptr; }
 
     /**
      Override this method to create a default Stylesheet, in case nothing was loaded
@@ -183,15 +192,6 @@ public:
     void prepareToPlay (double sampleRate, int samplesPerBlockExpected);
 
     /**
-     Send the midi data to the keyboard. This is only needed, if you added a MidiKeyboardComponent.
-
-     @param buffer the midi buffer from processBlock
-     @param numSamples the number of samples in the corresponding audio buffer
-     @param injectIndirectEvents if true key presses from the GUI are added to the midi stream
-     */
-    void processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents=true);
-
-    /**
      Registers background processing
      */
     void addBackgroundProcessing (MagicPlotSource* source);
@@ -208,13 +208,18 @@ private:
     void addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const;
     void addPropertiesToMenu (const juce::ValueTree& tree, juce::ComboBox& combo, juce::PopupMenu& menu, const juce::String& path) const;
 
+    /**
+     The ApplicationSettings is used for settings e.g. over many plugin instances.
+     */
+    SharedApplicationSettings settings;
+
     juce::ValueTree propertyRoot { "Properties" };
 
     juce::MidiKeyboardState keyboardState;
 
-    std::map<juce::Identifier, std::function<void()>>             triggers;
+    std::map<juce::Identifier, std::function<void()>>       triggers;
 
-    std::map<juce::Identifier, std::unique_ptr<ObjectBase>>       advertisedObjects;
+    std::map<juce::Identifier, std::unique_ptr<ObjectBase>> advertisedObjects;
 
     juce::TimeSliceThread visualiserThread { "Visualiser Thread" };
 

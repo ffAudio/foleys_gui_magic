@@ -49,10 +49,8 @@ class MagicGUIState;
  */
 class GuiItem   : public juce::Component,
                   private juce::Value::Listener,
-                  private juce::ValueTree::Listener
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-                , public juce::DragAndDropTarget
-#endif
+                  private juce::ValueTree::Listener,
+                  public juce::DragAndDropTarget
 {
 public:
     GuiItem (MagicGUIBuilder& builder, juce::ValueTree node);
@@ -89,6 +87,13 @@ public:
      Return the names of configurable colours
      */
     juce::StringArray getColourNames() const;
+
+    /**
+     Returns the parameterID that is controlled from this component.
+     To allow multiple return values depending of the position where the drop arrived
+     there is the drop position supplied.
+     */
+    virtual juce::String getControlledParameterID (juce::Point<int>) { return {}; }
 
     /**
      Look up a value through the DOM and CSS
@@ -133,20 +138,25 @@ public:
 
     juce::FlexItem& getFlexItem() { return flexItem; }
 
+    void itemDragEnter (const juce::DragAndDropTarget::SourceDetails& details) override;
+    void itemDragExit (const juce::DragAndDropTarget::SourceDetails& details) override;
+
+    void paintOverChildren (juce::Graphics& g) override;
+
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+
     /**
      This method sets the GUI in edit mode, that allows to drag the components around.
      */
     virtual void setEditMode (bool shouldEdit);
 
-    void paintOverChildren (juce::Graphics& g) override;
     void mouseDown (const juce::MouseEvent& event) override;
-
     void mouseDrag (const juce::MouseEvent& event) override;
+
+#endif
 
     bool isInterestedInDragSource (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails) override;
     void itemDropped (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails) override;
-#endif
 
     MagicGUIBuilder& magicBuilder;
 
@@ -181,6 +191,8 @@ private:
     void configureComponent();
 
     juce::Value     visibility { true };
+
+    juce::String    highlight;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GuiItem)
 };

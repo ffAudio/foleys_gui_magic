@@ -44,6 +44,7 @@ MagicProcessorState::MagicProcessorState (juce::AudioProcessor& processorToUse,
     processor (processorToUse),
     state (stateToUse)
 {
+    midiMapper.setAudioProcessorValueTreeState (&state);
 }
 
 juce::ValueTree MagicProcessorState::getPropertyRoot() const
@@ -87,7 +88,7 @@ void MagicProcessorState::addParametersToMenu (const juce::AudioProcessorParamet
     }
 }
 
-juce::AudioProcessorParameter* MagicProcessorState::getParameter (const juce::String& paramID)
+juce::RangedAudioParameter* MagicProcessorState::getParameter (const juce::String& paramID)
 {
     return state.getParameter (paramID);
 }
@@ -138,7 +139,7 @@ bool MagicProcessorState::getLastEditorSize (int& width, int& height)
 
 void MagicProcessorState::getStateInformation (juce::MemoryBlock& destData)
 {
-    juce::MemoryOutputStream stream(destData, false);
+    juce::MemoryOutputStream stream (destData, false);
     state.state.writeToStream (stream);
 }
 
@@ -181,6 +182,23 @@ void MagicProcessorState::setPlayheadUpdateFrequency (int frequency)
         startTimerHz (frequency);
     else
         stopTimer();
+}
+
+void MagicProcessorState::processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents)
+{
+    getKeyboardState().processNextMidiBuffer (buffer, 0, numSamples, injectIndirectEvents);
+
+    midiMapper.processMidiBuffer (buffer);
+}
+
+void MagicProcessorState::mapMidiController (int cc, const juce::String& parameterID)
+{
+    midiMapper.mapMidiController (cc, parameterID);
+}
+
+int MagicProcessorState::getLastController() const
+{
+    return midiMapper.getLastController();
 }
 
 juce::ValueTree MagicProcessorState::createDefaultGUITree() const

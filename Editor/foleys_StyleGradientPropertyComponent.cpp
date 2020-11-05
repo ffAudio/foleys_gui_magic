@@ -156,6 +156,7 @@ StyleGradientPropertyComponent::GradientPanel::GradientPanel (GradientBackground
     };
 
     angle.setRange (0, 360, 1);
+    angle.setTextValueSuffix (juce::String::fromUTF8 ("\u00B0"));
     addAndMakeVisible (angle);
     angle.setValue (juce::radiansToDegrees (gradient.angle));
     angle.onValueChange = [&]
@@ -184,10 +185,16 @@ void StyleGradientPropertyComponent::GradientPanel::resized()
     auto header = area.removeFromTop (24);
     close.setBounds (header.removeFromRight (24));
     typeSelect.setBounds (header);
-    angle.setBounds (area.removeFromTop (24));
+    angle.setBounds (area.removeFromTop (24).withLeft (proportionOfWidth (0.2f)).withWidth (proportionOfWidth (0.72f)));
     stopSelect.setBounds (area.removeFromBottom (30).reduced (5, 0));
 
     selector.setBounds (area);
+}
+
+void StyleGradientPropertyComponent::GradientPanel::paint (juce::Graphics& g)
+{
+    g.setColour (juce::Colours::silver);
+    g.drawFittedText (TRANS ("angle:"), 0, 24, proportionOfWidth (0.2f), 24, juce::Justification::right, 1);
 }
 
 void StyleGradientPropertyComponent::GradientPanel::addChangeListener (juce::ChangeListener* listener)
