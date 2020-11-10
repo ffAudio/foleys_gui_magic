@@ -39,59 +39,63 @@
 namespace foleys
 {
 
-class Decorator
+template<typename T>
+struct Box
 {
-public:
+    T top    = {};
+    T left   = {};
+    T right  = {};
+    T bottom = {};
 
-    Decorator() = default;
+    Box() = default;
+    Box (T value) : top (value), left (value), right (value), bottom (value) {}
 
-    /**
-     This will get the necessary information from the stylesheet, using inheritance
-     of nodes if needed, to set the margins/borders etc. for the GuiItem.
-     */
-    void configure (MagicGUIBuilder& builder, const juce::ValueTree& node);
-
-    void reset();
-
-    void updateColours (MagicGUIBuilder& builder, const juce::ValueTree& node);
-
-    void drawDecorator (juce::Graphics& g, juce::Rectangle<int> bounds);
-
-    struct ClientBounds
+    static Box fromString (const juce::String& text)
     {
-        juce::Rectangle<int> client;
-        juce::Rectangle<int> caption;
-    };
+        Box b;
+        auto values = juce::StringArray::fromTokens (text, ", ", "\"");
+        values.removeEmptyStrings();
 
-    Decorator::ClientBounds getClientBounds (juce::Rectangle<int> overallBounds) const;
+        switch (values.size())
+        {
+            case 1:
+                b.top = T (values [0].getFloatValue());
+                b.left = b.top;
+                b.right = b.top;
+                b.bottom = b.top;
+                break;
+            case 2:
+                b.top = T (values [0].getFloatValue());
+                b.left = T (values [1].getFloatValue());
+                b.right = b.left;
+                b.bottom = b.top;
+                break;
+            case 3:
+                b.top = T (values [0].getFloatValue());
+                b.left = T (values [1].getFloatValue());
+                b.bottom = T (values [2].getFloatValue());
+                b.right = b.left;
+                break;
+            case 4:
+                b.top = T (values [0].getFloatValue());
+                b.right = T (values [1].getFloatValue());
+                b.bottom = T (values [2].getFloatValue());
+                b.left = T (values [3].getFloatValue());
+                break;
+            default:
+                break;
+        }
 
-    juce::String getTabCaption (const juce::String& defaultName) const;
-    juce::Colour getTabColour() const;
+        return b;
+    }
 
-private:
-
-    juce::Colour backgroundColour { juce::Colours::darkgrey };
-    juce::Colour borderColour     { juce::Colours::silver };
-
-    Box<float> margin  { 5.0f };
-    Box<float> padding { 5.0f };
-    float border  = 0.0f;
-    float radius  = 5.0f;
-
-    juce::String        caption;
-    juce::Justification justification = juce::Justification::centredTop;
-    float               captionSize   = 20.0f;
-    juce::Colour        captionColour = juce::Colours::silver;
-
-    juce::String        tabCaption;
-    juce::Colour        tabColour;
-
-    juce::Image                 backgroundImage;
-    float                       backgroundAlpha = 1.0f;
-    juce::RectanglePlacement    backgroundPlacement = juce::RectanglePlacement::centred;
-    GradientBackground          backgroundGradient;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Decorator)
+    juce::Rectangle<T> reducedRect (juce::Rectangle<T> rect) const
+    {
+        return rect.withTrimmedTop (top)
+                   .withTrimmedLeft (left)
+                   .withTrimmedRight (right)
+                   .withTrimmedBottom (bottom);
+    }
 };
 
 }

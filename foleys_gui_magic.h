@@ -105,6 +105,7 @@
 #include "Helpers/foleys_Conversions.h"
 
 #include "Layout/foleys_GradientBackground.h"
+#include "Layout/foleys_BoxModel.h"
 #include "Layout/foleys_Stylesheet.h"
 #include "Layout/foleys_Decorator.h"
 #include "Layout/foleys_GuiItem.h"
