@@ -42,7 +42,7 @@ void Decorator::drawDecorator (juce::Graphics& g, juce::Rectangle<int> bounds)
 {
     juce::Graphics::ScopedSaveState stateSave (g);
 
-    auto boundsf = bounds.toFloat().reduced (margin);
+    auto boundsf = margin.reducedRect (bounds.toFloat());
 
     {
         juce::Graphics::ScopedSaveState save (g);
@@ -123,28 +123,28 @@ void Decorator::updateColours (MagicGUIBuilder& builder, const juce::ValueTree& 
 
 Decorator::ClientBounds Decorator::getClientBounds (juce::Rectangle<int> overallBounds) const
 {
-    auto box = overallBounds.reduced (juce::roundToInt (margin + padding));
+    auto box = padding.reducedRect (margin.reducedRect (overallBounds.toFloat()));
     juce::Rectangle<int> captionBox;
 
     if (caption.isNotEmpty())
     {
         if (justification.getOnlyVerticalFlags() & juce::Justification::top)
-            captionBox = box.removeFromTop (int (captionSize));
+            captionBox = box.toNearestInt().removeFromTop (int (captionSize));
         else if (justification.getOnlyVerticalFlags() & juce::Justification::bottom)
-            captionBox = box.removeFromBottom (int (captionSize));
+            captionBox = box.toNearestInt().removeFromBottom (int (captionSize));
         else
         {
             juce::Font f (captionSize * 0.8f);
             auto w = f.getStringWidth (caption);
 
             if (justification.getOnlyHorizontalFlags() & juce::Justification::left)
-                captionBox = box.removeFromLeft (w);
+                captionBox = box.toNearestInt().removeFromLeft (w);
             else if (justification.getOnlyHorizontalFlags() & juce::Justification::right)
-                captionBox = box.removeFromRight (w);
+                captionBox = box.toNearestInt().removeFromRight (w);
         }
     }
 
-    return { box, captionBox };
+    return { box.toNearestInt(), captionBox };
 }
 
 void Decorator::configure (MagicGUIBuilder& builder, const juce::ValueTree& node)
@@ -157,11 +157,11 @@ void Decorator::configure (MagicGUIBuilder& builder, const juce::ValueTree& node
 
     auto marginVar = builder.getStyleProperty (IDs::margin, node);
     if (! marginVar.isVoid())
-        margin = static_cast<float> (marginVar);
+        margin = Box<float>::fromString (marginVar.toString());
 
     auto paddingVar = builder.getStyleProperty (IDs::padding, node);
     if (! paddingVar.isVoid())
-        padding = static_cast<float> (paddingVar);
+        padding = Box<float>::fromString (paddingVar.toString());
 
     auto radiusVar = builder.getStyleProperty (IDs::radius, node);
     if (! radiusVar.isVoid())
@@ -207,8 +207,8 @@ void Decorator::reset()
     backgroundColour = juce::Colours::darkgrey;
     borderColour     = juce::Colours::silver;
 
-    margin  = 5.0f;
-    padding = 5.0f;
+    margin  = { 5.0f };
+    padding = { 5.0f };
     border  = 0.0f;
     radius  = 5.0f;
 

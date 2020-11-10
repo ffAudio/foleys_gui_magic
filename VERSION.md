@@ -1,6 +1,11 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.2.7
+-----
+
+- Implemented margin and padding with different values on each edge
+
 1.2.6
 -----
 
