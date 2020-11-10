@@ -5,6 +5,8 @@ PluginGuiMagic - Versions history
 -----
 
 - Implemented margin and padding with different values on each edge
+- Averted an assert in DropShadow with Sliders (or Components in General) 
+  becoming only one pixel
 
 1.2.6
 -----

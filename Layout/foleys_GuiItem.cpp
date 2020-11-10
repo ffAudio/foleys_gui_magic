@@ -201,7 +201,11 @@ juce::Rectangle<int> GuiItem::getClientBounds() const
 void GuiItem::resized()
 {
     if (auto* component = getWrappedComponent())
-        component->setBounds (getClientBounds());
+    {
+        auto b = getClientBounds();
+        component->setVisible (b.getWidth() > 2 && b.getHeight() > 2);
+        component->setBounds (b);
+    }
 }
 
 void GuiItem::updateLayout()
