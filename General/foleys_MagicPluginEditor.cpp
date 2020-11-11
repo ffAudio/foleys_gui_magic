@@ -121,8 +121,8 @@ void MagicPluginEditor::updateSize()
         int minHeight = rootNode.getProperty (IDs::minHeight, 10);
         int maxWidth = rootNode.getProperty (IDs::maxWidth, std::numeric_limits<int>::max());
         int maxHeight = rootNode.getProperty (IDs::maxHeight, std::numeric_limits<int>::max());
-        setResizeLimits (minWidth, minHeight, maxWidth, maxHeight);
         setResizable (resizable, resizeCorner);
+        setResizeLimits (minWidth, minHeight, maxWidth, maxHeight);
     }
 
     setSize (width, height);
