@@ -7,6 +7,7 @@ PluginGuiMagic - Versions history
 - Implemented margin and padding with different values on each edge
 - Averted an assert in DropShadow with Sliders (or Components in General) 
   becoming only one pixel
+- Added option to XY-Dragger for radius and sensitivity
 
 1.2.6
 -----
