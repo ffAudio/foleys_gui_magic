@@ -478,6 +478,8 @@ public:
 
     static const juce::Identifier  pCrosshair;
     static const juce::StringArray pCrosshairTypes;
+    static const juce::Identifier  pRadius;
+    static const juce::Identifier  pSenseFactor;
 
     XYDraggerItem (MagicGUIBuilder& builder, const juce::ValueTree& node)
       : GuiItem (builder, node)
@@ -523,6 +525,14 @@ public:
             dragger.setCrossHair (false, true);
         else
             dragger.setCrossHair (true, true);
+
+        auto radius = getProperty (pRadius);
+        if (! radius.isVoid())
+            dragger.setRadius (radius);
+
+        auto factor = getProperty (pSenseFactor);
+        if (! factor.isVoid())
+            dragger.setSenseFactor (factor);
     }
 
     std::vector<SettableProperty> getSettableProperties() const override
@@ -533,6 +543,8 @@ public:
         props.push_back ({ configNode, IDs::parameterY, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
         props.push_back ({ configNode, "right-click", SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
         props.push_back ({ configNode, pCrosshair, SettableProperty::Choice, {}, magicBuilder.createChoicesMenuLambda (pCrosshairTypes) });
+        props.push_back ({ configNode, pRadius, SettableProperty::Number, {}, {}});
+        props.push_back ({ configNode, pSenseFactor, SettableProperty::Number, {}, {}});
 
         return props;
     }
@@ -549,6 +561,8 @@ private:
 };
 const juce::Identifier  XYDraggerItem::pCrosshair       { "xy-crosshair" };
 const juce::StringArray XYDraggerItem::pCrosshairTypes  { "no-crosshair", "vertical", "horizontal", "crosshair" };
+const juce::Identifier  XYDraggerItem::pRadius          { "xy-radius" };
+const juce::Identifier  XYDraggerItem::pSenseFactor     { "xy-sense-factor" };
 
 //==============================================================================
 

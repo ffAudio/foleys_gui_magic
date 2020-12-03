@@ -66,6 +66,9 @@ public:
 
     void setRightClickParameter (juce::RangedAudioParameter* parameter);
 
+    void setRadius (float radius);
+    void setSenseFactor (float factor);
+
     bool hitTest (int x, int y) override;
     void mouseDown (const juce::MouseEvent&) override;
     void mouseMove (const juce::MouseEvent&) override;
@@ -93,7 +96,8 @@ private:
 
     juce::RangedAudioParameter* contextMenuParameter = nullptr;
 
-    static float radius;
+    float radius = 4.0f;
+    float senseFactor = 2.0f;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (XYDragComponent)
 };

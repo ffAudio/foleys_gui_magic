@@ -38,9 +38,6 @@
 namespace foleys
 {
 
-
-float XYDragComponent::radius = 4.0f;
-
 XYDragComponent::XYDragComponent()
 {
     setOpaque (false);
@@ -113,13 +110,24 @@ void XYDragComponent::setRightClickParameter (juce::RangedAudioParameter* parame
     contextMenuParameter = parameter;
 }
 
+void XYDragComponent::setRadius (float radiusToUse)
+{
+    radius = radiusToUse;
+    repaint();
+}
+
+void XYDragComponent::setSenseFactor (float factor)
+{
+    senseFactor = factor;
+}
+
 void XYDragComponent::updateWhichToDrag (juce::Point<float> pos)
 {
     const auto centre = juce::Point<int> (getXposition(), getYposition()).toFloat();
 
-    mouseOverDot = (centre.getDistanceFrom (pos) < radius * 1.5f);
-    mouseOverX = (wantsHorizontalDrag && std::abs (pos.getX() - centre.getX()) < 3.0f);
-    mouseOverY =  (wantsVerticalDrag && std::abs (pos.getY() - centre.getY()) < 3.0f);
+    mouseOverDot = (centre.getDistanceFrom (pos) < radius * senseFactor);
+    mouseOverX = (wantsHorizontalDrag && std::abs (pos.getX() - centre.getX()) < senseFactor + 1.0f);
+    mouseOverY =  (wantsVerticalDrag && std::abs (pos.getY() - centre.getY()) < senseFactor + 1.0f);
 
     repaint();
 }
@@ -129,13 +137,13 @@ bool XYDragComponent::hitTest (int x, int y)
     const auto click = juce::Point<int> (x, y).toFloat ();
     const auto centre = juce::Point<int> (getXposition (), getYposition ()).toFloat ();
 
-    if (centre.getDistanceFrom (click) < radius * 1.5f)
+    if (centre.getDistanceFrom (click) < radius * senseFactor)
         return true;
 
-    if (wantsHorizontalDrag && std::abs (click.getX() - centre.getX()) < 3.0f)
+    if (wantsHorizontalDrag && std::abs (click.getX() - centre.getX()) < senseFactor + 1.0f)
         return true;
 
-    if (wantsVerticalDrag && std::abs (click.getY() - centre.getY()) < 3.0f)
+    if (wantsVerticalDrag && std::abs (click.getY() - centre.getY()) < senseFactor + 1.0f)
         return true;
 
     return false;
