@@ -249,6 +249,7 @@ public:
         if (parameter.isNotEmpty())
             attachment = getMagicState().createAttachment (parameter, button);
 
+        button.setClickingTogglesState (parameter.isNotEmpty());
         button.setButtonText (magicBuilder.getStyleProperty (pText, configNode));
 
         auto triggerID = getProperty (pOnClick).toString();

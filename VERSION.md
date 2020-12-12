@@ -1,22 +1,27 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.2.7
+1.2.8
 -----
+
+- Set TextButton to toggle when a parameter is connected
+
+1.2.7 - 03.12.2020
+------------------
 
 - Implemented margin and padding with different values on each edge
 - Averted an assert in DropShadow with Sliders (or Components in General) 
   becoming only one pixel
 - Added option to XY-Dragger for radius and sensitivity
 
-1.2.6
------
+1.2.6 - 06.11.2020
+------------------
 
 - Added Midi-Learn component to be dragged on knobs/controls
 - Fixed missing text property for ToggleButton
 
-1.2.5
------
+1.2.5 - 15.10.2020
+------------------
 
 - Added editor for gradients, new gradients support stop positions
 - Refactored gradient drawing
