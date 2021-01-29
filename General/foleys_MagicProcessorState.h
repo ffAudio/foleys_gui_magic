@@ -111,7 +111,11 @@ public:
      */
     void setStateInformation (const void* data, int sizeInBytes, juce::AudioProcessorEditor* editor = nullptr);
 
+    /**
+     Returns a parameter for a parameter ID
+     */
     juce::RangedAudioParameter* getParameter (const juce::String& paramID) override;
+
     std::unique_ptr<juce::SliderParameterAttachment>   createAttachment (const juce::String& paramID, juce::Slider& slider) override;
     std::unique_ptr<juce::ComboBoxParameterAttachment> createAttachment (const juce::String& paramID, juce::ComboBox& combobox) override;
     std::unique_ptr<juce::ButtonParameterAttachment>   createAttachment (const juce::String& paramID, juce::Button& button) override;
@@ -133,8 +137,14 @@ public:
      */
     void processMidiBuffer (juce::MidiBuffer& buffer, int numSamples, bool injectIndirectEvents=true);
 
+    /**
+     Connects a midi controller CC to a parameter for MIDI learn
+     */
     void mapMidiController (int cc, const juce::String& parameterID);
 
+    /**
+     Returns the last moved controller for MIDI learn
+     */
     int  getLastController() const;
 
 private:

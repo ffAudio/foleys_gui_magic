@@ -700,6 +700,12 @@ public:
         addAndMakeVisible (listBox);
     }
 
+    ~ListBoxItem() override
+    {
+        if (auto* m = dynamic_cast<juce::ChangeBroadcaster*>(listBox.getModel()))
+            m->removeChangeListener (this);
+    }
+
     void update() override
     {
         if (auto* m = dynamic_cast<juce::ChangeBroadcaster*>(listBox.getModel()))

@@ -5,6 +5,7 @@ PluginGuiMagic - Versions history
 -----
 
 - Set TextButton to toggle when a parameter is connected
+- Make it work without AudioProcessorValueTreeState
 
 1.2.7 - 03.12.2020
 ------------------
