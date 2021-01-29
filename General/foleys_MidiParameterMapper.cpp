@@ -44,7 +44,7 @@ namespace IDs
     static juce::String cc        { "cc" };
 }
 
-MidiParameterMapper::MidiParameterMapper()
+MidiParameterMapper::MidiParameterMapper (MagicProcessorState& s) : state (s)
 {
     settings->settings.addListener (this);
 }
@@ -133,16 +133,8 @@ int MidiParameterMapper::getLastController() const
     return lastController.load();
 }
 
-void MidiParameterMapper::setAudioProcessorValueTreeState (juce::AudioProcessorValueTreeState* state)
-{
-    treeState = state;
-}
-
 void MidiParameterMapper::recreateMidiMapper()
 {
-    if (treeState == nullptr)
-        return;
-
     auto mappings = settings->settings.getChildWithName (IDs::mappings);
     if (! mappings.isValid())
         return;
@@ -156,7 +148,7 @@ void MidiParameterMapper::recreateMidiMapper()
         if (ccNum < 1 || paramID.isEmpty())
             continue;
 
-        auto* parameter = treeState->getParameter (paramID);
+        auto* parameter = state.getParameter (paramID);
         if (parameter == nullptr)
             continue;
 

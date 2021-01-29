@@ -144,7 +144,7 @@ public:
 
 private:
     AutoOrientationSlider slider;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachment;
+    std::unique_ptr<juce::SliderParameterAttachment> attachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliderItem)
 };
@@ -213,7 +213,7 @@ public:
 
 private:
     juce::ComboBox comboBox;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> attachment;
+    std::unique_ptr<juce::ComboBoxParameterAttachment> attachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ComboBoxItem)
 };
@@ -275,7 +275,7 @@ public:
 
 private:
     juce::TextButton button;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> attachment;
+    std::unique_ptr<juce::ButtonParameterAttachment> attachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TextButtonItem)
 };
@@ -335,7 +335,7 @@ public:
 
 private:
     juce::ToggleButton button;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> attachment;
+    std::unique_ptr<juce::ButtonParameterAttachment> attachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToggleButtonItem)
 };

@@ -56,6 +56,11 @@ public:
                          juce::AudioProcessorValueTreeState& stateToUse);
 
     /**
+     Updates the parameter list. Call this after you are done adding the parameters to your processor.
+     */
+    void updateParameterList();
+
+    /**
      Returns the root node for exposed properties for the GUI
      */
     juce::ValueTree getPropertyRoot() const override;
@@ -107,9 +112,9 @@ public:
     void setStateInformation (const void* data, int sizeInBytes, juce::AudioProcessorEditor* editor = nullptr);
 
     juce::RangedAudioParameter* getParameter (const juce::String& paramID) override;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>   createAttachment (const juce::String& paramID, juce::Slider& slider) override;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> createAttachment (const juce::String& paramID, juce::ComboBox& combobox) override;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   createAttachment (const juce::String& paramID, juce::Button& button) override;
+    std::unique_ptr<juce::SliderParameterAttachment>   createAttachment (const juce::String& paramID, juce::Slider& slider) override;
+    std::unique_ptr<juce::ComboBoxParameterAttachment> createAttachment (const juce::String& paramID, juce::ComboBox& combobox) override;
+    std::unique_ptr<juce::ButtonParameterAttachment>   createAttachment (const juce::String& paramID, juce::Button& button) override;
 
     /**
      This override creates the ValueTree defining the GuiItems from the getParameterTree()
@@ -117,7 +122,7 @@ public:
     juce::ValueTree createDefaultGUITree() const override;
 
     juce::AudioProcessor* getProcessor() override;
-    juce::AudioProcessorValueTreeState& getValueTreeState();
+    juce::ValueTree& getValueTree();
 
     /**
      Send the midi data to the keyboard and to the MidiLearn mapper.
@@ -145,8 +150,9 @@ private:
 
     juce::AudioProcessor& processor;
     juce::AudioProcessorValueTreeState& state;
+    std::map<juce::String, juce::RangedAudioParameter*> parameterLookup;
 
-    MidiParameterMapper midiMapper;
+    MidiParameterMapper midiMapper { *this };
 
     std::atomic<double> bpm;
     std::atomic<int>    timeSigNumerator;

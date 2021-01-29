@@ -82,13 +82,13 @@ public:
      */
     virtual juce::StringArray getParameterNames() const;
 
-    virtual juce::RangedAudioParameter* getParameter ([[maybe_unused]]const juce::String& paramID)
+    virtual juce::RangedAudioParameter* getParameter (const juce::String& paramID)
     { juce::ignoreUnused(paramID); return nullptr; }
-    virtual std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>   createAttachment (const juce::String& paramID, juce::Slider&)
+    virtual std::unique_ptr<juce::SliderParameterAttachment>   createAttachment (const juce::String& paramID, juce::Slider&)
     { juce::ignoreUnused(paramID); return nullptr; }
-    virtual std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> createAttachment (const juce::String& paramID, juce::ComboBox&)
+    virtual std::unique_ptr<juce::ComboBoxParameterAttachment> createAttachment (const juce::String& paramID, juce::ComboBox&)
     { juce::ignoreUnused(paramID); return nullptr; }
-    virtual std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   createAttachment (const juce::String& paramID, juce::Button&)
+    virtual std::unique_ptr<juce::ButtonParameterAttachment>   createAttachment (const juce::String& paramID, juce::Button&)
     { juce::ignoreUnused(paramID); return nullptr; }
 
     /**

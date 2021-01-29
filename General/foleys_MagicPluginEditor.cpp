@@ -71,7 +71,7 @@ void MagicPluginEditor::initialise (const char* data, int dataSize)
     if (builder.get() == nullptr)
         builder = createBuilderInstance();
 
-    auto guiTree = processorState.getValueTreeState().state.getChildWithName ("magic");
+    auto guiTree = processorState.getValueTree().getChildWithName ("magic");
     if (guiTree.isValid())
         setConfigTree (guiTree);
     else if (data != nullptr)
@@ -82,8 +82,8 @@ void MagicPluginEditor::initialise (const char* data, int dataSize)
     updateSize();
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-    if (!guiTree.isValid() && processorState.getValueTreeState().state.isValid())
-        processorState.getValueTreeState().state.addChild (builder->getConfigTree(), -1, nullptr);
+    if (!guiTree.isValid() && processorState.getValueTree().isValid())
+        processorState.getValueTree().addChild (builder->getConfigTree(), -1, nullptr);
 
     builder->attachToolboxToWindow (*this);
 #endif

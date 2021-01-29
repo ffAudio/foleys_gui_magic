@@ -44,7 +44,14 @@ MagicProcessorState::MagicProcessorState (juce::AudioProcessor& processorToUse,
     processor (processorToUse),
     state (stateToUse)
 {
-    midiMapper.setAudioProcessorValueTreeState (&state);
+    updateParameterList();
+}
+
+void MagicProcessorState::updateParameterList()
+{
+    for (auto* parameter : processor.getParameters())
+        if (auto* withID = dynamic_cast<juce::RangedAudioParameter*>(parameter))
+            parameterLookup [withID->paramID] = withID;
 }
 
 juce::ValueTree MagicProcessorState::getPropertyRoot() const
@@ -55,9 +62,8 @@ juce::ValueTree MagicProcessorState::getPropertyRoot() const
 juce::StringArray MagicProcessorState::getParameterNames() const
 {
     juce::StringArray names;
-    for (const auto* p : processor.getParameters())
-        if (const auto* withID = dynamic_cast<const juce::AudioProcessorParameterWithID*>(p))
-            names.add (withID->paramID);
+    for (auto& parameter : parameterLookup)
+        names.add (parameter.second->paramID);
 
     return names;
 }
@@ -90,22 +96,46 @@ void MagicProcessorState::addParametersToMenu (const juce::AudioProcessorParamet
 
 juce::RangedAudioParameter* MagicProcessorState::getParameter (const juce::String& paramID)
 {
-    return state.getParameter (paramID);
+    return parameterLookup.at (paramID);
 }
 
-std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::Slider& slider)
+std::unique_ptr<juce::SliderParameterAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::Slider& slider)
 {
-    return std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(state, paramID, slider);
+    auto* parameter = getParameter (paramID);
+
+    if (parameter)
+        return std::make_unique<juce::SliderParameterAttachment>(*parameter, slider);
+
+    // You have connected a control to a parameter that doesn't exist. Please fix your GUI.
+    // You may safely click continue in your debugger
+    jassertfalse;
+    return {};
 }
 
-std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::ComboBox& combobox)
+std::unique_ptr<juce::ComboBoxParameterAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::ComboBox& combobox)
 {
-    return std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(state, paramID, combobox);
+    auto* parameter = getParameter (paramID);
+
+    if (parameter)
+        return std::make_unique<juce::ComboBoxParameterAttachment>(*parameter, combobox);
+
+    // You have connected a control to a parameter that doesn't exist. Please fix your GUI.
+    // You may safely click continue in your debugger
+    jassertfalse;
+    return {};
 }
 
-std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::Button& button)
+std::unique_ptr<juce::ButtonParameterAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::Button& button)
 {
-    return std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(state, paramID, button);
+    auto* parameter = getParameter (paramID);
+
+    if (parameter)
+        return std::make_unique<juce::ButtonParameterAttachment>(*parameter, button);
+
+    // You have connected a control to a parameter that doesn't exist. Please fix your GUI.
+    // You may safely click continue in your debugger
+    jassertfalse;
+    return {};
 }
 
 juce::AudioProcessor* MagicProcessorState::getProcessor()
@@ -280,9 +310,9 @@ void MagicProcessorState::timerCallback()
     getPropertyAsValue ("playhead:isRecording").setValue (isRecording.load());
 }
 
-juce::AudioProcessorValueTreeState& MagicProcessorState::getValueTreeState()
+juce::ValueTree& MagicProcessorState::getValueTree()
 {
-    return state;
+    return state.state;
 }
 
 } // namespace foleys

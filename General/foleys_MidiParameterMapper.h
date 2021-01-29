@@ -45,7 +45,7 @@ namespace foleys
 class MidiParameterMapper  : private juce::ValueTree::Listener
 {
 public:
-    MidiParameterMapper();
+    MidiParameterMapper (MagicProcessorState& state);
     ~MidiParameterMapper() override;
 
     void processMidiBuffer (juce::MidiBuffer& buffer);
@@ -55,8 +55,6 @@ public:
     void unmapAllMidiController (int cc);
 
     int  getLastController() const;
-
-    void setAudioProcessorValueTreeState (juce::AudioProcessorValueTreeState* state);
 
 private:
     void recreateMidiMapper();
@@ -69,12 +67,12 @@ private:
 
     using MidiMapping=std::map<int, std::vector<juce::RangedAudioParameter*>>;
 
-    SharedApplicationSettings           settings;
-    juce::CriticalSection               mappingLock;
+    SharedApplicationSettings   settings;
+    juce::CriticalSection       mappingLock;
 
-    juce::AudioProcessorValueTreeState* treeState = nullptr;
-    std::atomic<int>                    lastController { -1 };
-    MidiMapping                         midiMapper;
+    MagicProcessorState&        state;
+    std::atomic<int>            lastController { -1 };
+    MidiMapping                 midiMapper;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiParameterMapper)
 };
