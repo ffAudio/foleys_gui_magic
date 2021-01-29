@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2020 Foleys Finest Audio Ltd. - Daniel Walz
+    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -36,7 +36,7 @@
     BEGIN_JUCE_MODULE_DECLARATION
 
     ID:            foleys_gui_magic
-    vendor:        Foleys Finest Audio Ltd.
+    vendor:        Foleys Finest Audio
     version:       1.2.8
     name:          Foleys GUI magic
     description:   This module allows to create GUI with a drag and drop editor
