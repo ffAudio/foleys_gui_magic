@@ -56,11 +56,6 @@ public:
                          juce::ValueTree& stateToUse);
 
     /**
-     Updates the parameter list. Call this after you are done adding the parameters to your processor.
-     */
-    void updateParameterList();
-
-    /**
      Returns the root node for exposed properties for the GUI
      */
     juce::ValueTree getPropertyRoot() const override;
@@ -160,8 +155,8 @@ private:
 
     juce::AudioProcessor& processor;
     juce::ValueTree       state;
-    std::map<juce::String, juce::RangedAudioParameter*> parameterLookup;
 
+    ParameterManager    parameters { processor };
     MidiParameterMapper midiMapper { *this };
 
     std::atomic<double> bpm;

@@ -46,11 +46,13 @@
 #include "General/foleys_ApplicationSettings.cpp"
 #include "General/foleys_MagicGUIBuilder.cpp"
 #include "General/foleys_MagicPluginEditor.cpp"
-#include "General/foleys_MagicGUIState.cpp"
-#include "General/foleys_MagicProcessorState.cpp"
 #include "General/foleys_Resources.cpp"
 #include "General/foleys_MagicJUCEFactories.cpp"
-#include "General/foleys_MidiParameterMapper.cpp"
+
+#include "State/foleys_MagicGUIState.cpp"
+#include "State/foleys_MagicProcessorState.cpp"
+#include "State/foleys_ParameterManager.cpp"
+#include "State/foleys_MidiParameterMapper.cpp"
 
 #include "Layout/foleys_GradientBackground.cpp"
 #include "Layout/foleys_Stylesheet.cpp"

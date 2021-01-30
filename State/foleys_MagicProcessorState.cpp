@@ -45,14 +45,6 @@ MagicProcessorState::MagicProcessorState (juce::AudioProcessor& processorToUse,
     state (stateToUse)
 {
     state.getOrCreateChildWithName ("properties", nullptr);
-    updateParameterList();
-}
-
-void MagicProcessorState::updateParameterList()
-{
-    for (auto* parameter : processor.getParameters())
-        if (auto* withID = dynamic_cast<juce::RangedAudioParameter*>(parameter))
-            parameterLookup [withID->paramID] = withID;
 }
 
 juce::ValueTree MagicProcessorState::getPropertyRoot() const
@@ -62,11 +54,7 @@ juce::ValueTree MagicProcessorState::getPropertyRoot() const
 
 juce::StringArray MagicProcessorState::getParameterNames() const
 {
-    juce::StringArray names;
-    for (auto& parameter : parameterLookup)
-        names.add (parameter.second->paramID);
-
-    return names;
+    return parameters.getParameterNames();
 }
 
 juce::PopupMenu MagicProcessorState::createParameterMenu() const
@@ -97,14 +85,12 @@ void MagicProcessorState::addParametersToMenu (const juce::AudioProcessorParamet
 
 juce::RangedAudioParameter* MagicProcessorState::getParameter (const juce::String& paramID)
 {
-    return parameterLookup.at (paramID);
+    return parameters.getParameter (paramID);
 }
 
 std::unique_ptr<juce::SliderParameterAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::Slider& slider)
 {
-    auto* parameter = getParameter (paramID);
-
-    if (parameter)
+    if (auto* parameter = getParameter (paramID))
         return std::make_unique<juce::SliderParameterAttachment>(*parameter, slider);
 
     // You have connected a control to a parameter that doesn't exist. Please fix your GUI.
@@ -115,9 +101,7 @@ std::unique_ptr<juce::SliderParameterAttachment> MagicProcessorState::createAtta
 
 std::unique_ptr<juce::ComboBoxParameterAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::ComboBox& combobox)
 {
-    auto* parameter = getParameter (paramID);
-
-    if (parameter)
+    if (auto* parameter = getParameter (paramID))
         return std::make_unique<juce::ComboBoxParameterAttachment>(*parameter, combobox);
 
     // You have connected a control to a parameter that doesn't exist. Please fix your GUI.
@@ -128,9 +112,7 @@ std::unique_ptr<juce::ComboBoxParameterAttachment> MagicProcessorState::createAt
 
 std::unique_ptr<juce::ButtonParameterAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::Button& button)
 {
-    auto* parameter = getParameter (paramID);
-
-    if (parameter)
+    if (auto* parameter = getParameter (paramID))
         return std::make_unique<juce::ButtonParameterAttachment>(*parameter, button);
 
     // You have connected a control to a parameter that doesn't exist. Please fix your GUI.
@@ -170,16 +152,7 @@ bool MagicProcessorState::getLastEditorSize (int& width, int& height)
 
 void MagicProcessorState::getStateInformation (juce::MemoryBlock& destData)
 {
-    for (auto& parameter : parameterLookup)
-    {
-        auto node = state.getChildWithProperty ("id", parameter.first);
-        if (node.isValid())
-            node.setProperty ("value", parameter.second->convertFrom0to1 (parameter.second->getValue()), nullptr);
-        else
-            state.appendChild ({"PARAM", {
-                { "id", parameter.second->paramID },
-                { "value", parameter.second->convertFrom0to1 (parameter.second->getValue()) }}}, nullptr);
-    }
+    parameters.saveParameterValues (state);
 
     juce::MemoryOutputStream stream (destData, false);
     state.writeToStream (stream);
@@ -196,15 +169,7 @@ void MagicProcessorState::setStateInformation (const void* data, int sizeInBytes
 
     state.copyPropertiesAndChildrenFrom (tree, nullptr);
 
-    for (const auto& child : state)
-    {
-        if (child.getType().toString() == "PARAM")
-        {
-            auto paramID = child.getProperty ("id", "unknownID").toString();
-            if (auto* parameter = getParameter (paramID))
-                parameter->setValueNotifyingHost (parameter->convertTo0to1 (child.getProperty ("value", 0.0f)));
-        }
-    }
+    parameters.loadParameterValues (state);
 
     if (editor)
     {
@@ -284,11 +249,11 @@ juce::ValueTree MagicProcessorState::createDefaultGUITree() const
 
         current.appendChild (child, nullptr);
 
-        juce::ValueTree parameters { IDs::view, {
+        juce::ValueTree params { IDs::view, {
             { IDs::styleClass, "parameters nomargin" }}};
 
-        current.appendChild (parameters, nullptr);
-        current = parameters;
+        current.appendChild (params, nullptr);
+        current = params;
     }
 
     createDefaultFromParameters (current, processor.getParameterTree());
