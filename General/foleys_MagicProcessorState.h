@@ -53,7 +53,7 @@ public:
      processor and it's internals.
      */
     MagicProcessorState (juce::AudioProcessor& processorToUse,
-                         juce::AudioProcessorValueTreeState& stateToUse);
+                         juce::ValueTree& stateToUse);
 
     /**
      Updates the parameter list. Call this after you are done adding the parameters to your processor.
@@ -159,7 +159,7 @@ private:
     void timerCallback() override;
 
     juce::AudioProcessor& processor;
-    juce::AudioProcessorValueTreeState& state;
+    juce::ValueTree       state;
     std::map<juce::String, juce::RangedAudioParameter*> parameterLookup;
 
     MidiParameterMapper midiMapper { *this };

@@ -39,11 +39,12 @@ namespace foleys
 {
 
 MagicProcessorState::MagicProcessorState (juce::AudioProcessor& processorToUse,
-                                          juce::AudioProcessorValueTreeState& stateToUse)
+                                          juce::ValueTree& stateToUse)
   : MagicGUIState(),
     processor (processorToUse),
     state (stateToUse)
 {
+    state.getOrCreateChildWithName ("properties", nullptr);
     updateParameterList();
 }
 
@@ -56,7 +57,7 @@ void MagicProcessorState::updateParameterList()
 
 juce::ValueTree MagicProcessorState::getPropertyRoot() const
 {
-    return state.state.getOrCreateChildWithName ("properties", nullptr);
+    return state.getChildWithName ("properties");
 }
 
 juce::StringArray MagicProcessorState::getParameterNames() const
@@ -145,20 +146,20 @@ juce::AudioProcessor* MagicProcessorState::getProcessor()
 
 void MagicProcessorState::setLastEditorSize (int  width, int  height)
 {
-    if (state.state.isValid() == false)
+    if (state.isValid() == false)
         return;
 
-    auto sizeNode = state.state.getOrCreateChildWithName (IDs::lastSize, nullptr);
+    auto sizeNode = state.getOrCreateChildWithName (IDs::lastSize, nullptr);
     sizeNode.setProperty (IDs::width,  width,  nullptr);
     sizeNode.setProperty (IDs::height, height, nullptr);
 }
 
 bool MagicProcessorState::getLastEditorSize (int& width, int& height)
 {
-    if (state.state.isValid() == false)
+    if (state.isValid() == false)
         return false;
 
-    auto sizeNode = state.state.getOrCreateChildWithName (IDs::lastSize, nullptr);
+    auto sizeNode = state.getOrCreateChildWithName (IDs::lastSize, nullptr);
     if (sizeNode.hasProperty (IDs::width) == false || sizeNode.hasProperty (IDs::height) == false)
         return false;
 
@@ -169,8 +170,19 @@ bool MagicProcessorState::getLastEditorSize (int& width, int& height)
 
 void MagicProcessorState::getStateInformation (juce::MemoryBlock& destData)
 {
+    for (auto& parameter : parameterLookup)
+    {
+        auto node = state.getChildWithProperty ("id", parameter.first);
+        if (node.isValid())
+            node.setProperty ("value", parameter.second->convertFrom0to1 (parameter.second->getValue()), nullptr);
+        else
+            state.appendChild ({"PARAM", {
+                { "id", parameter.second->paramID },
+                { "value", parameter.second->convertFrom0to1 (parameter.second->getValue()) }}}, nullptr);
+    }
+
     juce::MemoryOutputStream stream (destData, false);
-    state.state.writeToStream (stream);
+    state.writeToStream (stream);
 }
 
 void MagicProcessorState::setStateInformation (const void* data, int sizeInBytes, juce::AudioProcessorEditor* editor)
@@ -179,7 +191,20 @@ void MagicProcessorState::setStateInformation (const void* data, int sizeInBytes
     if (tree.isValid() == false)
         return;
 
-    state.replaceState (tree);
+    if (state.getType() != tree.getType())
+        return;
+
+    state.copyPropertiesAndChildrenFrom (tree, nullptr);
+
+    for (const auto& child : state)
+    {
+        if (child.getType().toString() == "PARAM")
+        {
+            auto paramID = child.getProperty ("id", "unknownID").toString();
+            if (auto* parameter = getParameter (paramID))
+                parameter->setValueNotifyingHost (parameter->convertTo0to1 (child.getProperty ("value", 0.0f)));
+        }
+    }
 
     if (editor)
     {
@@ -312,7 +337,7 @@ void MagicProcessorState::timerCallback()
 
 juce::ValueTree& MagicProcessorState::getValueTree()
 {
-    return state.state;
+    return state;
 }
 
 } // namespace foleys
