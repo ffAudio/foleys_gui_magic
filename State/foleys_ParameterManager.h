@@ -54,6 +54,10 @@ public:
 
     void loadParameterValues (juce::ValueTree& tree);
 
+    static juce::Identifier nodeName;
+    static juce::Identifier nodeId;
+    static juce::Identifier nodeValue;
+
 private:
     juce::AudioProcessor& processor;
 

@@ -39,6 +39,11 @@
 namespace foleys
 {
 
+juce::Identifier ParameterManager::nodeName  { "PARAM" };
+juce::Identifier ParameterManager::nodeId    { "id" };
+juce::Identifier ParameterManager::nodeValue { "value" };
+
+
 ParameterManager::ParameterManager (juce::AudioProcessor& p)
   : processor (p)
 {
@@ -70,13 +75,13 @@ void ParameterManager::saveParameterValues (juce::ValueTree& tree)
 {
     for (auto& parameter : parameterLookup)
     {
-        auto node = tree.getChildWithProperty ("id", parameter.first);
+        auto node = tree.getChildWithProperty (nodeId, parameter.first);
         if (node.isValid())
-            node.setProperty ("value", parameter.second->convertFrom0to1 (parameter.second->getValue()), nullptr);
+            node.setProperty (nodeValue, parameter.second->convertFrom0to1 (parameter.second->getValue()), nullptr);
         else
-            tree.appendChild ({"PARAM", {
-                { "id", parameter.second->paramID },
-                { "value", parameter.second->convertFrom0to1 (parameter.second->getValue()) }}}, nullptr);
+            tree.appendChild ({ nodeName, {
+                { nodeId, parameter.second->paramID },
+                { nodeValue, parameter.second->convertFrom0to1 (parameter.second->getValue()) }}}, nullptr);
     }
 }
 
@@ -84,11 +89,14 @@ void ParameterManager::loadParameterValues (juce::ValueTree& tree)
 {
     for (const auto& child : tree)
     {
-        if (child.getType().toString() == "PARAM")
+        if (child.getType() == nodeName)
         {
-            auto paramID = child.getProperty ("id", "unknownID").toString();
+            if (! child.hasProperty (nodeId) || child.hasProperty (nodeValue))
+                continue;
+
+            auto paramID = child.getProperty (nodeId).toString();
             if (auto* parameter = getParameter (paramID))
-                parameter->setValueNotifyingHost (parameter->convertTo0to1 (child.getProperty ("value", 0.0f)));
+                parameter->setValueNotifyingHost (parameter->convertTo0to1 (child.getProperty (nodeValue)));
         }
     }
 }
