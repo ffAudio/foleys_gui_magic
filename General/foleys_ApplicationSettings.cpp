@@ -54,12 +54,16 @@ void ApplicationSettings::setFileName (juce::File file)
         return;
 
     settingsFile = file;
-    load();
+    startTimerHz (1);
 }
 
 void ApplicationSettings::load()
 {
     juce::InterProcessLock lock (settingsFile.getFileName() + ".lock");
+
+    auto newChecksum = juce::MD5 (settingsFile).toHexString();
+    if (checksum == newChecksum)
+        return;
 
     auto stream = settingsFile.createInputStream();
     if (stream.get() == nullptr)
@@ -70,6 +74,10 @@ void ApplicationSettings::load()
         return;
 
     settings.copyPropertiesAndChildrenFrom (tree, nullptr);
+    settings.addListener (this);
+
+    checksum = newChecksum;
+    sendChangeMessage();
 }
 
 void ApplicationSettings::save()
@@ -86,6 +94,13 @@ void ApplicationSettings::save()
     stream->setPosition (0);
     stream->truncate();
     stream->writeString (settings.toXmlString());
+
+    checksum = juce::MD5 (settingsFile).toHexString();
+}
+
+void ApplicationSettings::timerCallback()
+{
+    load();
 }
 
 void ApplicationSettings::valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&)

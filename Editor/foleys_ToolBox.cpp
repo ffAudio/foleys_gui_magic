@@ -193,7 +193,7 @@ void ToolBox::loadGUI (const juce::File& xmlFile)
 
     if (tree.isValid() && tree.getType() == IDs::magic)
     {
-        builder.setConfigTree (tree);
+        builder.getMagicState().setGuiValueTree (tree);
         stateWasReloaded();
     }
 

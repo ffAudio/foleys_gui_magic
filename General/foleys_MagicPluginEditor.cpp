@@ -136,7 +136,7 @@ void MagicPluginEditor::setConfigTree (const juce::ValueTree& gui)
     if (! rootNode.hasProperty (IDs::resizable)) rootNode.setProperty (IDs::resizable, true, &undo);
     if (! rootNode.hasProperty (IDs::resizeCorner)) rootNode.setProperty (IDs::resizeCorner, true, &undo);
 
-    builder->setConfigTree (gui);
+    processorState.setGuiValueTree (gui);
     builder->createGUI (*this);
 
     updateSize();

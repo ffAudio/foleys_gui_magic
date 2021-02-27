@@ -1,11 +1,20 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.2.8
------
+1.3.0 - 28.02.2021
+------------------
+
+Breaking Changes:
+-----------------
+
+- The GUI ValueTree is now in MagicGUIState
+- AudioProcessorValueTreeState is no longer needed and not supplied to the MagicProcessorState
+- Added MagicProcessor that takes care of the necessary boilerplate
 
 - Set TextButton to toggle when a parameter is connected
 - Make it work without AudioProcessorValueTreeState
+- ApplicationSettings update now when the file changes / work cross multiple plugins
+- Fixed a crash with ListBox
 
 1.2.7 - 03.12.2020
 ------------------

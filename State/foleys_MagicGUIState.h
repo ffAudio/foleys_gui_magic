@@ -63,19 +63,38 @@ class MagicGUIState
     }
 
 public:
-    MagicGUIState() = default;
+    MagicGUIState();
 
     virtual ~MagicGUIState();
 
     /**
      Returns the root node for exposed properties for the GUI
      */
-    virtual juce::ValueTree getPropertyRoot() const;
+    juce::ValueTree getPropertyRoot();
+    juce::ValueTree getPropertyRoot() const;
+
+    /**
+     Set the GUI DOM to create the GUI components from
+     */
+    void setGuiValueTree (const juce::ValueTree& dom);
+    void setGuiValueTree (const char* data, int dataSize);
+
+    /**
+     Grants access to the gui tree. This is returned as reference so you are able to connect listeners to it.
+     */
+    juce::ValueTree& getGuiTree();
+
+    juce::ValueTree& getValueTree();
 
     /**
      Set a file to save common settings for all instances
      */
     void setApplicationSettingsFile (juce::File file);
+
+    /**
+     This is a settings ValueTree that is stored globally for all plugin instances
+     */
+    juce::ValueTree& getSettings();
 
     /**
      Returns the IDs of AudioProcessorParameters for selection
@@ -213,7 +232,8 @@ private:
      */
     SharedApplicationSettings settings;
 
-    juce::ValueTree propertyRoot { "Properties" };
+    juce::ValueTree guiValueTree { "magic" };
+    juce::ValueTree state        { "state" };
 
     juce::MidiKeyboardState keyboardState;
 

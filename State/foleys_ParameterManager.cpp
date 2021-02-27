@@ -52,7 +52,11 @@ ParameterManager::ParameterManager (juce::AudioProcessor& p)
 
 juce::RangedAudioParameter* ParameterManager::getParameter (const juce::String& paramID)
 {
-    return parameterLookup.at (paramID);
+    auto p = parameterLookup.find (paramID);
+    if (p != parameterLookup.end())
+        return p->second;
+
+    return nullptr;
 }
 
 void ParameterManager::updateParameterMap()
@@ -73,6 +77,8 @@ juce::StringArray ParameterManager::getParameterNames() const
 
 void ParameterManager::saveParameterValues (juce::ValueTree& tree)
 {
+    updateParameterMap();
+
     for (auto& parameter : parameterLookup)
     {
         auto node = tree.getChildWithProperty (nodeId, parameter.first);
@@ -87,11 +93,13 @@ void ParameterManager::saveParameterValues (juce::ValueTree& tree)
 
 void ParameterManager::loadParameterValues (juce::ValueTree& tree)
 {
+    updateParameterMap();
+
     for (const auto& child : tree)
     {
         if (child.getType() == nodeName)
         {
-            if (! child.hasProperty (nodeId) || child.hasProperty (nodeValue))
+            if (! (child.hasProperty (nodeId) && child.hasProperty (nodeValue)))
                 continue;
 
             auto paramID = child.getProperty (nodeId).toString();

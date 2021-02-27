@@ -41,9 +41,11 @@ namespace foleys
 MagicGUIBuilder::MagicGUIBuilder (MagicGUIState& state)
   : magicState (state)
 {
-    config = juce::ValueTree (IDs::magic);
-
     updateStylesheet();
+}
+
+MagicGUIBuilder::~MagicGUIBuilder()
+{
 }
 
 Stylesheet& MagicGUIBuilder::getStylesheet()
@@ -53,12 +55,12 @@ Stylesheet& MagicGUIBuilder::getStylesheet()
 
 juce::ValueTree& MagicGUIBuilder::getConfigTree()
 {
-    return config;
+    return magicState.getGuiTree();
 }
 
 juce::ValueTree MagicGUIBuilder::getGuiRootNode()
 {
-    return config.getChildWithName (IDs::view);
+    return getConfigTree().getOrCreateChildWithName (IDs::view, &undo);
 }
 
 std::unique_ptr<GuiItem> MagicGUIBuilder::createGuiItem (const juce::ValueTree& node)
@@ -85,7 +87,7 @@ std::unique_ptr<GuiItem> MagicGUIBuilder::createGuiItem (const juce::ValueTree& 
 
 void MagicGUIBuilder::updateStylesheet()
 {
-    auto stylesNode = config.getOrCreateChildWithName (IDs::styles, &undo);
+    auto stylesNode = getConfigTree().getOrCreateChildWithName (IDs::styles, &undo);
     if (stylesNode.getNumChildren() == 0)
         stylesNode.appendChild (magicState.createDefaultStylesheet(), &undo);
 
@@ -106,7 +108,7 @@ void MagicGUIBuilder::updateStylesheet()
 
 void MagicGUIBuilder::clearGUI()
 {
-    auto guiNode = config.getOrCreateChildWithName (IDs::view, &undo);
+    auto guiNode = getConfigTree().getOrCreateChildWithName (IDs::view, &undo);
     guiNode.removeAllChildren (&undo);
     guiNode.removeAllProperties (&undo);
 
@@ -115,7 +117,7 @@ void MagicGUIBuilder::clearGUI()
 
 void MagicGUIBuilder::resetToDefaultGUI()
 {
-    auto guiNode = config.getOrCreateChildWithName (IDs::view, &undo);
+    auto guiNode = getConfigTree().getOrCreateChildWithName (IDs::view, &undo);
     guiNode.removeAllChildren (&undo);
     guiNode.removeAllProperties (&undo);
     guiNode.copyPropertiesAndChildrenFrom (magicState.createDefaultGUITree(), &undo);
@@ -139,35 +141,6 @@ void MagicGUIBuilder::closeOverlayDialog()
     overlayDialog.reset();
 }
 
-void MagicGUIBuilder::setConfigTree (const juce::ValueTree& gui)
-{
-    if (gui.isValid() == false)
-        return;
-
-    if (config.isValid())
-    {
-        auto parentNode = config.getParent();
-        parentNode.removeChild (config, nullptr);
-        config = gui;
-        if (parentNode.isValid())
-            parentNode.appendChild (config, nullptr);
-    }
-    else
-    {
-        config = gui;
-    }
-
-    undo.clearUndoHistory();
-    updateComponents();
-}
-
-void MagicGUIBuilder::setConfigTree (const char* data, int dataSize)
-{
-    juce::String text (data, size_t (dataSize));
-    auto gui = juce::ValueTree::fromXml (text);
-    setConfigTree (gui);
-}
-
 void MagicGUIBuilder::createGUI (juce::Component& parentToUse)
 {
     parent = &parentToUse;
@@ -187,12 +160,10 @@ void MagicGUIBuilder::updateComponents()
 
     updateStylesheet();
 
-    if (config.getChildWithName (IDs::view).isValid() == false)
-        config.appendChild (magicState.createDefaultGUITree(), &undo);
+//    if (config.getChildWithName (IDs::view).isValid() == false)
+//        config.appendChild (magicState.createDefaultGUITree(), &undo);
 
-    auto rootNode = config.getOrCreateChildWithName (IDs::view, &undo);
-
-    root = createGuiItem (rootNode);
+    root = createGuiItem (getGuiRootNode());
     parent->addAndMakeVisible (root.get());
 
     root->setBounds (parent->getLocalBounds());

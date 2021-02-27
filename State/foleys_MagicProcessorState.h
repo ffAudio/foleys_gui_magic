@@ -52,13 +52,7 @@ public:
      Create a MagicProcessorState to let the generated GUI communicate with the
      processor and it's internals.
      */
-    MagicProcessorState (juce::AudioProcessor& processorToUse,
-                         juce::ValueTree& stateToUse);
-
-    /**
-     Returns the root node for exposed properties for the GUI
-     */
-    juce::ValueTree getPropertyRoot() const override;
+    MagicProcessorState (juce::AudioProcessor& processorToUse);
 
     /**
      Returns the IDs of AudioProcessorParameters for selection
@@ -110,6 +104,7 @@ public:
      Returns a parameter for a parameter ID
      */
     juce::RangedAudioParameter* getParameter (const juce::String& paramID) override;
+    void updateParameterMap();
 
     std::unique_ptr<juce::SliderParameterAttachment>   createAttachment (const juce::String& paramID, juce::Slider& slider) override;
     std::unique_ptr<juce::ComboBoxParameterAttachment> createAttachment (const juce::String& paramID, juce::ComboBox& combobox) override;
@@ -121,7 +116,6 @@ public:
     juce::ValueTree createDefaultGUITree() const override;
 
     juce::AudioProcessor* getProcessor() override;
-    juce::ValueTree& getValueTree();
 
     /**
      Send the midi data to the keyboard and to the MidiLearn mapper.
@@ -154,7 +148,6 @@ private:
     void timerCallback() override;
 
     juce::AudioProcessor& processor;
-    juce::ValueTree       state;
 
     ParameterManager    parameters { processor };
     MidiParameterMapper midiMapper { *this };

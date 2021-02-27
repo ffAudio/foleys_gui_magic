@@ -38,18 +38,9 @@
 namespace foleys
 {
 
-MagicProcessorState::MagicProcessorState (juce::AudioProcessor& processorToUse,
-                                          juce::ValueTree& stateToUse)
-  : MagicGUIState(),
-    processor (processorToUse),
-    state (stateToUse)
+MagicProcessorState::MagicProcessorState (juce::AudioProcessor& processorToUse)
+  : processor (processorToUse)
 {
-    state.getOrCreateChildWithName ("properties", nullptr);
-}
-
-juce::ValueTree MagicProcessorState::getPropertyRoot() const
-{
-    return state.getChildWithName ("properties");
 }
 
 juce::StringArray MagicProcessorState::getParameterNames() const
@@ -86,6 +77,11 @@ void MagicProcessorState::addParametersToMenu (const juce::AudioProcessorParamet
 juce::RangedAudioParameter* MagicProcessorState::getParameter (const juce::String& paramID)
 {
     return parameters.getParameter (paramID);
+}
+
+void MagicProcessorState::updateParameterMap()
+{
+    parameters.updateParameterMap();
 }
 
 std::unique_ptr<juce::SliderParameterAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::Slider& slider)
@@ -128,20 +124,14 @@ juce::AudioProcessor* MagicProcessorState::getProcessor()
 
 void MagicProcessorState::setLastEditorSize (int  width, int  height)
 {
-    if (state.isValid() == false)
-        return;
-
-    auto sizeNode = state.getOrCreateChildWithName (IDs::lastSize, nullptr);
+    auto sizeNode = getValueTree().getOrCreateChildWithName (IDs::lastSize, nullptr);
     sizeNode.setProperty (IDs::width,  width,  nullptr);
     sizeNode.setProperty (IDs::height, height, nullptr);
 }
 
 bool MagicProcessorState::getLastEditorSize (int& width, int& height)
 {
-    if (state.isValid() == false)
-        return false;
-
-    auto sizeNode = state.getOrCreateChildWithName (IDs::lastSize, nullptr);
+    auto sizeNode = getValueTree().getOrCreateChildWithName (IDs::lastSize, nullptr);
     if (sizeNode.hasProperty (IDs::width) == false || sizeNode.hasProperty (IDs::height) == false)
         return false;
 
@@ -152,6 +142,7 @@ bool MagicProcessorState::getLastEditorSize (int& width, int& height)
 
 void MagicProcessorState::getStateInformation (juce::MemoryBlock& destData)
 {
+    auto state = getValueTree();
     parameters.saveParameterValues (state);
 
     juce::MemoryOutputStream stream (destData, false);
@@ -164,6 +155,7 @@ void MagicProcessorState::setStateInformation (const void* data, int sizeInBytes
     if (tree.isValid() == false)
         return;
 
+    auto state = getValueTree();
     if (state.getType() != tree.getType())
         return;
 
@@ -298,11 +290,6 @@ void MagicProcessorState::timerCallback()
     getPropertyAsValue ("playhead:timeSigDenominator").setValue (timeSigDenominator.load());
     getPropertyAsValue ("playhead:isPlaying").setValue (isPlaying.load());
     getPropertyAsValue ("playhead:isRecording").setValue (isRecording.load());
-}
-
-juce::ValueTree& MagicProcessorState::getValueTree()
-{
-    return state;
 }
 
 } // namespace foleys

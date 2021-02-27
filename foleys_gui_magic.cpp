@@ -46,6 +46,7 @@
 #include "General/foleys_ApplicationSettings.cpp"
 #include "General/foleys_MagicGUIBuilder.cpp"
 #include "General/foleys_MagicPluginEditor.cpp"
+#include "General/foleys_MagicProcessor.cpp"
 #include "General/foleys_Resources.cpp"
 #include "General/foleys_MagicJUCEFactories.cpp"
 
