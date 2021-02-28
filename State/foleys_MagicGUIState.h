@@ -171,6 +171,9 @@ public:
         auto* pointerToReturn = o.get();
         advertisedObjects [objectID] = std::move (o);
 
+        if (auto* plot = dynamic_cast<MagicPlotSource*>(pointerToReturn))
+            addBackgroundProcessing (plot);
+
         return pointerToReturn;
     }
 

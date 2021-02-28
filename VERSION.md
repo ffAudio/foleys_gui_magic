@@ -10,6 +10,7 @@ Breaking Changes:
 - The GUI ValueTree is now in MagicGUIState
 - AudioProcessorValueTreeState is no longer needed and not supplied to the MagicProcessorState
 - Added MagicProcessor that takes care of the necessary boilerplate
+- addBackgroundProcessing() is no longer necessary
 
 - Set TextButton to toggle when a parameter is connected
 - Make it work without AudioProcessorValueTreeState
