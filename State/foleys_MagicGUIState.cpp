@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2020 Foleys Finest Audio Ltd. - Daniel Walz
+    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -38,6 +38,9 @@
 namespace foleys
 {
 
+MagicGUIState::MagicGUIState()
+{
+}
 
 MagicGUIState::~MagicGUIState()
 {
@@ -67,14 +70,47 @@ std::function<void()> MagicGUIState::getTrigger (const juce::Identifier& trigger
     return it->second;
 }
 
+juce::ValueTree MagicGUIState::getPropertyRoot()
+{
+    return state.getOrCreateChildWithName (IDs::properties, nullptr);
+}
+
 juce::ValueTree MagicGUIState::getPropertyRoot() const
 {
-    return propertyRoot;
+    return state.getChildWithName (IDs::properties);
+}
+
+void MagicGUIState::setGuiValueTree (const juce::ValueTree& dom)
+{
+    guiValueTree = dom;
+}
+
+void MagicGUIState::setGuiValueTree (const char* data, int dataSize)
+{
+    juce::String text (data, size_t (dataSize));
+    auto dom = juce::ValueTree::fromXml (text);
+    if (dom.isValid())
+        setGuiValueTree (dom);
+}
+
+juce::ValueTree& MagicGUIState::getGuiTree()
+{
+    return guiValueTree;
+}
+
+juce::ValueTree& MagicGUIState::getValueTree()
+{
+    return state;
 }
 
 void MagicGUIState::setApplicationSettingsFile (juce::File file)
 {
     settings->setFileName (file);
+}
+
+juce::ValueTree& MagicGUIState::getSettings()
+{
+    return settings->settings;
 }
 
 juce::ValueTree MagicGUIState::createDefaultStylesheet() const

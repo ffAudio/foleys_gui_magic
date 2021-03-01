@@ -21,29 +21,24 @@ Setup
 -----
 
 To use the WYSWYG plugin editor, add this module via Projucer to your JUCE project.
-Remove the PluginEditor, that was automatically created by Projucer. Instead add a member
-called `foleys::MagicProcessorState` to your processor and create a `foleys::MagicPluginEditor`
-in the `createEditor()` method of your processor:
 
-```
-// assumes an AudioProcessorValueTreeState named treeState
-foleys::MagicProcessorState magicState { *this, treeState };
+Instead of inheriting from juce::AudioProcessor inherit foleys::MagicProcessor.
+Get rid of those methods:
+- bool hasEditor()
+- juce::PluginEditor* createEditor()
+- void setStateInformation() and void getStateInformation() (optional, a default saving and loading method is provided)
 
-// return a new editor:
-AudioProcessorEditor* EqualizerExampleAudioProcessor::createEditor()
-{
-    // MAGIC GUI: create the generated editor, load your GUI from magic.xml in the binary resources
-    //            if you haven't created one yet, just give it a magicState and remove the last two arguments
-    return new foleys::MagicPluginEditor (magicState, BinaryData::magic_xml, BinaryData::magic_xmlSize);
-}
-```
+The foleys::MagicProcessor will provide a `foleys::MagicProcessorState magicState` (protected visibility) 
+to add visualisations or other objects to expose to the GUI.
+
+It is also possible to use the module in an Application. In that case you add a `MagicGuiState` and a `MagicGUIBuilder` yourself.
+There is an example available in the examples repository called PlayerExample.
 
 
 Add Visualisations
 ------------------
 
-To add visualisations like an Analyser or Oscilloscope to your plugin, add them in the constructor
-to the `foleys::MagicPluginState`:
+To add visualisations like an Analyser or Oscilloscope to your plugin, add them in the constructor:
 
 ```
 // Member:
@@ -51,7 +46,6 @@ foleys::MagicPlotSource* analyser = nullptr;
 
 // Constructor
 analyser = magicState.createAndAddObject<foleys::MagicAnalyser>("input");
-magicState.addBackgroundProcessing (analyser);
 
 // prepareToPlay
 analyser->prepareToPlay (sampleRate, samplesPerBlockExpected);
@@ -67,24 +61,18 @@ case "input".
 Saving and restoring the plugin
 -------------------------------
 
-You can save and restore your plugin state, just as you have been used to. But you can also delegate
-this to the `foleys::MagicPluginState`, which will additionally save and restore your PluginEditor's 
-last size:
+The `foleys::MagicProcessor` takes care of saving and restoring the parameters and properties.
+You can add your own values to the ValueTree in the `magicState`.
+There is a callback after restoring that you can override, in case you need to do some additional action.
 
+
+Bake in the xml
+---------------
+
+To bake in the GUI save the XML from the PGM panel and add it to the BinaryResources via Projucer.
+In the constructor you set the XML file:
 ```
-void getStateInformation (MemoryBlock& destData) override
-{
-    // MAGIC GUI: let the magicState conveniently handle save and restore the state.
-    //            You don't need to use that, but it also takes care of restoring the last editor size
-    magicState.getStateInformation (destData);
-}
-
-void setStateInformation (const void* data, int sizeInBytes) override
-{
-    // MAGIC GUI: let the magicState conveniently handle save and restore the state.
-    //            You don't need to use that, but it also takes care of restoring the last editor size
-    magicState.setStateInformation (data, sizeInBytes, getActiveEditor());
-}
+magicState.setGuiValueTree (BinaryData::magic_xml, BinaryData::magic_xmlSize);
 ```
 
 

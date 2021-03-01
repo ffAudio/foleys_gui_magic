@@ -39,65 +39,42 @@
 namespace foleys
 {
 
-class MagicLevelSource
+/**
+ The MidiParameterMapper allows to connect CC values to RangedAudioParameters
+ */
+class MidiParameterMapper  : private juce::ValueTree::Listener
 {
 public:
+    MidiParameterMapper (MagicProcessorState& state);
+    ~MidiParameterMapper() override;
 
-    MagicLevelSource()=default;
+    void processMidiBuffer (juce::MidiBuffer& buffer);
 
-    /**
-     Send new sample values to the measurement.
-     */
-    void pushSamples (const juce::AudioBuffer<float>& buffer);
+    void mapMidiController (int cc, const juce::String& parameterID);
+    void unmapMidiController (int cc, const juce::String& parameterID);
+    void unmapAllMidiController (int cc);
 
-    float getRMSvalue (int channel) const;
-    float getMaxValue (int channel) const;
-
-    /**
-     Setup the source to measure a signal.
-
-     @param numChannels the number of channels that will be sent
-     @param sampleRate the sampleRate the signal is timed in
-     @param maxKeepMS the number of milliseconds to keep the max
-     @param rmsWindowMS the length to calculate the RMS of it
-     */
-    void setupSource (int numChannels, double sampleRate, int maxKeepMS, int rmsWindowMS);
-
-    /**
-     Set the number of channels to measure. This should be done on a non-realtime thread.
-     */
-    void setNumChannels (int numChannels);
-    int getNumChannels() const;
-
-    /**
-     Set the number of samples to be averaged. They are stored in 64 samples blocks to minimise calculation overhead.
-     */
-    void setRmsLength (int numSamples);
-
-    //==============================================================================
+    int  getLastController() const;
 
 private:
+    void recreateMidiMapper();
 
-    struct ChannelData
-    {
-        ChannelData()=default;
-        ChannelData (const ChannelData& other);
+    void valueTreeChildAdded (juce::ValueTree& parentTree,
+                              juce::ValueTree& childWhichHasBeenAdded) override;
+    void valueTreeChildRemoved (juce::ValueTree& parentTree, juce::ValueTree&, int) override;
+    void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override;
 
-        std::atomic<float> max;
-        std::atomic<float> rms;
-        std::atomic<float> overall;
 
-        std::vector<float> rmsHistory;
-        int                rmsPointer = 0;
-        int                maxCountDown = 0;
-    };
+    using MidiMapping=std::map<int, std::vector<juce::RangedAudioParameter*>>;
 
-    std::vector<ChannelData> channelDatas;
-    int rmsHistorySize = 22050;
-    int maxCountDownInitial = 100;
+    SharedApplicationSettings   settings;
+    juce::CriticalSection       mappingLock;
 
-    JUCE_DECLARE_WEAK_REFERENCEABLE (MagicLevelSource)
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicLevelSource)
+    MagicProcessorState&        state;
+    std::atomic<int>            lastController { -1 };
+    MidiMapping                 midiMapper;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiParameterMapper)
 };
 
 } // namespace foleys

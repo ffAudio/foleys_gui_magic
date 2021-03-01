@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2020 Foleys Finest Audio Ltd. - Daniel Walz
+    Copyright (c) 2020 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -44,7 +44,9 @@ namespace foleys
  They are hierarchically ordered in a ValueTree and loaded via SharedResourcePointer,
  so they don't exist duplicated in one process.
  */
-class ApplicationSettings : private juce::ValueTree::Listener
+class ApplicationSettings : public juce::ChangeBroadcaster,
+                            private juce::Timer,
+                            private juce::ValueTree::Listener
 {
 public:
     ApplicationSettings();
@@ -60,6 +62,7 @@ public:
     void setFileName (juce::File file);
 
 private:
+    void timerCallback() override;
 
     void load();
     void save();
@@ -70,6 +73,7 @@ private:
     void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override;
 
     juce::File   settingsFile;
+    juce::String checksum;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ApplicationSettings)
 };

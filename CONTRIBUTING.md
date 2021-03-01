@@ -20,10 +20,10 @@ Ownership
 ---------
 
 Since this project is under a dual license (free for non-commercial use, paid license for commercial use),
-the sole ownership is with Foleys Finest Audio Ltd. By submitting your contributions you will not gain ownership
+the sole ownership is with Foleys Finest Audio. By submitting your contributions you will not gain ownership
 over parts or the entirety of foleys_gui_magic.
 Any compensation is solely on the discretion of the owner.
-Contributors declare, that they had ownership over the contributed code. Foleys Finest Audio Ltd. shall not be liable
+Contributors declare, that they had ownership over the contributed code. Foleys Finest Audio shall not be liable
 for copyright or patent infringements through external contributors.
 If you have claims to any part inside the project, please get in touch and the code will be removed, if the claims are valid.
 

@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2021 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -39,65 +39,31 @@
 namespace foleys
 {
 
-class MagicLevelSource
+class ParameterManager
 {
 public:
+    ParameterManager (juce::AudioProcessor& processor);
 
-    MagicLevelSource()=default;
+    juce::RangedAudioParameter* getParameter (const juce::String& paramID);
 
-    /**
-     Send new sample values to the measurement.
-     */
-    void pushSamples (const juce::AudioBuffer<float>& buffer);
+    juce::StringArray getParameterNames() const;
 
-    float getRMSvalue (int channel) const;
-    float getMaxValue (int channel) const;
+    void updateParameterMap();
 
-    /**
-     Setup the source to measure a signal.
+    void saveParameterValues (juce::ValueTree& tree);
 
-     @param numChannels the number of channels that will be sent
-     @param sampleRate the sampleRate the signal is timed in
-     @param maxKeepMS the number of milliseconds to keep the max
-     @param rmsWindowMS the length to calculate the RMS of it
-     */
-    void setupSource (int numChannels, double sampleRate, int maxKeepMS, int rmsWindowMS);
+    void loadParameterValues (juce::ValueTree& tree);
 
-    /**
-     Set the number of channels to measure. This should be done on a non-realtime thread.
-     */
-    void setNumChannels (int numChannels);
-    int getNumChannels() const;
-
-    /**
-     Set the number of samples to be averaged. They are stored in 64 samples blocks to minimise calculation overhead.
-     */
-    void setRmsLength (int numSamples);
-
-    //==============================================================================
+    static juce::Identifier nodeName;
+    static juce::Identifier nodeId;
+    static juce::Identifier nodeValue;
 
 private:
+    juce::AudioProcessor& processor;
 
-    struct ChannelData
-    {
-        ChannelData()=default;
-        ChannelData (const ChannelData& other);
+    std::map<juce::String, juce::RangedAudioParameter*> parameterLookup;
 
-        std::atomic<float> max;
-        std::atomic<float> rms;
-        std::atomic<float> overall;
-
-        std::vector<float> rmsHistory;
-        int                rmsPointer = 0;
-        int                maxCountDown = 0;
-    };
-
-    std::vector<ChannelData> channelDatas;
-    int rmsHistorySize = 22050;
-    int maxCountDownInitial = 100;
-
-    JUCE_DECLARE_WEAK_REFERENCEABLE (MagicLevelSource)
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicLevelSource)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParameterManager)
 };
 
 } // namespace foleys

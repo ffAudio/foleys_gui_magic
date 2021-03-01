@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2020 Foleys Finest Audio Ltd. - Daniel Walz
+    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -38,28 +38,14 @@
 namespace foleys
 {
 
-MagicProcessorState::MagicProcessorState (juce::AudioProcessor& processorToUse,
-                                          juce::AudioProcessorValueTreeState& stateToUse)
-  : MagicGUIState(),
-    processor (processorToUse),
-    state (stateToUse)
+MagicProcessorState::MagicProcessorState (juce::AudioProcessor& processorToUse)
+  : processor (processorToUse)
 {
-    midiMapper.setAudioProcessorValueTreeState (&state);
-}
-
-juce::ValueTree MagicProcessorState::getPropertyRoot() const
-{
-    return state.state.getOrCreateChildWithName ("properties", nullptr);
 }
 
 juce::StringArray MagicProcessorState::getParameterNames() const
 {
-    juce::StringArray names;
-    for (const auto* p : processor.getParameters())
-        if (const auto* withID = dynamic_cast<const juce::AudioProcessorParameterWithID*>(p))
-            names.add (withID->paramID);
-
-    return names;
+    return parameters.getParameterNames();
 }
 
 juce::PopupMenu MagicProcessorState::createParameterMenu() const
@@ -90,22 +76,45 @@ void MagicProcessorState::addParametersToMenu (const juce::AudioProcessorParamet
 
 juce::RangedAudioParameter* MagicProcessorState::getParameter (const juce::String& paramID)
 {
-    return state.getParameter (paramID);
+    return parameters.getParameter (paramID);
 }
 
-std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::Slider& slider)
+void MagicProcessorState::updateParameterMap()
 {
-    return std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(state, paramID, slider);
+    parameters.updateParameterMap();
 }
 
-std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::ComboBox& combobox)
+std::unique_ptr<juce::SliderParameterAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::Slider& slider)
 {
-    return std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(state, paramID, combobox);
+    if (auto* parameter = getParameter (paramID))
+        return std::make_unique<juce::SliderParameterAttachment>(*parameter, slider);
+
+    // You have connected a control to a parameter that doesn't exist. Please fix your GUI.
+    // You may safely click continue in your debugger
+    jassertfalse;
+    return {};
 }
 
-std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::Button& button)
+std::unique_ptr<juce::ComboBoxParameterAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::ComboBox& combobox)
 {
-    return std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(state, paramID, button);
+    if (auto* parameter = getParameter (paramID))
+        return std::make_unique<juce::ComboBoxParameterAttachment>(*parameter, combobox);
+
+    // You have connected a control to a parameter that doesn't exist. Please fix your GUI.
+    // You may safely click continue in your debugger
+    jassertfalse;
+    return {};
+}
+
+std::unique_ptr<juce::ButtonParameterAttachment> MagicProcessorState::createAttachment (const juce::String& paramID, juce::Button& button)
+{
+    if (auto* parameter = getParameter (paramID))
+        return std::make_unique<juce::ButtonParameterAttachment>(*parameter, button);
+
+    // You have connected a control to a parameter that doesn't exist. Please fix your GUI.
+    // You may safely click continue in your debugger
+    jassertfalse;
+    return {};
 }
 
 juce::AudioProcessor* MagicProcessorState::getProcessor()
@@ -115,20 +124,14 @@ juce::AudioProcessor* MagicProcessorState::getProcessor()
 
 void MagicProcessorState::setLastEditorSize (int  width, int  height)
 {
-    if (state.state.isValid() == false)
-        return;
-
-    auto sizeNode = state.state.getOrCreateChildWithName (IDs::lastSize, nullptr);
+    auto sizeNode = getValueTree().getOrCreateChildWithName (IDs::lastSize, nullptr);
     sizeNode.setProperty (IDs::width,  width,  nullptr);
     sizeNode.setProperty (IDs::height, height, nullptr);
 }
 
 bool MagicProcessorState::getLastEditorSize (int& width, int& height)
 {
-    if (state.state.isValid() == false)
-        return false;
-
-    auto sizeNode = state.state.getOrCreateChildWithName (IDs::lastSize, nullptr);
+    auto sizeNode = getValueTree().getOrCreateChildWithName (IDs::lastSize, nullptr);
     if (sizeNode.hasProperty (IDs::width) == false || sizeNode.hasProperty (IDs::height) == false)
         return false;
 
@@ -139,8 +142,11 @@ bool MagicProcessorState::getLastEditorSize (int& width, int& height)
 
 void MagicProcessorState::getStateInformation (juce::MemoryBlock& destData)
 {
+    auto state = getValueTree();
+    parameters.saveParameterValues (state);
+
     juce::MemoryOutputStream stream (destData, false);
-    state.state.writeToStream (stream);
+    state.writeToStream (stream);
 }
 
 void MagicProcessorState::setStateInformation (const void* data, int sizeInBytes, juce::AudioProcessorEditor* editor)
@@ -149,7 +155,13 @@ void MagicProcessorState::setStateInformation (const void* data, int sizeInBytes
     if (tree.isValid() == false)
         return;
 
-    state.replaceState (tree);
+    auto state = getValueTree();
+    if (state.getType() != tree.getType())
+        return;
+
+    state.copyPropertiesAndChildrenFrom (tree, nullptr);
+
+    parameters.loadParameterValues (state);
 
     if (editor)
     {
@@ -229,11 +241,11 @@ juce::ValueTree MagicProcessorState::createDefaultGUITree() const
 
         current.appendChild (child, nullptr);
 
-        juce::ValueTree parameters { IDs::view, {
+        juce::ValueTree params { IDs::view, {
             { IDs::styleClass, "parameters nomargin" }}};
 
-        current.appendChild (parameters, nullptr);
-        current = parameters;
+        current.appendChild (params, nullptr);
+        current = params;
     }
 
     createDefaultFromParameters (current, processor.getParameterTree());
@@ -278,11 +290,6 @@ void MagicProcessorState::timerCallback()
     getPropertyAsValue ("playhead:timeSigDenominator").setValue (timeSigDenominator.load());
     getPropertyAsValue ("playhead:isPlaying").setValue (isPlaying.load());
     getPropertyAsValue ("playhead:isRecording").setValue (isRecording.load());
-}
-
-juce::AudioProcessorValueTreeState& MagicProcessorState::getValueTreeState()
-{
-    return state;
 }
 
 } // namespace foleys

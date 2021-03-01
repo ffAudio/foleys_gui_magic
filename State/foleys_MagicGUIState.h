@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2020 Foleys Finest Audio Ltd. - Daniel Walz
+    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -63,14 +63,28 @@ class MagicGUIState
     }
 
 public:
-    MagicGUIState() = default;
+    MagicGUIState();
 
     virtual ~MagicGUIState();
 
     /**
      Returns the root node for exposed properties for the GUI
      */
-    virtual juce::ValueTree getPropertyRoot() const;
+    juce::ValueTree getPropertyRoot();
+    juce::ValueTree getPropertyRoot() const;
+
+    /**
+     Set the GUI DOM to create the GUI components from
+     */
+    void setGuiValueTree (const juce::ValueTree& dom);
+    void setGuiValueTree (const char* data, int dataSize);
+
+    /**
+     Grants access to the gui tree. This is returned as reference so you are able to connect listeners to it.
+     */
+    juce::ValueTree& getGuiTree();
+
+    juce::ValueTree& getValueTree();
 
     /**
      Set a file to save common settings for all instances
@@ -78,17 +92,22 @@ public:
     void setApplicationSettingsFile (juce::File file);
 
     /**
+     This is a settings ValueTree that is stored globally for all plugin instances
+     */
+    juce::ValueTree& getSettings();
+
+    /**
      Returns the IDs of AudioProcessorParameters for selection
      */
     virtual juce::StringArray getParameterNames() const;
 
-    virtual juce::RangedAudioParameter* getParameter ([[maybe_unused]]const juce::String& paramID)
+    virtual juce::RangedAudioParameter* getParameter (const juce::String& paramID)
     { juce::ignoreUnused(paramID); return nullptr; }
-    virtual std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>   createAttachment (const juce::String& paramID, juce::Slider&)
+    virtual std::unique_ptr<juce::SliderParameterAttachment>   createAttachment (const juce::String& paramID, juce::Slider&)
     { juce::ignoreUnused(paramID); return nullptr; }
-    virtual std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> createAttachment (const juce::String& paramID, juce::ComboBox&)
+    virtual std::unique_ptr<juce::ComboBoxParameterAttachment> createAttachment (const juce::String& paramID, juce::ComboBox&)
     { juce::ignoreUnused(paramID); return nullptr; }
-    virtual std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   createAttachment (const juce::String& paramID, juce::Button&)
+    virtual std::unique_ptr<juce::ButtonParameterAttachment>   createAttachment (const juce::String& paramID, juce::Button&)
     { juce::ignoreUnused(paramID); return nullptr; }
 
     /**
@@ -152,6 +171,9 @@ public:
         auto* pointerToReturn = o.get();
         advertisedObjects [objectID] = std::move (o);
 
+        if (auto* plot = dynamic_cast<MagicPlotSource*>(pointerToReturn))
+            addBackgroundProcessing (plot);
+
         return pointerToReturn;
     }
 
@@ -213,7 +235,8 @@ private:
      */
     SharedApplicationSettings settings;
 
-    juce::ValueTree propertyRoot { "Properties" };
+    juce::ValueTree guiValueTree { "magic" };
+    juce::ValueTree state        { "state" };
 
     juce::MidiKeyboardState keyboardState;
 

@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2020 Foleys Finest Audio Ltd. - Daniel Walz
+    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -48,16 +48,7 @@ class MagicGUIBuilder : public juce::ChangeListener
 {
 public:
     MagicGUIBuilder (MagicGUIState& magicStateToUse);
-
-    /**
-     Allows to set the GUI definition when reloading
-     */
-    void setConfigTree (const juce::ValueTree& config);
-
-    /**
-     Convenience method to call setConfigTree directly from BinaryData
-     */
-    void setConfigTree (const char* data, int dataSize);
+    ~MagicGUIBuilder() override;
 
     /**
      Create a node from the description
@@ -226,7 +217,6 @@ public:
 private:
 
     juce::UndoManager undo;
-    juce::ValueTree   config;
     Stylesheet        stylesheet { *this };
 
     //==============================================================================

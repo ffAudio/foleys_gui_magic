@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2020 Foleys Finest Audio Ltd. - Daniel Walz
+    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -158,6 +158,7 @@ namespace IDs
     static juce::Identifier width       { "width" };
     static juce::Identifier height      { "height" };
 
+    static juce::Identifier properties  { "Properties" };
     static juce::Identifier lastSize    { "last-size" };
 }
 

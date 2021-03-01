@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2020 Foleys Finest Audio Ltd. - Daniel Walz
+    Copyright (c) 2021 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -39,44 +39,54 @@
 namespace foleys
 {
 
-/**
- The MidiParameterMapper allows to connect CC values to RangedAudioParameters
- */
-class MidiParameterMapper  : private juce::ValueTree::Listener
+
+MagicProcessor::MagicProcessor()
+#ifndef JucePlugin_PreferredChannelConfigurations
+     : juce::AudioProcessor (juce::AudioProcessor::BusesProperties()
+                     #if ! JucePlugin_IsMidiEffect
+                      #if ! JucePlugin_IsSynth
+                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
+                      #endif
+                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
+                     #endif
+                       )
+#endif
+{}
+
+MagicProcessor::MagicProcessor (const BusesProperties& ioLayouts) : juce::AudioProcessor (ioLayouts)
+{}
+
+MagicProcessor::MagicProcessor (const std::initializer_list<const short[2]>& channelLayoutList) : juce::AudioProcessor (channelLayoutList)
+{}
+
+//==============================================================================
+void MagicProcessor::initialiseBuilder (MagicGUIBuilder& builder)
 {
-public:
-    MidiParameterMapper();
-    ~MidiParameterMapper() override;
+    builder.registerJUCEFactories();
+    builder.registerJUCELookAndFeels();
+}
 
-    void processMidiBuffer (juce::MidiBuffer& buffer);
+juce::AudioProcessorEditor* MagicProcessor::createEditor()
+{
+    magicState.updateParameterMap();
 
-    void mapMidiController (int cc, const juce::String& parameterID);
-    void unmapMidiController (int cc, const juce::String& parameterID);
-    void unmapAllMidiController (int cc);
+    auto builder = std::make_unique<MagicGUIBuilder>(magicState);
+    initialiseBuilder (*builder);
 
-    int  getLastController() const;
+    return new MagicPluginEditor (magicState, std::move (builder));
+}
 
-    void setAudioProcessorValueTreeState (juce::AudioProcessorValueTreeState* state);
+//==============================================================================
+void MagicProcessor::getStateInformation (juce::MemoryBlock& destData)
+{
+    magicState.getStateInformation (destData);
+}
 
-private:
-    void recreateMidiMapper();
+void MagicProcessor::setStateInformation (const void* data, int sizeInBytes)
+{
+    magicState.setStateInformation (data, sizeInBytes, getActiveEditor());
 
-    void valueTreeChildAdded (juce::ValueTree& parentTree,
-                              juce::ValueTree& childWhichHasBeenAdded) override;
-    void valueTreeChildRemoved (juce::ValueTree& parentTree, juce::ValueTree&, int) override;
-    void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override;
-
-
-    using MidiMapping=std::map<int, std::vector<juce::RangedAudioParameter*>>;
-
-    SharedApplicationSettings           settings;
-    juce::CriticalSection               mappingLock;
-
-    juce::AudioProcessorValueTreeState* treeState = nullptr;
-    std::atomic<int>                    lastController { -1 };
-    MidiMapping                         midiMapper;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiParameterMapper)
-};
+    postSetStateInformation();
+}
 
 } // namespace foleys

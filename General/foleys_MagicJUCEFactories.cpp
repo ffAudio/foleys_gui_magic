@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2020 Foleys Finest Audio Ltd. - Daniel Walz
+    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -144,7 +144,7 @@ public:
 
 private:
     AutoOrientationSlider slider;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachment;
+    std::unique_ptr<juce::SliderParameterAttachment> attachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliderItem)
 };
@@ -213,7 +213,7 @@ public:
 
 private:
     juce::ComboBox comboBox;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> attachment;
+    std::unique_ptr<juce::ComboBoxParameterAttachment> attachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ComboBoxItem)
 };
@@ -249,6 +249,7 @@ public:
         if (parameter.isNotEmpty())
             attachment = getMagicState().createAttachment (parameter, button);
 
+        button.setClickingTogglesState (parameter.isNotEmpty());
         button.setButtonText (magicBuilder.getStyleProperty (pText, configNode));
 
         auto triggerID = getProperty (pOnClick).toString();
@@ -274,7 +275,7 @@ public:
 
 private:
     juce::TextButton button;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> attachment;
+    std::unique_ptr<juce::ButtonParameterAttachment> attachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TextButtonItem)
 };
@@ -334,7 +335,7 @@ public:
 
 private:
     juce::ToggleButton button;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> attachment;
+    std::unique_ptr<juce::ButtonParameterAttachment> attachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToggleButtonItem)
 };
@@ -697,6 +698,12 @@ public:
     ListBoxItem (MagicGUIBuilder& builder, const juce::ValueTree& node) : GuiItem (builder, node)
     {
         addAndMakeVisible (listBox);
+    }
+
+    ~ListBoxItem() override
+    {
+        if (auto* m = dynamic_cast<juce::ChangeBroadcaster*>(listBox.getModel()))
+            m->removeChangeListener (this);
     }
 
     void update() override
