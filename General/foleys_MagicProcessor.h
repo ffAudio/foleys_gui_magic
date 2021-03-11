@@ -43,6 +43,16 @@ namespace foleys
  This is a convenience class to create a plugin using PluginGuiMagic. It has all wired up for you,
  The MagicPluginEditor for you to design or use the generic default, the loading and saving of the state
  and many more.
+
+ In the constructor you can create the GUI ValueTree either by using
+ \code{.cpp}
+ // generate a default GUI deduced from Parameters, ParameterGroups and MagicPlotSources
+ auto defaultGUI = magicState.createDefaultGUITree();
+ magicState.setGuiValueTree (defaultGUI);
+
+ // or you load an existing one from BinaryData
+ magicState.setGuiValueTree (BinaryData::magic_xml, BinaryData::magic_xmlSize);
+ \endcode
  */
 class MagicProcessor  : public juce::AudioProcessor
 {
