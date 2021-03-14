@@ -125,7 +125,17 @@ public:
      */
     virtual void updateLayout();
 
+    /**
+     Parse the values and set it to the FlexBox::Item for layouting.
+     */
     void configureFlexBoxItem (const juce::ValueTree& node);
+
+    void configurePosition (const juce::ValueTree& node);
+
+    /**
+     Calculates the position according to the parent area
+     */
+    juce::Rectangle<int> resolvePosition (juce::Rectangle<int> parent);
 
     /**
      Returns the bounds of the wrapped Component. This is the GuiItems bounds
@@ -193,6 +203,15 @@ private:
     juce::Value     visibility { true };
 
     juce::String    highlight;
+
+    struct Position
+    {
+        bool   absolute = true;
+        double value = 0.0;
+    };
+    Position posX, posY, posWidth, posHeight;
+
+    void configurePosition (const juce::var& v, Position& p, double d);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GuiItem)
 };

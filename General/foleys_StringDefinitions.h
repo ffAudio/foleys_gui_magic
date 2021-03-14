@@ -158,6 +158,11 @@ namespace IDs
     static juce::Identifier width       { "width" };
     static juce::Identifier height      { "height" };
 
+    static juce::Identifier posX        { "pos-x" };
+    static juce::Identifier posY        { "pos-y" };
+    static juce::Identifier posWidth    { "pos-width" };
+    static juce::Identifier posHeight   { "pos-height" };
+
     static juce::Identifier properties  { "Properties" };
     static juce::Identifier lastSize    { "last-size" };
 }

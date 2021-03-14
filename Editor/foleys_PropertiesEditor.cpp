@@ -127,6 +127,8 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
 
     addDecoratorProperties();
 
+    addFlexItemProperties();
+
     juce::Array<juce::PropertyComponent*> additional;
 
     if (stylesheet.isClassNode (styleItem))
@@ -141,8 +143,6 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
 
     if (styleItem.getType() == IDs::view || stylesheet.isClassNode (styleItem))
         addContainerProperties();
-
-    addFlexItemProperties();
 
     if (stylesheet.isClassNode (styleItem))
         nodeSelect.setText (TRANS ("Class: ") + styleItem.getType().toString(), juce::dontSendNotification);
@@ -289,6 +289,11 @@ void PropertiesEditor::addFlexItemProperties()
 {
     juce::Array<juce::PropertyComponent*> array;
 
+    array.add (new StyleTextPropertyComponent (builder, IDs::posX, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::posY, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::posWidth, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::posHeight, styleItem));
+
     array.add (new StyleTextPropertyComponent (builder, IDs::width, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::height, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::minWidth, styleItem));
@@ -300,7 +305,7 @@ void PropertiesEditor::addFlexItemProperties()
     array.add (new StyleTextPropertyComponent (builder, IDs::flexOrder, styleItem));
     array.add (new StyleChoicePropertyComponent (builder, IDs::flexAlignSelf, styleItem, { IDs::flexStretch, IDs::flexStart, IDs::flexEnd, IDs::flexCenter, IDs::flexAuto }));
 
-    properties.addSection ("Flex-Item", array, false);
+    properties.addSection ("Item", array, false);
 }
 
 void PropertiesEditor::addContainerProperties()

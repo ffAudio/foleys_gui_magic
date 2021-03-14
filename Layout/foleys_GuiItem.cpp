@@ -91,6 +91,7 @@ void GuiItem::updateInternal()
     decorator.configure (magicBuilder, configNode);
     configureComponent();
     configureFlexBoxItem (configNode);
+    configurePosition (configNode);
 
     updateColours();
 
@@ -186,6 +187,40 @@ void GuiItem::configureFlexBoxItem (const juce::ValueTree& node)
         flexItem.alignSelf = juce::FlexItem::AlignSelf::autoAlign;
     else
         flexItem.alignSelf = juce::FlexItem::AlignSelf::stretch;
+}
+
+void GuiItem::configurePosition (const juce::ValueTree& node)
+{
+    configurePosition (magicBuilder.getStyleProperty (IDs::posX, node), posX, 0.0);
+    configurePosition (magicBuilder.getStyleProperty (IDs::posY, node), posY, 0.0);
+    configurePosition (magicBuilder.getStyleProperty (IDs::posWidth, node), posWidth, 100.0);
+    configurePosition (magicBuilder.getStyleProperty (IDs::posHeight, node), posHeight, 100.0);
+}
+
+void GuiItem::configurePosition (const juce::var& v, Position& p, double d)
+{
+    if (v.isVoid())
+    {
+        p.absolute = false;
+        p.value = d;
+    }
+    else
+    {
+        auto const s = v.toString();
+        p.absolute = ! s.endsWith ("%");
+        p.value = s.getDoubleValue();
+    }
+}
+
+juce::Rectangle<int> GuiItem::resolvePosition (juce::Rectangle<int> parent)
+{
+    return juce::Rectangle<int>
+    (
+        parent.getX() + juce::roundToInt (posX.absolute ? posX.value : posX.value * parent.getWidth() * 0.01),
+        parent.getY() + juce::roundToInt (posY.absolute ? posY.value : posY.value * parent.getHeight() * 0.01),
+        juce::roundToInt (posWidth.absolute ? posWidth.value : posWidth.value * parent.getWidth() * 0.01),
+        juce::roundToInt (posHeight.absolute ? posHeight.value : posHeight.value * parent.getHeight() * 0.01)
+    );
 }
 
 void GuiItem::paint (juce::Graphics& g)

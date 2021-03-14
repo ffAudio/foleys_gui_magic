@@ -120,6 +120,11 @@ void Container::setLayoutMode (Layout layoutToUse)
     updateLayout();
 }
 
+Container::Layout Container::getLayoutMode() const
+{
+    return layout;
+}
+
 void Container::resized()
 {
     updateLayout();
@@ -132,6 +137,9 @@ void Container::updateLayout()
 
     auto clientBounds = getClientBounds();
 
+    if (layout != Layout::Tabbed)
+        tabbedButtons.reset();
+
     if (layout == Layout::FlexBox)
     {
         flexBox.items.clear();
@@ -140,18 +148,18 @@ void Container::updateLayout()
 
         flexBox.performLayout (clientBounds);
     }
-    else
+    else if (layout == Layout::Tabbed)
     {
-        if (layout == Layout::Tabbed)
-        {
-            updateTabbedButtons();
-            tabbedButtons->setBounds (clientBounds.removeFromTop (30));
-        }
-        else
-            tabbedButtons.reset();
+        updateTabbedButtons();
+        tabbedButtons->setBounds (clientBounds.removeFromTop (30));
 
         for (auto& child : children)
             child->setBounds (clientBounds);
+    }
+    else // layout == Layout::Contents
+    {
+        for (auto& child : children)
+            child->setBounds (child->resolvePosition (clientBounds));
     }
 
     for (auto& child : children)

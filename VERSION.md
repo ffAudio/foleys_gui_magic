@@ -1,6 +1,11 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.3.1
+-----
+
+- Added options to specify position and size relative or absolute to the parent component
+
 1.3.0 - 28.02.2021
 ------------------
 

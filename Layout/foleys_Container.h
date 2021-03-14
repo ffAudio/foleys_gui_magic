@@ -78,6 +78,11 @@ public:
      */
     void setLayoutMode (Layout layout);
 
+    /**
+     Returns the current layout mode
+     */
+    Layout getLayoutMode() const;
+
     void resized() override;
 
     bool isContainer() const override { return true; }
