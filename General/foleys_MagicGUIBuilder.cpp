@@ -218,6 +218,14 @@ GuiItem* MagicGUIBuilder::findGuiItemWithId (const juce::String& name)
     return nullptr;
 }
 
+GuiItem* MagicGUIBuilder::findGuiItem (const juce::ValueTree& node)
+{
+    if (node.isValid() && root)
+        return root->findGuiItem (node);
+
+    return nullptr;
+}
+
 void MagicGUIBuilder::registerFactory (juce::Identifier type, std::unique_ptr<GuiItem>(*factory)(MagicGUIBuilder& builder, const juce::ValueTree&))
 {
     if (factories.find (type) != factories.cend())
@@ -389,9 +397,15 @@ void MagicGUIBuilder::setSelectedNode (const juce::ValueTree& node)
 {
     if (selectedNode != node)
     {
+        if (auto* item = findGuiItem (selectedNode))
+            item->setDraggable (false);
+
         selectedNode = node;
         if (magicToolBox.get() != nullptr)
             magicToolBox->setSelectedNode (selectedNode);
+
+        if (auto* item = findGuiItem (selectedNode))
+            item->setDraggable (true);
 
         if (parent != nullptr)
             parent->repaint();

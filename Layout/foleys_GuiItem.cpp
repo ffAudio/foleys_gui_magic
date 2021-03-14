@@ -235,6 +235,11 @@ juce::Rectangle<int> GuiItem::getClientBounds() const
 
 void GuiItem::resized()
 {
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    if (borderDragger)
+        borderDragger->setBounds (getLocalBounds());
+#endif
+
     if (auto* component = getWrappedComponent())
     {
         auto b = getClientBounds();
@@ -324,6 +329,14 @@ void GuiItem::itemDragExit (const juce::DragAndDropTarget::SourceDetails& detail
     repaint();
 }
 
+GuiItem* GuiItem::findGuiItem (const juce::ValueTree& node)
+{
+    if (node == configNode)
+        return this;
+
+    return nullptr;
+}
+
 void GuiItem::paintOverChildren (juce::Graphics& g)
 {
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
@@ -349,6 +362,60 @@ void GuiItem::setEditMode (bool shouldEdit)
 
     if (auto* component = getWrappedComponent())
         component->setInterceptsMouseClicks (!shouldEdit, !shouldEdit);
+}
+
+void GuiItem::setDraggable (bool selected)
+{
+    auto manualLayout = false;
+    if (auto* container = dynamic_cast<Container*>(getParentComponent()))
+        manualLayout = container->getLayoutMode() == Container::Layout::Contents;
+
+    if (selected && manualLayout)
+    {
+        toFront (false);
+        borderDragger = std::make_unique<BorderDragger>(this, nullptr);
+
+        borderDragger->onDragStart = [&]
+        {
+            magicBuilder.getUndoManager().beginNewTransaction ("Drag component position");
+        };
+        borderDragger->onDragging = [&]
+        {
+            savePosition();
+        };
+        borderDragger->onDragEnd = [&]
+        {
+            savePosition();
+        };
+
+        borderDragger->setBounds (getLocalBounds());
+        addAndMakeVisible (*borderDragger);
+    }
+    else
+    {
+        borderDragger.reset();
+    }
+}
+
+void GuiItem::savePosition ()
+{
+    auto* container = dynamic_cast<Container*>(getParentComponent());
+
+    if (container == nullptr)
+        return;
+
+    auto parent = container->getClientBounds();
+
+    auto px = posX.absolute ? juce::String (getX() - parent.getX()) : juce::String (100.0 * (getX() - parent.getX()) / parent.getWidth()) + "%";
+    auto py = posY.absolute ? juce::String (getY() - parent.getY()) : juce::String (100.0 * (getY() - parent.getY()) / parent.getHeight()) + "%";
+    auto pw = posWidth.absolute ? juce::String (getWidth()) : juce::String (100.0 * getWidth() / parent.getWidth()) + "%";
+    auto ph = posHeight.absolute ? juce::String (getHeight()) : juce::String (100.0 * getHeight() / parent.getHeight()) + "%";
+
+    auto* undo = &magicBuilder.getUndoManager();
+    configNode.setProperty (IDs::posX, px, undo);
+    configNode.setProperty (IDs::posY, py, undo);
+    configNode.setProperty (IDs::posWidth, pw, undo);
+    configNode.setProperty (IDs::posHeight, ph, undo);
 }
 
 void GuiItem::mouseDown (const juce::MouseEvent&)

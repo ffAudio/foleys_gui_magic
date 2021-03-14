@@ -82,6 +82,11 @@ public:
     GuiItem* findGuiItemWithId (const juce::String& name);
 
     /**
+     Seeks recursively for a GuiItem
+     */
+    GuiItem* findGuiItem (const juce::ValueTree& node);
+
+    /**
      This selects the stylesheet node and sets it to the Stylesheet.
      If no stylesheet is found, a default one is created.
      */
