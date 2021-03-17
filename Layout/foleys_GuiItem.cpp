@@ -253,6 +253,14 @@ void GuiItem::updateLayout()
     resized();
 }
 
+LayoutType GuiItem::getParentsLayoutType() const
+{
+    if (auto* container = dynamic_cast<Container*>(getParentComponent()))
+        return container->getLayoutMode();
+
+    return LayoutType::Contents;
+}
+
 juce::String GuiItem::getTabCaption (const juce::String& defaultName) const
 {
     return decorator.getTabCaption (defaultName);
@@ -366,11 +374,7 @@ void GuiItem::setEditMode (bool shouldEdit)
 
 void GuiItem::setDraggable (bool selected)
 {
-    auto manualLayout = false;
-    if (auto* container = dynamic_cast<Container*>(getParentComponent()))
-        manualLayout = container->getLayoutMode() == Container::Layout::Contents;
-
-    if (selected && manualLayout)
+    if (selected && getParentsLayoutType() == LayoutType::Contents)
     {
         toFront (false);
         borderDragger = std::make_unique<BorderDragger>(this, nullptr);
@@ -418,14 +422,25 @@ void GuiItem::savePosition ()
     configNode.setProperty (IDs::posHeight, ph, undo);
 }
 
-void GuiItem::mouseDown (const juce::MouseEvent&)
+void GuiItem::mouseDown (const juce::MouseEvent& event)
 {
     magicBuilder.setSelectedNode (configNode);
+
+    if (getParentsLayoutType() == LayoutType::Contents)
+    {
+        magicBuilder.getUndoManager().beginNewTransaction ("Drag component position");
+        componentDragger.startDraggingComponent (this, event);
+    }
 }
 
 void GuiItem::mouseDrag (const juce::MouseEvent& event)
 {
-    if (event.mouseWasDraggedSinceMouseDown())
+    if (getParentsLayoutType() == LayoutType::Contents)
+    {
+        componentDragger.dragComponent (this, event, nullptr);
+        savePosition();
+    }
+    else if (event.mouseWasDraggedSinceMouseDown())
     {
         auto* container = juce::DragAndDropContainer::findParentDragContainerFor (this);
         container->startDragging (IDs::dragSelected, this);

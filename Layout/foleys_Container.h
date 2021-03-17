@@ -42,6 +42,16 @@ namespace foleys
 class MagicPlotComponent;
 
 /**
+ The LayoutType defines after which method
+ */
+enum class LayoutType
+{
+    Contents,
+    FlexBox,
+    Tabbed
+};
+
+/**
  The Container is a GuiItem, that can hold multiple Components.
  In the editor it is seen as "View". With the setting "display"
  the layout strategy can be chosen.
@@ -51,13 +61,6 @@ class Container   : public GuiItem,
                     private juce::Timer
 {
 public:
-    enum class Layout
-    {
-        Contents,
-        FlexBox,
-        Tabbed
-    };
-
     Container (MagicGUIBuilder& builder, juce::ValueTree node);
 
     /**
@@ -76,12 +79,12 @@ public:
     /**
      Sets the layout mode of the container
      */
-    void setLayoutMode (Layout layout);
+    void setLayoutMode (LayoutType layout);
 
     /**
      Returns the current layout mode
      */
-    Layout getLayoutMode() const;
+    LayoutType getLayoutMode() const;
 
     void resized() override;
 
@@ -133,7 +136,7 @@ private:
     int  currentTab = 0;
     int  refreshRateHz = 30;
 
-    Layout layout = Layout::FlexBox;
+    LayoutType layout = LayoutType::FlexBox;
     juce::FlexBox flexBox;
 
     std::unique_ptr<juce::TabbedButtonBar>  tabbedButtons;

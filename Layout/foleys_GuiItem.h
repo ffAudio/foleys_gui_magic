@@ -42,6 +42,8 @@ namespace foleys
 class MagicGUIBuilder;
 class MagicGUIState;
 
+enum class LayoutType;
+
 /**
  The GuiItem class will draw borders and descriptions around widgets, if defined.
  It also owns the Component and the Attachment, in case the Component is connected
@@ -124,6 +126,11 @@ public:
      This will trigger a recalculation of the children layout regardless of resized
      */
     virtual void updateLayout();
+
+    /**
+     Returns the layout type this item is managed by.
+     */
+    LayoutType getParentsLayoutType() const;
 
     /**
      Parse the values and set it to the FlexBox::Item for layouting.
@@ -217,6 +224,7 @@ private:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BorderDragger)
     };
     std::unique_ptr<BorderDragger> borderDragger;
+    juce::ComponentDragger         componentDragger;
 
     void valueChanged (juce::Value& source) override;
 
