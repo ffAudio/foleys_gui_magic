@@ -1,6 +1,14 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.3.1
+-----
+
+- Added options to specify position and size relative or absolute to the parent component
+- Allow the selected component in a Contents to be draggable
+- Add a switch to disable storing the tree in the plugin state
+- Allow loading the gui from an external XML file without compilation
+
 1.3.0 - 28.02.2021
 ------------------
 

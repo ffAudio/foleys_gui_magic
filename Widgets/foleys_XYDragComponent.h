@@ -40,6 +40,7 @@ namespace foleys
 {
 
 /**
+ This is a 2D parameter dragging component.
  */
 class XYDragComponent  : public juce::Component
 {

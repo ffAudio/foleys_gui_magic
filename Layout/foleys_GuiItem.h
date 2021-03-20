@@ -42,6 +42,8 @@ namespace foleys
 class MagicGUIBuilder;
 class MagicGUIState;
 
+enum class LayoutType;
+
 /**
  The GuiItem class will draw borders and descriptions around widgets, if defined.
  It also owns the Component and the Attachment, in case the Component is connected
@@ -125,7 +127,22 @@ public:
      */
     virtual void updateLayout();
 
+    /**
+     Returns the layout type this item is managed by.
+     */
+    LayoutType getParentsLayoutType() const;
+
+    /**
+     Parse the values and set it to the FlexBox::Item for layouting.
+     */
     void configureFlexBoxItem (const juce::ValueTree& node);
+
+    void configurePosition (const juce::ValueTree& node);
+
+    /**
+     Calculates the position according to the parent area
+     */
+    juce::Rectangle<int> resolvePosition (juce::Rectangle<int> parent);
 
     /**
      Returns the bounds of the wrapped Component. This is the GuiItems bounds
@@ -143,12 +160,19 @@ public:
 
     void paintOverChildren (juce::Graphics& g) override;
 
+    /**
+     Seeks recursively for a GuiItem
+     */
+    virtual GuiItem* findGuiItem (const juce::ValueTree& node);
+
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 
     /**
      This method sets the GUI in edit mode, that allows to drag the components around.
      */
     virtual void setEditMode (bool shouldEdit);
+
+    void setDraggable (bool selected);
 
     void mouseDown (const juce::MouseEvent& event) override;
     void mouseDrag (const juce::MouseEvent& event) override;
@@ -172,6 +196,36 @@ protected:
 
 private:
 
+    class BorderDragger : public juce::ResizableBorderComponent
+    {
+    public:
+        BorderDragger (juce::Component* component, juce::ComponentBoundsConstrainer* constrainer = nullptr) : juce::ResizableBorderComponent (component, constrainer) {}
+        std::function<void()> onDragStart, onDragging, onDragEnd;
+
+        void mouseDown (const juce::MouseEvent& event) override
+        {
+            if (onDragStart) onDragStart();
+            juce::ResizableBorderComponent::mouseDown (event);
+        }
+
+        void mouseDrag (const juce::MouseEvent& event) override
+        {
+            juce::ResizableBorderComponent::mouseDrag (event);
+            if (onDragging) onDragging();
+        }
+
+        void mouseUp (const juce::MouseEvent& event) override
+        {
+            juce::ResizableBorderComponent::mouseUp (event);
+            if (onDragEnd) onDragEnd();
+        }
+
+    private:
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BorderDragger)
+    };
+    std::unique_ptr<BorderDragger> borderDragger;
+    juce::ComponentDragger         componentDragger;
+
     void valueChanged (juce::Value& source) override;
 
     void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override;
@@ -193,6 +247,16 @@ private:
     juce::Value     visibility { true };
 
     juce::String    highlight;
+
+    struct Position
+    {
+        bool   absolute = true;
+        double value = 0.0;
+    };
+    Position posX, posY, posWidth, posHeight;
+
+    void configurePosition (const juce::var& v, Position& p, double d);
+    void savePosition ();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GuiItem)
 };

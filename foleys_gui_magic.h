@@ -37,7 +37,7 @@
 
     ID:            foleys_gui_magic
     vendor:        Foleys Finest Audio
-    version:       1.3.0
+    version:       1.3.1
     name:          Foleys GUI magic
     description:   This module allows to create GUI with a drag and drop editor
     dependencies:  juce_core, juce_audio_basics, juce_audio_devices, juce_audio_formats,
@@ -59,6 +59,14 @@
   */
 #ifndef FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 #define FOLEYS_SHOW_GUI_EDITOR_PALLETTE 1
+#endif
+
+/** Config: FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
+            This will save the currently edited GUI in the plugin instances state. Best to turn this off
+            in the product to avoid confusion in updates.
+  */
+#ifndef FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
+#define FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE 1
 #endif
 
 /** Config: FOLEYS_ENABLE_BINARY_DATA

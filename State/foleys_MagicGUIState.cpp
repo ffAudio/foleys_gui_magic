@@ -93,6 +93,13 @@ void MagicGUIState::setGuiValueTree (const char* data, int dataSize)
         setGuiValueTree (dom);
 }
 
+void MagicGUIState::setGuiValueTree (const juce::File& file)
+{
+    auto dom = juce::ValueTree::fromXml (file.loadFileAsString());
+    if (dom.isValid())
+        guiValueTree = dom;
+}
+
 juce::ValueTree& MagicGUIState::getGuiTree()
 {
     return guiValueTree;

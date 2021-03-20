@@ -48,8 +48,12 @@ class MagicPluginEditor  : public juce::AudioProcessorEditor,
                            public juce::DragAndDropContainer
 {
 public:
+    /**
+     Create an AudioProcessorEditor populated from a MagicGUIBuilder.
+     */
     MagicPluginEditor (MagicProcessorState& processorState, std::unique_ptr<MagicGUIBuilder> builder = {});
 
+    [[deprecated ("MagicPluginEditor will get the state from the processorState. Call processorState.setGuiValueTree() beforehand.")]]
     MagicPluginEditor (MagicProcessorState& processorState, const char* data, const int dataSize, std::unique_ptr<MagicGUIBuilder> builder = {});
 
     ~MagicPluginEditor() override;

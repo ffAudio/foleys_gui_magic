@@ -51,11 +51,11 @@ void Container::update()
 
     const auto display = magicBuilder.getStyleProperty (IDs::display, configNode).toString();
     if (display == IDs::contents)
-        setLayoutMode (Container::Layout::Contents);
+        setLayoutMode (LayoutType::Contents);
     else if (display == IDs::tabbed)
-        setLayoutMode (Container::Layout::Tabbed);
+        setLayoutMode (LayoutType::Tabbed);
     else
-        setLayoutMode (Container::Layout::FlexBox);
+        setLayoutMode (LayoutType::FlexBox);
 
     auto repaintHz = magicBuilder.getStyleProperty (IDs::repaintHz, configNode).toString();
     if (repaintHz.isNotEmpty())
@@ -103,10 +103,22 @@ GuiItem* Container::findGuiItemWithId (const juce::String& name)
     return nullptr;
 }
 
-void Container::setLayoutMode (Layout layoutToUse)
+GuiItem* Container::findGuiItem (const juce::ValueTree& node)
+{
+    if (node == configNode)
+        return this;
+
+    for (auto& child : children)
+        if (auto* item = child->findGuiItem (node))
+            return item;
+
+    return nullptr;
+}
+
+void Container::setLayoutMode (LayoutType layoutToUse)
 {
     layout = layoutToUse;
-    if (layout == Layout::Tabbed)
+    if (layout == LayoutType::Tabbed)
     {
         updateTabbedButtons();
     }
@@ -118,6 +130,11 @@ void Container::setLayoutMode (Layout layoutToUse)
     }
 
     updateLayout();
+}
+
+LayoutType Container::getLayoutMode() const
+{
+    return layout;
 }
 
 void Container::resized()
@@ -132,7 +149,10 @@ void Container::updateLayout()
 
     auto clientBounds = getClientBounds();
 
-    if (layout == Layout::FlexBox)
+    if (layout != LayoutType::Tabbed)
+        tabbedButtons.reset();
+
+    if (layout == LayoutType::FlexBox)
     {
         flexBox.items.clear();
         for (auto& child : children)
@@ -140,18 +160,18 @@ void Container::updateLayout()
 
         flexBox.performLayout (clientBounds);
     }
-    else
+    else if (layout == LayoutType::Tabbed)
     {
-        if (layout == Layout::Tabbed)
-        {
-            updateTabbedButtons();
-            tabbedButtons->setBounds (clientBounds.removeFromTop (30));
-        }
-        else
-            tabbedButtons.reset();
+        updateTabbedButtons();
+        tabbedButtons->setBounds (clientBounds.removeFromTop (30));
 
         for (auto& child : children)
             child->setBounds (clientBounds);
+    }
+    else // layout == Layout::Contents
+    {
+        for (auto& child : children)
+            child->setBounds (child->resolvePosition (clientBounds));
     }
 
     for (auto& child : children)

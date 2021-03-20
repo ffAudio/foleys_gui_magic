@@ -71,6 +71,7 @@ void MagicPluginEditor::initialise (const char* data, int dataSize)
     if (builder.get() == nullptr)
         builder = createBuilderInstance();
 
+#if FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
     auto guiTree = processorState.getValueTree().getChildWithName ("magic");
     if (guiTree.isValid())
         setConfigTree (guiTree);
@@ -78,6 +79,9 @@ void MagicPluginEditor::initialise (const char* data, int dataSize)
         setConfigTree (data, dataSize);
     else
         builder->createGUI (*this);
+#else  // FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
+    auto guiTree = processorState.getGuiTree();
+#endif // FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
 
     updateSize();
 
