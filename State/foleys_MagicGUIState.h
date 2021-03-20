@@ -78,6 +78,7 @@ public:
      */
     void setGuiValueTree (const juce::ValueTree& dom);
     void setGuiValueTree (const char* data, int dataSize);
+    void setGuiValueTree (const juce::File& file);
 
     /**
      Grants access to the gui tree. This is returned as reference so you are able to connect listeners to it.

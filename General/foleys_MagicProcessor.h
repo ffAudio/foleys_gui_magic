@@ -62,7 +62,12 @@ public:
     MagicProcessor (const std::initializer_list<const short[2]>& channelLayoutList);
 
     /**
-     Override that method to initialise the builder, register your own bespoke components or LookAndFeel classes
+     Override that method to initialise the builder, register your own bespoke components or LookAndFeel classes.
+     If you override this and you want to use the bundled components don't forget to call
+     \code{.cpp}
+     builder.registerJUCEFactories();
+     builder.registerJUCELookAndFeels();
+     \endcode
      */
     virtual void initialiseBuilder (MagicGUIBuilder& builder);
 
