@@ -1,8 +1,8 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.3.1
------
+1.3.1 - 21.03.2021
+------------------
 
 - Added options to specify position and size relative or absolute to the parent component
 - Allow the selected component in a Contents to be draggable
