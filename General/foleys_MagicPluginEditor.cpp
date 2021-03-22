@@ -44,39 +44,21 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, std::uniq
     processorState (stateToUse),
     builder (std::move (builderToUse))
 {
-    initialise();
-}
-
-MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, const char* data, const int dataSize, std::unique_ptr<MagicGUIBuilder> builderToUse)
-  : juce::AudioProcessorEditor (*stateToUse.getProcessor()),
-    processorState (stateToUse),
-    builder (std::move (builderToUse))
-{
-    initialise (data, dataSize);
-}
-
-MagicPluginEditor::~MagicPluginEditor()
-{
-#if JUCE_MODULE_AVAILABLE_juce_opengl && FOLEYS_ENABLE_OPEN_GL_CONTEXT
-    oglContext.detach();
-#endif
-}
-
-void MagicPluginEditor::initialise (const char* data, int dataSize)
-{
 #if JUCE_MODULE_AVAILABLE_juce_opengl && FOLEYS_ENABLE_OPEN_GL_CONTEXT
     oglContext.attachTo (*this);
 #endif
 
     if (builder.get() == nullptr)
-        builder = createBuilderInstance();
+    {
+        builder = std::make_unique<MagicGUIBuilder>(processorState);
+        builder->registerJUCEFactories();
+        builder->registerJUCELookAndFeels();
+    }
 
 #if FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
     auto guiTree = processorState.getValueTree().getChildWithName ("magic");
     if (guiTree.isValid())
         setConfigTree (guiTree);
-    else if (data != nullptr)
-        setConfigTree (data, dataSize);
     else
         builder->createGUI (*this);
 #else  // FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
@@ -93,13 +75,11 @@ void MagicPluginEditor::initialise (const char* data, int dataSize)
 #endif
 }
 
-std::unique_ptr<MagicGUIBuilder> MagicPluginEditor::createBuilderInstance()
+MagicPluginEditor::~MagicPluginEditor()
 {
-    auto newBuilder = std::make_unique<MagicGUIBuilder>(processorState);
-    newBuilder->registerJUCEFactories();
-    newBuilder->registerJUCELookAndFeels();
-
-    return newBuilder;
+#if JUCE_MODULE_AVAILABLE_juce_opengl && FOLEYS_ENABLE_OPEN_GL_CONTEXT
+    oglContext.detach();
+#endif
 }
 
 void MagicPluginEditor::updateSize()
@@ -144,13 +124,6 @@ void MagicPluginEditor::setConfigTree (const juce::ValueTree& gui)
     builder->createGUI (*this);
 
     updateSize();
-}
-
-void MagicPluginEditor::setConfigTree (const char* data, int dataSize)
-{
-    juce::String text (data, size_t (dataSize));
-    auto gui = juce::ValueTree::fromXml (text);
-    setConfigTree (gui);
 }
 
 MagicGUIBuilder& MagicPluginEditor::getGUIBuilder()

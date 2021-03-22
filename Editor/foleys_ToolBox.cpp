@@ -226,6 +226,7 @@ void ToolBox::stateWasReloaded()
     treeEditor.updateTree();
     propertiesEditor.setStyle (builder.getStylesheet().getCurrentStyle());
     palette.update();
+    builder.updateComponents();
 }
 
 void ToolBox::paint (juce::Graphics& g)
