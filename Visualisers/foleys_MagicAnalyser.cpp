@@ -126,8 +126,7 @@ void MagicAnalyser::AnalyserJob::setupAnalyser (int audioFifoSize)
     abstractFifo.setTotalSize (audioFifoSize);
 
     audioFifo.clear();
-    averager.clear();
-    averagerPtr = 1;
+    values.clear();
 }
 
 void MagicAnalyser::AnalyserJob::pushSamples (const juce::AudioBuffer<float>& buffer, int inChannel)
@@ -180,16 +179,21 @@ int MagicAnalyser::AnalyserJob::useTimeSlice()
     {
         juce::ScopedLock lockedForWriting (owner.pathCreationLock);
 
-        auto factor = 1.0f / averager.getNumSamples();
-        if (averager.getNumChannels() > 2)
-            factor = factor / (averager.getNumChannels() - 1.0f);
+        const auto  factor = 1.0f / fft.getSize();
+        const auto  decay  = 0.8f;   // FIXME: calculate by fft size and sampleRate
+        const auto* read   = fftBuffer.getReadPointer (0);
+        auto*       write  = values.getWritePointer (0);
 
-        averager.copyFrom (averagerPtr, 0, fftBuffer.getReadPointer (0), averager.getNumSamples(), factor);
-        if (++averagerPtr == averager.getNumChannels()) averagerPtr = 1;
-
-        averager.copyFrom (0, 0, averager.getReadPointer (1), averager.getNumSamples());
-        for (int i = 2; i < averager.getNumChannels(); ++i)
-            averager.addFrom (0, 0, averager.getReadPointer (i), averager.getNumSamples());
+        for (int i=0; i < values.getNumSamples(); ++i, ++read, ++write)
+        {
+            auto v = *read * factor;
+            if (v >= *write)
+                *write = v;
+            else if (v < 1.12202e-05f)
+                *write = 0.0f;
+            else
+                *write = *write * decay;
+        }
 
         owner.resetLastDataFlag();
     }
@@ -199,7 +203,7 @@ int MagicAnalyser::AnalyserJob::useTimeSlice()
 
 const juce::AudioBuffer<float> MagicAnalyser::AnalyserJob::getAnalyserData() const
 {
-    return averager;
+    return values;
 }
 
 

@@ -111,8 +111,7 @@ private:
         juce::dsp::WindowingFunction<float> windowing { size_t (fft.getSize()), juce::dsp::WindowingFunction<float>::hann, true };
         juce::AudioBuffer<float> fftBuffer            { 1, fft.getSize() * 2 };
 
-        juce::AudioBuffer<float> averager             { 5, fft.getSize() / 2 };
-        int averagerPtr = 1;
+        juce::AudioBuffer<float> values               { 1, fft.getSize() / 2 };
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AnalyserJob)
     };
