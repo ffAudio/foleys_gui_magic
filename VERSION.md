@@ -4,6 +4,9 @@ PluginGuiMagic - Versions history
 1.3.2
 -----
 
+- New components respect current edit mode
+- Fixed accidently draggable components
+
 1.3.1 - 21.03.2021
 ------------------
 

@@ -223,8 +223,8 @@ private:
     private:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BorderDragger)
     };
-    std::unique_ptr<BorderDragger> borderDragger;
-    juce::ComponentDragger         componentDragger;
+    std::unique_ptr<BorderDragger>          borderDragger;
+    std::unique_ptr<juce::ComponentDragger> componentDragger;
 
     void valueChanged (juce::Value& source) override;
 

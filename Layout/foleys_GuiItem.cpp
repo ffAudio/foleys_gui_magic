@@ -97,6 +97,10 @@ void GuiItem::updateInternal()
 
     update();
 
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    setEditMode (magicBuilder.isEditModeOn());
+#endif
+
     repaint();
 }
 
@@ -374,10 +378,13 @@ void GuiItem::setEditMode (bool shouldEdit)
 
 void GuiItem::setDraggable (bool selected)
 {
-    if (selected && getParentsLayoutType() == LayoutType::Contents)
+    if (selected &&
+        getParentsLayoutType() == LayoutType::Contents &&
+        configNode != magicBuilder.getGuiRootNode())
     {
         toFront (false);
         borderDragger = std::make_unique<BorderDragger>(this, nullptr);
+        componentDragger = std::make_unique<juce::ComponentDragger>();
 
         borderDragger->onDragStart = [&]
         {
@@ -398,6 +405,7 @@ void GuiItem::setDraggable (bool selected)
     else
     {
         borderDragger.reset();
+        componentDragger.reset();
     }
 }
 
@@ -426,18 +434,18 @@ void GuiItem::mouseDown (const juce::MouseEvent& event)
 {
     magicBuilder.setSelectedNode (configNode);
 
-    if (getParentsLayoutType() == LayoutType::Contents)
+    if (componentDragger)
     {
         magicBuilder.getUndoManager().beginNewTransaction ("Drag component position");
-        componentDragger.startDraggingComponent (this, event);
+        componentDragger->startDraggingComponent (this, event);
     }
 }
 
 void GuiItem::mouseDrag (const juce::MouseEvent& event)
 {
-    if (getParentsLayoutType() == LayoutType::Contents)
+    if (componentDragger)
     {
-        componentDragger.dragComponent (this, event, nullptr);
+        componentDragger->dragComponent (this, event, nullptr);
         savePosition();
     }
     else if (event.mouseWasDraggedSinceMouseDown())
