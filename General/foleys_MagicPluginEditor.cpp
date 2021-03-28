@@ -63,6 +63,8 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, std::uniq
         builder->createGUI (*this);
 #else  // FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
     auto guiTree = processorState.getGuiTree();
+    if (guiTree.isValid())
+        setConfigTree (guiTree);
 #endif // FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
 
     updateSize();
@@ -101,10 +103,11 @@ void MagicPluginEditor::updateSize()
     {
         processorState.getLastEditorSize (width, height);
 
+        auto maximalBounds = juce::Desktop::getInstance().getDisplays().getTotalBounds (true);
         int minWidth = rootNode.getProperty (IDs::minWidth, 10);
         int minHeight = rootNode.getProperty (IDs::minHeight, 10);
-        int maxWidth = rootNode.getProperty (IDs::maxWidth, std::numeric_limits<int>::max());
-        int maxHeight = rootNode.getProperty (IDs::maxHeight, std::numeric_limits<int>::max());
+        int maxWidth = rootNode.getProperty (IDs::maxWidth, maximalBounds.getWidth());
+        int maxHeight = rootNode.getProperty (IDs::maxHeight, maximalBounds.getHeight());
         setResizable (resizable, resizeCorner);
         setResizeLimits (minWidth, minHeight, maxWidth, maxHeight);
     }
