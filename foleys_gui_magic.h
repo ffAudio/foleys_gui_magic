@@ -69,14 +69,6 @@
 #define FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE 1
 #endif
 
-/** Config: FOLEYS_ENABLE_BINARY_DATA
-            Makes the binary resources available to the GUI. Make sure you actually have
-            at least one file added, or this will fail to compile.
- */
-#ifndef FOLEYS_ENABLE_BINARY_DATA
-#define FOLEYS_ENABLE_BINARY_DATA 0
-#endif
-
 /** Config: FOLEYS_ENABLE_OPEN_GL_CONTEXT
             If selected an juce OpenGLCOntext is attached. Not a big difference on OSX, but vital on Windows.
   */
