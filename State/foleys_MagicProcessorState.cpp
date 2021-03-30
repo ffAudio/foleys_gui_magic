@@ -142,11 +142,11 @@ bool MagicProcessorState::getLastEditorSize (int& width, int& height)
 
 void MagicProcessorState::getStateInformation (juce::MemoryBlock& destData)
 {
-    auto state = getValueTree();
-    parameters.saveParameterValues (state);
+    auto newState = getValueTree();
+    parameters.saveParameterValues (newState);
 
     juce::MemoryOutputStream stream (destData, false);
-    state.writeToStream (stream);
+    newState.writeToStream (stream);
 }
 
 void MagicProcessorState::setStateInformation (const void* data, int sizeInBytes, juce::AudioProcessorEditor* editor)
@@ -155,13 +155,13 @@ void MagicProcessorState::setStateInformation (const void* data, int sizeInBytes
     if (tree.isValid() == false)
         return;
 
-    auto state = getValueTree();
-    if (state.getType() != tree.getType())
+    auto newState = getValueTree();
+    if (newState.getType() != tree.getType())
         return;
 
-    state.copyPropertiesAndChildrenFrom (tree, nullptr);
+    newState.copyPropertiesAndChildrenFrom (tree, nullptr);
 
-    parameters.loadParameterValues (state);
+    parameters.loadParameterValues (newState);
 
     if (editor)
     {

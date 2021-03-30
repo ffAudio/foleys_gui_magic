@@ -91,8 +91,8 @@ void GuiItem::updateInternal()
 {
     auto& stylesheet = magicBuilder.getStylesheet();
 
-    if (auto* lookAndFeel = stylesheet.getLookAndFeel (configNode))
-        setLookAndFeel (lookAndFeel);
+    if (auto* newLookAndFeel = stylesheet.getLookAndFeel (configNode))
+        setLookAndFeel (newLookAndFeel);
 
     decorator.configure (magicBuilder, configNode);
     configureComponent();

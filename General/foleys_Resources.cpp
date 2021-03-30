@@ -37,7 +37,7 @@
 
 namespace BinaryDataFallbacks {
 const int namedResourceListSize = 0;
-const char* namedResourceList[]{};
+const char** namedResourceList = nullptr;
 const char* getNamedResource(const char*, int&) { return nullptr; }
 }  // namespace BinaryDataFallbacks
 

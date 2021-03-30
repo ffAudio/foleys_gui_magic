@@ -240,9 +240,9 @@ juce::Colour StyleGradientPropertyComponent::GradientPanel::ColourSelectorWithSw
     return swatchColours [size_t (index)];
 }
 
-void StyleGradientPropertyComponent::GradientPanel::ColourSelectorWithSwatches::setSwatchColour (int index, const juce::Colour& colour)
+void StyleGradientPropertyComponent::GradientPanel::ColourSelectorWithSwatches::setSwatchColour (int index, const juce::Colour& newColour)
 {
-    swatchColours [size_t (index)] = colour;
+    swatchColours [size_t (index)] = newColour;
 }
 
 void StyleGradientPropertyComponent::GradientPanel::ColourSelectorWithSwatches::loadSwatches()
@@ -267,8 +267,8 @@ void StyleGradientPropertyComponent::GradientPanel::ColourSelectorWithSwatches::
         coloursNode->deleteAllChildElements();
         for (int i = 0; i < int (swatchColours.size()); ++i)
         {
-            auto* node = coloursNode->createNewChildElement (IDs::colour);
-            node->addTextElement (swatchColours [size_t (i)].toDisplayString (true));
+            auto* colourNode = coloursNode->createNewChildElement (IDs::colour);
+            colourNode->addTextElement (swatchColours [size_t (i)].toDisplayString (true));
         }
 
         p->setValue (IDs::swatches, coloursNode.get());

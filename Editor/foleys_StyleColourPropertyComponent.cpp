@@ -254,9 +254,9 @@ juce::Colour StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatch
     return swatchColours [size_t (index)];
 }
 
-void StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::setSwatchColour (int index, const juce::Colour& colour)
+void StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::setSwatchColour (int index, const juce::Colour& newColour)
 {
-    swatchColours [size_t (index)] = colour;
+    swatchColours [size_t (index)] = newColour;
 }
 
 void StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::loadSwatches()
@@ -281,8 +281,8 @@ void StyleColourPropertyComponent::ColourPanel::ColourSelectorWithSwatches::save
         coloursNode->deleteAllChildElements();
         for (int i = 0; i < int (swatchColours.size()); ++i)
         {
-            auto* node = coloursNode->createNewChildElement (IDs::colour);
-            node->addTextElement (swatchColours [size_t (i)].toDisplayString (true));
+            auto* colourNode = coloursNode->createNewChildElement (IDs::colour);
+            colourNode->addTextElement (swatchColours [size_t (i)].toDisplayString (true));
         }
 
         p->setValue (IDs::swatches, coloursNode.get());
