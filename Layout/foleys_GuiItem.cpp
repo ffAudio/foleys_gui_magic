@@ -46,6 +46,12 @@ GuiItem::GuiItem (MagicGUIBuilder& builder, juce::ValueTree node)
 
     visibility.addListener (this);
     configNode.addListener (this);
+    magicBuilder.getStylesheet().addListener (this);
+}
+
+GuiItem::~GuiItem()
+{
+    magicBuilder.getStylesheet().removeListener (this);
 }
 
 void GuiItem::setColourTranslation (std::vector<std::pair<juce::String, int>> mapping)
@@ -288,6 +294,17 @@ void GuiItem::valueTreePropertyChanged (juce::ValueTree& treeThatChanged, const 
         if (auto* parent = dynamic_cast<GuiItem*>(getParentComponent()))
             parent->updateInternal();
         else
+            updateInternal();
+
+        return;
+    }
+
+    auto& stylesheet = magicBuilder.getStylesheet();
+    if (stylesheet.isClassNode (treeThatChanged))
+    {
+        auto name = treeThatChanged.getType().toString();
+        auto classes = configNode.getProperty (IDs::styleClass, juce::String()).toString();
+        if (classes.contains (name))
             updateInternal();
     }
 }

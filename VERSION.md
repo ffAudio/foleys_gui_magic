@@ -8,6 +8,8 @@ PluginGuiMagic - Versions history
 - Fixed accidently draggable components
 - Allow dragging of groups (instead of selecting the child)
 - Fixed setup when FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE is off
+- Don't need BinaryData config switch any longer
+- Fixed creation of CSS classes and update when a property there changes
 - Changed Analyser to use ballistics rather than rolling average
 
 1.3.1 - 21.03.2021

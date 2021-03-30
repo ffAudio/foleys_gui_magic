@@ -170,6 +170,9 @@ public:
     bool isIdNode (const juce::ValueTree& node) const;
     bool isColourPaletteNode (const juce::ValueTree& node) const;
 
+    void addListener (juce::ValueTree::Listener* listener);
+    void removeListener (juce::ValueTree::Listener* listener);
+
 private:
     void valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&) override;
 
