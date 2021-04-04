@@ -1,8 +1,19 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.3.1
+1.3.2
 -----
+
+- New components respect current edit mode
+- Fixed accidently draggable components
+- Allow dragging of groups (instead of selecting the child)
+- Fixed setup when FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE is off
+- Don't need BinaryData config switch any longer
+- Fixed creation of CSS classes and update when a property there changes
+- Changed Analyser to use ballistics rather than rolling average
+
+1.3.1 - 21.03.2021
+------------------
 
 - Added options to specify position and size relative or absolute to the parent component
 - Allow the selected component in a Contents to be draggable

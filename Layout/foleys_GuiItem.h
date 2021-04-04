@@ -56,6 +56,7 @@ class GuiItem   : public juce::Component,
 {
 public:
     GuiItem (MagicGUIBuilder& builder, juce::ValueTree node);
+    ~GuiItem() override;
 
     /**
      Allows accessing the Component inside that GuiItem. Don't keep this pointer!
@@ -176,6 +177,7 @@ public:
 
     void mouseDown (const juce::MouseEvent& event) override;
     void mouseDrag (const juce::MouseEvent& event) override;
+    void mouseUp (const juce::MouseEvent& event) override;
 
 #endif
 
@@ -223,8 +225,8 @@ private:
     private:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BorderDragger)
     };
-    std::unique_ptr<BorderDragger> borderDragger;
-    juce::ComponentDragger         componentDragger;
+    std::unique_ptr<BorderDragger>          borderDragger;
+    std::unique_ptr<juce::ComponentDragger> componentDragger;
 
     void valueChanged (juce::Value& source) override;
 

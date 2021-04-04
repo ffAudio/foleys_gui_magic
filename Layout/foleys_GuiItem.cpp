@@ -46,6 +46,12 @@ GuiItem::GuiItem (MagicGUIBuilder& builder, juce::ValueTree node)
 
     visibility.addListener (this);
     configNode.addListener (this);
+    magicBuilder.getStylesheet().addListener (this);
+}
+
+GuiItem::~GuiItem()
+{
+    magicBuilder.getStylesheet().removeListener (this);
 }
 
 void GuiItem::setColourTranslation (std::vector<std::pair<juce::String, int>> mapping)
@@ -85,8 +91,8 @@ void GuiItem::updateInternal()
 {
     auto& stylesheet = magicBuilder.getStylesheet();
 
-    if (auto* lookAndFeel = stylesheet.getLookAndFeel (configNode))
-        setLookAndFeel (lookAndFeel);
+    if (auto* newLookAndFeel = stylesheet.getLookAndFeel (configNode))
+        setLookAndFeel (newLookAndFeel);
 
     decorator.configure (magicBuilder, configNode);
     configureComponent();
@@ -96,6 +102,10 @@ void GuiItem::updateInternal()
     updateColours();
 
     update();
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    setEditMode (magicBuilder.isEditModeOn());
+#endif
 
     repaint();
 }
@@ -285,6 +295,17 @@ void GuiItem::valueTreePropertyChanged (juce::ValueTree& treeThatChanged, const 
             parent->updateInternal();
         else
             updateInternal();
+
+        return;
+    }
+
+    auto& stylesheet = magicBuilder.getStylesheet();
+    if (stylesheet.isClassNode (treeThatChanged))
+    {
+        auto name = treeThatChanged.getType().toString();
+        auto classes = configNode.getProperty (IDs::styleClass, juce::String()).toString();
+        if (classes.contains (name))
+            updateInternal();
     }
 }
 
@@ -374,10 +395,13 @@ void GuiItem::setEditMode (bool shouldEdit)
 
 void GuiItem::setDraggable (bool selected)
 {
-    if (selected && getParentsLayoutType() == LayoutType::Contents)
+    if (selected &&
+        getParentsLayoutType() == LayoutType::Contents &&
+        configNode != magicBuilder.getGuiRootNode())
     {
         toFront (false);
         borderDragger = std::make_unique<BorderDragger>(this, nullptr);
+        componentDragger = std::make_unique<juce::ComponentDragger>();
 
         borderDragger->onDragStart = [&]
         {
@@ -398,6 +422,7 @@ void GuiItem::setDraggable (bool selected)
     else
     {
         borderDragger.reset();
+        componentDragger.reset();
     }
 }
 
@@ -424,20 +449,18 @@ void GuiItem::savePosition ()
 
 void GuiItem::mouseDown (const juce::MouseEvent& event)
 {
-    magicBuilder.setSelectedNode (configNode);
-
-    if (getParentsLayoutType() == LayoutType::Contents)
+    if (componentDragger)
     {
         magicBuilder.getUndoManager().beginNewTransaction ("Drag component position");
-        componentDragger.startDraggingComponent (this, event);
+        componentDragger->startDraggingComponent (this, event);
     }
 }
 
 void GuiItem::mouseDrag (const juce::MouseEvent& event)
 {
-    if (getParentsLayoutType() == LayoutType::Contents)
+    if (componentDragger)
     {
-        componentDragger.dragComponent (this, event, nullptr);
+        componentDragger->dragComponent (this, event, nullptr);
         savePosition();
     }
     else if (event.mouseWasDraggedSinceMouseDown())
@@ -446,6 +469,13 @@ void GuiItem::mouseDrag (const juce::MouseEvent& event)
         container->startDragging (IDs::dragSelected, this);
     }
 }
+
+void GuiItem::mouseUp (const juce::MouseEvent& event)
+{
+    if (! event.mouseWasDraggedSinceMouseDown())
+        magicBuilder.setSelectedNode (configNode);
+}
+
 #endif
 
 bool GuiItem::isInterestedInDragSource (const juce::DragAndDropTarget::SourceDetails &)

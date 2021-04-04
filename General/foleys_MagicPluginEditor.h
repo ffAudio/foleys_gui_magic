@@ -53,9 +53,6 @@ public:
      */
     MagicPluginEditor (MagicProcessorState& processorState, std::unique_ptr<MagicGUIBuilder> builder = {});
 
-    [[deprecated ("MagicPluginEditor will get the state from the processorState. Call processorState.setGuiValueTree() beforehand.")]]
-    MagicPluginEditor (MagicProcessorState& processorState, const char* data, const int dataSize, std::unique_ptr<MagicGUIBuilder> builder = {});
-
     ~MagicPluginEditor() override;
 
     /**
@@ -64,23 +61,6 @@ public:
      @param gui the ValueTree that defines the GUI of the editor
      */
     void setConfigTree (const juce::ValueTree& gui);
-
-    /**
-     Setup a GUI from a previously stored ValueTree. This is the
-     usual way to deploy your finished GUI via the Projucer:
-
-     @code{.cpp}
-     AudioProcessorEditor* MyAudioProcessor::createEditor()
-     {
-         auto* editor = new foleys::MagicPluginEditor (magicState, BinaryData::magic_xml, BinaryData::magic_xmlSize);
-         return editor;
-     }
-     @endcode
-
-     @param data points to the binary data of the XML file
-     @param dataSize the number of bytes
-     */
-    void setConfigTree (const char* data, int dataSize);
 
     /**
      Grants access to the MagicGUIBuilder
@@ -92,10 +72,10 @@ public:
     void resized() override;
 
 private:
-    void initialise (const char* data = nullptr, int dataSize = 0);
 
-    std::unique_ptr<MagicGUIBuilder> createBuilderInstance();
-
+    /**
+     Setup the size and resizable and size limits
+     */
     void updateSize();
 
 #if JUCE_MODULE_AVAILABLE_juce_opengl && FOLEYS_ENABLE_OPEN_GL_CONTEXT

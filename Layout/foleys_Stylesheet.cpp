@@ -397,6 +397,16 @@ juce::StringArray Stylesheet::getAllClassesNames() const
     return names;
 }
 
+void Stylesheet::addListener (juce::ValueTree::Listener* listener)
+{
+    currentStyle.addListener (listener);
+}
+
+void Stylesheet::removeListener (juce::ValueTree::Listener* listener)
+{
+    currentStyle.removeListener (listener);
+}
+
 //==============================================================================
 
 Stylesheet::StyleClass::StyleClass (juce::ValueTree style)

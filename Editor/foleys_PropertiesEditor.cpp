@@ -179,7 +179,10 @@ void PropertiesEditor::createNewClass()
     if (auto* editor = dlg.getTextEditor (editorID))
     {
         auto name = editor->getText().replaceCharacters (".&$@ ", "---__");
-        builder.getStylesheet().addNewStyleClass (name, &undo);
+        auto newNode = builder.getStylesheet().addNewStyleClass (name, &undo);
+        auto index = newNode.getParent().indexOf (newNode);
+        updatePopupMenu();
+        nodeSelect.setSelectedId (3000 + index);
     }
 }
 
@@ -188,6 +191,7 @@ void PropertiesEditor::deleteClass (const juce::String& name)
     auto& stylesheet = builder.getStylesheet();
     stylesheet.deleteStyleClass (name, &undo);
     builder.removeStyleClassReferences (builder.getGuiRootNode(), name);
+    updatePopupMenu();
 }
 
 //==============================================================================

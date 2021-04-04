@@ -35,10 +35,18 @@
  */
 
 
+namespace BinaryDataFallbacks {
+const int namedResourceListSize = 0;
+const char** namedResourceList = nullptr;
+const char* getNamedResource(const char*, int&) { return nullptr; }
+}  // namespace BinaryDataFallbacks
+
+namespace BinaryData {
+using namespace BinaryDataFallbacks;
+}
+
 namespace foleys
 {
-
-#if FOLEYS_ENABLE_BINARY_DATA
 
 juce::StringArray Resources::getResourceFileNames()
 {
@@ -59,12 +67,5 @@ juce::Image Resources::getImage (const juce::String& name)
 
     return {};
 }
-
-#else
-
-juce::StringArray Resources::getResourceFileNames()         { return {}; }
-juce::Image       Resources::getImage (const juce::String&) { return {}; }
-
-#endif
 
 }

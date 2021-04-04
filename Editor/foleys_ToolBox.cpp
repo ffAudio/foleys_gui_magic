@@ -226,6 +226,7 @@ void ToolBox::stateWasReloaded()
     treeEditor.updateTree();
     propertiesEditor.setStyle (builder.getStylesheet().getCurrentStyle());
     palette.update();
+    builder.updateComponents();
 }
 
 void ToolBox::paint (juce::Graphics& g)
@@ -361,9 +362,9 @@ juce::File ToolBox::getLastLocation() const
 {
     juce::File lastLocation;
 
-    juce::ApplicationProperties properties;
-    properties.setStorageParameters (ToolBox::getApplicationPropertyStorage());
-    if (auto* p = properties.getUserSettings())
+    juce::ApplicationProperties appProperties;
+    appProperties.setStorageParameters (ToolBox::getApplicationPropertyStorage());
+    if (auto* p = appProperties.getUserSettings())
         lastLocation = juce::File (p->getValue (IDs::lastLocation));
 
     if (lastLocation.exists())
@@ -389,9 +390,9 @@ juce::File ToolBox::getLastLocation() const
 
 void ToolBox::setLastLocation(juce::File file)
 {
-    juce::ApplicationProperties properties;
-    properties.setStorageParameters (ToolBox::getApplicationPropertyStorage());
-    if (auto* p = properties.getUserSettings())
+    juce::ApplicationProperties appProperties;
+    appProperties.setStorageParameters (ToolBox::getApplicationPropertyStorage());
+    if (auto* p = appProperties.getUserSettings())
         p->setValue (IDs::lastLocation, file.getFullPathName());
 }
 
