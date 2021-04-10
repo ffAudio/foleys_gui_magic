@@ -61,7 +61,16 @@ public:
 
     void drawTabButton (juce::TabBarButton&, juce::Graphics&, bool isMouseOver, bool isMouseDown) override;
 
+    //==============================================================================
+
+    void drawPopupMenuItemWithOptions (juce::Graphics&, const juce::Rectangle<int>& area,
+                                       bool isHighlighted,
+                                       const juce::PopupMenu::Item& item,
+                                       const juce::PopupMenu::Options&) override;
+
+    
 private:
+    juce::Colour findPopupColour (int colourId, juce::Component* target);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LookAndFeel)
 };
