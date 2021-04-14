@@ -40,6 +40,7 @@ namespace foleys
 Container::Container (MagicGUIBuilder& builder, juce::ValueTree node)
   : GuiItem (builder, node)
 {
+    addAndMakeVisible (containerBox);
 }
 
 void Container::update()
@@ -67,7 +68,7 @@ void Container::update()
 
 void Container::addChildItem (std::unique_ptr<GuiItem> child)
 {
-    addAndMakeVisible (child.get());
+    containerBox.addAndMakeVisible (child.get());
     children.push_back (std::move (child));
 }
 
@@ -80,7 +81,7 @@ void Container::createSubComponents()
         auto childItem = magicBuilder.createGuiItem (childNode);
         if (childItem)
         {
-            addAndMakeVisible (childItem.get());
+            containerBox.addAndMakeVisible (childItem.get());
             childItem->createSubComponents();
 
             children.push_back (std::move (childItem));
@@ -147,7 +148,8 @@ void Container::updateLayout()
     if (children.empty())
         return;
 
-    auto clientBounds = getClientBounds();
+    containerBox.setBounds (getClientBounds());
+    containerBox.setBackgroundColour (decorator.getBackgroundColour());
 
     if (layout != LayoutType::Tabbed)
         tabbedButtons.reset();
@@ -158,10 +160,11 @@ void Container::updateLayout()
         for (auto& child : children)
             flexBox.items.add (child->getFlexItem());
 
-        flexBox.performLayout (clientBounds);
+        flexBox.performLayout (containerBox.getLocalBounds());
     }
     else if (layout == LayoutType::Tabbed)
     {
+        auto clientBounds = containerBox.getLocalBounds();
         updateTabbedButtons();
         tabbedButtons->setBounds (clientBounds.removeFromTop (30));
 
@@ -171,7 +174,7 @@ void Container::updateLayout()
     else // layout == Layout::Contents
     {
         for (auto& child : children)
-            child->setBounds (child->resolvePosition (clientBounds));
+            child->setBounds (child->resolvePosition (containerBox.getLocalBounds()));
     }
 
     for (auto& child : children)
@@ -202,7 +205,7 @@ void Container::updateContinuousRedraw()
 void Container::updateTabbedButtons()
 {
     tabbedButtons = std::make_unique<juce::TabbedButtonBar>(juce::TabbedButtonBar::TabsAtTop);
-    addAndMakeVisible (*tabbedButtons);
+    containerBox.addAndMakeVisible (*tabbedButtons);
 
     for (auto& child : children)
     {
@@ -281,7 +284,7 @@ void Container::timerCallback()
         if (p) needsRepaint |= p->needsUpdate();
 
     if (needsRepaint)
-        repaint();
+        containerBox.repaint();
 }
 
 void Container::changeListenerCallback (juce::ChangeBroadcaster*)
@@ -316,5 +319,18 @@ void Container::setEditMode (bool shouldEdit)
     GuiItem::setEditMode (shouldEdit);
 }
 #endif
+
+//==============================================================================
+
+void Container::ContainerBox::paint (juce::Graphics& g)
+{
+    g.fillAll (backgroundColour);
+}
+
+void Container::ContainerBox::setBackgroundColour (juce::Colour colour)
+{
+    backgroundColour = colour;
+    setOpaque (backgroundColour.isOpaque());
+}
 
 } // namespace foleys

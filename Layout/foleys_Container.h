@@ -126,6 +126,17 @@ public:
 #endif
 
 private:
+    class ContainerBox : public juce::Component
+    {
+    public:
+        ContainerBox() = default;
+        void paint (juce::Graphics& g) override;
+        void setBackgroundColour (juce::Colour colour);
+
+    private:
+        juce::Colour backgroundColour;
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ContainerBox)
+    };
 
     void changeListenerCallback (juce::ChangeBroadcaster*) override;
     void timerCallback() override;
@@ -139,6 +150,7 @@ private:
     LayoutType layout = LayoutType::FlexBox;
     juce::FlexBox flexBox;
 
+    ContainerBox containerBox;
     std::unique_ptr<juce::TabbedButtonBar>  tabbedButtons;
     std::vector<std::unique_ptr<GuiItem>> children;
 
