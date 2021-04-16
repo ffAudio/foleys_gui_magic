@@ -322,9 +322,12 @@ void Container::setEditMode (bool shouldEdit)
 
 //==============================================================================
 
+Container::ContainerBox::ContainerBox (Container& ownerToUse)
+: owner (ownerToUse) {}
+
 void Container::ContainerBox::paint (juce::Graphics& g)
 {
-    g.fillAll (backgroundColour);
+    owner.decorator.drawDecorator (g, {-getX(), -getY(), owner.getWidth(), owner.getHeight()});
 }
 
 void Container::ContainerBox::setBackgroundColour (juce::Colour colour)
