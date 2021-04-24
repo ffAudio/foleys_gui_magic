@@ -76,6 +76,13 @@ StylePropertyComponent::StylePropertyComponent (MagicGUIBuilder& builderToUse, j
         node.removeProperty (property, &builder.getUndoManager());
         refresh();
     };
+
+    node.addListener (this);
+}
+
+StylePropertyComponent::~StylePropertyComponent()
+{
+    node.removeListener (this);
 }
 
 juce::var StylePropertyComponent::lookupValue()
@@ -131,5 +138,10 @@ void StylePropertyComponent::mouseDoubleClick (const juce::MouseEvent&)
         builder.getMagicToolBox().setNodeToEdit (inheritedFrom);
 }
 
+void StylePropertyComponent::valueTreePropertyChanged (juce::ValueTree& tree, const juce::Identifier& changedProperty)
+{
+    if (tree == node && property == changedProperty)
+        refresh();
+}
 
 } // namespace foleys
