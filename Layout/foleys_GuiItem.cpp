@@ -428,7 +428,7 @@ void GuiItem::setDraggable (bool selected)
 
 void GuiItem::savePosition ()
 {
-    auto* container = dynamic_cast<Container*>(getParentComponent());
+    auto* container = findParentComponentOfClass<Container>();
 
     if (container == nullptr)
         return;
