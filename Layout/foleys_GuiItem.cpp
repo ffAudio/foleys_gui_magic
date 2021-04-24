@@ -291,7 +291,7 @@ void GuiItem::valueTreePropertyChanged (juce::ValueTree& treeThatChanged, const 
 {
     if (treeThatChanged == configNode)
     {
-        if (auto* parent = dynamic_cast<GuiItem*>(getParentComponent()))
+        if (auto* parent = findParentComponentOfClass<GuiItem>())
             parent->updateInternal();
         else
             updateInternal();
