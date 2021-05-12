@@ -53,7 +53,6 @@ private:
 
     void valueChanged (juce::Value& value) override;
 
-    SettableProperty::PropertyType  type = SettableProperty::Choice;
     juce::StringArray               choices;
     std::function<void(juce::ComboBox&)> menuCreationLambda;
     juce::Value                     proxy;

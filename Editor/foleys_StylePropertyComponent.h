@@ -40,10 +40,12 @@ namespace foleys
 {
 
 
-class StylePropertyComponent  : public juce::PropertyComponent
+class StylePropertyComponent  : public juce::PropertyComponent,
+                                private juce::ValueTree::Listener
 {
 public:
     StylePropertyComponent (MagicGUIBuilder& builder, juce::Identifier property, juce::ValueTree& node);
+    ~StylePropertyComponent() override;
 
     void paint (juce::Graphics& g) override;
     void resized() override;
@@ -65,6 +67,8 @@ protected:
     juce::TextButton    remove { "X" };
 
 private:
+    void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
+                                   const juce::Identifier& changedProperty) override;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StylePropertyComponent)
 };

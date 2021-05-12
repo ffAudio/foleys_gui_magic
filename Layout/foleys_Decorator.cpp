@@ -104,6 +104,11 @@ juce::Colour Decorator::getTabColour() const
     return tabColour;
 }
 
+juce::Colour Decorator::getBackgroundColour() const
+{
+    return backgroundColour;
+}
+
 void Decorator::updateColours (MagicGUIBuilder& builder, const juce::ValueTree& node)
 {
     auto& stylesheet = builder.getStylesheet();

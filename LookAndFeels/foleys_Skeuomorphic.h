@@ -72,6 +72,7 @@ private:
 
     const knobImages& getKnobImages (int diameter);
 
+private:    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Skeuomorphic)
 };
 
