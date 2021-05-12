@@ -119,9 +119,13 @@ void MagicPluginEditor::setConfigTree (const juce::ValueTree& gui)
 {
     // Set default values
     auto rootNode = gui.getChildWithName (IDs::view);
-    auto& undo = builder->getUndoManager();
-    if (! rootNode.hasProperty (IDs::resizable)) rootNode.setProperty (IDs::resizable, true, &undo);
-    if (! rootNode.hasProperty (IDs::resizeCorner)) rootNode.setProperty (IDs::resizeCorner, true, &undo);
+
+    if (rootNode.isValid())
+    {
+        auto& undo = builder->getUndoManager();
+        if (!rootNode.hasProperty(IDs::resizable)) rootNode.setProperty (IDs::resizable, true, &undo);
+        if (!rootNode.hasProperty(IDs::resizeCorner)) rootNode.setProperty (IDs::resizeCorner, true, &undo);
+    }
 
     processorState.setGuiValueTree (gui);
     builder->createGUI (*this);
