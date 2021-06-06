@@ -172,8 +172,8 @@ void Decorator::configure (MagicGUIBuilder& builder, const juce::ValueTree& node
     if (! radiusVar.isVoid())
         radius = static_cast<float> (radiusVar);
 
-    caption    = node.getProperty (IDs::caption, juce::String());
-    tabCaption = node.getProperty (IDs::tabCaption, juce::String());
+    caption    = builder.getStyleProperty (IDs::caption, node);
+    tabCaption = builder.getStyleProperty (IDs::tabCaption, node);
     auto tc    = builder.getStyleProperty (IDs::tabColour, node);
     if (! tc.isVoid())
         tabColour = stylesheet.getColour (tc.toString());
