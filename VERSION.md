@@ -4,6 +4,8 @@ PluginGuiMagic - Versions history
 1.3.3
 -----
 
+- Allow caption to be configured from CSS style class
+
 1.3.2 - 04.04.2021
 ------------------
 
