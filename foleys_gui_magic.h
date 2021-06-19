@@ -61,6 +61,14 @@
 #define FOLEYS_SHOW_GUI_EDITOR_PALLETTE 1
 #endif
 
+/** Config: FOLEYS_ENABLE_BINARY_DATA
+            Makes the binary resources available to the GUI. Make sure you actually have
+            at least one file added, or this will fail to compile.
+ */
+#ifndef FOLEYS_ENABLE_BINARY_DATA
+#define FOLEYS_ENABLE_BINARY_DATA 0
+#endif
+
 /** Config: FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
             This will save the currently edited GUI in the plugin instances state. Best to turn this off
             in the product to avoid confusion in updates.
