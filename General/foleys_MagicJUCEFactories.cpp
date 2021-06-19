@@ -56,6 +56,9 @@ public:
     static const juce::Identifier  pMinValue;
     static const juce::Identifier  pMaxValue;
 
+    static const juce::Identifier  pFilmStrip;
+    static const juce::Identifier  pNumImages;
+
     SliderItem (MagicGUIBuilder& builder, const juce::ValueTree& node) : GuiItem (builder, node)
     {
         setColourTranslation (
@@ -116,6 +119,16 @@ public:
         auto paramID = getControlledParameterID ({});
         if (paramID.isNotEmpty())
             attachment = getMagicState().createAttachment (paramID, slider);
+
+        auto filmStripName = getProperty (pFilmStrip).toString();
+        if (filmStripName.isNotEmpty())
+        {
+            auto filmStrip = Resources::getImage (filmStripName);
+            slider.setFilmStrip (filmStrip);
+        }
+
+        int numFilmImages = getProperty (pNumImages);
+        slider.setNumImages (numFilmImages, false);
     }
 
     std::vector<SettableProperty> getSettableProperties() const override
@@ -128,6 +141,8 @@ public:
         props.push_back ({ configNode, pValue, SettableProperty::Choice, 1.0f, magicBuilder.createPropertiesMenuLambda() });
         props.push_back ({ configNode, pMinValue, SettableProperty::Number, 0.0f, {} });
         props.push_back ({ configNode, pMaxValue, SettableProperty::Number, 2.0f, {} });
+        props.push_back ({ configNode, pFilmStrip, SettableProperty::Choice, 0.0f, magicBuilder.createChoicesMenuLambda(Resources::getResourceFileNames()) });
+        props.push_back ({ configNode, pNumImages, SettableProperty::Number, 0.0f, {} });
 
         return props;
     }
@@ -155,6 +170,8 @@ const juce::StringArray SliderItem::pTextBoxPositions { "no-textbox", "textbox-a
 const juce::Identifier  SliderItem::pValue      { "value" };
 const juce::Identifier  SliderItem::pMinValue   { "min-value" };
 const juce::Identifier  SliderItem::pMaxValue   { "max-value" };
+const juce::Identifier  SliderItem::pFilmStrip  { "filmstrip" };
+const juce::Identifier  SliderItem::pNumImages  { "num-filmstrip-images" };
 
 
 //==============================================================================

@@ -54,6 +54,32 @@ public:
         resized();
     }
 
+    void paint (juce::Graphics& g) override
+    {
+        if (filmStrip.isNull() || numImages == 0)
+        {
+            juce::Slider::paint (g);
+        }
+        else
+        {
+            auto index = juce::roundToInt ((numImages - 1) * valueToProportionOfLength (getValue()));
+            auto knobArea = getLookAndFeel().getSliderLayout(*this).sliderBounds;
+
+            if (horizontalFilmStrip)
+            {
+                auto w = filmStrip.getWidth() / numImages;
+                g.drawImage (filmStrip, knobArea.getX(), knobArea.getY(), knobArea.getWidth(), knobArea.getHeight(),
+                             index * w, 0, w, filmStrip.getHeight());
+            }
+            else
+            {
+                auto h = filmStrip.getHeight() / numImages;
+                g.drawImage (filmStrip, knobArea.getX(), knobArea.getY(), knobArea.getWidth(), knobArea.getHeight(),
+                             0, index * h, filmStrip.getWidth(), h);
+            }
+        }
+    }
+
     void resized() override
     {
         if (autoOrientation)
@@ -72,9 +98,24 @@ public:
         juce::Slider::resized();
     }
 
+    void setFilmStrip (juce::Image& image)
+    {
+        filmStrip = image;
+    }
+
+    void setNumImages (int num, bool horizontal)
+    {
+        numImages = num;
+        horizontalFilmStrip = horizontal;
+    }
+
 private:
 
     bool autoOrientation = true;
+
+    juce::Image filmStrip;
+    int         numImages = 0;
+    bool        horizontalFilmStrip = false;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AutoOrientationSlider)
 };
