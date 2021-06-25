@@ -5,6 +5,8 @@ PluginGuiMagic - Versions history
 -----
 
 - Allow caption to be configured from CSS style class
+- Added Filmstrip option for knobs
+- Removed `FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE`
 
 1.3.2 - 04.04.2021
 ------------------

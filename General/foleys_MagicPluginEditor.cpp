@@ -55,17 +55,9 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, std::uniq
         builder->registerJUCELookAndFeels();
     }
 
-#if FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
-    auto guiTree = processorState.getValueTree().getChildWithName ("magic");
-    if (guiTree.isValid())
-        setConfigTree (guiTree);
-    else
-        builder->createGUI (*this);
-#else  // FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
     auto guiTree = processorState.getGuiTree();
     if (guiTree.isValid())
         setConfigTree (guiTree);
-#endif // FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
 
     updateSize();
 

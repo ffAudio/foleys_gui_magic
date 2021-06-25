@@ -6,7 +6,7 @@ that provides a hierarchical information, and a CSS cascading stylesheet to defi
 rules for the appearance of the GUI.
 
 There is a drag and drop editor to add GUI elements, and to connect to
-parameters of your AudioProcessorValueTreeState. Also an editor in the style of FireBug
+parameters of your AudioProcessor. Also an editor in the style of FireBug
 to investigate the individual properties, and how they were obtained/calculated.
 
 
@@ -20,7 +20,7 @@ All feedback is welcome.
 Setup
 -----
 
-To use the WYSWYG plugin editor, add this module via Projucer to your JUCE project.
+To use the WYSWYG plugin editor, add this module via Projucer or CMake to your JUCE project.
 
 Instead of inheriting from juce::AudioProcessor inherit foleys::MagicProcessor.
 Get rid of those methods:

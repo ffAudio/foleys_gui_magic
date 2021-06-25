@@ -69,14 +69,6 @@
 #define FOLEYS_ENABLE_BINARY_DATA 0
 #endif
 
-/** Config: FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
-            This will save the currently edited GUI in the plugin instances state. Best to turn this off
-            in the product to avoid confusion in updates.
-  */
-#ifndef FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
-#define FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE 1
-#endif
-
 /** Config: FOLEYS_ENABLE_OPEN_GL_CONTEXT
             If selected an juce OpenGLCOntext is attached. Not a big difference on OSX, but vital on Windows.
   */
