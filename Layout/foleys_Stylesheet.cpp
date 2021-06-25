@@ -248,7 +248,11 @@ juce::Colour Stylesheet::parseColour (const juce::String& name)
 
 juce::LookAndFeel* Stylesheet::getLookAndFeel (const juce::ValueTree& node) const
 {
-    auto lnf = getStyleProperty (IDs::lookAndFeel, node).toString();
+    auto lnfNode = getStyleProperty (IDs::lookAndFeel, node);
+    if (lnfNode.isVoid())
+        return nullptr;
+
+    auto lnf = lnfNode.toString();
     if (lnf.isNotEmpty())
     {
         const auto& it = lookAndFeels.find (lnf);
