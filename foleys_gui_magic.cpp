@@ -61,6 +61,8 @@
 #include "Layout/foleys_Container.cpp"
 #include "Layout/foleys_GuiItem.cpp"
 
+#include "Helpers/foleys_DefaultGuiTrees.cpp"
+
 #include "Visualisers/foleys_MagicLevelSource.cpp"
 #include "Visualisers/foleys_MagicFilterPlot.cpp"
 #include "Visualisers/foleys_MagicAnalyser.cpp"

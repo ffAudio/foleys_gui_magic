@@ -110,11 +110,6 @@ public:
     std::unique_ptr<juce::ComboBoxParameterAttachment> createAttachment (const juce::String& paramID, juce::ComboBox& combobox) override;
     std::unique_ptr<juce::ButtonParameterAttachment>   createAttachment (const juce::String& paramID, juce::Button& button) override;
 
-    /**
-     This override creates the ValueTree defining the GuiItems from the getParameterTree()
-     */
-    juce::ValueTree createDefaultGUITree() const override;
-
     juce::AudioProcessor* getProcessor() override;
 
     /**

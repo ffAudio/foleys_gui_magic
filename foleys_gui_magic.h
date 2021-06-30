@@ -105,6 +105,7 @@
 #include "Helpers/foleys_ParameterAttachment.h"
 #include "Helpers/foleys_AtomicValueAttachment.h"
 #include "Helpers/foleys_Conversions.h"
+#include "Helpers/foleys_DefaultGuiTrees.h"
 
 #include "Layout/foleys_GradientBackground.h"
 #include "Layout/foleys_BoxModel.h"

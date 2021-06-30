@@ -107,10 +107,12 @@ void MagicPluginEditor::updateSize()
     setSize (width, height);
 }
 
-void MagicPluginEditor::setConfigTree (const juce::ValueTree& gui)
+void MagicPluginEditor::setConfigTree (const juce::ValueTree& config)
 {
+    jassert (config.isValid() && config.hasType(IDs::magic));
+
     // Set default values
-    auto rootNode = gui.getChildWithName (IDs::view);
+    auto rootNode = config.getChildWithName (IDs::view);
 
     if (rootNode.isValid())
     {
@@ -119,9 +121,7 @@ void MagicPluginEditor::setConfigTree (const juce::ValueTree& gui)
         if (!rootNode.hasProperty(IDs::resizeCorner)) rootNode.setProperty (IDs::resizeCorner, true, &undo);
     }
 
-    processorState.setGuiValueTree (gui);
     builder->createGUI (*this);
-
     updateSize();
 }
 

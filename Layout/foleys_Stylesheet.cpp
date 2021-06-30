@@ -355,41 +355,6 @@ bool Stylesheet::isColourPaletteNode (const juce::ValueTree& node) const
     return false;
 }
 
-juce::ValueTree Stylesheet::createDefaultStyle()
-{
-    juce::ValueTree style (IDs::style, {{ IDs::name, "default" }},
-    {
-        { IDs::nodes, {} },
-        { IDs::classes, {}, {
-            { "plot-view", {
-                { IDs::border, 2 },
-                { IDs::backgroundColour, "black" },
-                { IDs::borderColour, "silver" },
-                { IDs::display, IDs::contents }
-            } },
-            { "nomargin", {
-                { IDs::margin, 0 },
-                { IDs::padding, 0 },
-                { IDs::border, 0 }} },
-            { "group", {
-                { IDs::margin, 5 },
-                { IDs::padding, 5 },
-                { IDs::border, 2 },
-                { IDs::flexDirection, IDs::flexDirColumn }} }
-        } },
-        { IDs::types, {}, {
-            { "Slider", {{ IDs::border, 0 }, { "slider-textbox", "textbox-below" }} },
-            { "ToggleButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }, { IDs::captionSize, 0 }, { "text", "Active" }} },
-            { "TextButton", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }, { IDs::captionSize, 0 }} },
-            { "ComboBox", {{ IDs::border, 0 }, { IDs::maxHeight, 50 }, { IDs::captionSize, 0 }} },
-            { "Plot", {{ IDs::border, 0 }, { IDs::margin, 0 }, { IDs::padding, 0 }, { IDs::backgroundColour, "00000000" }, {IDs::radius, 0}} },
-            { "XYDragComponent", {{ IDs::border, 0 }, { IDs::margin, 0 }, { IDs::padding, 0 }, { IDs::backgroundColour, "00000000" }, {IDs::radius, 0}} }
-        } }
-    });
-
-    return style;
-}
-
 juce::StringArray Stylesheet::getAllClassesNames() const
 {
     juce::StringArray names;

@@ -72,6 +72,16 @@ public:
     virtual void initialiseBuilder (MagicGUIBuilder& builder);
 
     /**
+     This method is called to create the GUI. The default implementation will come up with a ValueTree containing
+     a default Stylesheet and populate the GUI components from the AudioProcessorParameters it finds using
+     getParameterTree() as well as getting the MagicPlotSources.
+
+     You can override this method with your bespoke algorithm to create a ValueTree or to load your ValueTree
+     from BinaryData.
+     */
+    virtual juce::ValueTree createGuiValueTree();
+
+    /**
      If there is anything you need to do after a new state was loaded you can override this method
      */
     virtual void postSetStateInformation() {}

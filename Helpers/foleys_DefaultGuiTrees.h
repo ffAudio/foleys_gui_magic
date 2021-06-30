@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2021 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -39,56 +39,24 @@
 namespace foleys
 {
 
-/**
- This is a generic AudioProcessorEditor, that is completely
- defined and styled by drag and drop. There is an XML representation,
- that can be baked into the project using the BinaryData of Projucer.
- */
-class MagicPluginEditor  : public juce::AudioProcessorEditor,
-                           public juce::DragAndDropContainer
+class MagicGUIState;
+
+namespace DefaultGuiTrees
 {
-public:
-    /**
-     Create an AudioProcessorEditor populated from a MagicGUIBuilder.
-     */
-    MagicPluginEditor (MagicProcessorState& processorState, std::unique_ptr<MagicGUIBuilder> builder = {});
 
-    ~MagicPluginEditor() override;
+static inline juce::ValueTree createDefaultDocument (juce::ValueTree gui);
 
-    /**
-     Setup a GUI from a previously stored ValueTree
+static inline juce::ValueTree createHelloWorld();
 
-     @param gui the ValueTree that defines the Stylesheet, colour palette and GUI components of the editor
-     */
-    void setConfigTree (const juce::ValueTree& config);
+static inline juce::ValueTree createProcessorGui (const juce::AudioProcessorParameterGroup& tree);
 
-    /**
-     Grants access to the MagicGUIBuilder
-     */
-    MagicGUIBuilder& getGUIBuilder();
+static inline void createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree);
 
-    void paint (juce::Graphics& g) override;
+static inline juce::ValueTree createPlotView (const MagicGUIState& magicState);
 
-    void resized() override;
+static inline juce::ValueTree createDefaultStylesheet();
 
-private:
+}
 
-    /**
-     Setup the size and resizable and size limits
-     */
-    void updateSize();
 
-#if JUCE_MODULE_AVAILABLE_juce_opengl && FOLEYS_ENABLE_OPEN_GL_CONTEXT
-    juce::OpenGLContext oglContext;
-#endif
-
-    MagicProcessorState& processorState;
-
-    std::unique_ptr<MagicGUIBuilder> builder;
-
-    juce::TooltipWindow tooltip      { this };
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicPluginEditor)
-};
-
-} // namespace foleys
+}
