@@ -100,8 +100,11 @@ void MagicPluginEditor::updateSize()
         int minHeight = rootNode.getProperty (IDs::minHeight, 10);
         int maxWidth = rootNode.getProperty (IDs::maxWidth, maximalBounds.getWidth());
         int maxHeight = rootNode.getProperty (IDs::maxHeight, maximalBounds.getHeight());
+        double aspect = rootNode.getProperty (IDs::aspect, 0.0);
         setResizable (resizable, resizeCorner);
         setResizeLimits (minWidth, minHeight, maxWidth, maxHeight);
+        if (aspect > 0.0)
+            getConstrainer()->setFixedAspectRatio (aspect);
     }
 
     setSize (width, height);

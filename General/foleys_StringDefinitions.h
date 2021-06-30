@@ -157,6 +157,7 @@ namespace IDs
     static juce::Identifier maxHeight   { "max-height" };
     static juce::Identifier width       { "width" };
     static juce::Identifier height      { "height" };
+    static juce::Identifier aspect      { "aspect" };
 
     static juce::Identifier posX        { "pos-x" };
     static juce::Identifier posY        { "pos-y" };

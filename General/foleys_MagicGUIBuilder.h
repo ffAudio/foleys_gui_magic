@@ -154,11 +154,6 @@ public:
     void clearGUI();
 
     /**
-     Remove the current GUI and replaces it with a generated default
-     */
-    void resetToDefaultGUI();
-
-    /**
      This is used to display a dialog box. It is called by the GUI editor, but in future it might be reached
      using the configured GUI.
      */

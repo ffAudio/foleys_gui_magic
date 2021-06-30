@@ -115,17 +115,6 @@ void MagicGUIBuilder::clearGUI()
     updateComponents();
 }
 
-void MagicGUIBuilder::resetToDefaultGUI()
-{
-    auto guiNode = getConfigTree().getOrCreateChildWithName (IDs::view, &undo);
-    guiNode.removeAllChildren (&undo);
-    guiNode.removeAllProperties (&undo);
-    // FIXME
-    // guiNode.copyPropertiesAndChildrenFrom (magicState.createDefaultGUITree(), &undo);
-
-    updateComponents();
-}
-
 void MagicGUIBuilder::showOverlayDialog (std::unique_ptr<juce::Component> dialog)
 {
     if (parent == nullptr)
