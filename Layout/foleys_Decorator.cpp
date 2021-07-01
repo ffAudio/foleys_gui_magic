@@ -133,7 +133,9 @@ Decorator::ClientBounds Decorator::getClientBounds (juce::Rectangle<int> overall
 
     if (caption.isNotEmpty())
     {
-        if (justification.getOnlyVerticalFlags() & juce::Justification::top)
+        if (justification == juce::Justification::centred)
+            captionBox = overallBounds;
+        else if (justification.getOnlyVerticalFlags() & juce::Justification::top)
             captionBox = box.removeFromTop (captionSize).toNearestInt();
         else if (justification.getOnlyVerticalFlags() & juce::Justification::bottom)
             captionBox = box.removeFromBottom (captionSize).toNearestInt();
@@ -183,7 +185,7 @@ void Decorator::configure (MagicGUIBuilder& builder, const juce::ValueTree& node
         captionSize = static_cast<float> (sizeVar);
 
     auto placementVar = builder.getStyleProperty (IDs::captionPlacement, node);
-    if (! placementVar.isVoid())
+    if (! placementVar.isVoid() && placementVar.toString().isNotEmpty())
         justification = juce::Justification (makeJustificationsChoices()[placementVar.toString()]);
     else
         justification = juce::Justification::centredTop;

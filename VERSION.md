@@ -9,6 +9,7 @@ PluginGuiMagic - Versions history
 - Added Filmstrip option for knobs
 - Added aspect ratio to resize constrainer
 - Added interval and suffix to Slider (not with parameter)
+- Allow caption to be centered
 - Removed `FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE`
 - Fixed default GUI creation
 
