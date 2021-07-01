@@ -156,11 +156,6 @@ public:
      */
     void registerLookAndFeel (juce::String name, std::unique_ptr<juce::LookAndFeel> lookAndFeel);
 
-    /**
-     This creates a default stylesheet from scratch, to allow the default GUI to look sensible.
-     */
-    static juce::ValueTree createDefaultStyle();
-
     juce::StringArray getAllClassesNames() const;
 
     juce::StringArray getLookAndFeelNames() const;

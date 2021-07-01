@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2021 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -39,39 +39,24 @@
 namespace foleys
 {
 
+class MagicGUIState;
 
-class StylePropertyComponent  : public juce::PropertyComponent,
-                                private juce::ValueTree::Listener
+namespace DefaultGuiTrees
 {
-public:
-    StylePropertyComponent (MagicGUIBuilder& builder, juce::Identifier property, juce::ValueTree& node);
-    ~StylePropertyComponent() override;
 
-    void paint (juce::Graphics& g) override;
-    void resized() override;
+static inline juce::ValueTree createDefaultDocument (juce::ValueTree gui);
 
-    void mouseDoubleClick (const juce::MouseEvent& event) override;
+static inline juce::ValueTree createHelloWorld();
 
-    static StylePropertyComponent* createComponent (MagicGUIBuilder& builder, SettableProperty& property, juce::ValueTree& node);
+static inline juce::ValueTree createProcessorGui (const juce::AudioProcessorParameterGroup& tree);
 
-protected:
+static inline void createDefaultFromParameters (juce::ValueTree& node, const juce::AudioProcessorParameterGroup& tree);
 
-    juce::var lookupValue();
+static inline juce::ValueTree createPlotView (const MagicGUIState& magicState);
 
-    MagicGUIBuilder&    builder;
-    juce::Identifier    property;
-    juce::ValueTree     node;
-    juce::ValueTree     inheritedFrom;
+static inline juce::ValueTree createDefaultStylesheet();
 
-    std::unique_ptr<juce::Component> editor;
-    juce::TextButton    remove { "X" };
-
-private:
-    void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged,
-                                   const juce::Identifier& changedProperty) override;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StylePropertyComponent)
-};
+}
 
 
-} // namespace foleys
+}

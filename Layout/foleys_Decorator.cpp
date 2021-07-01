@@ -104,6 +104,11 @@ juce::Colour Decorator::getTabColour() const
     return tabColour;
 }
 
+juce::Colour Decorator::getBackgroundColour() const
+{
+    return backgroundColour;
+}
+
 void Decorator::updateColours (MagicGUIBuilder& builder, const juce::ValueTree& node)
 {
     auto& stylesheet = builder.getStylesheet();
@@ -128,7 +133,9 @@ Decorator::ClientBounds Decorator::getClientBounds (juce::Rectangle<int> overall
 
     if (caption.isNotEmpty())
     {
-        if (justification.getOnlyVerticalFlags() & juce::Justification::top)
+        if (justification == juce::Justification::centred)
+            captionBox = overallBounds;
+        else if (justification.getOnlyVerticalFlags() & juce::Justification::top)
             captionBox = box.removeFromTop (captionSize).toNearestInt();
         else if (justification.getOnlyVerticalFlags() & juce::Justification::bottom)
             captionBox = box.removeFromBottom (captionSize).toNearestInt();
@@ -167,8 +174,8 @@ void Decorator::configure (MagicGUIBuilder& builder, const juce::ValueTree& node
     if (! radiusVar.isVoid())
         radius = static_cast<float> (radiusVar);
 
-    caption    = node.getProperty (IDs::caption, juce::String());
-    tabCaption = node.getProperty (IDs::tabCaption, juce::String());
+    caption    = builder.getStyleProperty (IDs::caption, node);
+    tabCaption = builder.getStyleProperty (IDs::tabCaption, node);
     auto tc    = builder.getStyleProperty (IDs::tabColour, node);
     if (! tc.isVoid())
         tabColour = stylesheet.getColour (tc.toString());
@@ -178,7 +185,7 @@ void Decorator::configure (MagicGUIBuilder& builder, const juce::ValueTree& node
         captionSize = static_cast<float> (sizeVar);
 
     auto placementVar = builder.getStyleProperty (IDs::captionPlacement, node);
-    if (! placementVar.isVoid())
+    if (! placementVar.isVoid() && placementVar.toString().isNotEmpty())
         justification = juce::Justification (makeJustificationsChoices()[placementVar.toString()]);
     else
         justification = juce::Justification::centredTop;

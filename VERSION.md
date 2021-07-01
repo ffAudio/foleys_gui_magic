@@ -1,8 +1,20 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.3.2
+1.3.3
 -----
+
+- Added callback to MagicProcessor to allow bespoke generic GUI trees
+- Allow caption to be configured from CSS style class
+- Added Filmstrip option for knobs
+- Added aspect ratio to resize constrainer
+- Added interval and suffix to Slider (not with parameter)
+- Allow caption to be centered
+- Removed `FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE`
+- Fixed default GUI creation
+
+1.3.2 - 04.04.2021
+------------------
 
 - New components respect current edit mode
 - Fixed accidently draggable components

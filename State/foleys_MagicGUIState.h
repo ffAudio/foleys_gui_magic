@@ -112,16 +112,6 @@ public:
     { juce::ignoreUnused(paramID); return nullptr; }
 
     /**
-     Override this method to create a default Stylesheet, in case nothing was loaded
-     */
-    virtual juce::ValueTree createDefaultStylesheet() const;
-
-    /**
-     Override this to create a default GUI
-     */
-    virtual juce::ValueTree createDefaultGUITree() const;
-
-    /**
      Return a hierarchical menu of the AudioParameters
 
      Implemented in MagicPluginState
@@ -236,7 +226,7 @@ private:
      */
     SharedApplicationSettings settings;
 
-    juce::ValueTree guiValueTree { "magic" };
+    juce::ValueTree guiValueTree { IDs::magic };
     juce::ValueTree state        { "state" };
 
     juce::MidiKeyboardState keyboardState;

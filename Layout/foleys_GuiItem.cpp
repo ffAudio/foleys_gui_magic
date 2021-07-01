@@ -291,7 +291,7 @@ void GuiItem::valueTreePropertyChanged (juce::ValueTree& treeThatChanged, const 
 {
     if (treeThatChanged == configNode)
     {
-        if (auto* parent = dynamic_cast<GuiItem*>(getParentComponent()))
+        if (auto* parent = findParentComponentOfClass<GuiItem>())
             parent->updateInternal();
         else
             updateInternal();
@@ -428,7 +428,7 @@ void GuiItem::setDraggable (bool selected)
 
 void GuiItem::savePosition ()
 {
-    auto* container = dynamic_cast<Container*>(getParentComponent());
+    auto* container = findParentComponentOfClass<Container>();
 
     if (container == nullptr)
         return;

@@ -82,6 +82,8 @@ juce::ValueTree MagicGUIState::getPropertyRoot() const
 
 void MagicGUIState::setGuiValueTree (const juce::ValueTree& dom)
 {
+    jassert (dom.hasType (IDs::magic));
+
     guiValueTree = dom;
 }
 
@@ -97,7 +99,7 @@ void MagicGUIState::setGuiValueTree (const juce::File& file)
 {
     auto dom = juce::ValueTree::fromXml (file.loadFileAsString());
     if (dom.isValid())
-        guiValueTree = dom;
+        setGuiValueTree (dom);
 }
 
 juce::ValueTree& MagicGUIState::getGuiTree()
@@ -118,23 +120,6 @@ void MagicGUIState::setApplicationSettingsFile (juce::File file)
 juce::ValueTree& MagicGUIState::getSettings()
 {
     return settings->settings;
-}
-
-juce::ValueTree MagicGUIState::createDefaultStylesheet() const
-{
-    return Stylesheet::createDefaultStyle();
-}
-
-juce::ValueTree MagicGUIState::createDefaultGUITree() const
-{
-    return {IDs::view, {{"id", "root"}},
-        {
-            {"Label", {
-                {"text", "Hello world!"},
-                {"font-size", "25"},
-                {"justification", "centred"}
-            }}
-        }};
 }
 
 juce::Value MagicGUIState::getPropertyAsValue (const juce::String& pathToProperty)

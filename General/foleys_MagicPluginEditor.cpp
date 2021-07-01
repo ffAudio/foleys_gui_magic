@@ -55,17 +55,9 @@ MagicPluginEditor::MagicPluginEditor (MagicProcessorState& stateToUse, std::uniq
         builder->registerJUCELookAndFeels();
     }
 
-#if FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
-    auto guiTree = processorState.getValueTree().getChildWithName ("magic");
-    if (guiTree.isValid())
-        setConfigTree (guiTree);
-    else
-        builder->createGUI (*this);
-#else  // FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
     auto guiTree = processorState.getGuiTree();
     if (guiTree.isValid())
         setConfigTree (guiTree);
-#endif // FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE
 
     updateSize();
 
@@ -108,24 +100,31 @@ void MagicPluginEditor::updateSize()
         int minHeight = rootNode.getProperty (IDs::minHeight, 10);
         int maxWidth = rootNode.getProperty (IDs::maxWidth, maximalBounds.getWidth());
         int maxHeight = rootNode.getProperty (IDs::maxHeight, maximalBounds.getHeight());
+        double aspect = rootNode.getProperty (IDs::aspect, 0.0);
         setResizable (resizable, resizeCorner);
         setResizeLimits (minWidth, minHeight, maxWidth, maxHeight);
+        if (aspect > 0.0)
+            getConstrainer()->setFixedAspectRatio (aspect);
     }
 
     setSize (width, height);
 }
 
-void MagicPluginEditor::setConfigTree (const juce::ValueTree& gui)
+void MagicPluginEditor::setConfigTree (const juce::ValueTree& config)
 {
+    jassert (config.isValid() && config.hasType(IDs::magic));
+
     // Set default values
-    auto rootNode = gui.getChildWithName (IDs::view);
-    auto& undo = builder->getUndoManager();
-    if (! rootNode.hasProperty (IDs::resizable)) rootNode.setProperty (IDs::resizable, true, &undo);
-    if (! rootNode.hasProperty (IDs::resizeCorner)) rootNode.setProperty (IDs::resizeCorner, true, &undo);
+    auto rootNode = config.getChildWithName (IDs::view);
 
-    processorState.setGuiValueTree (gui);
+    if (rootNode.isValid())
+    {
+        auto& undo = builder->getUndoManager();
+        if (!rootNode.hasProperty(IDs::resizable)) rootNode.setProperty (IDs::resizable, true, &undo);
+        if (!rootNode.hasProperty(IDs::resizeCorner)) rootNode.setProperty (IDs::resizeCorner, true, &undo);
+    }
+
     builder->createGUI (*this);
-
     updateSize();
 }
 

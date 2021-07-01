@@ -89,7 +89,7 @@ void MagicGUIBuilder::updateStylesheet()
 {
     auto stylesNode = getConfigTree().getOrCreateChildWithName (IDs::styles, &undo);
     if (stylesNode.getNumChildren() == 0)
-        stylesNode.appendChild (magicState.createDefaultStylesheet(), &undo);
+        stylesNode.appendChild (DefaultGuiTrees::createDefaultStylesheet(), &undo);
 
     auto selectedName = stylesNode.getProperty (IDs::selected, {}).toString();
     if (selectedName.isNotEmpty())
@@ -111,16 +111,6 @@ void MagicGUIBuilder::clearGUI()
     auto guiNode = getConfigTree().getOrCreateChildWithName (IDs::view, &undo);
     guiNode.removeAllChildren (&undo);
     guiNode.removeAllProperties (&undo);
-
-    updateComponents();
-}
-
-void MagicGUIBuilder::resetToDefaultGUI()
-{
-    auto guiNode = getConfigTree().getOrCreateChildWithName (IDs::view, &undo);
-    guiNode.removeAllChildren (&undo);
-    guiNode.removeAllProperties (&undo);
-    guiNode.copyPropertiesAndChildrenFrom (magicState.createDefaultGUITree(), &undo);
 
     updateComponents();
 }

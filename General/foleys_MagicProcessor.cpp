@@ -66,12 +66,34 @@ void MagicProcessor::initialiseBuilder (MagicGUIBuilder& builder)
     builder.registerJUCELookAndFeels();
 }
 
+juce::ValueTree MagicProcessor::createGuiValueTree()
+{
+    juce::ValueTree magic { IDs::magic };
+    magic.appendChild (DefaultGuiTrees::createDefaultStylesheet(), nullptr);
+
+    juce::ValueTree rootNode {IDs::view, {{ IDs::id, IDs::root }}};
+
+    auto plotView = DefaultGuiTrees::createPlotView (magicState);
+    if (plotView.isValid())
+        rootNode.appendChild (plotView, nullptr);
+
+    auto params = DefaultGuiTrees::createProcessorGui (getParameterTree());
+    rootNode.appendChild (params, nullptr);
+
+    magic.appendChild (rootNode, nullptr);
+
+    return magic;
+}
+
 juce::AudioProcessorEditor* MagicProcessor::createEditor()
 {
     magicState.updateParameterMap();
 
     auto builder = std::make_unique<MagicGUIBuilder>(magicState);
     initialiseBuilder (*builder);
+
+    if (magicState.getGuiTree().getChildWithName (IDs::view).isValid() == false)
+        magicState.setGuiValueTree (createGuiValueTree());
 
     return new MagicPluginEditor (magicState, std::move (builder));
 }

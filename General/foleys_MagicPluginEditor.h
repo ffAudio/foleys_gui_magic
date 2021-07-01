@@ -58,9 +58,9 @@ public:
     /**
      Setup a GUI from a previously stored ValueTree
 
-     @param gui the ValueTree that defines the GUI of the editor
+     @param gui the ValueTree that defines the Stylesheet, colour palette and GUI components of the editor
      */
-    void setConfigTree (const juce::ValueTree& gui);
+    void setConfigTree (const juce::ValueTree& config);
 
     /**
      Grants access to the MagicGUIBuilder
