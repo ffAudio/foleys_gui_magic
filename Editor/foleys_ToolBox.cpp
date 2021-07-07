@@ -70,13 +70,14 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
     fileMenu.onClick = [&]
     {
         juce::PopupMenu file;
+
         file.addItem ("Load XML", [&] { loadDialog(); });
         file.addItem ("Save XML", [&] { saveDialog(); });
         file.addSeparator();
         file.addItem ("Clear",    [&] { builder.clearGUI(); });
         file.addSeparator();
         file.addItem ("Refresh",  [&] { builder.updateComponents(); });
-        file.show();
+        file.showMenuAsync (juce::PopupMenu::Options());
     };
 
     viewMenu.onClick = [&]
@@ -89,7 +90,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
         view.addSeparator();
         view.addItem ("AlwaysOnTop", true, isAlwaysOnTop(), [&]() { setAlwaysOnTop ( ! isAlwaysOnTop() ); });
 
-        view.show ();
+        view.showMenuAsync (juce::PopupMenu::Options());
     };
 
     undoButton.onClick = [&]

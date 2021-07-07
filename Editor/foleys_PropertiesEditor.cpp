@@ -169,21 +169,31 @@ void PropertiesEditor::createNewClass()
 {
     static juce::String editorID { "styleClass" };
 
-    juce::AlertWindow dlg (TRANS ("New style class"), TRANS ("Enter a name:"), juce::AlertWindow::QuestionIcon, this);
-    dlg.addTextEditor (editorID, "class");
-    dlg.addButton (TRANS ("Cancel"), 0);
-    dlg.addButton (TRANS ("Ok"), 1);
-    if (dlg.runModalLoop() == 0)
-        return;
-
-    if (auto* editor = dlg.getTextEditor (editorID))
+    classNameInput = std::make_unique<juce::AlertWindow> (TRANS ("New style class"),
+                                                          TRANS ("Enter a name:"),
+                                                          juce::AlertWindow::QuestionIcon,
+                                                          this);
+    classNameInput->addTextEditor (editorID, "class");
+    classNameInput->addButton (TRANS ("Cancel"), 0);
+    classNameInput->addButton (TRANS ("Ok"), 1);
+    classNameInput->centreAroundComponent (getTopLevelComponent(), 350, 200);
+    classNameInput->enterModalState (true,
+                                     juce::ModalCallbackFunction::create ([this] (int result)
     {
-        auto name = editor->getText().replaceCharacters (".&$@ ", "---__");
-        auto newNode = builder.getStylesheet().addNewStyleClass (name, &undo);
-        auto index = newNode.getParent().indexOf (newNode);
-        updatePopupMenu();
-        nodeSelect.setSelectedId (3000 + index);
-    }
+        if (result > 0)
+        {
+            if (auto* editor = classNameInput->getTextEditor (editorID))
+            {
+                auto name = editor->getText().replaceCharacters (".&$@ ", "---__");
+                auto newNode = builder.getStylesheet().addNewStyleClass (name, &undo);
+                auto index = newNode.getParent().indexOf (newNode);
+                updatePopupMenu();
+                nodeSelect.setSelectedId (3000 + index);
+            }
+        }
+
+        classNameInput.reset();
+    }));
 }
 
 void PropertiesEditor::deleteClass (const juce::String& name)

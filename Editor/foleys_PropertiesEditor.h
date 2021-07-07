@@ -97,6 +97,8 @@ private:
     juce::ValueTree     style;
     juce::ValueTree     styleItem;
 
+    std::unique_ptr<juce::AlertWindow> classNameInput;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PropertiesEditor)
 };
 
