@@ -40,30 +40,53 @@
 namespace foleys
 {
 
-class LookAndFeel : public JuceLookAndFeel_V4
+class JuceLookAndFeel_V2 : public juce::LookAndFeel_V2
 {
 public:
-    LookAndFeel() = default;
+    JuceLookAndFeel_V2() = default;
 
-    void drawRotarySlider (juce::Graphics&, int x, int y, int width, int height,
-                           float sliderPosProportional, float rotaryStartAngle,
-                           float rotaryEndAngle, juce::Slider&) override;
+    void drawPopupMenuItemWithOptions (juce::Graphics&, const juce::Rectangle<int>& area,
+                                       bool isHighlighted,
+                                       const juce::PopupMenu::Item& item,
+                                       const juce::PopupMenu::Options&) override;
 
-    //==============================================================================
-
-    void drawComboBox (juce::Graphics&, int width, int height, bool isButtonDown,
-                       int buttonX, int buttonY, int buttonW, int buttonH,
-                       juce::ComboBox&) override;
-
-    void positionComboBoxText (juce::ComboBox&, juce::Label& labelToPosition) override;
-
-    //==============================================================================
-
-    void drawTabButton (juce::TabBarButton&, juce::Graphics&, bool isMouseOver, bool isMouseDown) override;
-    
 private:
+    juce::Colour findPopupColour (int colourId, juce::Component* target);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JuceLookAndFeel_V2)
+};
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LookAndFeel)
+//==============================================================================
+
+class JuceLookAndFeel_V3 : public juce::LookAndFeel_V3
+{
+public:
+    JuceLookAndFeel_V3() = default;
+
+    void drawPopupMenuItemWithOptions (juce::Graphics&, const juce::Rectangle<int>& area,
+                                       bool isHighlighted,
+                                       const juce::PopupMenu::Item& item,
+                                       const juce::PopupMenu::Options&) override;
+
+private:
+    juce::Colour findPopupColour (int colourId, juce::Component* target);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JuceLookAndFeel_V3)
+};
+
+//==============================================================================
+
+class JuceLookAndFeel_V4 : public juce::LookAndFeel_V4
+{
+public:
+    JuceLookAndFeel_V4() = default;
+
+    void drawPopupMenuItemWithOptions (juce::Graphics&, const juce::Rectangle<int>& area,
+                                       bool isHighlighted,
+                                       const juce::PopupMenu::Item& item,
+                                       const juce::PopupMenu::Options&) override;
+
+private:
+    juce::Colour findPopupColour (int colourId, juce::Component* target);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JuceLookAndFeel_V4)
 };
 
 } // namespace foleys

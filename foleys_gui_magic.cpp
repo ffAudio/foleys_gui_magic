@@ -74,6 +74,7 @@
 #include "Widgets/foleys_FileBrowserDialog.cpp"
 #include "Widgets/foleys_MidiLearnComponent.cpp"
 
+#include "LookAndFeels/foleys_JuceLookAndFeels.cpp"
 #include "LookAndFeels/foleys_LookAndFeel.cpp"
 #include "LookAndFeels/foleys_Skeuomorphic.cpp"
 

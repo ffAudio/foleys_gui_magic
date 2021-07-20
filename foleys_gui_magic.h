@@ -114,6 +114,7 @@
 #include "Layout/foleys_GuiItem.h"
 #include "Layout/foleys_Container.h"
 
+#include "LookAndFeels/foleys_JuceLookAndFeels.h"
 #include "LookAndFeels/foleys_LookAndFeel.h"
 #include "LookAndFeels/foleys_Skeuomorphic.h"
 
