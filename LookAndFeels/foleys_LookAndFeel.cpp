@@ -263,7 +263,11 @@ void LookAndFeel::drawPopupMenuItemWithOptions (juce::Graphics& g, const juce::R
                                                 const juce::PopupMenu::Options& options)
 {
     auto textColour = findPopupColour (juce::PopupMenu::textColourId, options.getTargetComponent());
-    
+
+    g.fillAll (findPopupColour (isHighlighted ? juce::PopupMenu::highlightedBackgroundColourId
+                                              : juce::PopupMenu::backgroundColourId,
+                                options.getTargetComponent()));
+
     if (item.isSeparator)
     {
         auto r  = area.reduced (5, 0);
