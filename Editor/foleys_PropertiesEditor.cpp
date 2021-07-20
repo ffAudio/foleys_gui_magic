@@ -38,6 +38,13 @@
 namespace foleys
 {
 
+enum ComboIDs : int
+{
+    TypeEdit=1000,
+    NodeEdit=2000,
+    ClassEdit=3000,
+    PaletteEdit=4000
+};
 
 PropertiesEditor::PropertiesEditor (MagicGUIBuilder& builderToEdit)
   : builder (builderToEdit),
@@ -66,24 +73,24 @@ PropertiesEditor::PropertiesEditor (MagicGUIBuilder& builderToEdit)
             return;
 
         auto index = nodeSelect.getSelectedId();
-        if (index >= 4000)
+        if (index >= ComboIDs::PaletteEdit)
         {
-            auto node = style.getChildWithName (IDs::palettes).getChild (index - 4000);
+            auto node = style.getChildWithName (IDs::palettes).getChild (index - ComboIDs::PaletteEdit);
             setNodeToEdit (node);
         }
-        else if (index >= 3000)
+        else if (index >= ComboIDs::ClassEdit)
         {
-            auto node = style.getChildWithName (IDs::classes).getChild (index - 3000);
+            auto node = style.getChildWithName (IDs::classes).getChild (index - ComboIDs::ClassEdit);
             setNodeToEdit (node);
         }
-        else if (index >= 2000)
+        else if (index >= ComboIDs::NodeEdit)
         {
-            auto node = style.getChildWithName (IDs::nodes).getChild (index - 2000);
+            auto node = style.getChildWithName (IDs::nodes).getChild (index - ComboIDs::NodeEdit);
             setNodeToEdit (node);
         }
-        else if (index >= 1000)
+        else if (index >= ComboIDs::TypeEdit)
         {
-            auto node = style.getChildWithName (IDs::types).getChild (index - 1000);
+            auto node = style.getChildWithName (IDs::types).getChild (index - ComboIDs::TypeEdit);
             setNodeToEdit (node);
         }
 
@@ -188,7 +195,7 @@ void PropertiesEditor::createNewClass()
                 auto newNode = builder.getStylesheet().addNewStyleClass (name, &undo);
                 auto index = newNode.getParent().indexOf (newNode);
                 updatePopupMenu();
-                nodeSelect.setSelectedId (3000 + index);
+                nodeSelect.setSelectedId (ComboIDs::ClassEdit + index);
             }
         }
 
@@ -360,7 +367,7 @@ void PropertiesEditor::updatePopupMenu()
     if (typesNode.isValid())
     {
         juce::PopupMenu menu;
-        int index = 1000;
+        int index = ComboIDs::TypeEdit;
         for (const auto& child : typesNode)
             menu.addItem (juce::PopupMenu::Item ("Type: " + child.getType().toString()).setID (index++));
 
@@ -370,7 +377,7 @@ void PropertiesEditor::updatePopupMenu()
     auto nodesNode = style.getChildWithName (IDs::nodes);
     if (nodesNode.isValid())
     {
-        int index = 2000;
+        int index = ComboIDs::NodeEdit;
         juce::PopupMenu menu;
         for (const auto& child : nodesNode)
             menu.addItem (juce::PopupMenu::Item ("Node: " + child.getType().toString()).setID (index++));
@@ -381,7 +388,7 @@ void PropertiesEditor::updatePopupMenu()
     auto classesNode = style.getChildWithName (IDs::classes);
     if (classesNode.isValid())
     {
-        int index = 3000;
+        int index = ComboIDs::ClassEdit;
         juce::PopupMenu menu;
         for (const auto& child : classesNode)
             menu.addItem (juce::PopupMenu::Item ("Class: " + child.getType().toString()).setID (index++));
@@ -411,7 +418,7 @@ void PropertiesEditor::updatePopupMenu()
     auto palettesNode = style.getChildWithName (IDs::palettes);
     if (palettesNode.isValid())
     {
-        int index = 4000;
+        int index = ComboIDs::PaletteEdit;
         juce::PopupMenu menu;
         for (const auto& child : palettesNode)
             menu.addItem (juce::PopupMenu::Item ("Palette: " + child.getType().toString()).setID (index++));
