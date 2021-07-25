@@ -67,6 +67,9 @@ namespace IDs
     static juce::Identifier captionSize  { "caption-size" };
     static juce::Identifier lookAndFeel  { "lookAndFeel" };
     static juce::Identifier tooltip      { "tooltip" };
+    static juce::Identifier tooltipText       { "tooltip-text" };
+    static juce::Identifier tooltipBackground { "tooltip-background" };
+    static juce::Identifier tooltipOutline    { "tooltip-outline" };
     static juce::Identifier parameter    { "parameter" };
     static juce::Identifier parameterX   { "parameter-x" };
     static juce::Identifier parameterY   { "parameter-y" };

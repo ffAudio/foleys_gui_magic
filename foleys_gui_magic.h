@@ -113,6 +113,7 @@
 #include "Layout/foleys_Decorator.h"
 #include "Layout/foleys_GuiItem.h"
 #include "Layout/foleys_Container.h"
+#include "Layout/foleys_RootItem.h"
 
 #include "LookAndFeels/foleys_JuceLookAndFeels.h"
 #include "LookAndFeels/foleys_LookAndFeel.h"

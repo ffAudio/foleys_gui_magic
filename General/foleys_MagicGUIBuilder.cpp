@@ -67,7 +67,8 @@ std::unique_ptr<GuiItem> MagicGUIBuilder::createGuiItem (const juce::ValueTree& 
 {
     if (node.getType() == IDs::view)
     {
-        auto item = std::make_unique<Container>(*this, node);
+        auto item = (node == getGuiRootNode()) ? std::make_unique<RootItem>(*this, node)
+                                               : std::make_unique<Container>(*this, node);
         item->updateInternal();
         item->createSubComponents();
         return item;
@@ -149,9 +150,6 @@ void MagicGUIBuilder::updateComponents()
         return;
 
     updateStylesheet();
-
-//    if (config.getChildWithName (IDs::view).isValid() == false)
-//        config.appendChild (magicState.createDefaultGUITree(), &undo);
 
     root = createGuiItem (getGuiRootNode());
     parent->addAndMakeVisible (root.get());

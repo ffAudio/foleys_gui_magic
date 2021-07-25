@@ -250,6 +250,9 @@ void PropertiesEditor::addNodeProperties()
         array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::minHeight, &undo), IDs::minHeight.toString(), 8, false));
         array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::maxHeight, &undo), IDs::maxHeight.toString(), 8, false));
         array.add (new juce::TextPropertyComponent (styleItem.getPropertyAsValue (IDs::aspect, &undo), IDs::aspect.toString(), 8, false));
+        array.add (new StyleColourPropertyComponent (builder, IDs::tooltipText, styleItem));
+        array.add (new StyleColourPropertyComponent (builder, IDs::tooltipBackground, styleItem));
+        array.add (new StyleColourPropertyComponent (builder, IDs::tooltipOutline, styleItem));
     }
 
     auto classNames = builder.getStylesheet().getAllClassesNames();

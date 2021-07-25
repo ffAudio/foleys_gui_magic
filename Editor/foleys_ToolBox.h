@@ -115,8 +115,6 @@ private:
     juce::StretchableLayoutResizerBar resizer1 { &resizeManager, 1, false };
     juce::StretchableLayoutResizerBar resizer3 { &resizeManager, 3, false };
 
-    juce::TooltipWindow tooltip      { this };
-
     std::unique_ptr<juce::FileBrowserComponent> fileBrowser;
 
     void updateToolboxPosition();

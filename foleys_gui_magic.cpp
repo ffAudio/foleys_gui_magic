@@ -60,6 +60,7 @@
 #include "Layout/foleys_Decorator.cpp"
 #include "Layout/foleys_Container.cpp"
 #include "Layout/foleys_GuiItem.cpp"
+#include "Layout/foleys_RootItem.cpp"
 
 #include "Helpers/foleys_DefaultGuiTrees.cpp"
 

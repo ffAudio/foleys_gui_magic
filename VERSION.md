@@ -6,9 +6,10 @@ PluginGuiMagic - Versions history
 
 - Removed modal loops (needed for JUCE 6.0.9)
 - Added PopupMenu background and colours in ComboBox for all shipped LookAndFeels
+- Made Tooltip colours configurable
 
-1.3.3
------
+1.3.3 - 01.07.2021
+------------------
 
 - Added callback to MagicProcessor to allow bespoke generic GUI trees
 - Allow caption to be configured from CSS style class
