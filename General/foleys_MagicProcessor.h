@@ -142,6 +142,18 @@ public:
 protected:
     MagicProcessorState magicState { *this };
 
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    /**
+     In your MagicProcessor call this macro to set the toolbox save path to either "Sources" or if there is a sibling to "Resources"
+     \code{.cpp}
+     FOLEYS_SET_SOURCE_PATH (__FILE__);
+     \endcode
+     */
+    #define FOLEYS_SET_SOURCE_PATH(source) magicState.setResourcesFolder (source);
+#else
+    #define FOLEYS_SET_SOURCE_PATH(source) juce::ignoreUnused (source);
+#endif
+
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicProcessor)
 };

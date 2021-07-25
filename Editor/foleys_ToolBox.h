@@ -86,10 +86,10 @@ public:
 
     static juce::PropertiesFile::Options getApplicationPropertyStorage();
 
-private:
-
     juce::File getLastLocation() const;
-    void setLastLocation(juce::File file);
+    void setLastLocation (juce::File file);
+
+private:
 
     std::unique_ptr<juce::FileFilter> getFileFilter() const;
 
@@ -116,6 +116,7 @@ private:
     juce::StretchableLayoutResizerBar resizer3 { &resizeManager, 3, false };
 
     std::unique_ptr<juce::FileBrowserComponent> fileBrowser;
+    juce::File                                  lastLocation;
 
     void updateToolboxPosition();
     juce::ResizableCornerComponent resizeCorner { this, nullptr };

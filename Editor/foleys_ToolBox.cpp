@@ -154,7 +154,7 @@ void ToolBox::loadDialog()
 {
     auto dialog = std::make_unique<FileBrowserDialog>(NEEDS_TRANS ("Cancel"), NEEDS_TRANS ("Load"),
                                                       juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
-                                                      getLastLocation(), getFileFilter());
+                                                      lastLocation, getFileFilter());
     dialog->setAcceptFunction ([&, dlg=dialog.get()]
     {
         loadGUI (dlg->getFile());
@@ -172,7 +172,7 @@ void ToolBox::saveDialog()
 {
     auto dialog = std::make_unique<FileBrowserDialog>(NEEDS_TRANS ("Cancel"), NEEDS_TRANS ("Save"),
                                                       juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles | juce::FileBrowserComponent::warnAboutOverwriting,
-                                                      getLastLocation(), getFileFilter());
+                                                      lastLocation, getFileFilter());
     dialog->setAcceptFunction ([&, dlg=dialog.get()]
     {
         saveGUI (dlg->getFile());
@@ -197,7 +197,7 @@ void ToolBox::loadGUI (const juce::File& xmlFile)
         stateWasReloaded();
     }
 
-    setLastLocation (xmlFile);
+    lastLocation = xmlFile;
 }
 
 void ToolBox::saveGUI (const juce::File& xmlFile)
@@ -206,7 +206,8 @@ void ToolBox::saveGUI (const juce::File& xmlFile)
     stream.setPosition (0);
     stream.truncate();
     stream.writeString (builder.getConfigTree().toXmlString());
-    setLastLocation (xmlFile);
+
+    lastLocation = xmlFile;
 }
 
 void ToolBox::setSelectedNode (const juce::ValueTree& node)
@@ -358,42 +359,9 @@ void ToolBox::updateToolboxPosition()
         setBounds (parentBounds.getRight(), parentBounds.getY(), width, height);
 }
 
-juce::File ToolBox::getLastLocation() const
-{
-    juce::File lastLocation;
-
-    juce::ApplicationProperties appProperties;
-    appProperties.setStorageParameters (ToolBox::getApplicationPropertyStorage());
-    if (auto* p = appProperties.getUserSettings())
-        lastLocation = juce::File (p->getValue (IDs::lastLocation));
-
-    if (lastLocation.exists())
-        return lastLocation;
-
-    auto start = juce::File::getSpecialLocation (juce::File::currentExecutableFile);
-    while (start.exists() && !start.isRoot() && start.getFileName() != "Builds")
-        start = start.getParentDirectory();
-
-    if (start.getFileName() == "Builds")
-    {
-        auto resources = start.getSiblingFile ("Resources");
-        if (resources.isDirectory())
-            return resources;
-
-        auto sources = start.getSiblingFile ("Source");
-        if (sources.isDirectory())
-            return sources;
-    }
-
-    return juce::File::getSpecialLocation (juce::File::currentExecutableFile);
-}
-
 void ToolBox::setLastLocation(juce::File file)
 {
-    juce::ApplicationProperties appProperties;
-    appProperties.setStorageParameters (ToolBox::getApplicationPropertyStorage());
-    if (auto* p = appProperties.getUserSettings())
-        p->setValue (IDs::lastLocation, file.getFullPathName());
+    lastLocation = file;
 }
 
 std::unique_ptr<juce::FileFilter> ToolBox::getFileFilter() const

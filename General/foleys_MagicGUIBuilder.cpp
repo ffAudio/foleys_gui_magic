@@ -434,7 +434,10 @@ void MagicGUIBuilder::attachToolboxToWindow (juce::Component& window)
     juce::MessageManager::callAsync ([&, reference]
                                      {
                                          if (reference != nullptr)
+                                         {
                                              magicToolBox = std::make_unique<ToolBox>(reference->getTopLevelComponent(), *this);
+                                             magicToolBox->setLastLocation (magicState.getResourcesFolder());
+                                         }
                                      });
 }
 
