@@ -40,6 +40,7 @@ namespace foleys
 {
 
 class MagicLevelMeter : public juce::Component,
+                        public juce::SettableTooltipClient,
                         private juce::Timer
 {
 public:
