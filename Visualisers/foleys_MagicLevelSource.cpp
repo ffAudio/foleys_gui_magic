@@ -43,35 +43,29 @@ void MagicLevelSource::pushSamples (const juce::AudioBuffer<float>& buffer)
     for (int c=0; c < std::min (buffer.getNumChannels(), int (channelDatas.size())); ++c)
     {
         auto& data = channelDatas [size_t (c)];
-        data.overall.store (std::max (data.overall.load(), buffer.getMagnitude (c, 0, buffer.getNumSamples())));
+        auto currentMax = buffer.getMagnitude (c, 0, buffer.getNumSamples());
+        auto currentRMS = buffer.getRMSLevel (c, 0, buffer.getNumSamples());
 
-        int  bufferPos = 0;
-        while (bufferPos < buffer.getNumSamples())
+        data.overall.store (std::max (data.overall.load(), currentMax));
+
+        auto lastRMS = data.rms.load();
+        if (currentRMS >= lastRMS)
+            data.rms.store (currentRMS);
+        else
+            data.rms.store (lastRMS * 0.9f); // TODO: proper decay depending on block size
+
+        auto lastMax = data.max.load();
+        if (currentMax >= lastMax)
         {
-            const auto currentMax = buffer.getMagnitude (c, bufferPos, std::min (64, buffer.getNumSamples() - bufferPos));
-            if (currentMax >= data.max.load() || data.maxCountDown <= 0)
-            {
-                data.max.store (currentMax);
-                data.maxCountDown = maxCountDownInitial;
-            }
-            else
-            {
-                --data.maxCountDown;
-            }
-
-            data.rmsHistory [size_t (data.rmsPointer++)] = buffer.getRMSLevel (c, bufferPos,
-                                                                               std::min (64, buffer.getNumSamples() - bufferPos));
-            if (data.rmsPointer >= int (data.rmsHistory.size()))
-                data.rmsPointer = 0;
-
-            bufferPos += 64;
+            data.max.store (currentMax);
+            data.countdown = maxCountdown;
         }
-
-        auto sum = 0.0;
-        for (const auto item : data.rmsHistory)
-            sum += item * item;
-
-        data.rms.store (static_cast<float> (std::sqrt (sum / double (data.rmsHistory.size()))));
+        else
+        {
+            data.countdown -= buffer.getNumSamples();
+            if (data.countdown < 0)
+                data.max.store (currentMax);
+        }
     }
 }
 
@@ -91,37 +85,20 @@ float MagicLevelSource::getMaxValue (int channel) const
     return 0.0f;
 }
 
-void MagicLevelSource::setupSource (int numChannels, double sampleRate, int maxKeepMS, int rmsWindowMS)
+void MagicLevelSource::setupSource (int numChannels, double sampleRate, int maxKeepMS)
 {
     setNumChannels (numChannels);
-    setRmsLength (static_cast<int> (std::ceil (sampleRate * rmsWindowMS * 0.001)));
-
-    maxCountDownInitial = static_cast<int> (std::ceil (sampleRate * maxKeepMS * 0.001 / 64.0));
+    maxCountdown = juce::roundToInt (sampleRate * maxKeepMS / 1000);
 }
 
 void MagicLevelSource::setNumChannels (int numChannels)
 {
     channelDatas.resize (size_t (numChannels));
-
-    for (auto& channel : channelDatas)
-        channel.rmsHistory.resize (size_t (rmsHistorySize / 64), 0.0f);
 }
 
 int MagicLevelSource::getNumChannels() const
 {
     return int (channelDatas.size());
-}
-
-void MagicLevelSource::setRmsLength (int numSamples)
-{
-    rmsHistorySize = numSamples;
-
-    for (auto& channel : channelDatas)
-    {
-        channel.rmsHistory.resize (size_t (numSamples / 64), 0.0f);
-        if (channel.rmsPointer >= int (channel.rmsHistory.size()))
-            channel.rmsPointer = 0;
-    }
 }
 
 //==============================================================================
