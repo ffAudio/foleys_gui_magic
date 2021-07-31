@@ -177,7 +177,7 @@ void GUITreeEditor::GuiTreeItem::paintItem (juce::Graphics& g, int width, int he
 
     juce::String name = itemNode.getType().toString();
 
-    if (itemNode.hasProperty (IDs::id))
+    if (itemNode.hasProperty (IDs::id) && itemNode.getProperty (IDs::id).toString().isNotEmpty())
         name += " (" + itemNode.getProperty (IDs::id).toString() + ")";
 
     if (itemNode.hasProperty (IDs::caption))
