@@ -123,7 +123,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
     setBounds (100, 100, 300, 700);
     addToDesktop (getLookAndFeel().getMenuWindowFlags());
 
-    startTimer (100);
+    startTimer (Timers::WindowDrag, 100);
 
     setVisible (true);
 
@@ -136,6 +136,12 @@ ToolBox::~ToolBox()
 {
     if (parent != nullptr)
         parent->removeKeyListener (this);
+
+    stopTimer (Timers::WindowDrag);
+    stopTimer (Timers::AutoSave);
+
+    if (autoSaveFile.existsAsFile() && lastLocation.hasIdenticalContentTo (autoSaveFile))
+        autoSaveFile.deleteFile();
 }
 
 void ToolBox::mouseDown (const juce::MouseEvent& e)
@@ -176,6 +182,8 @@ void ToolBox::saveDialog()
     dialog->setAcceptFunction ([&, dlg=dialog.get()]
     {
         saveGUI (dlg->getFile());
+        lastLocation = dlg->getFile();
+
         builder.closeOverlayDialog();
     });
     dialog->setCancelFunction ([&]
@@ -202,12 +210,14 @@ void ToolBox::loadGUI (const juce::File& xmlFile)
 
 void ToolBox::saveGUI (const juce::File& xmlFile)
 {
-    juce::FileOutputStream stream (xmlFile);
-    stream.setPosition (0);
-    stream.truncate();
-    stream.writeString (builder.getConfigTree().toXmlString());
-
-    lastLocation = xmlFile;
+    auto saved = false;
+    auto temp = xmlFile.getNonexistentSibling();
+    {
+        juce::FileOutputStream stream (temp);
+        saved = stream.writeString (builder.getConfigTree().toXmlString());
+    }
+    if (saved)
+        temp.moveFileTo (xmlFile);
 }
 
 void ToolBox::setSelectedNode (const juce::ValueTree& node)
@@ -326,9 +336,12 @@ bool ToolBox::keyPressed (const juce::KeyPress& key)
     return false;
 }
 
-void ToolBox::timerCallback ()
+void ToolBox::timerCallback (int timer)
 {
-    updateToolboxPosition();
+    if (timer == Timers::WindowDrag)
+        updateToolboxPosition();
+    else if (timer == Timers::AutoSave)
+        saveGUI (autoSaveFile);
 }
 
 void ToolBox::setToolboxPosition (PositionOption position)
@@ -339,9 +352,9 @@ void ToolBox::setToolboxPosition (PositionOption position)
     resizeCorner.setVisible (isDetached);
 
     if (isDetached)
-        stopTimer ();
+        stopTimer (Timers::WindowDrag);
     else
-        startTimer (100);
+        startTimer (Timers::WindowDrag, 100);
 }
 
 void ToolBox::updateToolboxPosition()
@@ -361,7 +374,14 @@ void ToolBox::updateToolboxPosition()
 
 void ToolBox::setLastLocation(juce::File file)
 {
+    if (file.isDirectory())
+        file = file.getChildFile ("magic.xml");
+
     lastLocation = file;
+    autoSaveFile = lastLocation.getParentDirectory()
+                               .getNonexistentChildFile (file.getFileNameWithoutExtension() + ".sav", ".xml");
+
+    startTimer (Timers::AutoSave, 10000);
 }
 
 std::unique_ptr<juce::FileFilter> ToolBox::getFileFilter() const

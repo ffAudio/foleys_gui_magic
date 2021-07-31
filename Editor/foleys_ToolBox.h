@@ -47,7 +47,7 @@ class MagicGUIBuilder;
 class ToolBox  : public juce::Component,
                  public juce::DragAndDropContainer,
                  public juce::KeyListener,
-                 private juce::Timer
+                 private juce::MultiTimer
 {
 public:
     /**
@@ -72,7 +72,7 @@ public:
 
     void resized() override;
 
-    void timerCallback () override;
+    void timerCallback (int timer) override;
 
     void setSelectedNode (const juce::ValueTree& node);
     void setNodeToEdit (juce::ValueTree node);
@@ -90,6 +90,11 @@ public:
     void setLastLocation (juce::File file);
 
 private:
+    enum Timers : int
+    {
+        WindowDrag=1,
+        AutoSave
+    };
 
     std::unique_ptr<juce::FileFilter> getFileFilter() const;
 
@@ -117,6 +122,7 @@ private:
 
     std::unique_ptr<juce::FileBrowserComponent> fileBrowser;
     juce::File                                  lastLocation;
+    juce::File                                  autoSaveFile;
 
     void updateToolboxPosition();
     juce::ResizableCornerComponent resizeCorner { this, nullptr };

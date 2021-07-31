@@ -9,6 +9,7 @@ PluginGuiMagic - Versions history
 - Made Tooltip colours configurable
 - Added tooltip to foleys widgets like Levelmeter, XY-dragger
 - Added macro to automatically set the sources folder for save/load FOLEYS_SET_SOURCE_PATH
+- Added AutoSave every 10 seconds, requires using FOLEYS_SET_SOURCE_PATH
 
 1.3.3 - 01.07.2021
 ------------------
