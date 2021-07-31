@@ -181,8 +181,9 @@ void ToolBox::saveDialog()
                                                       lastLocation, getFileFilter());
     dialog->setAcceptFunction ([&, dlg=dialog.get()]
     {
-        saveGUI (dlg->getFile());
-        lastLocation = dlg->getFile();
+        auto xmlFile = dlg->getFile();
+        saveGUI (xmlFile);
+        setLastLocation (xmlFile);
 
         builder.closeOverlayDialog();
     });
@@ -205,10 +206,10 @@ void ToolBox::loadGUI (const juce::File& xmlFile)
         stateWasReloaded();
     }
 
-    lastLocation = xmlFile;
+    setLastLocation (xmlFile);
 }
 
-void ToolBox::saveGUI (const juce::File& xmlFile)
+bool ToolBox::saveGUI (const juce::File& xmlFile)
 {
     juce::TemporaryFile temp (xmlFile);
 
@@ -218,8 +219,10 @@ void ToolBox::saveGUI (const juce::File& xmlFile)
         stream.reset();
 
         if (saved)
-            temp.overwriteTargetFileWithTemporary();
+            return temp.overwriteTargetFileWithTemporary();
     }
+
+    return false;
 }
 
 void ToolBox::setSelectedNode (const juce::ValueTree& node)
@@ -380,6 +383,8 @@ void ToolBox::setLastLocation(juce::File file)
         file = file.getChildFile ("magic.xml");
 
     lastLocation = file;
+
+    autoSaveFile.deleteFile();
     autoSaveFile = lastLocation.getParentDirectory()
                                .getNonexistentChildFile (file.getFileNameWithoutExtension() + ".sav", ".xml");
 

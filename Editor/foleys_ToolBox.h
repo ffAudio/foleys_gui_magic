@@ -66,7 +66,7 @@ public:
     void saveDialog();
 
     void loadGUI (const juce::File& file);
-    void saveGUI (const juce::File& file);
+    bool saveGUI (const juce::File& file);
 
     void paint (juce::Graphics& g) override;
 
