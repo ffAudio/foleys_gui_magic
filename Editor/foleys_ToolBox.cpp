@@ -210,14 +210,16 @@ void ToolBox::loadGUI (const juce::File& xmlFile)
 
 void ToolBox::saveGUI (const juce::File& xmlFile)
 {
-    auto saved = false;
-    auto temp = xmlFile.getNonexistentSibling();
+    juce::TemporaryFile temp (xmlFile);
+
+    if (auto stream = temp.getFile().createOutputStream())
     {
-        juce::FileOutputStream stream (temp);
-        saved = stream.writeString (builder.getConfigTree().toXmlString());
+        auto saved = stream->writeString (builder.getConfigTree().toXmlString());
+        stream.reset();
+
+        if (saved)
+            temp.overwriteTargetFileWithTemporary();
     }
-    if (saved)
-        temp.moveFileTo (xmlFile);
 }
 
 void ToolBox::setSelectedNode (const juce::ValueTree& node)
