@@ -175,7 +175,7 @@ juce::ValueTree& PropertiesEditor::getNodeToEdit()
 void PropertiesEditor::createNewClass()
 {
     static juce::String editorID { "styleClass" };
-#if JUCE_VERSION > 0x60008 // bump to 9 once juce fixes the version number
+#if JUCE_VERSION > 0x60008
     auto iconType = juce::MessageBoxIconType::QuestionIcon;
 #else
     auto iconType = juce::AlertWindow::QuestionIcon;
