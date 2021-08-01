@@ -60,6 +60,7 @@
 #include "Layout/foleys_Decorator.cpp"
 #include "Layout/foleys_Container.cpp"
 #include "Layout/foleys_GuiItem.cpp"
+#include "Layout/foleys_RootItem.cpp"
 
 #include "Helpers/foleys_DefaultGuiTrees.cpp"
 
@@ -74,6 +75,7 @@
 #include "Widgets/foleys_FileBrowserDialog.cpp"
 #include "Widgets/foleys_MidiLearnComponent.cpp"
 
+#include "LookAndFeels/foleys_JuceLookAndFeels.cpp"
 #include "LookAndFeels/foleys_LookAndFeel.cpp"
 #include "LookAndFeels/foleys_Skeuomorphic.cpp"
 

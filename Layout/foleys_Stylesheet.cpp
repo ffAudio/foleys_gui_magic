@@ -156,7 +156,7 @@ juce::var Stylesheet::getStyleProperty (const juce::Identifier& name, const juce
         return node.getProperty (name);
     }
 
-    if (inherit && node.hasProperty (IDs::id))
+    if (inherit && node.hasProperty (IDs::id) && node.getProperty (IDs::id).toString().isNotEmpty())
     {
         auto styleNode = currentStyle.getChildWithName (IDs::nodes);
         auto idNode = styleNode.getChildWithName (node.getProperty (IDs::id).toString());

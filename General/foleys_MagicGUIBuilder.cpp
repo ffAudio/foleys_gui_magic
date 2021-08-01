@@ -67,7 +67,8 @@ std::unique_ptr<GuiItem> MagicGUIBuilder::createGuiItem (const juce::ValueTree& 
 {
     if (node.getType() == IDs::view)
     {
-        auto item = std::make_unique<Container>(*this, node);
+        auto item = (node == getGuiRootNode()) ? std::make_unique<RootItem>(*this, node)
+                                               : std::make_unique<Container>(*this, node);
         item->updateInternal();
         item->createSubComponents();
         return item;
@@ -149,9 +150,6 @@ void MagicGUIBuilder::updateComponents()
         return;
 
     updateStylesheet();
-
-//    if (config.getChildWithName (IDs::view).isValid() == false)
-//        config.appendChild (magicState.createDefaultGUITree(), &undo);
 
     root = createGuiItem (getGuiRootNode());
     parent->addAndMakeVisible (root.get());
@@ -248,9 +246,9 @@ void MagicGUIBuilder::registerLookAndFeel (juce::String name, std::unique_ptr<ju
 void MagicGUIBuilder::registerJUCELookAndFeels()
 {
     stylesheet.registerLookAndFeel ("LookAndFeel_V1", std::make_unique<juce::LookAndFeel_V1>());
-    stylesheet.registerLookAndFeel ("LookAndFeel_V2", std::make_unique<juce::LookAndFeel_V2>());
-    stylesheet.registerLookAndFeel ("LookAndFeel_V3", std::make_unique<juce::LookAndFeel_V3>());
-    stylesheet.registerLookAndFeel ("LookAndFeel_V4", std::make_unique<juce::LookAndFeel_V4>());
+    stylesheet.registerLookAndFeel ("LookAndFeel_V2", std::make_unique<JuceLookAndFeel_V2>());
+    stylesheet.registerLookAndFeel ("LookAndFeel_V3", std::make_unique<JuceLookAndFeel_V3>());
+    stylesheet.registerLookAndFeel ("LookAndFeel_V4", std::make_unique<JuceLookAndFeel_V4>());
     stylesheet.registerLookAndFeel ("FoleysFinest", std::make_unique<LookAndFeel>());
     stylesheet.registerLookAndFeel ("Skeuomorphic", std::make_unique<Skeuomorphic>());
 }
@@ -436,7 +434,10 @@ void MagicGUIBuilder::attachToolboxToWindow (juce::Component& window)
     juce::MessageManager::callAsync ([&, reference]
                                      {
                                          if (reference != nullptr)
+                                         {
                                              magicToolBox = std::make_unique<ToolBox>(reference->getTopLevelComponent(), *this);
+                                             magicToolBox->setLastLocation (magicState.getResourcesFolder());
+                                         }
                                      });
 }
 

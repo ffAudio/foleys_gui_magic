@@ -237,4 +237,20 @@ juce::MidiKeyboardState& MagicGUIState::getKeyboardState()
     return keyboardState;
 }
 
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+void MagicGUIState::setResourcesFolder (const juce::String& source)
+{
+    resourcesFolder = juce::File (source).getParentDirectory();
+    auto sibling = resourcesFolder.getSiblingFile ("Resources");
+    if (sibling.isDirectory())
+        resourcesFolder = sibling;
+}
+
+juce::File MagicGUIState::getResourcesFolder() const
+{
+    return resourcesFolder;
+}
+
+#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+
 } // namespace foleys

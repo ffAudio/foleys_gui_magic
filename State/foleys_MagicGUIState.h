@@ -216,6 +216,14 @@ public:
      */
     virtual juce::AudioProcessor* getProcessor() { return nullptr; }
 
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    void setResourcesFolder (const juce::String& name);
+    juce::File getResourcesFolder() const;
+
+private:
+    juce::File resourcesFolder;
+#endif
+
 private:
 
     void addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const;

@@ -42,7 +42,8 @@ namespace foleys
 /**
  The MagicPlotComponent allows drawing the data from a MagicPlotSource.
  */
-class MagicPlotComponent  : public juce::Component
+class MagicPlotComponent  : public juce::Component,
+                            juce::SettableTooltipClient
 {
 public:
 

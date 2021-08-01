@@ -70,13 +70,14 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
     fileMenu.onClick = [&]
     {
         juce::PopupMenu file;
+
         file.addItem ("Load XML", [&] { loadDialog(); });
         file.addItem ("Save XML", [&] { saveDialog(); });
         file.addSeparator();
         file.addItem ("Clear",    [&] { builder.clearGUI(); });
         file.addSeparator();
         file.addItem ("Refresh",  [&] { builder.updateComponents(); });
-        file.show();
+        file.showMenuAsync (juce::PopupMenu::Options());
     };
 
     viewMenu.onClick = [&]
@@ -89,7 +90,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
         view.addSeparator();
         view.addItem ("AlwaysOnTop", true, isAlwaysOnTop(), [&]() { setAlwaysOnTop ( ! isAlwaysOnTop() ); });
 
-        view.show ();
+        view.showMenuAsync (juce::PopupMenu::Options());
     };
 
     undoButton.onClick = [&]
@@ -122,7 +123,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
     setBounds (100, 100, 300, 700);
     addToDesktop (getLookAndFeel().getMenuWindowFlags());
 
-    startTimer (100);
+    startTimer (Timers::WindowDrag, 100);
 
     setVisible (true);
 
@@ -135,6 +136,12 @@ ToolBox::~ToolBox()
 {
     if (parent != nullptr)
         parent->removeKeyListener (this);
+
+    stopTimer (Timers::WindowDrag);
+    stopTimer (Timers::AutoSave);
+
+    if (autoSaveFile.existsAsFile() && lastLocation.hasIdenticalContentTo (autoSaveFile))
+        autoSaveFile.deleteFile();
 }
 
 void ToolBox::mouseDown (const juce::MouseEvent& e)
@@ -153,7 +160,7 @@ void ToolBox::loadDialog()
 {
     auto dialog = std::make_unique<FileBrowserDialog>(NEEDS_TRANS ("Cancel"), NEEDS_TRANS ("Load"),
                                                       juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
-                                                      getLastLocation(), getFileFilter());
+                                                      lastLocation, getFileFilter());
     dialog->setAcceptFunction ([&, dlg=dialog.get()]
     {
         loadGUI (dlg->getFile());
@@ -171,10 +178,13 @@ void ToolBox::saveDialog()
 {
     auto dialog = std::make_unique<FileBrowserDialog>(NEEDS_TRANS ("Cancel"), NEEDS_TRANS ("Save"),
                                                       juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles | juce::FileBrowserComponent::warnAboutOverwriting,
-                                                      getLastLocation(), getFileFilter());
+                                                      lastLocation, getFileFilter());
     dialog->setAcceptFunction ([&, dlg=dialog.get()]
     {
-        saveGUI (dlg->getFile());
+        auto xmlFile = dlg->getFile();
+        saveGUI (xmlFile);
+        setLastLocation (xmlFile);
+
         builder.closeOverlayDialog();
     });
     dialog->setCancelFunction ([&]
@@ -199,13 +209,20 @@ void ToolBox::loadGUI (const juce::File& xmlFile)
     setLastLocation (xmlFile);
 }
 
-void ToolBox::saveGUI (const juce::File& xmlFile)
+bool ToolBox::saveGUI (const juce::File& xmlFile)
 {
-    juce::FileOutputStream stream (xmlFile);
-    stream.setPosition (0);
-    stream.truncate();
-    stream.writeString (builder.getConfigTree().toXmlString());
-    setLastLocation (xmlFile);
+    juce::TemporaryFile temp (xmlFile);
+
+    if (auto stream = temp.getFile().createOutputStream())
+    {
+        auto saved = stream->writeString (builder.getConfigTree().toXmlString());
+        stream.reset();
+
+        if (saved)
+            return temp.overwriteTargetFileWithTemporary();
+    }
+
+    return false;
 }
 
 void ToolBox::setSelectedNode (const juce::ValueTree& node)
@@ -324,9 +341,12 @@ bool ToolBox::keyPressed (const juce::KeyPress& key)
     return false;
 }
 
-void ToolBox::timerCallback ()
+void ToolBox::timerCallback (int timer)
 {
-    updateToolboxPosition();
+    if (timer == Timers::WindowDrag)
+        updateToolboxPosition();
+    else if (timer == Timers::AutoSave)
+        saveGUI (autoSaveFile);
 }
 
 void ToolBox::setToolboxPosition (PositionOption position)
@@ -337,9 +357,9 @@ void ToolBox::setToolboxPosition (PositionOption position)
     resizeCorner.setVisible (isDetached);
 
     if (isDetached)
-        stopTimer ();
+        stopTimer (Timers::WindowDrag);
     else
-        startTimer (100);
+        startTimer (Timers::WindowDrag, 100);
 }
 
 void ToolBox::updateToolboxPosition()
@@ -357,42 +377,18 @@ void ToolBox::updateToolboxPosition()
         setBounds (parentBounds.getRight(), parentBounds.getY(), width, height);
 }
 
-juce::File ToolBox::getLastLocation() const
-{
-    juce::File lastLocation;
-
-    juce::ApplicationProperties appProperties;
-    appProperties.setStorageParameters (ToolBox::getApplicationPropertyStorage());
-    if (auto* p = appProperties.getUserSettings())
-        lastLocation = juce::File (p->getValue (IDs::lastLocation));
-
-    if (lastLocation.exists())
-        return lastLocation;
-
-    auto start = juce::File::getSpecialLocation (juce::File::currentExecutableFile);
-    while (start.exists() && !start.isRoot() && start.getFileName() != "Builds")
-        start = start.getParentDirectory();
-
-    if (start.getFileName() == "Builds")
-    {
-        auto resources = start.getSiblingFile ("Resources");
-        if (resources.isDirectory())
-            return resources;
-
-        auto sources = start.getSiblingFile ("Source");
-        if (sources.isDirectory())
-            return sources;
-    }
-
-    return juce::File::getSpecialLocation (juce::File::currentExecutableFile);
-}
-
 void ToolBox::setLastLocation(juce::File file)
 {
-    juce::ApplicationProperties appProperties;
-    appProperties.setStorageParameters (ToolBox::getApplicationPropertyStorage());
-    if (auto* p = appProperties.getUserSettings())
-        p->setValue (IDs::lastLocation, file.getFullPathName());
+    if (file.isDirectory())
+        file = file.getChildFile ("magic.xml");
+
+    lastLocation = file;
+
+    autoSaveFile.deleteFile();
+    autoSaveFile = lastLocation.getParentDirectory()
+                               .getNonexistentChildFile (file.getFileNameWithoutExtension() + ".sav", ".xml");
+
+    startTimer (Timers::AutoSave, 10000);
 }
 
 std::unique_ptr<juce::FileFilter> ToolBox::getFileFilter() const

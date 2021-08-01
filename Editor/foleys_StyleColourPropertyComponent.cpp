@@ -65,11 +65,13 @@ StyleColourPropertyComponent::StyleColourPropertyComponent (MagicGUIBuilder& bui
     variables.onClick = [&]
     {
         juce::PopupMenu menu;
+        juce::PopupMenu::Options options;
+
         juce::Component::SafePointer<juce::Label> l = dynamic_cast<juce::Label*>(editor.get());
         for (auto v : builder.getStylesheet().getPaletteEntryNames())
             menu.addItem (v, [l, v]() mutable { if (l) l->setText ("$" + v, juce::sendNotification); });
 
-        menu.showAt (editor.get());
+        menu.showMenuAsync (juce::PopupMenu::Options().withTargetComponent (editor.get()));
     };
 
     mouseEvents.onMouseDown = [this](const juce::MouseEvent&)

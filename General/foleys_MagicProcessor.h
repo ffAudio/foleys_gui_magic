@@ -44,19 +44,31 @@ namespace foleys
  The MagicPluginEditor for you to design or use the generic default, the loading and saving of the state
  and many more.
 
- In the constructor you can create the GUI ValueTree either by using
+ In the createGuiValueTree() you can create the GUI ValueTree either by using
  \code{.cpp}
- // generate a default GUI deduced from Parameters, ParameterGroups and MagicPlotSources
- auto defaultGUI = magicState.createDefaultGUITree();
- magicState.setGuiValueTree (defaultGUI);
+ juce::ValueTree EqualizerExampleAudioProcessor::createGuiValueTree()
+ {
+     // generate a default GUI deduced from Parameters, ParameterGroups and MagicPlotSources
+     return magicState.createDefaultGUITree();
 
- // or you load an existing one from BinaryData
- magicState.setGuiValueTree (BinaryData::magic_xml, BinaryData::magic_xmlSize);
+     // or you load an existing one from BinaryData
+     juce::String text (BinaryData::magic_xml, BinaryData::magic_xmlSize);
+     return juce::ValueTree::fromXml (text);
+ }
  \endcode
  */
 class MagicProcessor  : public juce::AudioProcessor
 {
 public:
+    /**
+     Creates a MagicProcessor, that inherits juce::AudioProcessor and adds connections to the editable GUI.
+
+     The floating editor toolbox allows auto save. To use that add this macro in the constructor to let the editor
+     know the location of the source files:
+     \code{.cpp}
+     FOLEYS_SET_SOURCE_PATH(__FILE__);
+     \endcode
+     */
     MagicProcessor();
     MagicProcessor (const BusesProperties& ioLayouts);
     MagicProcessor (const std::initializer_list<const short[2]>& channelLayoutList);
@@ -141,6 +153,18 @@ public:
 
 protected:
     MagicProcessorState magicState { *this };
+
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    /**
+     In your MagicProcessor call this macro to set the toolbox save path to either "Sources" or if there is a sibling to "Resources"
+     \code{.cpp}
+     FOLEYS_SET_SOURCE_PATH (__FILE__);
+     \endcode
+     */
+    #define FOLEYS_SET_SOURCE_PATH(source) magicState.setResourcesFolder (source);
+#else
+    #define FOLEYS_SET_SOURCE_PATH(source) juce::ignoreUnused (source);
+#endif
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicProcessor)

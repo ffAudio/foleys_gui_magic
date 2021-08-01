@@ -40,7 +40,7 @@
 namespace foleys
 {
 
-class Skeuomorphic : public juce::LookAndFeel_V4
+class Skeuomorphic : public JuceLookAndFeel_V4
 {
 public:
     Skeuomorphic() = default;

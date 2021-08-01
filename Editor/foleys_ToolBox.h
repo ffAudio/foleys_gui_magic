@@ -47,7 +47,7 @@ class MagicGUIBuilder;
 class ToolBox  : public juce::Component,
                  public juce::DragAndDropContainer,
                  public juce::KeyListener,
-                 private juce::Timer
+                 private juce::MultiTimer
 {
 public:
     /**
@@ -66,13 +66,13 @@ public:
     void saveDialog();
 
     void loadGUI (const juce::File& file);
-    void saveGUI (const juce::File& file);
+    bool saveGUI (const juce::File& file);
 
     void paint (juce::Graphics& g) override;
 
     void resized() override;
 
-    void timerCallback () override;
+    void timerCallback (int timer) override;
 
     void setSelectedNode (const juce::ValueTree& node);
     void setNodeToEdit (juce::ValueTree node);
@@ -86,10 +86,15 @@ public:
 
     static juce::PropertiesFile::Options getApplicationPropertyStorage();
 
-private:
-
     juce::File getLastLocation() const;
-    void setLastLocation(juce::File file);
+    void setLastLocation (juce::File file);
+
+private:
+    enum Timers : int
+    {
+        WindowDrag=1,
+        AutoSave
+    };
 
     std::unique_ptr<juce::FileFilter> getFileFilter() const;
 
@@ -115,9 +120,9 @@ private:
     juce::StretchableLayoutResizerBar resizer1 { &resizeManager, 1, false };
     juce::StretchableLayoutResizerBar resizer3 { &resizeManager, 3, false };
 
-    juce::TooltipWindow tooltip      { this };
-
     std::unique_ptr<juce::FileBrowserComponent> fileBrowser;
+    juce::File                                  lastLocation;
+    juce::File                                  autoSaveFile;
 
     void updateToolboxPosition();
     juce::ResizableCornerComponent resizeCorner { this, nullptr };

@@ -1,8 +1,19 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.3.3
+1.3.4
 -----
+
+- Removed modal loops (needed for JUCE 6.0.9)
+- Added PopupMenu background and colours in ComboBox for all shipped LookAndFeels
+- Made Tooltip colours configurable
+- Added tooltip to foleys widgets like Levelmeter, XY-dragger
+- Added macro to automatically set the sources folder for save/load FOLEYS_SET_SOURCE_PATH
+- Added AutoSave every 10 seconds, requires using FOLEYS_SET_SOURCE_PATH
+- Changed LevelMeter from rolling average to ballistic, added max line
+
+1.3.3 - 01.07.2021
+------------------
 
 - Added callback to MagicProcessor to allow bespoke generic GUI trees
 - Allow caption to be configured from CSS style class

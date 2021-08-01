@@ -31,6 +31,13 @@ Get rid of those methods:
 The foleys::MagicProcessor will provide a `foleys::MagicProcessorState magicState` (protected visibility) 
 to add visualisations or other objects to expose to the GUI.
 
+The floating editor has an auto save, which needs to know the location of your source files. To activate that
+you need to copy this macro into your foleys::MagicProcessor constructor:
+```cpp
+FOLEYS_SET_SOURCE_PATH(__FILE__);
+```
+Otherwise autosave will start working once you loaded or saved the state, since then the editor has a location to use.
+
 It is also possible to use the module in an Application. In that case you add a `MagicGuiState` and a `MagicGUIBuilder` yourself.
 There is an example available in the examples repository called PlayerExample.
 

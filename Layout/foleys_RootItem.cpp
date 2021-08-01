@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2021 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -34,36 +34,27 @@
  ==============================================================================
  */
 
-#pragma once
-
-
 namespace foleys
 {
 
-class LookAndFeel : public JuceLookAndFeel_V4
+RootItem::RootItem (MagicGUIBuilder& builder, juce::ValueTree node)
+  : Container (builder, node)
 {
-public:
-    LookAndFeel() = default;
+    updateColours();
+}
 
-    void drawRotarySlider (juce::Graphics&, int x, int y, int width, int height,
-                           float sliderPosProportional, float rotaryStartAngle,
-                           float rotaryEndAngle, juce::Slider&) override;
+void RootItem::updateColours()
+{
+    auto text = magicBuilder.getStyleProperty (IDs::tooltipText, configNode);
+    if (! text.isVoid())
+        tooltip.getLookAndFeel().setColour (juce::TooltipWindow::textColourId, Stylesheet::parseColour (text));
+    auto background = magicBuilder.getStyleProperty (IDs::tooltipBackground, configNode);
+    if (! background.isVoid())
+        tooltip.getLookAndFeel().setColour (juce::TooltipWindow::backgroundColourId, Stylesheet::parseColour (background));
+    auto outline = magicBuilder.getStyleProperty (IDs::tooltipOutline, configNode);
+    if (! outline.isVoid())
+        tooltip.getLookAndFeel().setColour (juce::TooltipWindow::outlineColourId, Stylesheet::parseColour (outline));
+}
 
-    //==============================================================================
-
-    void drawComboBox (juce::Graphics&, int width, int height, bool isButtonDown,
-                       int buttonX, int buttonY, int buttonW, int buttonH,
-                       juce::ComboBox&) override;
-
-    void positionComboBoxText (juce::ComboBox&, juce::Label& labelToPosition) override;
-
-    //==============================================================================
-
-    void drawTabButton (juce::TabBarButton&, juce::Graphics&, bool isMouseOver, bool isMouseDown) override;
-    
-private:
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LookAndFeel)
-};
 
 } // namespace foleys

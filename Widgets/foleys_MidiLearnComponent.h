@@ -46,6 +46,7 @@ class MagicProcessorState;
  onto a knob to connect to its parameter
  */
 class MidiLearnComponent  : public juce::Component,
+                            public juce::SettableTooltipClient,
                             private juce::Timer
 {
 public:

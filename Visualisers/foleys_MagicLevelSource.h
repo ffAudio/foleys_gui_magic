@@ -59,20 +59,14 @@ public:
      @param numChannels the number of channels that will be sent
      @param sampleRate the sampleRate the signal is timed in
      @param maxKeepMS the number of milliseconds to keep the max
-     @param rmsWindowMS the length to calculate the RMS of it
      */
-    void setupSource (int numChannels, double sampleRate, int maxKeepMS, int rmsWindowMS);
+    void setupSource (int numChannels, double sampleRate, int maxKeepMS);
 
     /**
      Set the number of channels to measure. This should be done on a non-realtime thread.
      */
     void setNumChannels (int numChannels);
     int getNumChannels() const;
-
-    /**
-     Set the number of samples to be averaged. They are stored in 64 samples blocks to minimise calculation overhead.
-     */
-    void setRmsLength (int numSamples);
 
     //==============================================================================
 
@@ -86,15 +80,11 @@ private:
         std::atomic<float> max;
         std::atomic<float> rms;
         std::atomic<float> overall;
-
-        std::vector<float> rmsHistory;
-        int                rmsPointer = 0;
-        int                maxCountDown = 0;
+        int                countdown = 0;
     };
 
     std::vector<ChannelData> channelDatas;
-    int rmsHistorySize = 22050;
-    int maxCountDownInitial = 100;
+    int                      maxCountdown = 22050;
 
     JUCE_DECLARE_WEAK_REFERENCEABLE (MagicLevelSource)
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicLevelSource)
