@@ -178,7 +178,7 @@ void PropertiesEditor::createNewClass()
 
     classNameInput = std::make_unique<juce::AlertWindow> (TRANS ("New style class"),
                                                           TRANS ("Enter a name:"),
-                                                          juce::AlertWindow::QuestionIcon,
+                                                          juce::MessageBoxIconType::QuestionIcon,
                                                           this);
     classNameInput->addTextEditor (editorID, "class");
     classNameInput->addButton (TRANS ("Cancel"), 0);
