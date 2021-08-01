@@ -1,8 +1,11 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.3.4
+1.3.5
 -----
+
+1.3.4 - 01.08.2021
+------------------
 
 - Removed modal loops (needed for JUCE 6.0.9)
 - Added PopupMenu background and colours in ComboBox for all shipped LookAndFeels
