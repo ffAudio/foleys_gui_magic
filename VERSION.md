@@ -4,6 +4,8 @@ PluginGuiMagic - Versions history
 1.3.5
 -----
 
+- Add ParameterAttachment for Label
+
 1.3.4 - 01.08.2021
 ------------------
 
