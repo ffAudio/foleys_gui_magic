@@ -97,6 +97,7 @@ void StyleGradientPropertyComponent::refresh()
         }
         else
         {
+            label->getTextValue().referTo (label->getTextValue());
             label->setText (value.toString(), juce::dontSendNotification);
         }
     }

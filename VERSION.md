@@ -4,7 +4,9 @@ PluginGuiMagic - Versions history
 1.3.5
 -----
 
+- Fixed AlertWindow::IconType to a backward compatible version
 - Add ParameterAttachment for Label
+- Added a fix when undo after a edit-drag operation
 
 1.3.4 - 01.08.2021
 ------------------

@@ -68,9 +68,14 @@ void StyleTextPropertyComponent::refresh()
     if (auto* label = dynamic_cast<juce::Label*>(editor.get()))
     {
         if (node == inheritedFrom)
+        {
             label->getTextValue().referTo (node.getPropertyAsValue (property, &builder.getUndoManager()));
+        }
         else
+        {
+            label->getTextValue().referTo (label->getTextValue());
             label->setText (value.toString(), juce::dontSendNotification);
+        }
     }
 
     repaint();
