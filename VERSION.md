@@ -1,8 +1,15 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.3.4
+1.3.5
 -----
+
+- Fixed AlertWindow::IconType to a backward compatible version
+- Add ParameterAttachment for Label
+- Added a fix when undo after a edit-drag operation
+
+1.3.4 - 01.08.2021
+------------------
 
 - Removed modal loops (needed for JUCE 6.0.9)
 - Added PopupMenu background and colours in ComboBox for all shipped LookAndFeels

@@ -175,10 +175,15 @@ juce::ValueTree& PropertiesEditor::getNodeToEdit()
 void PropertiesEditor::createNewClass()
 {
     static juce::String editorID { "styleClass" };
+#if JUCE_VERSION > 0x60008
+    auto iconType = juce::MessageBoxIconType::QuestionIcon;
+#else
+    auto iconType = juce::AlertWindow::QuestionIcon;
+#endif
 
     classNameInput = std::make_unique<juce::AlertWindow> (TRANS ("New style class"),
                                                           TRANS ("Enter a name:"),
-                                                          juce::MessageBoxIconType::QuestionIcon,
+                                                          iconType,
                                                           this);
     classNameInput->addTextEditor (editorID, "class");
     classNameInput->addButton (TRANS ("Cancel"), 0);

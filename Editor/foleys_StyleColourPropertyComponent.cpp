@@ -133,6 +133,7 @@ void StyleColourPropertyComponent::refresh()
             if (value.isVoid())
                 getLookAndFeelColourFallback();
 
+            label->getTextValue().referTo (label->getTextValue());
             label->setText (value.toString(), juce::dontSendNotification);
         }
     }

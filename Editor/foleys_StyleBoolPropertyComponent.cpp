@@ -68,9 +68,14 @@ void StyleBoolPropertyComponent::refresh()
     if (auto* toggle = dynamic_cast<juce::ToggleButton*>(editor.get()))
     {
         if (node == inheritedFrom)
+        {
             toggle->getToggleStateValue().referTo (node.getPropertyAsValue (property, &builder.getUndoManager()));
+        }
         else
+        {
+            toggle->getToggleStateValue().referTo (toggle->getToggleStateValue());
             toggle->setToggleState (value, juce::dontSendNotification);
+        }
     }
 
     repaint();

@@ -97,9 +97,14 @@ void StyleChoicePropertyComponent::refresh()
     if (auto* combo = dynamic_cast<juce::ComboBox*>(editor.get()))
     {
         if (node == inheritedFrom)
+        {
             proxy.referTo (node.getPropertyAsValue (property, &builder.getUndoManager()));
+        }
         else
+        {
+            proxy.referTo (proxy);
             combo->setText (value.toString(), juce::dontSendNotification);
+        }
     }
 
     repaint();

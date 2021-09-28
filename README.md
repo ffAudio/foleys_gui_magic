@@ -72,6 +72,22 @@ The `foleys::MagicProcessor` takes care of saving and restoring the parameters a
 You can add your own values to the ValueTree in the `magicState`.
 There is a callback after restoring that you can override, in case you need to do some additional action.
 
+Additionally to saving the values in the plugin state you can have settings across all instances of your plugin.
+To use that you need to setup the path to a file. After that the settings are synchronised in the
+settings of the magicState:
+```
+// in constructor
+magicState.setApplicationSettingsFile (juce::File::getSpecialLocation (juce::File::userApplicationDataDirectory)
+                                       .getChildFile (ProjectInfo::companyName)
+                                       .getChildFile (ProjectInfo::projectName + juce::String (".settings")));
+
+// use it like
+presetNode = magicState.getSettings().getOrCreateChildWithName ("presets", nullptr);
+presetNode.setProperty ("foo", 100, nullptr);
+```
+
+Other than the juce::ApplicationSettings this is not a flat list but can deal with hierarchical data in form of ValueTrees.
+PluginGuiMagic will deal with interprocess safety and update if the file has changed.
 
 Bake in the xml
 ---------------

@@ -379,6 +379,9 @@ void ToolBox::updateToolboxPosition()
 
 void ToolBox::setLastLocation(juce::File file)
 {
+    if (file.getFullPathName().isEmpty())
+        return;
+
     if (file.isDirectory())
         file = file.getChildFile ("magic.xml");
 
