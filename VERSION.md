@@ -1,8 +1,13 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.3.5
+1.3.6
 -----
+
+- Added drumpad component
+
+1.3.5 - 28.09.2021
+------------------
 
 - Fixed AlertWindow::IconType to a backward compatible version
 - Add ParameterAttachment for Label
