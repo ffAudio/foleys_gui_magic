@@ -668,6 +668,62 @@ private:
 
 //==============================================================================
 
+class DrumpadItem : public GuiItem
+{
+public:
+    static const juce::Identifier  pColumns;
+    static const juce::Identifier  pRows;
+    static const juce::Identifier  pRootNote;
+
+    FOLEYS_DECLARE_GUI_FACTORY (DrumpadItem)
+
+    DrumpadItem (MagicGUIBuilder& builder, const juce::ValueTree& node)
+      : GuiItem (builder, node),
+        drumpad (getMagicState().getKeyboardState())
+    {
+        addAndMakeVisible (drumpad);
+    }
+
+    void update() override
+    {
+        auto rowsVar    = getProperty (pRows);
+        auto columnsVar = getProperty (pColumns);
+
+        auto rows = rowsVar.isVoid() ? 3 : int (rowsVar);
+        auto columns = columnsVar.isVoid() ? 3 : int (columnsVar);
+
+        drumpad.setMatrix (rows, columns);
+
+        auto rootNote = getProperty (pRootNote);
+        if (!rootNote.isVoid())
+            drumpad.setRootNote (rootNote);
+    }
+
+    std::vector<SettableProperty> getSettableProperties() const override
+    {
+        std::vector<SettableProperty> props;
+        props.push_back ({ configNode, pColumns,  SettableProperty::Number,  3, {}});
+        props.push_back ({ configNode, pRows,     SettableProperty::Number,  3, {}});
+        props.push_back ({ configNode, pRootNote, SettableProperty::Number, 64, {}});
+        return props;
+    }
+
+    juce::Component* getWrappedComponent() override
+    {
+        return &drumpad;
+    }
+
+private:
+    MidiDrumpadComponent drumpad;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DrumpadItem)
+};
+const juce::Identifier  DrumpadItem::pColumns  { "pad-columns" };
+const juce::Identifier  DrumpadItem::pRows     { "pad-rows" };
+const juce::Identifier  DrumpadItem::pRootNote { "pad-root-note" };
+
+//==============================================================================
+
 class LevelMeterItem : public GuiItem
 {
 public:
@@ -843,6 +899,7 @@ void MagicGUIBuilder::registerJUCEFactories()
     registerFactory (IDs::plot, &PlotItem::factory);
     registerFactory (IDs::xyDragComponent, &XYDraggerItem::factory);
     registerFactory (IDs::keyboardComponent, &KeyboardItem::factory);
+    registerFactory (IDs::drumpadComponent, &DrumpadItem::factory);
     registerFactory (IDs::meter, &LevelMeterItem::factory);
     registerFactory ("MidiLearn", &MidiLearnItem::factory);
     registerFactory (IDs::listBox, &ListBoxItem::factory);
