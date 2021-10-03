@@ -42,6 +42,16 @@ namespace foleys
 class MidiDrumpadComponent : public juce::Component
 {
 public:
+    enum ColourIds
+    {
+        background= 0x2002200,
+        padFill,
+        padOutline,
+        padDownFill,
+        padDownOutline,
+        touch
+    };
+
     MidiDrumpadComponent (juce::MidiKeyboardState& keyboardState);
 
     void paint (juce::Graphics& g) override;
@@ -50,19 +60,28 @@ public:
     void setMatrix (int rows, int columns);
     void setRootNote (int noteNumber);
 
-    class Pad : public juce::Component
+    class Pad : public juce::Component,
+                public juce::MidiKeyboardState::Listener
     {
     public:
-        Pad (juce::MidiKeyboardState& keyboardState, int noteNumber);
+        Pad (MidiDrumpadComponent& owner, int noteNumber);
+        ~Pad() override;
 
         void paint (juce::Graphics& g) override;
 
         void mouseDown (const juce::MouseEvent& event) override;
         void mouseUp (const juce::MouseEvent& event) override;
 
+        void handleNoteOn (juce::MidiKeyboardState* source,
+                           int midiChannel, int midiNoteNumber, float velocity) override;
+
+        void handleNoteOff (juce::MidiKeyboardState* source,
+                            int midiChannel, int midiNoteNumber, float velocity) override;
+
     private:
-        juce::MidiKeyboardState& keyboardState;
-        int noteNumber = 64;
+        MidiDrumpadComponent& owner;
+        int                   noteNumber = 64;
+        std::atomic_bool      isDown { false };
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Pad)
     };

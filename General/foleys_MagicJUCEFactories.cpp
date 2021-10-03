@@ -681,6 +681,16 @@ public:
       : GuiItem (builder, node),
         drumpad (getMagicState().getKeyboardState())
     {
+        setColourTranslation (
+        {
+            { "drumpad-background",   MidiDrumpadComponent::background },
+            { "drumpad-fill",         MidiDrumpadComponent::padFill },
+            { "drumpad-outline",      MidiDrumpadComponent::padOutline },
+            { "drumpad-down-fill",    MidiDrumpadComponent::padDownFill },
+            { "drumpad-down-outline", MidiDrumpadComponent::padDownOutline },
+            { "drumpad-touch",        MidiDrumpadComponent::touch },
+        });
+
         addAndMakeVisible (drumpad);
     }
 

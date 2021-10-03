@@ -41,6 +41,13 @@ namespace foleys
 MidiDrumpadComponent::MidiDrumpadComponent (juce::MidiKeyboardState& state)
   : keyboardState (state)
 {
+    setColour (MidiDrumpadComponent::background, juce::Colours::darkgrey);
+    setColour (MidiDrumpadComponent::padFill, juce::Colours::green);
+    setColour (MidiDrumpadComponent::padDownFill, juce::Colours::lightgreen);
+    setColour (MidiDrumpadComponent::padOutline, juce::Colours::darkgreen);
+    setColour (MidiDrumpadComponent::padDownOutline, juce::Colours::green);
+    setColour (MidiDrumpadComponent::touch, juce::Colours::orange);
+
     updateButtons();
 }
 
@@ -63,7 +70,7 @@ void MidiDrumpadComponent::updateButtons()
     pads.clear();
 
     for (int i = 0; i < numRows * numColumns; ++i)
-        pads.push_back (std::make_unique<Pad>(keyboardState, rootNote + i));
+        pads.push_back (std::make_unique<Pad>(*this, rootNote + i));
 
     for (auto& pad : pads)
         addAndMakeVisible (pad.get());
@@ -73,7 +80,7 @@ void MidiDrumpadComponent::updateButtons()
 
 void MidiDrumpadComponent::paint (juce::Graphics& g)
 {
-    g.fillAll (juce::Colours::darkgrey);
+    g.fillAll (findColour (MidiDrumpadComponent::background));
 }
 
 void MidiDrumpadComponent::resized()
@@ -91,26 +98,62 @@ void MidiDrumpadComponent::resized()
 
 //  ==============================================================================
 
-MidiDrumpadComponent::Pad::Pad (juce::MidiKeyboardState& state, int note)
-  : keyboardState (state),
+MidiDrumpadComponent::Pad::Pad (MidiDrumpadComponent& ownerToUse, int note)
+  : owner (ownerToUse),
     noteNumber (note)
-{}
+{
+    owner.keyboardState.addListener (this);
+}
+
+MidiDrumpadComponent::Pad::~Pad()
+{
+    owner.keyboardState.removeListener (this);
+}
 
 void MidiDrumpadComponent::Pad::paint (juce::Graphics& g)
 {
-    g.setColour (juce::Colours::green);
-    g.fillRoundedRectangle (getLocalBounds().reduced (3).toFloat(), 3.0);
+    g.setColour (owner.findColour (isDown ? MidiDrumpadComponent::padDownFill : MidiDrumpadComponent::padFill));
+    g.fillRoundedRectangle (getLocalBounds().reduced (3).toFloat(), 3.0f);
+
+    g.setColour (owner.findColour (isDown ? MidiDrumpadComponent::padDownOutline : MidiDrumpadComponent::padOutline));
+    g.drawRoundedRectangle (getLocalBounds().reduced (3).toFloat(), 3.0f, 1.0f);
 }
 
 void MidiDrumpadComponent::Pad::mouseDown (const juce::MouseEvent& event)
 {
-    keyboardState.noteOn (1, noteNumber, event.isPressureValid() ? event.pressure : 1.0f);
+    owner.keyboardState.noteOn (1, noteNumber, event.isPressureValid() ? event.pressure : 1.0f);
 }
 
 void MidiDrumpadComponent::Pad::mouseUp (const juce::MouseEvent& event)
 {
     juce::ignoreUnused (event);
-    keyboardState.noteOff (1, noteNumber, 1.0f);
+    owner.keyboardState.noteOff (1, noteNumber, 1.0f);
+}
+
+void MidiDrumpadComponent::Pad::handleNoteOn (juce::MidiKeyboardState* source,
+                                              int midiChannel, int midiNoteNumber, float velocity)
+{
+    juce::ignoreUnused (source, midiChannel, velocity);
+
+    if (midiNoteNumber != noteNumber)
+        return;
+
+    isDown = true;
+
+    juce::MessageManager::callAsync ([this]{ repaint();});
+}
+
+void MidiDrumpadComponent::Pad::handleNoteOff (juce::MidiKeyboardState* source,
+                                               int midiChannel, int midiNoteNumber, float velocity)
+{
+    juce::ignoreUnused (source, midiChannel, velocity);
+
+    if (midiNoteNumber != noteNumber)
+        return;
+
+    isDown = false;
+
+    juce::MessageManager::callAsync ([this]{ repaint();});
 }
 
 } // namespace foleys
