@@ -49,12 +49,19 @@ MidiDrumpadComponent::MidiDrumpadComponent (juce::MidiKeyboardState& state)
     setColour (MidiDrumpadComponent::touch, juce::Colours::orange);
 
     updateButtons();
+
+    startTimerHz (30);
+}
+
+MidiDrumpadComponent::~MidiDrumpadComponent()
+{
+    stopTimer();
 }
 
 void MidiDrumpadComponent::setMatrix (int rows, int columns)
 {
-    numRows = rows;
-    numColumns = columns;
+    numRows = std::max (rows, 1);
+    numColumns = std::max (columns, 1);
     
     updateButtons();
 }
@@ -96,6 +103,15 @@ void MidiDrumpadComponent::resized()
     }
 }
 
+void MidiDrumpadComponent::timerCallback()
+{
+    if (needsPaint)
+    {
+        needsPaint = false;
+        repaint();
+    }
+}
+
 //  ==============================================================================
 
 MidiDrumpadComponent::Pad::Pad (MidiDrumpadComponent& ownerToUse, int note)
@@ -117,17 +133,36 @@ void MidiDrumpadComponent::Pad::paint (juce::Graphics& g)
 
     g.setColour (owner.findColour (isDown ? MidiDrumpadComponent::padDownOutline : MidiDrumpadComponent::padOutline));
     g.drawRoundedRectangle (getLocalBounds().reduced (3).toFloat(), 3.0f, 1.0f);
+
+    if (isDown)
+    {
+        auto radius = pressure * 20.0f;
+        g.setColour (owner.findColour (MidiDrumpadComponent::touch));
+        g.fillEllipse (juce::Rectangle<float>(lastPos.x - 0.5f * radius, lastPos.y - 0.5f * radius, radius, radius));
+    }
 }
 
 void MidiDrumpadComponent::Pad::mouseDown (const juce::MouseEvent& event)
 {
-    owner.keyboardState.noteOn (1, noteNumber, event.isPressureValid() ? event.pressure : 1.0f);
+    pressure = event.isPressureValid() ? event.pressure : 1.0f;
+    owner.keyboardState.noteOn (1, noteNumber, pressure);
+    lastPos = event.getPosition();
+    owner.needsPaint = true;
+}
+
+void MidiDrumpadComponent::Pad::mouseDrag (const juce::MouseEvent& event)
+{
+    pressure = event.isPressureValid() ? event.pressure : 1.0f;
+    lastPos = event.getPosition();
+    owner.needsPaint = true;
 }
 
 void MidiDrumpadComponent::Pad::mouseUp (const juce::MouseEvent& event)
 {
-    juce::ignoreUnused (event);
+    pressure = event.isPressureValid() ? event.pressure : 0.0f;
+    lastPos = getLocalBounds().getCentre();
     owner.keyboardState.noteOff (1, noteNumber, 1.0f);
+    owner.needsPaint = true;
 }
 
 void MidiDrumpadComponent::Pad::handleNoteOn (juce::MidiKeyboardState* source,
@@ -140,7 +175,7 @@ void MidiDrumpadComponent::Pad::handleNoteOn (juce::MidiKeyboardState* source,
 
     isDown = true;
 
-    juce::MessageManager::callAsync ([this]{ repaint();});
+    owner.needsPaint = true;
 }
 
 void MidiDrumpadComponent::Pad::handleNoteOff (juce::MidiKeyboardState* source,
@@ -153,7 +188,7 @@ void MidiDrumpadComponent::Pad::handleNoteOff (juce::MidiKeyboardState* source,
 
     isDown = false;
 
-    juce::MessageManager::callAsync ([this]{ repaint();});
+    owner.needsPaint = true;
 }
 
 } // namespace foleys

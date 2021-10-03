@@ -39,7 +39,8 @@
 namespace foleys
 {
 
-class MidiDrumpadComponent : public juce::Component
+class MidiDrumpadComponent : public juce::Component,
+                             public juce::Timer
 {
 public:
     enum ColourIds
@@ -53,12 +54,22 @@ public:
     };
 
     MidiDrumpadComponent (juce::MidiKeyboardState& keyboardState);
+    ~MidiDrumpadComponent() override;
 
     void paint (juce::Graphics& g) override;
     void resized() override;
 
+    /**
+     Set the number of rows and columns. The note numbers are ascending top left to bottom right.
+     */
     void setMatrix (int rows, int columns);
+
+    /**
+     Set the note number of the top left pad
+     */
     void setRootNote (int noteNumber);
+
+    void timerCallback() override;
 
     class Pad : public juce::Component,
                 public juce::MidiKeyboardState::Listener
@@ -70,6 +81,7 @@ public:
         void paint (juce::Graphics& g) override;
 
         void mouseDown (const juce::MouseEvent& event) override;
+        void mouseDrag (const juce::MouseEvent& event) override;
         void mouseUp (const juce::MouseEvent& event) override;
 
         void handleNoteOn (juce::MidiKeyboardState* source,
@@ -80,8 +92,10 @@ public:
 
     private:
         MidiDrumpadComponent& owner;
-        int                   noteNumber = 64;
+        int                   noteNumber = 60;
         std::atomic_bool      isDown { false };
+        juce::Point<int>      lastPos;
+        float                 pressure = 0.0f;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Pad)
     };
@@ -91,10 +105,11 @@ private:
 
     juce::MidiKeyboardState& keyboardState;
 
-    int rootNote   = 64;
+    int rootNote   = 60;  // C3
     int numRows    =  3;
     int numColumns =  3;
 
+    std::atomic_bool                  needsPaint { true };
     std::vector<std::unique_ptr<Pad>> pads;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiDrumpadComponent)
