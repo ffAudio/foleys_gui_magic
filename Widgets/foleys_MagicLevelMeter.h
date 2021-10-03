@@ -46,7 +46,7 @@ class MagicLevelMeter : public juce::Component,
 public:
     enum ColourIds
     {
-        backgroundColourId = 0x2002000,
+        backgroundColourId = 0x2002100,
         barBackgroundColourId,
         barFillColourId,
         outlineColourId,
