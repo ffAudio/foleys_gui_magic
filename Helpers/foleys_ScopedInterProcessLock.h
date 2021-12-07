@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2020 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -32,94 +32,32 @@
     OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
     OF THE POSSIBILITY OF SUCH DAMAGE.
  ==============================================================================
-*/
+ */
 
+#pragma once
 
 namespace foleys
 {
 
-ApplicationSettings::ApplicationSettings()
+class ScopedInterProcessLock
 {
-    settings.addListener (this);
-}
-
-ApplicationSettings::~ApplicationSettings()
-{
-    settings.removeListener (this);
-}
-
-void ApplicationSettings::setFileName (juce::File file)
-{
-    if (file == settingsFile)
-        return;
-
-    settingsFile = file;
-    startTimerHz (1);
-}
-
-void ApplicationSettings::load()
-{
-    ScopedInterProcessLock lock (settingsFile.getFileName() + ".lock", 500,
-    [this]
+public:
+    ScopedInterProcessLock (const juce::String& name, int timeout = -1, std::function<void()> onEntered = nullptr)
+      : lock (name)
     {
-        auto newChecksum = juce::MD5 (settingsFile).toHexString();
-        if (checksum == newChecksum)
-            return;
+        if (lock.enter (timeout) && onEntered)
+            onEntered();
+    }
 
-        auto stream = settingsFile.createInputStream();
-        if (stream.get() == nullptr)
-            return;
+    ~ScopedInterProcessLock()
+    {
+        lock.exit();
+    }
+    
+private:
+    juce::InterProcessLock lock;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ScopedInterProcessLock)
+};
 
-        auto tree = juce::ValueTree::fromXml (stream->readEntireStreamAsString());
-        if (! tree.isValid())
-            return;
-
-        settings.copyPropertiesAndChildrenFrom (tree, nullptr);
-        settings.addListener (this);
-
-        checksum = newChecksum;
-        sendChangeMessage();
-    });
-}
-
-void ApplicationSettings::save()
-{
-    ScopedInterProcessLock lock (settingsFile.getFileName() + ".lock", 1000,
-    [this] {
-        auto parent = settingsFile.getParentDirectory();
-        parent.createDirectory();
-
-        auto stream = settingsFile.createOutputStream();
-        if (stream.get() == nullptr)
-            return;
-
-        stream->setPosition (0);
-        stream->truncate();
-        stream->writeString (settings.toXmlString());
-
-        checksum = juce::MD5 (settingsFile).toHexString();
-    });
-}
-
-void ApplicationSettings::timerCallback()
-{
-    load();
-}
-
-void ApplicationSettings::valueTreeChildAdded (juce::ValueTree&, juce::ValueTree&)
-{
-    save();
-}
-
-void ApplicationSettings::valueTreeChildRemoved (juce::ValueTree&, juce::ValueTree&, int)
-{
-    save();
-}
-
-void ApplicationSettings::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
-{
-    save();
-}
 
 }
-
