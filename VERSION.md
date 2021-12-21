@@ -5,6 +5,7 @@ PluginGuiMagic - Versions history
 -----
 
 - Added drumpad component
+- Add option for XY-Pad to jump to click point
 
 1.3.5 - 28.09.2021
 ------------------
