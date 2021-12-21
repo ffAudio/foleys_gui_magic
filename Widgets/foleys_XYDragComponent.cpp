@@ -121,6 +121,11 @@ void XYDragComponent::setSenseFactor (float factor)
     senseFactor = factor;
 }
 
+void XYDragComponent::setJumpToClick (bool shouldJumpToClick)
+{
+    jumpToClick = shouldJumpToClick;
+}
+
 void XYDragComponent::updateWhichToDrag (juce::Point<float> pos)
 {
     const auto centre = juce::Point<int> (getXposition(), getYposition()).toFloat();
@@ -134,6 +139,9 @@ void XYDragComponent::updateWhichToDrag (juce::Point<float> pos)
 
 bool XYDragComponent::hitTest (int x, int y)
 {
+    if (jumpToClick)
+        return true;
+
     const auto click = juce::Point<int> (x, y).toFloat ();
     const auto centre = juce::Point<int> (getXposition (), getYposition ()).toFloat ();
 
@@ -175,6 +183,22 @@ void XYDragComponent::mouseDown (const juce::MouseEvent& event)
             contextMenuParameter->endChangeGesture();
         });
 
+        return;
+    }
+
+    if (jumpToClick)
+    {
+        mouseOverX = true;
+        mouseOverY = true;
+        mouseOverDot = true;
+
+        xAttachment.beginGesture();
+        xAttachment.setNormalisedValue (event.position.getX() / float (getWidth()));
+
+        yAttachment.beginGesture();
+        yAttachment.setNormalisedValue (1.0f - event.position.getY() / float (getHeight()));
+
+        repaint();
         return;
     }
 
