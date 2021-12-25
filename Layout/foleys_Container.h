@@ -52,6 +52,17 @@ enum class LayoutType
 };
 
 /**
+ The scroll mode
+ */
+enum class ScrollMode
+{
+    NoScroll,
+    ScrollHorizontal,
+    ScrollVertical,
+    ScrollBoth
+};
+
+/**
  The Container is a GuiItem, that can hold multiple Components.
  In the editor it is seen as "View". With the setting "display"
  the layout strategy can be chosen.
@@ -149,12 +160,15 @@ private:
     int  currentTab = 0;
     int  refreshRateHz = 30;
 
-    LayoutType layout = LayoutType::FlexBox;
+    LayoutType    layout = LayoutType::FlexBox;
     juce::FlexBox flexBox;
 
-    ContainerBox containerBox { *this };
+    ScrollMode    scrollMode = ScrollMode::NoScroll;
+
+    ContainerBox                            containerBox { *this };
+    juce::Viewport                          viewport;
     std::unique_ptr<juce::TabbedButtonBar>  tabbedButtons;
-    std::vector<std::unique_ptr<GuiItem>> children;
+    std::vector<std::unique_ptr<GuiItem>>   children;
 
     std::vector<juce::Component::SafePointer<MagicPlotComponent>> plotComponents;
 

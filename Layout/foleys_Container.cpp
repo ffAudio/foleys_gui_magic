@@ -40,7 +40,8 @@ namespace foleys
 Container::Container (MagicGUIBuilder& builder, juce::ValueTree node)
   : GuiItem (builder, node)
 {
-    addAndMakeVisible (containerBox);
+    addAndMakeVisible (viewport);
+    viewport.setViewedComponent (&containerBox, false);
 }
 
 void Container::update()
@@ -63,6 +64,21 @@ void Container::update()
     {
         refreshRateHz = repaintHz.getIntValue();
         updateContinuousRedraw();
+    }
+
+    auto scroll = magicBuilder.getStyleProperty (IDs::scrollMode, configNode).toString();
+    if (scroll.isNotEmpty())
+    {
+        if (scroll == IDs::noScroll)
+            scrollMode = ScrollMode::NoScroll;
+        else if (scroll == IDs::scrollHorizontal)
+            scrollMode = ScrollMode::ScrollHorizontal;
+        else if (scroll == IDs::scrollVertical)
+            scrollMode = ScrollMode::ScrollVertical;
+        else if (scroll == IDs::scrollBoth)
+            scrollMode = ScrollMode::ScrollBoth;
+
+        updateLayout();
     }
 }
 
@@ -148,11 +164,15 @@ void Container::updateLayout()
     if (children.empty())
         return;
 
-    containerBox.setBounds (getClientBounds());
     containerBox.setBackgroundColour (decorator.getBackgroundColour());
 
     if (layout != LayoutType::Tabbed)
         tabbedButtons.reset();
+
+    viewport.setBounds (getClientBounds());
+    viewport.setScrollBarsShown (scrollMode == ScrollMode::ScrollVertical || scrollMode == ScrollMode::ScrollBoth,
+                                 scrollMode == ScrollMode::ScrollHorizontal || scrollMode == ScrollMode::ScrollBoth);
+    auto clientBounds = viewport.getLocalBounds();
 
     if (layout == LayoutType::FlexBox)
     {
@@ -160,11 +180,30 @@ void Container::updateLayout()
         for (auto& child : children)
             flexBox.items.add (child->getFlexItem());
 
-        flexBox.performLayout (containerBox.getLocalBounds());
+        auto overall = clientBounds;
+        flexBox.performLayout (overall);
+
+        if (scrollMode != ScrollMode::NoScroll)
+        {
+            // check sizes
+            for (auto& child : children)
+                overall = overall.getUnion (child->getBounds());
+
+            containerBox.setBounds (overall);
+
+            if (scrollMode == ScrollMode::ScrollHorizontal && viewport.isHorizontalScrollBarShown())
+                overall.removeFromBottom (viewport.getScrollBarThickness());
+            else if (scrollMode == ScrollMode::ScrollVertical && viewport.isVerticalScrollBarShown())
+                overall.removeFromRight (viewport.getScrollBarThickness());
+
+            flexBox.performLayout (overall);
+        }
+
+        containerBox.setBounds (overall);
     }
     else if (layout == LayoutType::Tabbed)
     {
-        auto clientBounds = containerBox.getLocalBounds();
+        containerBox.setBounds (clientBounds);
         updateTabbedButtons();
         tabbedButtons->setBounds (clientBounds.removeFromTop (30));
 
@@ -173,8 +212,10 @@ void Container::updateLayout()
     }
     else // layout == Layout::Contents
     {
+        containerBox.setBounds (clientBounds);
+
         for (auto& child : children)
-            child->setBounds (child->resolvePosition (containerBox.getLocalBounds()));
+            child->setBounds (child->resolvePosition (clientBounds));
     }
 
     for (auto& child : children)
@@ -327,7 +368,8 @@ Container::ContainerBox::ContainerBox (Container& ownerToUse)
 
 void Container::ContainerBox::paint (juce::Graphics& g)
 {
-    owner.decorator.drawDecorator (g, {-getX(), -getY(), owner.getWidth(), owner.getHeight()});
+    auto b = owner.getClientBounds();
+    owner.decorator.drawDecorator (g, {-b.getX(), -b.getY(), owner.getWidth(), owner.getHeight()});
 }
 
 void Container::ContainerBox::setBackgroundColour (juce::Colour colour)
