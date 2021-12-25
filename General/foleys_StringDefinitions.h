@@ -98,6 +98,13 @@ namespace IDs
     static juce::String     tabbed       { "tabbed" };
     static juce::String     flexbox      { "flexbox" };
 
+    static juce::Identifier scrollMode   { "scroll-mode" };
+    static juce::String     noScroll         { "no-scroll" };
+    static juce::String     scrollHorizontal { "scroll-horizontal" };
+    static juce::String     scrollVertical   { "scroll-vertical" };
+    static juce::String     scrollBoth       { "scroll" };
+
+
     static juce::String     root         { "root" };
 
     static juce::Identifier nodes     { "Nodes"   };
