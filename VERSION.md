@@ -4,6 +4,7 @@ PluginGuiMagic - Versions history
 1.3.6
 -----
 
+- Allow Containers to scroll if over-full and configured accordingly
 - Added drumpad component
 - Add option for XY-Pad to jump to click point
 
