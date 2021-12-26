@@ -137,10 +137,10 @@ public:
 #endif
 
 private:
-    class ContainerBox : public juce::Component
+    class Scroller : public juce::Viewport
     {
     public:
-        ContainerBox (Container& owner);
+        Scroller (Container& owner);
 
         void paint (juce::Graphics& g) override;
         void setBackgroundColour (juce::Colour colour);
@@ -148,7 +148,7 @@ private:
     private:
         Container& owner;
         juce::Colour backgroundColour;
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ContainerBox)
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Scroller)
     };
 
     void changeListenerCallback (juce::ChangeBroadcaster*) override;
@@ -165,8 +165,8 @@ private:
 
     ScrollMode    scrollMode = ScrollMode::NoScroll;
 
-    ContainerBox                            containerBox { *this };
-    juce::Viewport                          viewport;
+    juce::Component                         containerBox;
+    Scroller                                viewport { *this };
     std::unique_ptr<juce::TabbedButtonBar>  tabbedButtons;
     std::vector<std::unique_ptr<GuiItem>>   children;
 
