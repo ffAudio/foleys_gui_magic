@@ -164,7 +164,7 @@ void Container::updateLayout()
     if (children.empty())
         return;
 
-    containerBox.setBackgroundColour (decorator.getBackgroundColour());
+    viewport.setBackgroundColour (decorator.getBackgroundColour());
 
     if (layout != LayoutType::Tabbed)
         tabbedButtons.reset();
@@ -363,16 +363,16 @@ void Container::setEditMode (bool shouldEdit)
 
 //==============================================================================
 
-Container::ContainerBox::ContainerBox (Container& ownerToUse)
+Container::Scroller::Scroller (Container& ownerToUse)
 : owner (ownerToUse) {}
 
-void Container::ContainerBox::paint (juce::Graphics& g)
+void Container::Scroller::paint (juce::Graphics& g)
 {
     auto b = owner.getClientBounds();
     owner.decorator.drawDecorator (g, {-b.getX(), -b.getY(), owner.getWidth(), owner.getHeight()});
 }
 
-void Container::ContainerBox::setBackgroundColour (juce::Colour colour)
+void Container::Scroller::setBackgroundColour (juce::Colour colour)
 {
     backgroundColour = colour;
     setOpaque (backgroundColour.isOpaque());
