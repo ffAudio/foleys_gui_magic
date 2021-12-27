@@ -6,7 +6,9 @@ PluginGuiMagic - Versions history
 
 - Allow Containers to scroll if over-full and configured accordingly
 - Added drumpad component
+- Added gradient option to curve Plots
 - Add option for XY-Pad to jump to click point
+- Save position of the toolbox
 
 1.3.5 - 28.09.2021
 ------------------

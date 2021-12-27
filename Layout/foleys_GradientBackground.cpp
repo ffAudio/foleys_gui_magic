@@ -44,13 +44,8 @@ GradientBackground::GradientBackground()
     colours [1.0f] = juce::Colours::white;
 }
 
-void GradientBackground::drawGradient (juce::Graphics& g, juce::Rectangle<float> bounds, const juce::Path& shape)
+void GradientBackground::setupGradientFill (juce::Graphics& g, juce::Rectangle<float> bounds)
 {
-    if (isEmpty())
-        return;
-
-    juce::Graphics::ScopedSaveState state (g);
-
     auto diag = std::sqrt (std::pow (bounds.getWidth() * std::sin (angle), 2.0f) + std::pow (bounds.getHeight() * std::cos (angle), 2.0f)) / 2.0f;
     auto vec = juce::Point<float>().getPointOnCircumference (diag, angle);
 
@@ -68,6 +63,16 @@ void GradientBackground::drawGradient (juce::Graphics& g, juce::Rectangle<float>
     }
 
     g.setFillType (gradient);
+}
+
+void GradientBackground::drawGradient (juce::Graphics& g, juce::Rectangle<float> bounds, const juce::Path& shape)
+{
+    if (isEmpty())
+        return;
+
+    juce::Graphics::ScopedSaveState state (g);
+    setupGradientFill (g, bounds);
+
     g.fillPath (shape);
 }
 

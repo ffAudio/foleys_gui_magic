@@ -56,6 +56,8 @@ public:
 
     void setup (juce::String text, const Stylesheet& stylesheet);
 
+    void setupGradientFill (juce::Graphics& g, juce::Rectangle<float> bounds);
+
     juce::String toString() const;
 
     void clear();
