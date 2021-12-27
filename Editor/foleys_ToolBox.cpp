@@ -96,7 +96,11 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
         view.addItem ("Right", true, positionOption == right, [&]() { setToolboxPosition (right); });
         view.addItem ("Detached", true, positionOption == detached, [&]() { setToolboxPosition (detached); });
         view.addSeparator();
-        view.addItem ("AlwaysOnTop", true, isAlwaysOnTop(), [&]() { setAlwaysOnTop ( ! isAlwaysOnTop() ); });
+        view.addItem ("AlwaysOnTop", true, isAlwaysOnTop(), [&]() {
+            setAlwaysOnTop ( ! isAlwaysOnTop() );
+            if (auto* properties = appProperties.getUserSettings())
+                properties->setValue ("alwaysOnTop", isAlwaysOnTop() ? "true" : "false");
+        });
 
         view.showMenuAsync (juce::PopupMenu::Options());
     };
