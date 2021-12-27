@@ -1,8 +1,8 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.3.6
------
+1.3.6 - 27.12.2021
+------------------
 
 - Allow Containers to scroll if over-full and configured accordingly
 - Added drumpad component
