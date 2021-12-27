@@ -52,7 +52,8 @@ struct SettableProperty
         Number,         /*< A number, e.g. line width */
         Colour,         /*< Show the colour selector and palette names */
         Toggle,         /*< Show a toggle for bool properties */
-        Choice          /*< Shows choices provided */
+        Choice,         /*< Shows choices provided */
+        Gradient,       /*< Show a bespoke gradient editor */
     };
 
     const juce::ValueTree  node;
