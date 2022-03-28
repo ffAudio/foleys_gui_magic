@@ -243,6 +243,9 @@ juce::Colour Stylesheet::getColour (const juce::String& name) const
 
 juce::Colour Stylesheet::parseColour (const juce::String& name)
 {
+    if (name.startsWithIgnoreCase ("transparent"))
+        return juce::Colours::transparentBlack;
+
     return juce::Colours::findColourForName (name, juce::Colour::fromString (name.length() < 8 ? "ff" + name : name));
 }
 
