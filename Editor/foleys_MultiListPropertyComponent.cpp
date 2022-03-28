@@ -58,24 +58,30 @@ MultiListPropertyComponent::MultiListPropertyComponent (const juce::Value& value
     select.onClick = [&]
     {
         auto strings = juce::StringArray::fromTokens (text.getText(), separator, "");
+        strings.removeEmptyStrings(true);
+
         juce::Component::SafePointer<juce::Label> textEdit (&text);
 
         juce::PopupMenu popup;
         for (const auto& name : choices)
-            if (! strings.contains (name))
-                popup.addItem (name, [&, textEdit]
-                {
-                    if (textEdit == nullptr)
-                        return;
+        {
+            auto newArray = strings;
+            auto adding = !newArray.contains(name);
 
-                    if (! strings.contains (name))
-                    {
-                        strings.add (name);
-                        strings.removeEmptyStrings (true);
-                        textEdit->setText (strings.joinIntoString (separator), juce::sendNotificationAsync);
-                    }
-                });
+            if (adding)
+                newArray.add(name);
+            else
+                newArray.removeString(name);
 
+            auto newText = newArray.joinIntoString(separator);
+
+            popup.addItem(name, true, !adding, [textEdit, newText]
+            {
+                if (textEdit)
+                    textEdit->setText(newText, juce::sendNotification);
+            });
+
+        }
         popup.showMenuAsync (juce::PopupMenu::Options());
     };
 }
