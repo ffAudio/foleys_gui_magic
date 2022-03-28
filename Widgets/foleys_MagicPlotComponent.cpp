@@ -105,7 +105,7 @@ void MagicPlotComponent::drawPlot (juce::Graphics& g)
     if (!gradient && colour.isTransparent() == false)
         g.setColour (colour);
 
-    if (gradient || colour.isTransparent())
+    if (gradient || !colour.isTransparent())
         g.fillPath (filledPath);
 
     colour = findColour (active ? plotColourId : plotInactiveColourId);

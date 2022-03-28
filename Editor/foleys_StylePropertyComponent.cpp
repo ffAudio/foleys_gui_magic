@@ -143,6 +143,9 @@ void StylePropertyComponent::mouseDoubleClick (const juce::MouseEvent&)
 
 void StylePropertyComponent::valueTreePropertyChanged (juce::ValueTree& tree, const juce::Identifier& changedProperty)
 {
+    if (builder.getUndoManager().isPerformingUndoRedo())
+        return;
+
     if (tree == node && property == changedProperty)
         refresh();
 }

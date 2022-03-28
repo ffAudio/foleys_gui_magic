@@ -1,6 +1,14 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.3.7
+-----
+
+- Avoid a loop when undo colours
+- Fixed fill when no colour was set
+- Fixed parsing of colours named "transparent"
+- Fixed crash with class selection popup MultiListPropertyComponent
+
 1.3.6 - 27.12.2021
 ------------------
 
