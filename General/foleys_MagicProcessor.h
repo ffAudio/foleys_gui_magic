@@ -75,7 +75,8 @@ public:
 
     /**
      Override that method to initialise the builder, register your own bespoke components or LookAndFeel classes.
-     If you override this and you want to use the bundled components don't forget to call
+     If you override this and you want to use the bundled components don't forget to call those two lines, otherwise you
+     won't have any Components or LookAndFeels to choose from
      \code{.cpp}
      builder.registerJUCEFactories();
      builder.registerJUCELookAndFeels();

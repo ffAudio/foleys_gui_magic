@@ -8,6 +8,7 @@ PluginGuiMagic - Versions history
 - Fixed fill when no colour was set
 - Fixed parsing of colours named "transparent"
 - Fixed crash with class selection popup MultiListPropertyComponent
+- Fixed gradient for glowing MagicPlot
 
 1.3.6 - 27.12.2021
 ------------------
