@@ -71,6 +71,11 @@ namespace IDs
     static juce::Identifier tooltipText       { "tooltip-text" };
     static juce::Identifier tooltipBackground { "tooltip-background" };
     static juce::Identifier tooltipOutline    { "tooltip-outline" };
+
+    static juce::Identifier accessibility            { "accessibility" };
+    static juce::Identifier accessibilityDescription { "description" };
+    static juce::Identifier accessibilityHelpText    { "help-text" };
+
     static juce::Identifier parameter    { "parameter" };
     static juce::Identifier parameterX   { "parameter-x" };
     static juce::Identifier parameterY   { "parameter-y" };
