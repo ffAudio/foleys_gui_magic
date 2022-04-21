@@ -141,6 +141,10 @@ void GuiItem::configureComponent()
             tooltipClient->setTooltip (tooltip);
     }
 
+    component->setAccessible (magicBuilder.getStyleProperty (IDs::accessibility, configNode));
+    component->setDescription (magicBuilder.getStyleProperty (IDs::accessibilityDescription, configNode).toString());
+    component->setHelpText (magicBuilder.getStyleProperty (IDs::accessibilityHelpText, configNode).toString());
+
     auto  visibilityNode = magicBuilder.getStyleProperty (IDs::visibility, configNode);
     if (! visibilityNode.isVoid())
         visibility.referTo (magicBuilder.getMagicState().getPropertyAsValue (visibilityNode.toString()));
