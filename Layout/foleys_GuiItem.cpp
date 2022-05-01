@@ -142,8 +142,10 @@ void GuiItem::configureComponent()
     }
 
     component->setAccessible (magicBuilder.getStyleProperty (IDs::accessibility, configNode));
+    component->setTitle (magicBuilder.getStyleProperty (IDs::accessibilityTitle, configNode));
     component->setDescription (magicBuilder.getStyleProperty (IDs::accessibilityDescription, configNode).toString());
     component->setHelpText (magicBuilder.getStyleProperty (IDs::accessibilityHelpText, configNode).toString());
+    component->setExplicitFocusOrder (magicBuilder.getStyleProperty (IDs::accessibilityFocusOrder, configNode));
 
     auto  visibilityNode = magicBuilder.getStyleProperty (IDs::visibility, configNode);
     if (! visibilityNode.isVoid())

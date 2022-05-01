@@ -274,9 +274,11 @@ void PropertiesEditor::addDecoratorProperties()
     array.add (new StyleColourPropertyComponent (builder, IDs::captionColour, styleItem));
     array.add (new StyleChoicePropertyComponent (builder, IDs::captionPlacement, styleItem, getAllKeyNames (makeJustificationsChoices())));
     array.add (new StyleTextPropertyComponent (builder, IDs::tooltip, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::accessibilityTitle, styleItem));
     array.add (new StyleBoolPropertyComponent (builder, IDs::accessibility, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::accessibilityDescription, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::accessibilityHelpText, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::accessibilityFocusOrder, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::margin, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::padding, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::border, styleItem));
