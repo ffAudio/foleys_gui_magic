@@ -4,6 +4,25 @@ PluginGuiMagic - Versions history
 1.3.7
 -----
 
+- Added accessibilities settings
+- Avoid a loop when undo colours
+- Fixed fill when no colour was set
+- Fixed parsing of colours named "transparent"
+- Fixed crash with class selection popup MultiListPropertyComponent
+- Fixed gradient for glowing MagicPlot
+
+1.3.6 - 27.12.2021
+------------------
+
+- Allow Containers to scroll if over-full and configured accordingly
+- Added drumpad component
+- Added gradient option to curve Plots
+- Add option for XY-Pad to jump to click point
+- Save position of the toolbox
+
+1.3.5 - 28.09.2021
+------------------
+
 - Avoid a loop when undo colours
 - Fixed fill when no colour was set
 - Fixed parsing of colours named "transparent"
