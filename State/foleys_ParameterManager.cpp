@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2021 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2021-2022 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -35,6 +35,8 @@
  */
 
 #pragma once
+
+#include "foleys_ParameterManager.h"
 
 namespace foleys
 {

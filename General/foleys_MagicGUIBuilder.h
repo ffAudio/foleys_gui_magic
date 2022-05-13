@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2019-2022 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -36,9 +36,17 @@
 
 #pragma once
 
+#include <juce_gui_basics/juce_gui_basics.h>
+
+#include "../Layout/foleys_GuiItem.h"
+#include "../Layout/foleys_Stylesheet.h"
+#include "../State/foleys_MagicGUIState.h"
+
 namespace foleys
 {
-
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+    class ToolBox;
+#endif
 
 /**
  The MagicGUIBuilder is responsible to recreate the GUI from a single ValueTree.
