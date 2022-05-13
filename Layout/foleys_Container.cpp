@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2019-2022 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -34,6 +34,8 @@
  ==============================================================================
  */
 
+#include "foleys_Container.h"
+
 namespace foleys
 {
 
@@ -47,6 +49,14 @@ Container::Container (MagicGUIBuilder& builder, juce::ValueTree node)
 void Container::update()
 {
     configureFlexBox (configNode);
+
+    auto focusType = magicBuilder.getStyleProperty (IDs::focusContainerType, configNode).toString();
+    if (focusType == IDs::focusContainer)
+        setFocusContainerType (FocusContainerType::focusContainer);
+    else if (focusType == IDs::focusKeyContainer)
+        setFocusContainerType (FocusContainerType::keyboardFocusContainer);
+    else
+        setFocusContainerType (FocusContainerType::none);
 
     for (auto& child : *this)
         child->updateInternal();
