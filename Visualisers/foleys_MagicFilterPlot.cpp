@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2019-2022 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -34,6 +34,9 @@
  ==============================================================================
  */
 
+#include <juce_dsp/juce_dsp.h>
+
+#include "foleys_MagicFilterPlot.h"
 
 namespace foleys
 {

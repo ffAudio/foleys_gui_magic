@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2020 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2020-2022 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -35,6 +35,9 @@
 */
 
 #pragma once
+
+#include <juce_core/juce_core.h>
+#include <juce_data_structures/juce_data_structures.h>
 
 namespace foleys
 {
