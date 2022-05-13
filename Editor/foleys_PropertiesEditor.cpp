@@ -34,6 +34,7 @@
  ==============================================================================
  */
 
+#include "foleys_PropertiesEditor.h"
 
 namespace foleys
 {

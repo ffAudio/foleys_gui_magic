@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2021 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2021 - 2022 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -33,6 +33,8 @@
     OF THE POSSIBILITY OF SUCH DAMAGE.
  ==============================================================================
  */
+
+#include <juce_audio_processors/juce_audio_processors.h>
 
 #pragma once
 

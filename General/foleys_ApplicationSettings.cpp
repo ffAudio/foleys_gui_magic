@@ -1,6 +1,6 @@
 /*
  ==============================================================================
-    Copyright (c) 2020 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2020-2022 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
     License for non-commercial projects:
@@ -34,6 +34,10 @@
  ==============================================================================
 */
 
+#include <juce_cryptography/juce_cryptography.h>
+
+#include "foleys_ApplicationSettings.h"
+#include "../Helpers/foleys_ScopedInterProcessLock.h"
 
 namespace foleys
 {
