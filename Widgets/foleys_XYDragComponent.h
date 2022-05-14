@@ -38,6 +38,8 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
+#include "../Helpers/foleys_ParameterAttachment.h"
+
 namespace foleys
 {
 

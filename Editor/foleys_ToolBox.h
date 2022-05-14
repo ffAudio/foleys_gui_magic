@@ -38,6 +38,10 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
+#include "foleys_GUITreeEditor.h"
+#include "foleys_PropertiesEditor.h"
+#include "foleys_Palette.h"
+
 namespace foleys
 {
 
