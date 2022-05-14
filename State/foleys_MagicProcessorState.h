@@ -36,6 +36,9 @@
 
 #pragma once
 
+#include "foleys_ParameterManager.h"
+#include "foleys_MidiParameterMapper.h"
+
 namespace foleys
 {
 

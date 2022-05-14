@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include "foleys_StyleBoolPropertyComponent.h"
+#include "foleys_StylePropertyComponent.h"
 
 namespace foleys
 {
