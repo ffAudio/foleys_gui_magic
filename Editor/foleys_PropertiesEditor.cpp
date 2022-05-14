@@ -36,6 +36,13 @@
 
 #include "foleys_PropertiesEditor.h"
 
+#include "foleys_StyleBoolPropertyComponent.h"
+#include "foleys_StyleChoicePropertyComponent.h"
+#include "foleys_StyleColourPropertyComponent.h"
+#include "foleys_StyleGradientPropertyComponent.h"
+#include "foleys_StyleTextPropertyComponent.h"
+#include "foleys_MultiListPropertyComponent.h"
+
 namespace foleys
 {
 

@@ -35,6 +35,7 @@
  */
 
 #include "foleys_MagicLevelMeter.h"
+#include "../Visualisers/foleys_MagicLevelSource.h"
 
 namespace foleys
 {
