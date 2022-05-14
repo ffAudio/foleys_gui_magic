@@ -36,7 +36,10 @@
 
 #pragma once
 
+#include <juce_gui_extra/juce_gui_extra.h>
+
 #include "foleys_StylePropertyComponent.h"
+#include "../Helpers/foleys_MouseLambdas.h"
 
 namespace foleys
 {

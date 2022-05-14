@@ -42,6 +42,8 @@
 namespace foleys
 {
 
+class MagicProcessorState;
+
 /**
  This is a generic AudioProcessorEditor, that is completely
  defined and styled by drag and drop. There is an XML representation,

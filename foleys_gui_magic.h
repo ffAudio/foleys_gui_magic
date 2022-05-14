@@ -134,33 +134,6 @@
 #include "Widgets/foleys_MidiLearnComponent.h"
 #include "Widgets/foleys_MidiDrumpadComponent.h"
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-
-namespace EditorColours
-{
-    static juce::Colour background;
-    static juce::Colour outline;
-    static juce::Colour text;
-    static juce::Colour disabledText;
-    static juce::Colour removeButton;
-    static juce::Colour selectedBackground;
-}
-
-#include "Editor/foleys_MultiListPropertyComponent.h"
-#include "Editor/foleys_StylePropertyComponent.h"
-#include "Editor/foleys_StyleTextPropertyComponent.h"
-#include "Editor/foleys_StyleBoolPropertyComponent.h"
-#include "Editor/foleys_StyleColourPropertyComponent.h"
-#include "Editor/foleys_StyleGradientPropertyComponent.h"
-#include "Editor/foleys_StyleChoicePropertyComponent.h"
-
-#include "Editor/foleys_GUITreeEditor.h"
-#include "Editor/foleys_PropertiesEditor.h"
-#include "Editor/foleys_Palette.h"
-#include "Editor/foleys_ToolBox.h"
-
-#endif // FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-
 #include "State/foleys_ParameterManager.h"
 #include "State/foleys_MidiParameterMapper.h"
 #include "State/foleys_MagicGUIState.h"
