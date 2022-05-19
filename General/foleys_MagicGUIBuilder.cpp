@@ -168,7 +168,7 @@ void MagicGUIBuilder::updateComponents()
 
     root->setBounds (parent->getLocalBounds());
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE6
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     if (root.get() != nullptr)
         root->setEditMode (editMode);
 #endif
