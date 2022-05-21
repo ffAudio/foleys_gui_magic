@@ -52,6 +52,7 @@
 #include "State/foleys_MagicProcessorState.cpp"
 #include "State/foleys_ParameterManager.cpp"
 #include "State/foleys_MidiParameterMapper.cpp"
+#include "State/foleys_RadioButtonManager.cpp"
 
 #include "Layout/foleys_GradientBackground.cpp"
 #include "Layout/foleys_Stylesheet.cpp"
