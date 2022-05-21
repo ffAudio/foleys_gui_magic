@@ -41,6 +41,7 @@
 #include "../Layout/foleys_GuiItem.h"
 #include "../Layout/foleys_Stylesheet.h"
 #include "../State/foleys_MagicGUIState.h"
+#include "../State/foleys_RadioButtonManager.h"
 
 namespace foleys
 {
@@ -194,6 +195,19 @@ public:
         };
     }
 
+    /*!
+     * Add a button to have the radio group managed.
+     * @param button is the button to be managed.
+     */
+    void addToRadioButtonManager (juce::Button* button);
+
+    /*!
+     * Remove a button from the radio group manager. Make sure to call this before you destroy a button
+     * i.e. from the destructor of the wrapping GuiItem
+     * @param button the button to remove.
+     */
+    void removeFromRadioButtonManager (juce::Button* button);
+
     void changeListenerCallback (juce::ChangeBroadcaster* sender) override;
 
     /**
@@ -238,6 +252,8 @@ private:
     std::unique_ptr<juce::Component> overlayDialog;
 
     std::map<juce::Identifier, std::unique_ptr<GuiItem>(*)(MagicGUIBuilder& builder, const juce::ValueTree&)> factories;
+
+    RadioButtonManager radioButtonManager;
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     bool editMode = false;
