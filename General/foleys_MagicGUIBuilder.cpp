@@ -352,6 +352,17 @@ juce::var MagicGUIBuilder::getPropertyDefaultValue (juce::Identifier property) c
     return {};
 }
 
+void MagicGUIBuilder::addToRadioButtonManager (juce::Button* button)
+{
+    radioButtonManager.addButton (button);
+}
+
+void MagicGUIBuilder::removeFromRadioButtonManager (juce::Button* button)
+{
+    radioButtonManager.removeButton (button);
+}
+
+
 void MagicGUIBuilder::changeListenerCallback (juce::ChangeBroadcaster*)
 {
     if (root.get() != nullptr)
