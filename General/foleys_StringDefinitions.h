@@ -188,6 +188,7 @@ namespace IDs
     static juce::Identifier posHeight   { "pos-height" };
 
     static juce::Identifier buttonRadioGroup { "button-radio-group" };
+    static juce::Identifier buttonRadioValue { "button-radio-value" };
 
     static juce::Identifier properties  { "Properties" };
     static juce::Identifier lastSize    { "last-size" };
