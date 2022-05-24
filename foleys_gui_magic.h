@@ -134,6 +134,7 @@
 #include "Widgets/foleys_MidiLearnComponent.h"
 #include "Widgets/foleys_MidiDrumpadComponent.h"
 
+#include "State/foleys_RadioButtonManager.h"
 #include "State/foleys_ParameterManager.h"
 #include "State/foleys_MidiParameterMapper.h"
 #include "State/foleys_MagicGUIState.h"

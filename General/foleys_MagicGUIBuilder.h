@@ -196,17 +196,10 @@ public:
     }
 
     /*!
-     * Add a button to have the radio group managed.
-     * @param button is the button to be managed.
+     * Grant access to the RadioButtonManager
+     * @return the radioButtonManager
      */
-    void addToRadioButtonManager (juce::Button* button);
-
-    /*!
-     * Remove a button from the radio group manager. Make sure to call this before you destroy a button
-     * i.e. from the destructor of the wrapping GuiItem
-     * @param button the button to remove.
-     */
-    void removeFromRadioButtonManager (juce::Button* button);
+    RadioButtonManager& getRadioButtonManager();
 
     void changeListenerCallback (juce::ChangeBroadcaster* sender) override;
 
