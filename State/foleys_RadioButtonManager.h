@@ -39,7 +39,8 @@
 namespace foleys
 {
 
-class RadioButtonManager : public juce::Button::Listener
+
+class RadioButtonManager
 {
 public:
     RadioButtonManager() = default;
@@ -47,12 +48,39 @@ public:
     void addButton (juce::Button* button);
     void removeButton (juce::Button* button);
 
-    void buttonClicked (juce::Button *) override {}
-    void buttonStateChanged (juce::Button *) override;
+    void buttonActivated (juce::Button* button);
 private:
     std::vector<juce::Button*> buttons;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RadioButtonManager)
 
 };
+
+// ==============================================================================
+
+class RadioButtonHandler  : private juce::Button::Listener,
+                            private juce::RangedAudioParameter::Listener
+{
+public:
+    RadioButtonHandler (juce::Button& buttonToControl, RadioButtonManager& manager);
+    ~RadioButtonHandler() override;
+
+    void setRadioGroupValue (juce::var value, juce::RangedAudioParameter* parameter);
+
+private:
+
+    void buttonClicked (juce::Button *) override {}
+    void buttonStateChanged (juce::Button *) override;
+    void parameterValueChanged (int parameterIndex, float newValue) override;
+    void parameterGestureChanged (int /*parameterIndex*/, bool /*gestureIsStarting*/) override {}
+
+    juce::Button& button;
+    RadioButtonManager& radioButtonManager;
+
+    juce::var radioButtonValue;
+    juce::RangedAudioParameter* parameter = nullptr;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RadioButtonHandler)
+};
+
 
 } // namespace foleys

@@ -38,27 +38,74 @@
 namespace foleys
 {
 
-void RadioButtonManager::addButton (juce::Button* button)
-{
-    if (std::find(buttons.begin(), buttons.end(), button) == buttons.end())
-        buttons.push_back(button);
 
-    button->addListener (this);
+RadioButtonHandler::RadioButtonHandler (juce::Button& buttonToControl, RadioButtonManager& manager)
+  : button (buttonToControl),
+    radioButtonManager(manager)
+{
+    radioButtonManager.addButton (&button);
+    button.addListener (this);
 }
 
-void RadioButtonManager::removeButton (juce::Button* button)
+RadioButtonHandler::~RadioButtonHandler()
 {
-    buttons.erase (std::remove_if (buttons.begin(), buttons.end(), [button](const auto& other)
-                        { return other == button; }),
-                   buttons.end());
-    button->removeListener (this);
+    button.removeListener (this);
+    radioButtonManager.removeButton (&button);
 }
 
-void RadioButtonManager::buttonStateChanged (juce::Button* button)
+void RadioButtonHandler::setRadioGroupValue (juce::var value, juce::RangedAudioParameter* parameterToControl)
 {
-    if (!button->getToggleState())
+    if (parameterToControl != parameter)
+    {
+        if (parameter)
+            parameter->removeListener (this);
+
+        parameter = parameterToControl;
+        if (parameter)
+            parameter->removeListener (this);
+    }
+
+    radioButtonValue = value;
+
+    if (parameter)
+    {
+        auto currentValue = parameter->convertFrom0to1 (parameter->getValue());
+        button.setToggleState (currentValue == static_cast<float>(value), juce::dontSendNotification);
+    }
+}
+
+void RadioButtonHandler::buttonStateChanged (juce::Button* clickedButton)
+{
+    if (!clickedButton->getToggleState())
         return;
 
+    if (parameter)
+    {
+        auto value = parameter->convertTo0to1 (radioButtonValue);
+        parameter->beginChangeGesture();
+        parameter->setValueNotifyingHost (value);
+        parameter->endChangeGesture();
+    }
+
+    radioButtonManager.buttonActivated (clickedButton);
+}
+
+void RadioButtonHandler::parameterValueChanged (int parameterIndex, float newValue)
+{
+    juce::ignoreUnused (parameterIndex);
+
+    if (!parameter)
+        return;
+
+    auto value = parameter->convertFrom0to1 (newValue);
+    if (value == static_cast<float>(radioButtonValue))
+        button.setToggleState (true, juce::sendNotificationSync);
+}
+
+// ==============================================================================
+
+void RadioButtonManager::buttonActivated (juce::Button* button)
+{
     auto groupID = button->getRadioGroupId();
     if (groupID == 0)
         return;
@@ -67,5 +114,19 @@ void RadioButtonManager::buttonStateChanged (juce::Button* button)
         if (button != otherButton && otherButton->getRadioGroupId() == groupID)
             otherButton->setToggleState (false, juce::sendNotificationSync);
 }
+
+void RadioButtonManager::addButton (juce::Button* button)
+{
+    if (std::find(buttons.begin(), buttons.end(), button) == buttons.end())
+        buttons.push_back(button);
+}
+
+void RadioButtonManager::removeButton (juce::Button* button)
+{
+    buttons.erase (std::remove_if (buttons.begin(), buttons.end(), [button](const auto& other)
+                        { return other == button; }),
+                   buttons.end());
+}
+
 
 } // namespace foleys

@@ -5,6 +5,7 @@ PluginGuiMagic - Versions history
 -----
 
 - Added accessibilities settings
+- Added Radio group features
 - Avoid a loop when undo colours
 - Fixed fill when no colour was set
 - Fixed parsing of colours named "transparent"
