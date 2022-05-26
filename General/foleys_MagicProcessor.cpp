@@ -69,8 +69,9 @@ void MagicProcessor::initialiseBuilder (MagicGUIBuilder& builder)
 
 juce::ValueTree MagicProcessor::createGuiValueTree()
 {
-    juce::ValueTree magic { IDs::magic };
-    magic.appendChild (DefaultGuiTrees::createDefaultStylesheet(), nullptr);
+    juce::ValueTree magic {IDs::magic, {},
+                           {juce::ValueTree { IDs::styles, {},
+                                              {DefaultGuiTrees::createDefaultStylesheet()}}}};
 
     juce::ValueTree rootNode {IDs::view, {{ IDs::id, IDs::root }}};
 
