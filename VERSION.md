@@ -1,8 +1,8 @@
 PluginGuiMagic - Versions history
 ================================
 
-1.3.7
------
+1.3.7 - 27.05.2022
+------------------
 
 - Avoid a loop when undo colours
 - Fixed fill when no colour was set
