@@ -1,6 +1,11 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.3.8
+-----
+
+- Fixed radio buttons not to double propagate
+
 1.3.7 - 27.05.2022
 ------------------
 

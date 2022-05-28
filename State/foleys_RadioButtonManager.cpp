@@ -99,7 +99,7 @@ void RadioButtonHandler::parameterValueChanged (int parameterIndex, float newVal
 
     auto value = parameter->convertFrom0to1 (newValue);
     if (value == static_cast<float>(radioButtonValue))
-        button.setToggleState (true, juce::sendNotificationSync);
+        button.setToggleState (true, juce::dontSendNotification);
 }
 
 // ==============================================================================
@@ -112,7 +112,7 @@ void RadioButtonManager::buttonActivated (juce::Button* button)
 
     for (auto* otherButton : buttons)
         if (button != otherButton && otherButton->getRadioGroupId() == groupID)
-            otherButton->setToggleState (false, juce::sendNotificationSync);
+            otherButton->setToggleState (false, juce::dontSendNotification);
 }
 
 void RadioButtonManager::addButton (juce::Button* button)
