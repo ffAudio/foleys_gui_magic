@@ -71,6 +71,11 @@ public:
         return atomicValue.load();
     }
 
+    void set (T value)
+    {
+        internalValue.setValue (value);
+    }
+
 private:
 
     void valueChanged (juce::Value&) override
