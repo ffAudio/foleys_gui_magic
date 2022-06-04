@@ -61,6 +61,8 @@ void Container::update()
     for (auto& child : *this)
         child->updateInternal();
 
+    setTitle (magicBuilder.getStyleProperty (IDs::accessibilityTitle, configNode).toString());
+
     const auto display = magicBuilder.getStyleProperty (IDs::display, configNode).toString();
     if (display == IDs::contents)
         setLayoutMode (LayoutType::Contents);
