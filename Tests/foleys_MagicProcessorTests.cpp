@@ -34,4 +34,10 @@
  ==============================================================================
  */
 
-#include "../foleys_gui_magic.h"
+#include <foleys_gui_magic/foleys_gui_magic.h>
+#include <catch2/catch_test_macros.hpp>
+
+TEST_CASE ("MagicProcessor test", "[processor]")
+{
+
+}
