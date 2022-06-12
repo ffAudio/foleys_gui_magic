@@ -32,7 +32,7 @@ include (CMakeFindDependencyMacro)
 
 find_dependency (JUCE 6)
 
-juce_add_module ("${CMAKE_CURRENT_LIST_DIR}/foleys_gui_magic"
+juce_add_module ("${CMAKE_CURRENT_LIST_DIR}"
                  ALIAS_NAMESPACE Foleys)
 
 find_package_message ("${CMAKE_FIND_PACKAGE_NAME}" 
