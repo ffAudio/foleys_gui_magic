@@ -16,7 +16,7 @@ find_package (JUCE 6 REQUIRED)
 
 include (GNUInstallDirs)
 
-juce_add_module ("${CMAKE_CURRENT_LIST_DIR}/foleys_gui_magic"
+juce_add_module ("${CMAKE_CURRENT_LIST_DIR}"
                  ALIAS_NAMESPACE Foleys)
 
 # tests
@@ -35,19 +35,23 @@ set (FGM_INSTALL_DEST "${CMAKE_INSTALL_LIBDIR}/cmake/foleys_gui_magic"
         CACHE STRING
         "Directory below INSTALL_PREFIX where the foleys_gui_magic CMake package files will be installed to")
 
-install (DIRECTORY CMake
-         DESTINATION "${FGM_INSTALL_DEST}"
-         COMPONENT foleys_gui_magic)
-
-install (DIRECTORY foleys_gui_magic
-         DESTINATION "${FGM_INSTALL_DEST}"
-         COMPONENT foleys_gui_magic)
+install (DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
+         DESTINATION "${FGM_INSTALL_DEST}/.."
+         COMPONENT foleys_gui_magic
+         PATTERN Tests/* EXCLUDE
+         PATTERN *.md EXCLUDE
+         PATTERN .git/* EXCLUDE
+         PATTERN .github/* EXCLUDE
+         PATTERN *.json EXCLUDE
+         PATTERN CMakeLists.txt EXCLUDE 
+         PATTERN "${CMAKE_CURRENT_BINARY_DIR}/" EXCLUDE)
 
 include (CMakePackageConfigHelpers)
 
 write_basic_package_version_file (foleys_gui_magic-config-version.cmake 
                                   VERSION "${PROJECT_VERSION}"
-                                  COMPATIBILITY SameMajorVersion)
+                                  COMPATIBILITY SameMajorVersion
+                                  ARCH_INDEPENDENT)
 
 configure_package_config_file (CMake/config.cmake foleys_gui_magic-config.cmake
                                INSTALL_DESTINATION "${FGM_INSTALL_DEST}" 
