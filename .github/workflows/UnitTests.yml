@@ -1,24 +1,70 @@
 name: foleys_gui_magic UnitTests
 
-on: [push, pull_request]
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+  schedule:
+    - cron: 0 0 * * 1
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
-  build:
-    runs-on: [windows-latest, macos-latest]
+
+  build_and_test:
+
+    name: ${{ matrix.os }} ${{ matrix.config }} tests
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        config: [Debug, Release]
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
 
     steps:
-    - uses: actions/checkout@v2
 
-    - name: Create Build Environment
-      run: cmake -E make_directory ${{runner.workspace}}/build
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+        fetch-depth: 1
 
     - name: Configure CMake
-      shell: bash
-      working-directory: ${{runner.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      run: cmake --preset maintainer
 
-    - name: Build
-      working-directory: ${{runner.workspace}}/build
-      shell: bash
-      run: cmake --build . --config $BUILD_TYPE
+    - name: Run build 
+      run: cmake --build --preset maintainer --config ${{ matrix.config }}
 
+    - name: Run tests 
+      run: ctest --preset default
+
+  ios_build:
+
+    name: ${{ matrix.preset }} ${{ matrix.config }} build
+    runs-on: macos-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false 
+      matrix:
+        preset: [iOS, tvOS, watchOS]
+        config: [Debug, Release]
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+
+    steps:
+
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Configure CMake
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Run build 
+        run: cmake --build --preset maintainer --config ${{ matrix.config }}
+
+      # note: unit tests can't be run for iOS builds because 
+      # Apple doesn't allow command-line executables to be built for iOS
