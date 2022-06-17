@@ -22,11 +22,16 @@ Setup
 
 To use the WYSWYG plugin editor, add this module via Projucer or CMake to your JUCE project.
 
+If you are using CMake and the CPM.cmake package manager to add this repository, be aware that:
+- JUCE's module system expects the root folder of a module to have the same name as the module
+- By default, CPM.cmake will download the source code into a nested folder named with the version, for example `foleys_gui_magic/<version>/<sourcesHere>`
+This can cause the JUCE module system to get confused. If you are using CPM.cmake, we recommend you set the `CPM_USE_NAMED_CACHE_DIRECTORIES` CMake or environment variable to `ON` to prevent this issue.
+
 Instead of inheriting from juce::AudioProcessor inherit foleys::MagicProcessor.
 Get rid of those methods:
-- bool hasEditor()
-- juce::PluginEditor* createEditor()
-- void setStateInformation() and void getStateInformation() (optional, a default saving and loading method is provided)
+- `bool hasEditor()`
+- `juce::PluginEditor* createEditor()`
+- `void setStateInformation()` and `void getStateInformation()` (optional, a default saving and loading method is provided)
 
 The foleys::MagicProcessor will provide a `foleys::MagicProcessorState magicState` (protected visibility) 
 to add visualisations or other objects to expose to the GUI.
