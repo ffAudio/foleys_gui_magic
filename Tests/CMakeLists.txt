@@ -58,23 +58,31 @@ endif()
 
 find_package (Catch2 3 REQUIRED)
 
-add_executable (FoleysGUIMagicTests
+add_executable (FoleysGUIMagicTests)
+
+target_sources (FoleysGUIMagicTests PRIVATE 
 					foleys_MagicProcessorTests.cpp 
 					foleys_GuiTreeTests.cpp)
 
 set_target_properties (
 	FoleysGUIMagicTests
-	PROPERTIES LABELS "foleys_gui_magic;Tests" FOLDER foleys_gui_magic 
+	PROPERTIES LABELS "foleys_gui_magic;Tests" 
+			   FOLDER foleys_gui_magic 
 			   EchoString "Building the foleys_gui_magic unit test runner..."
 			   MACOSX_BUNDLE OFF)
 
-target_link_libraries (FoleysGUIMagicTests PRIVATE Catch2::Catch2WithMain Foleys::foleys_gui_magic)
+target_link_libraries (FoleysGUIMagicTests PRIVATE 
+							Catch2::Catch2WithMain 
+							Foleys::foleys_gui_magic)
 
 get_target_property (tests_sources FoleysGUIMagicTests SOURCES)
 
 source_group (TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${tests_sources})
 
-foreach (tag IN ITEMS processor gui)
+# execute each category of unit test cases as a separate test
+set (test_categories processor gui)
+
+foreach (tag IN LISTS test_categories)
 	add_test (NAME "foleys_gui_magic.${tag}" 
 			  COMMAND FoleysGUIMagicTests "[${tag}]" 
 			  			--warn NoAssertions 
