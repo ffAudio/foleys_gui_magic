@@ -288,6 +288,8 @@ public:
 
         if (parameterName.isNotEmpty() && radioValue.isVoid())
             attachment = getMagicState().createAttachment (parameterName, button);
+        else
+            attachment.reset();
 
         auto groupID = static_cast<int>(getProperty (IDs::buttonRadioGroup));
         if (groupID > 0)
@@ -364,6 +366,8 @@ public:
         auto radioValue = getProperty (IDs::buttonRadioValue);
         if (parameterName.isNotEmpty() && radioValue.isVoid())
             attachment = getMagicState().createAttachment (parameterName, button);
+        else
+            attachment.reset();
 
         button.setButtonText (magicBuilder.getStyleProperty (pText, configNode));
 
