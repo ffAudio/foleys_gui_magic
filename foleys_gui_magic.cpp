@@ -37,6 +37,8 @@
 #include <stack>
 #include <numeric>
 
+#include "foleys_gui_magic.h"
+
 #if FOLEYS_ENABLE_BINARY_DATA
 #include "BinaryData.h"
 #endif
