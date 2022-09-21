@@ -90,7 +90,7 @@ void MidiParameterMapper::processMidiBuffer (juce::MidiBuffer& buffer)
 
 void MidiParameterMapper::mapMidiController (int cc, const juce::String& parameterID)
 {
-    auto mappings = settings->settings.getOrCreateChildWithName (IDs::mappings, nullptr);
+    auto mappings = getMappingSettings();
 
     juce::ValueTree node { IDs::mapping, {{IDs::cc, cc}, {IDs::parameter, parameterID}} };
     mappings.appendChild (node, nullptr);
@@ -98,7 +98,7 @@ void MidiParameterMapper::mapMidiController (int cc, const juce::String& paramet
 
 void MidiParameterMapper::unmapMidiController (int cc, const juce::String& parameterID)
 {
-    auto mappings = settings->settings.getChildWithName (IDs::mappings);
+    auto mappings = getMappingSettings();
     if (! mappings.isValid())
         return;
 
@@ -115,7 +115,7 @@ void MidiParameterMapper::unmapMidiController (int cc, const juce::String& param
 
 void MidiParameterMapper::unmapAllMidiController (int cc)
 {
-    auto mappings = settings->settings.getChildWithName (IDs::mappings);
+    auto mappings = getMappingSettings();
     if (! mappings.isValid())
         return;
 
@@ -135,9 +135,14 @@ int MidiParameterMapper::getLastController() const
     return lastController.load();
 }
 
+juce::ValueTree MidiParameterMapper::getMappingSettings()
+{
+    return settings->settings.getOrCreateChildWithName (IDs::mappings, nullptr);
+}
+
 void MidiParameterMapper::recreateMidiMapper()
 {
-    auto mappings = settings->settings.getChildWithName (IDs::mappings);
+    auto mappings = getMappingSettings();
     if (! mappings.isValid())
         return;
 
