@@ -48,13 +48,42 @@ public:
     MidiParameterMapper (MagicProcessorState& state);
     ~MidiParameterMapper() override;
 
+    /*!
+     * Get Midi CC messages and set parameters accordingly
+     * @param buffer the last midi events
+     */
     void processMidiBuffer (juce::MidiBuffer& buffer);
 
+    /*!
+     * Map a MIDI CC to a parameter
+     * @param cc the MIDI CC number to map
+     * @param parameterID the parameterID to map to
+     */
     void mapMidiController (int cc, const juce::String& parameterID);
+
+    /*!
+     * Remove a specific mapping
+     * @param cc the MIDI CC number to map
+     * @param parameterID the parameterID to unmap
+     */
     void unmapMidiController (int cc, const juce::String& parameterID);
+
+    /*!
+     * Remove all mappings from a specific CC controller
+     * @param cc the MIDI CC number to unmap
+     */
     void unmapAllMidiController (int cc);
 
+    /*!
+     * @return the last touched MIDI controller so it can be mapped
+     */
     int  getLastController() const;
+
+    /*!
+     * Grant access to the ValueTree to save or restore the mappings manually
+     * @return the ValueTree containing the mappings
+     */
+    juce::ValueTree getMappingSettings();
 
 private:
     void recreateMidiMapper();
