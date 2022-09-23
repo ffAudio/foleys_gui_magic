@@ -5,6 +5,7 @@ PluginGuiMagic - Versions history
 -----
 
 - Fixed radio buttons not to double propagate
+- Fixed missing compiler settings
 
 1.3.7 - 27.05.2022
 ------------------
