@@ -581,6 +581,8 @@ public:
     static const juce::Identifier  pCrosshair;
     static const juce::StringArray pCrosshairTypes;
     static const juce::Identifier  pRadius;
+    static const juce::Identifier  pWheelParameter;
+    static const juce::Identifier  pContextParameter;
     static const juce::Identifier  pSenseFactor;
     static const juce::Identifier  pJumpToClick;
 
@@ -614,10 +616,13 @@ public:
         else
             dragger.setParameterY (nullptr);
 
-
-        auto rightParamID = configNode.getProperty ("right-click", juce::String()).toString();
+        auto rightParamID = configNode.getProperty (pContextParameter, juce::String()).toString();
         if (rightParamID.isNotEmpty())
             dragger.setRightClickParameter (dynamic_cast<juce::RangedAudioParameter*>(getMagicState().getParameter (rightParamID)));
+
+        auto wheelParamID = configNode.getProperty (pWheelParameter, juce::String()).toString();
+        if (wheelParamID.isNotEmpty())
+            dragger.setWheelParameter (dynamic_cast<juce::RangedAudioParameter*>(getMagicState().getParameter (wheelParamID)));
 
         auto crosshair = getProperty (pCrosshair);
         if (crosshair == pCrosshairTypes [0])
@@ -648,7 +653,8 @@ public:
 
         props.push_back ({ configNode, IDs::parameterX, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
         props.push_back ({ configNode, IDs::parameterY, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
-        props.push_back ({ configNode, "right-click", SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
+        props.push_back ({ configNode, pContextParameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
+        props.push_back ({ configNode, pWheelParameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
         props.push_back ({ configNode, pCrosshair, SettableProperty::Choice, {}, magicBuilder.createChoicesMenuLambda (pCrosshairTypes) });
         props.push_back ({ configNode, pRadius, SettableProperty::Number, {}, {}});
         props.push_back ({ configNode, pSenseFactor, SettableProperty::Number, {}, {}});
@@ -670,6 +676,8 @@ private:
 const juce::Identifier  XYDraggerItem::pCrosshair       { "xy-crosshair" };
 const juce::StringArray XYDraggerItem::pCrosshairTypes  { "no-crosshair", "vertical", "horizontal", "crosshair" };
 const juce::Identifier  XYDraggerItem::pRadius          { "xy-radius" };
+const juce::Identifier  XYDraggerItem::pWheelParameter  { "wheel-parameter" };
+const juce::Identifier  XYDraggerItem::pContextParameter { "right-click" };
 const juce::Identifier  XYDraggerItem::pSenseFactor     { "xy-sense-factor" };
 const juce::Identifier  XYDraggerItem::pJumpToClick     { "xy-jump-to-click" };
 

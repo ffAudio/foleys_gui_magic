@@ -1,6 +1,11 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.3.9
+-----
+
+- Added wheel parameter to XYDraggerComponent
+
 1.3.8 - 31.10.2022
 ------------------
 
