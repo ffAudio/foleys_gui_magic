@@ -106,6 +106,11 @@ void XYDragComponent::setParameterY (juce::RangedAudioParameter* parameter)
     yAttachment.attachToParameter (parameter);
 }
 
+void XYDragComponent::setWheelParameter (juce::RangedAudioParameter* parameter)
+{
+    wheelParameter = parameter;
+}
+
 void XYDragComponent::setRightClickParameter (juce::RangedAudioParameter* parameter)
 {
     contextMenuParameter = parameter;
@@ -236,6 +241,24 @@ void XYDragComponent::mouseUp (const juce::MouseEvent& event)
 
     if (mouseOverY || mouseOverDot)
         yAttachment.endGesture();
+}
+
+void XYDragComponent::mouseWheelMove (const juce::MouseEvent& event, const juce::MouseWheelDetails& details)
+{
+    updateWhichToDrag (event.position);
+
+    if (mouseOverDot && wheelParameter)
+    {
+        wheelParameter->beginChangeGesture();
+        auto range     = wheelParameter->getNormalisableRange();
+        auto lastValue = range.convertFrom0to1 (wheelParameter->getValue());
+        auto interval = details.deltaY > 0.0f ? range.interval : -range.interval;
+        wheelParameter->setValueNotifyingHost (range.convertTo0to1 (juce::jlimit (range.start, range.end, lastValue + interval)));
+        wheelParameter->endChangeGesture();
+        return;
+    }
+
+    juce::Component::mouseWheelMove(event, details);
 }
 
 void XYDragComponent::mouseEnter (const juce::MouseEvent& event)
