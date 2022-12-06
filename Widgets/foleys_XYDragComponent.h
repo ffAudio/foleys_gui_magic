@@ -69,6 +69,7 @@ public:
 
     void setParameterX (juce::RangedAudioParameter* parameter);
     void setParameterY (juce::RangedAudioParameter* parameter);
+    void setWheelParameter (juce::RangedAudioParameter* parameter);
 
     void setRightClickParameter (juce::RangedAudioParameter* parameter);
 
@@ -81,6 +82,7 @@ public:
     void mouseMove (const juce::MouseEvent&) override;
     void mouseDrag (const juce::MouseEvent&) override;
     void mouseUp (const juce::MouseEvent&) override;
+    void mouseWheelMove (const juce::MouseEvent&, const juce::MouseWheelDetails&) override;
     void mouseEnter (const juce::MouseEvent&) override;
     void mouseExit (const juce::MouseEvent&) override;
 
@@ -101,6 +103,7 @@ private:
     ParameterAttachment<float> xAttachment;
     ParameterAttachment<float> yAttachment;
 
+    juce::RangedAudioParameter* wheelParameter = nullptr;
     juce::RangedAudioParameter* contextMenuParameter = nullptr;
 
     bool  jumpToClick = false;
