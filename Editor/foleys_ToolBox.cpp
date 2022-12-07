@@ -53,7 +53,7 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
 
     if (auto* properties = appProperties.getUserSettings())
     {
-        positionOption = ToolBox::positionOptionFromString (properties->getValue ("position"));
+        setToolboxPosition (ToolBox::positionOptionFromString (properties->getValue ("position")));
         setAlwaysOnTop (properties->getValue ("alwaysOnTop") == "true");
     }
 
