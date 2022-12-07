@@ -5,6 +5,7 @@ PluginGuiMagic - Versions history
 -----
 
 - Added wheel parameter to XYDraggerComponent
+- Fixed initially invisible resizer when toolbox is detached
 
 1.3.8 - 31.10.2022
 ------------------
