@@ -7,6 +7,7 @@ PluginGuiMagic - Versions history
 - Added wheel parameter to XYDraggerComponent
 - Fixed initially invisible resizer when toolbox is detached
 - Updated updatePlayheadInformation for JUCE 7
+- Added safety to RadioButtonManager
 
 1.3.8 - 31.10.2022
 ------------------

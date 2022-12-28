@@ -62,7 +62,7 @@ void RadioButtonHandler::setRadioGroupValue (juce::var value, juce::RangedAudioP
 
         parameter = parameterToControl;
         if (parameter)
-            parameter->removeListener (this);
+            parameter->addListener (this);
     }
 
     radioButtonValue = value;
@@ -107,8 +107,8 @@ void RadioButtonManager::buttonActivated (juce::Button* button)
     if (groupID == 0)
         return;
 
-    for (auto* otherButton : buttons)
-        if (button != otherButton && otherButton->getRadioGroupId() == groupID)
+    for (auto& otherButton : buttons)
+        if (otherButton && button != otherButton && otherButton->getRadioGroupId() == groupID)
             otherButton->setToggleState (false, juce::dontSendNotification);
 }
 
@@ -121,7 +121,7 @@ void RadioButtonManager::addButton (juce::Button* button)
 void RadioButtonManager::removeButton (juce::Button* button)
 {
     buttons.erase (std::remove_if (buttons.begin(), buttons.end(), [button](const auto& other)
-                        { return other == button; }),
+                        { return other == button || other == nullptr; }),
                    buttons.end());
 }
 

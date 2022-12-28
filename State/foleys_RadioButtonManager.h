@@ -50,7 +50,7 @@ public:
 
     void buttonActivated (juce::Button* button);
 private:
-    std::vector<juce::Button*> buttons;
+    std::vector<juce::Component::SafePointer<juce::Button>> buttons;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RadioButtonManager)
 
 };
