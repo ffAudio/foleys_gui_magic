@@ -41,7 +41,7 @@ namespace foleys
 
 RadioButtonHandler::RadioButtonHandler (juce::Button& buttonToControl, RadioButtonManager& manager)
   : button (buttonToControl),
-    radioButtonManager(manager)
+    radioButtonManager (manager)
 {
     radioButtonManager.addButton (&button);
     button.addListener (this);
@@ -49,6 +49,9 @@ RadioButtonHandler::RadioButtonHandler (juce::Button& buttonToControl, RadioButt
 
 RadioButtonHandler::~RadioButtonHandler()
 {
+    if (parameter)
+        parameter->removeListener (this);
+
     button.removeListener (this);
     radioButtonManager.removeButton (&button);
 }
