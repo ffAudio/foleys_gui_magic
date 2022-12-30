@@ -169,7 +169,14 @@ void MagicProcessorState::setStateInformation (const void* data, int sizeInBytes
         int width, height;
 
         if (getLastEditorSize (width, height))
-            editor->setSize (width, height);
+        {
+            juce::Component::SafePointer safeEditor (editor);
+            juce::MessageManager::callAsync([safeEditor, width, height]
+                                            {
+                if (safeEditor)
+                    safeEditor->setSize (width, height);
+                                            });
+        }
     }
 }
 
