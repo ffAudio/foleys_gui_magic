@@ -32,6 +32,14 @@ jobs:
         submodules: recursive
         fetch-depth: 1
 
+    - name: Install JUCE's Linux Deps
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update && sudo apt install libasound2-dev libx11-dev libxinerama-dev \
+        libxext-dev libfreetype6-dev libcurl4-openssl-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev \
+        xvfb fluxbox ninja-build
+        sudo /usr/bin/Xvfb $DISPLAY &
+
     - name: Configure CMake
       run: cmake --preset maintainer
 

@@ -9,6 +9,7 @@ PluginGuiMagic - Versions history
 - Updated updatePlayheadInformation for JUCE 7
 - Added safety to RadioButtonManager
 - Allow setStateInformation to occur on a background thread
+- Added first unit test
 
 1.3.8 - 31.10.2022
 ------------------
