@@ -411,7 +411,7 @@ void ToolBox::setLastLocation(juce::File file)
     startTimer (Timers::AutoSave, 10000);
 }
 
-std::unique_ptr<juce::FileFilter> ToolBox::getFileFilter() const
+std::unique_ptr<juce::FileFilter> ToolBox::getFileFilter()
 {
     return std::make_unique<juce::WildcardFileFilter>("*.xml", "*", "XML files");
 }
@@ -420,16 +420,17 @@ juce::String ToolBox::positionOptionToString (PositionOption option)
 {
     switch (option)
     {
-        case PositionOption::left:
-            return "left";
         case PositionOption::right:
             return "right";
         case PositionOption::detached:
             return "detached";
+        case PositionOption::left:
+        default:
+            return "left";
     }
 }
 
-ToolBox::PositionOption ToolBox::positionOptionFromString (juce::String text)
+ToolBox::PositionOption ToolBox::positionOptionFromString (const juce::String& text)
 {
     if (text == ToolBox::positionOptionToString (PositionOption::detached))
         return PositionOption::detached;

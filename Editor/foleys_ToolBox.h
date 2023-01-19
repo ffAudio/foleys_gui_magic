@@ -92,7 +92,6 @@ public:
 
     static juce::PropertiesFile::Options getApplicationPropertyStorage();
 
-    juce::File getLastLocation() const;
     void setLastLocation (juce::File file);
 
 private:
@@ -103,9 +102,9 @@ private:
     };
 
     static juce::String positionOptionToString (PositionOption option);
-    static PositionOption positionOptionFromString (juce::String text);
+    static PositionOption positionOptionFromString (const juce::String& text);
 
-    std::unique_ptr<juce::FileFilter> getFileFilter() const;
+    static std::unique_ptr<juce::FileFilter> getFileFilter();
 
     juce::Component::SafePointer<juce::Component> parent;
 
