@@ -54,10 +54,12 @@ MagicGUIBuilder::MagicGUIBuilder (MagicGUIState& state)
   : magicState (state)
 {
     updateStylesheet();
+    getConfigTree().addListener (this);
 }
 
 MagicGUIBuilder::~MagicGUIBuilder()
 {
+    getConfigTree().removeListener (this);
 }
 
 Stylesheet& MagicGUIBuilder::getStylesheet()
@@ -363,6 +365,12 @@ void MagicGUIBuilder::changeListenerCallback (juce::ChangeBroadcaster*)
         root->updateInternal();
 
     updateLayout();
+}
+
+void MagicGUIBuilder::valueTreeRedirected (juce::ValueTree& treeWhichHasBeenChanged)
+{
+    juce::ignoreUnused (treeWhichHasBeenChanged);
+    updateComponents();
 }
 
 MagicGUIState& MagicGUIBuilder::getMagicState()
