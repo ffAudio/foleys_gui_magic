@@ -71,6 +71,9 @@ void Container::update()
     else
         setLayoutMode (LayoutType::FlexBox);
 
+    auto tabHeightProperty = magicBuilder.getStyleProperty (IDs::tabHeight, configNode).toString();
+    tabbarHeight = tabHeightProperty.isNotEmpty() ? tabHeightProperty.getIntValue() : 30;
+
     auto repaintHz = magicBuilder.getStyleProperty (IDs::repaintHz, configNode).toString();
     if (repaintHz.isNotEmpty())
     {
@@ -215,9 +218,11 @@ void Container::updateLayout()
     }
     else if (layout == LayoutType::Tabbed)
     {
-        containerBox.setBounds (clientBounds);
-        updateTabbedButtons();
-        tabbedButtons->setBounds (clientBounds.removeFromTop (30));
+        if (tabbedButtons) {
+            containerBox.setBounds(clientBounds);
+            updateTabbedButtons();
+            tabbedButtons->setBounds(clientBounds.removeFromTop (tabbarHeight));
+        }
 
         for (auto& child : children)
             child->setBounds (clientBounds);

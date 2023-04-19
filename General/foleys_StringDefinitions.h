@@ -104,6 +104,7 @@ namespace IDs
     static juce::String     contents     { "contents" };
     static juce::String     tabbed       { "tabbed" };
     static juce::String     flexbox      { "flexbox" };
+    static juce::Identifier tabHeight    { "tab-height" };
 
     static juce::Identifier focusContainerType { "focus-container" };
     static juce::String     focusNone          { "focus-none" };
