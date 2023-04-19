@@ -160,6 +160,7 @@ private:
     void updateSelectedTab();
 
     int  currentTab = 0;
+    int  tabbarHeight  = 30;
     int  refreshRateHz = 30;
 
     LayoutType    layout = LayoutType::FlexBox;
