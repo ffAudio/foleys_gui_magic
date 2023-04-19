@@ -75,6 +75,7 @@ class Container   : public GuiItem,
 {
 public:
     Container (MagicGUIBuilder& builder, juce::ValueTree node);
+    ~Container();
 
     /**
      Updates the layout fo children
@@ -154,18 +155,17 @@ private:
     };
 
     void changeListenerCallback (juce::ChangeBroadcaster*) override;
+    void valueChanged (juce::Value&) override;
     void timerCallback() override;
 
     void updateTabbedButtons();
     void updateSelectedTab();
 
-    int  currentTab = 0;
-    int  tabbarHeight  = 30;
-    int  refreshRateHz = 30;
-
+    juce::Value   currentTab { juce::var {0} };
+    int           tabbarHeight  = 30;
+    int           refreshRateHz = 30;
     LayoutType    layout = LayoutType::FlexBox;
     juce::FlexBox flexBox;
-
     ScrollMode    scrollMode = ScrollMode::NoScroll;
 
     juce::Component                         containerBox;
