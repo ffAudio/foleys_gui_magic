@@ -359,6 +359,7 @@ void PropertiesEditor::addContainerProperties()
     array.add (new StyleTextPropertyComponent (builder, IDs::repaintHz, styleItem));
     array.add (new StyleChoicePropertyComponent (builder, IDs::scrollMode, styleItem, { IDs::noScroll, IDs::scrollHorizontal, IDs::scrollVertical, IDs::scrollBoth }));
     array.add (new StyleTextPropertyComponent (builder, IDs::tabHeight, styleItem));
+    array.add (new StyleChoicePropertyComponent (builder, IDs::selectedTab, styleItem, builder.createPropertiesMenuLambda()));
 
     array.add (new StyleChoicePropertyComponent (builder, IDs::flexDirection, styleItem, { IDs::flexDirRow, IDs::flexDirRowReverse, IDs::flexDirColumn, IDs::flexDirColumnReverse }));
     array.add (new StyleChoicePropertyComponent (builder, IDs::flexWrap, styleItem, { IDs::flexNoWrap, IDs::flexWrapNormal, IDs::flexWrapReverse }));
