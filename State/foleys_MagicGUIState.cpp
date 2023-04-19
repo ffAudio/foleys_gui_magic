@@ -211,7 +211,7 @@ void MagicGUIState::addPropertiesToMenu (const juce::ValueTree& tree, juce::Comb
     for (int i=0; i < tree.getNumProperties(); ++i)
     {
         const auto name = tree.getPropertyName (i).toString();
-        menu.addItem (name, [&combo, t = path + name]
+        menu.addItem (name, true, false, [&combo, t = path + name]
         {
             combo.setText (t);
         });

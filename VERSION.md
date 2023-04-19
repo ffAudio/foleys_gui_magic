@@ -9,6 +9,10 @@ PluginGuiMagic - Versions history
 - Updated updatePlayheadInformation for JUCE 7
 - Added safety to RadioButtonManager
 - Allow setStateInformation to occur on a background thread
+- Add setting a property from a TextButton
+- Changed name "value" to "property" on ToggleButton
+- Allow setting of Tab-Bar height
+- Add a property "tab-selected" to connect to a property in the state
 
 1.3.8 - 31.10.2022
 ------------------

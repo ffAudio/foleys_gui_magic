@@ -44,6 +44,12 @@ Container::Container (MagicGUIBuilder& builder, juce::ValueTree node)
 {
     addAndMakeVisible (viewport);
     viewport.setViewedComponent (&containerBox, false);
+    currentTab.addListener (this);
+}
+
+Container::~Container()
+{
+    currentTab.removeListener (this);
 }
 
 void Container::update()
@@ -73,6 +79,10 @@ void Container::update()
 
     auto tabHeightProperty = magicBuilder.getStyleProperty (IDs::tabHeight, configNode).toString();
     tabbarHeight = tabHeightProperty.isNotEmpty() ? tabHeightProperty.getIntValue() : 30;
+
+    const auto tabProperty = magicBuilder.getStyleProperty (IDs::selectedTab, configNode).toString();
+    if (tabProperty.isNotEmpty())
+        currentTab.referTo(getMagicState().getPropertyAsValue(tabProperty));
 
     auto repaintHz = magicBuilder.getStyleProperty (IDs::repaintHz, configNode).toString();
     if (repaintHz.isNotEmpty())
@@ -272,7 +282,7 @@ void Container::updateTabbedButtons()
     }
 
     tabbedButtons->addChangeListener (this);
-    tabbedButtons->setCurrentTabIndex (currentTab, false);
+    tabbedButtons->setCurrentTabIndex (currentTab.getValue(), false);
     updateSelectedTab();
 }
 
@@ -349,6 +359,12 @@ void Container::changeListenerCallback (juce::ChangeBroadcaster*)
 {
     currentTab = tabbedButtons ? tabbedButtons->getCurrentTabIndex() : 0;
     updateSelectedTab();
+}
+
+void Container::valueChanged (juce::Value& source)
+{
+    if (source == currentTab)
+      updateSelectedTab();
 }
 
 void Container::updateSelectedTab()

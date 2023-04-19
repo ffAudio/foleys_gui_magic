@@ -55,7 +55,7 @@ enum class LayoutType;
  to an AudioProcessorValueTreeState.
  */
 class GuiItem   : public juce::Component,
-                  private juce::Value::Listener,
+                  public juce::Value::Listener,
                   private juce::ValueTree::Listener,
                   public juce::DragAndDropTarget
 {
