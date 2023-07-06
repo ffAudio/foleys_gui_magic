@@ -56,6 +56,9 @@ void RootItem::updateColours()
     auto outline = magicBuilder.getStyleProperty (IDs::tooltipOutline, configNode);
     if (! outline.isVoid())
         tooltip.getLookAndFeel().setColour (juce::TooltipWindow::outlineColourId, Stylesheet::parseColour (outline));
+
+    for (const auto& child : *this)
+        child->updateColours();
 }
 
 
