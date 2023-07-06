@@ -75,7 +75,7 @@ class Container   : public GuiItem,
 {
 public:
     Container (MagicGUIBuilder& builder, juce::ValueTree node);
-    ~Container();
+    ~Container() override;
 
     /**
      Updates the layout fo children

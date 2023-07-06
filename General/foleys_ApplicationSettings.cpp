@@ -49,6 +49,7 @@ ApplicationSettings::ApplicationSettings()
 
 ApplicationSettings::~ApplicationSettings()
 {
+    stopTimer();
     settings.removeListener (this);
 }
 
