@@ -73,7 +73,8 @@ void RadioButtonHandler::setRadioGroupValue (juce::var value, juce::RangedAudioP
     if (parameter)
     {
         auto currentValue = parameter->convertFrom0to1 (parameter->getValue());
-        button.setToggleState (currentValue == static_cast<float>(value), juce::dontSendNotification);
+        // other than setToggleState this seems not to trigger circular updates
+        button.getToggleStateValue() = (currentValue == static_cast<float>(value));
     }
 }
 
@@ -98,8 +99,8 @@ void RadioButtonHandler::parameterValueChanged (int parameterIndex, float newVal
         return;
 
     auto value = parameter->convertFrom0to1 (newValue);
-    if (value == static_cast<float>(radioButtonValue))
-        button.setToggleState (true, juce::dontSendNotification);
+    // other than setToggleState this seems not to trigger circular updates
+    button.getToggleStateValue() = (value == static_cast<float>(radioButtonValue));
 }
 
 // ==============================================================================
@@ -112,7 +113,7 @@ void RadioButtonManager::buttonActivated (juce::Button* button)
 
     for (auto& otherButton : buttons)
         if (otherButton && button != otherButton && otherButton->getRadioGroupId() == groupID)
-            otherButton->setToggleState (false, juce::dontSendNotification);
+            otherButton->getToggleStateValue() = false;
 }
 
 void RadioButtonManager::addButton (juce::Button* button)
