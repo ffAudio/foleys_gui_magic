@@ -14,6 +14,7 @@ PluginGuiMagic - Versions history
 - Allow setting of Tab-Bar height
 - Add a property "tab-selected" to connect to a property in the state
 - Avoid update feedback loop in RadioButtonManager
+- Added update when something in the Stylesheet changes
 
 1.3.8 - 31.10.2022
 ------------------

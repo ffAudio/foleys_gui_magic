@@ -42,6 +42,15 @@ namespace foleys
 Stylesheet::Stylesheet (MagicGUIBuilder& builderToUse) : builder (builderToUse)
 {
     setColourPalette();
+
+    currentStyle.addListener(this);
+    currentPalette.addListener(this);
+}
+
+Stylesheet::~Stylesheet()
+{
+    currentStyle.removeListener(this);
+    currentPalette.removeListener(this);
 }
 
 void Stylesheet::setStyle (const juce::ValueTree& node)
@@ -99,9 +108,12 @@ juce::ValueTree Stylesheet::getCurrentPalette()
     return currentPalette;
 }
 
-void Stylesheet::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier&)
+void Stylesheet::valueTreePropertyChanged (juce::ValueTree&, const juce::Identifier& name)
 {
-    builder.updateColours();
+    if (name.toString().contains("color"))
+        builder.updateColours();
+    else
+        builder.updateComponents();
 }
 
 void Stylesheet::updateValidRanges()

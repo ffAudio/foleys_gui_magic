@@ -53,6 +53,7 @@ class Stylesheet : private juce::ValueTree::Listener
 public:
 
     Stylesheet (MagicGUIBuilder& builder);
+    ~Stylesheet() override;
 
     /**
      The Stylesheet node in the XML can contain several Styles to select from.
