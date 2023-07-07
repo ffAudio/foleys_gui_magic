@@ -1,0 +1,28 @@
+name: CMake
+
+on: push
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build_and_test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+
+    steps:
+
+      - uses: actions/checkout@v2
+        with:
+          clean: true
+
+      - name: Configure CMake
+        run: cmake --log-level=VERBOSE -D JUCE_COPY_PLUGIN_AFTER_BUILD=OFF
+
+      - name: Build
+        run: cmake --build --config ${{ env.BUILD_TYPE }} -j 8
+
+      - name: Run tests
+        run: ctest -C ${{ env.BUILD_TYPE }} --output-on-failure -j 4
