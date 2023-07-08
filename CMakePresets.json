@@ -1,0 +1,125 @@
+{
+	"buildPresets": [
+		{
+	      "cleanFirst": true,
+	      "configuration": "Debug",
+	      "configurePreset": "default",
+	      "displayName": "The default build",
+	      "jobs": 4,
+	      "name": "default"
+	    },
+	    {
+	      "displayName": "Maintainer build",
+	      "inherits": "default",
+	      "name": "maintainer",
+	      "verbose": true
+	    }
+	],
+	"cmakeMinimumRequired": {
+		"major": 3,
+    	"minor": 15,
+    	"patch": 0
+	},
+	"configurePresets": [
+	    {
+	      "binaryDir": "${sourceDir}/Builds",
+	      "displayName": "The default CMake configuration",
+	      "name": "default",
+	      "warnings": {
+	        "unusedCli": false
+	      },
+	      "cacheVariables": {
+	      	"FGM_BUILD_TESTS": "OFF"
+	      }
+	    },
+	    {
+	      "displayName": "CMake configuration for development of foleys_gui_magic",
+	      "inherits": "default",
+	      "name": "maintainer",
+	      "warnings": {
+	        "deprecated": true,
+	        "dev": true,
+	        "uninitialized": true
+	      },
+	      "cacheVariables": {
+	      	"FGM_BUILD_TESTS": "ON"
+	      }
+	    },
+	    {
+	      "cacheVariables": {
+	        "CMAKE_CXX_COMPILER": "g++-11",
+	        "CMAKE_C_COMPILER": "gcc-11"
+	      },
+	      "displayName": "Build with Ninja and GCC",
+	      "generator": "Ninja Multi-Config",
+	      "inherits": "maintainer",
+	      "name": "ninja-gcc"
+	    },
+	    {
+	      "cacheVariables": {
+	        "CMAKE_CXX_COMPILER": "clang++",
+	        "CMAKE_C_COMPILER": "clang"
+	      },
+	      "displayName": "Build with Ninja and Clang",
+	      "generator": "Ninja Multi-Config",
+	      "inherits": "maintainer",
+	      "name": "ninja-clang"
+	    },
+	    {
+	      "cacheVariables": {
+	        "CMAKE_SYSTEM_NAME": "iOS",
+	        "CMAKE_XCODE_EFFECTIVE_PLATFORMS": "-iphoneos"
+	      },
+	      "condition": {
+	        "lhs": "${hostSystemName}",
+	        "rhs": "Darwin",
+	        "type": "equals"
+	      },
+	      "displayName": "Configure cross-compiling for iOS",
+	      "generator": "Xcode",
+	      "inherits": "default",
+	      "name": "iOS"
+	    },
+	    {
+	      "cacheVariables": {
+	        "CMAKE_SYSTEM_NAME": "tvOS",
+	        "CMAKE_XCODE_EFFECTIVE_PLATFORMS": "-appletvos"
+	      },
+	      "displayName": "Configure cross-compiling for tvOS",
+	      "inherits": "iOS",
+	      "name": "tvOS"
+	    },
+	    {
+	      "cacheVariables": {
+	        "CMAKE_SYSTEM_NAME": "watchOS",
+	        "CMAKE_XCODE_EFFECTIVE_PLATFORMS": "-watchos"
+	      },
+	      "displayName": "Configure cross-compiling for watchOS",
+	      "inherits": "iOS",
+	      "name": "watchOS"
+	    }
+	],
+	"testPresets": [
+		{
+	      "configuration": "Debug",
+	      "configurePreset": "default",
+	      "execution": {
+	        "jobs": 4,
+	        "noTestsAction": "error"
+	      },
+	      "filter": {
+	        "include": {
+	          "name": "foleys_gui_magic."
+	        }
+	      },
+	      "name": "default",
+	      "output": {
+	        "outputLogFile": "${sourceDir}/Builds/test_log.log",
+	        "outputOnFailure": true,
+	        "shortProgress": true,
+	        "verbosity": "verbose"
+	      }
+	    }
+	],
+	"version": 3
+}

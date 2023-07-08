@@ -34,15 +34,32 @@
  ==============================================================================
  */
 
+#pragma once
+
 #include <foleys_gui_magic/foleys_gui_magic.h>
-#include <catch2/catch_test_macros.hpp>
 
-
-#include "foleys_TestProcessors.h"
-
-TEST_CASE ("GUI tree test", "[gui]")
+class UnitTestProcessor : public foleys::MagicProcessor
 {
-std::unique_ptr<juce::AudioProcessor> processor (new UnitTestProcessor());
-std::unique_ptr<juce::AudioProcessorEditor> editor (processor->createEditor());
-REQUIRE (editor.get() != nullptr);
-}
+public:
+    UnitTestProcessor()
+    {
+        addParameter (new juce::AudioParameterFloat ("float", "Some float", {-100.0f, 100.0f}, 10.0f));
+        addParameter (new juce::AudioParameterBool ("bool", "Some boolean", false));
+        addParameter (new juce::AudioParameterChoice ("choice", "Choose wisely", {"Gold", "Tin", "Wood", "Marble"}, 2));
+        addParameter (new juce::AudioParameterInt ("int", "Some number", -10, 10, 3));
+    }
+
+    const juce::String getName() const override { return "UnitTestProcessor"; }
+    void prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock) override { juce::ignoreUnused (sampleRate, maximumExpectedSamplesPerBlock); }
+    void processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi) override { juce::ignoreUnused (buffer, midi); }
+    void releaseResources() override {}
+
+    double getTailLengthSeconds() const override { return 0; }
+    bool acceptsMidi() const override            { return true; }
+    bool producesMidi() const override           { return false; }
+
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (UnitTestProcessor)
+};
+
+

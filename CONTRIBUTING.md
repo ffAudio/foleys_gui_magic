@@ -11,9 +11,6 @@ All work is done voluntarily for the pleasure and benefit for all users. Feature
 and integrated, if they fit our goals.
 We will at our discretion integrate or rewrite pull requests, but often we will ask to adapt things to fit our needs.
 
-The repository https://github.com/ffAudio/PluginGuiMagic is the reference. All pull requests should check,
-that none of the example projects break.
-
 We are looking forward to a fruitful collaboration!
 
 Ownership
@@ -37,10 +34,11 @@ Daniel Walz
 Contributors
 -----------
 
-Yuri Witte    
-Benedikt    
+Ben Vining: CMake, Catch2 and github actions
 
-TBC
+Yuri Witte: LookAndFeel "Skeumorphic"
+
+Benedikt
 
 
 Brighton, UK - 2019

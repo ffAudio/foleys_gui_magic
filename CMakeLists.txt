@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
-set (version 1.4.0)
+set (FGM_VERSION 1.4.0)
 
 project ("foleys_gui_magic"
         DESCRIPTION "PluginGuiMagic"
         HOMEPAGE_URL "https://foleysfinest.com/PluginGuiMagic"
         LANGUAGES CXX)
+
+enable_testing()
+
+list (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMakeIncludes")
 
 option (FOLEYS_BUILD_TESTS "Build and run the unit tests" ON)
 option (FOLEYS_BUILD_EXAMPLES "Build the examples" ON)
@@ -59,3 +63,50 @@ if (FOLEYS_RUN_PLUGINVAL)
 endif ()
 
 project (foleys_gui_magic)
+
+# tests
+if(FOLEYS_BUILD_TESTS)
+    add_subdirectory (Tests)
+endif()
+
+# install rules
+
+set (FGM_INSTALL_DEST "${CMAKE_INSTALL_LIBDIR}/cmake/foleys_gui_magic"
+        CACHE STRING
+        "Directory below INSTALL_PREFIX where the foleys_gui_magic CMake package files will be installed to")
+
+install (DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
+        DESTINATION "${FGM_INSTALL_DEST}/.."
+        COMPONENT foleys_gui_magic
+        PATTERN Tests/* EXCLUDE
+        PATTERN *.md EXCLUDE
+        PATTERN .git/* EXCLUDE
+        PATTERN .github/* EXCLUDE
+        PATTERN *.json EXCLUDE
+        PATTERN CMakeLists.txt EXCLUDE
+        PATTERN "${CMAKE_CURRENT_BINARY_DIR}/" EXCLUDE)
+
+include (CMakePackageConfigHelpers)
+
+#write_basic_package_version_file (foleys_gui_magic-config-version.cmake
+#        VERSION "${FGM_VERSION}"
+#        COMPATIBILITY SameMajorVersion
+#        ARCH_INDEPENDENT)
+
+configure_package_config_file (CMakeIncludes/config.cmake foleys_gui_magic-config.cmake
+        INSTALL_DESTINATION "${FGM_INSTALL_DEST}"
+        NO_SET_AND_CHECK_MACRO)
+
+install (FILES "${CMAKE_CURRENT_BINARY_DIR}/foleys_gui_magic-config-version.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/foleys_gui_magic-config.cmake"
+        DESTINATION "${FGM_INSTALL_DEST}"
+        COMPONENT foleys_gui_magic)
+
+include (CPackComponent)
+
+cpack_add_component (foleys_gui_magic
+        GROUP Foleys
+        INSTALL_TYPES Developer)
+
+export (PACKAGE foleys_gui_magic)
+
