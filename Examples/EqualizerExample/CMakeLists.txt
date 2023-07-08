@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13.0)
 
-project("EqualizerExample" VERSION ${version})
+project("EqualizerExample" VERSION ${FGM_VERSION})
 
 set(${PROJECT_NAME}_sources
     Source/PluginProcessor.cpp

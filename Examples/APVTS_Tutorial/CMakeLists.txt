@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15.0)
 
-project("apvtsTutorial" VERSION ${version})
+project("apvtsTutorial" VERSION ${FGM_VERSION})
 
 set(${PROJECT_NAME}_sources
     Source/PluginProcessor.cpp)

@@ -1,28 +1,35 @@
 name: CMake
 
-on: push
+on: [push, pull_request]
 
 env:
   BUILD_TYPE: Release
 
 jobs:
-  build_and_test:
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [macos-latest, windows-latest]
+      fail-fast: false
 
     steps:
-
       - uses: actions/checkout@v2
         with:
-          clean: true
+          submodules: recursive
+
+      - name: Create Build Environment
+        run: cmake -E make_directory ${{runner.workspace}}/build
 
       - name: Configure CMake
-        run: cmake --log-level=VERBOSE -D JUCE_COPY_PLUGIN_AFTER_BUILD=OFF
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
       - name: Build
-        run: cmake --build --config ${{ env.BUILD_TYPE }} -j 8
+        working-directory: ${{runner.workspace}}/build
+        shell: bash
+        run: cmake --build . --config $BUILD_TYPE
 
       - name: Run tests
-        run: ctest -C ${{ env.BUILD_TYPE }} --output-on-failure -j 4
+        run: ctest --preset default -C ${{ env.BUILD_TYPE }} --output-on-failure -j 4
