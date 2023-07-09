@@ -58,7 +58,8 @@ endif()
 
 find_package (Catch2 3 REQUIRED)
 
-add_executable (FoleysGUIMagicTests)
+juce_add_console_app (FoleysGUIMagicTests VERSION ${FOLEYS_VERSION}
+		BUNDLE_ID "com.foleysfinest.foleys_gui_magic.tests")
 
 target_sources (FoleysGUIMagicTests PRIVATE 
 					foleys_MagicProcessorTests.cpp 
@@ -73,7 +74,7 @@ set_target_properties (
 
 target_link_libraries (FoleysGUIMagicTests PRIVATE 
 							Catch2::Catch2WithMain 
-							foleys::foleys_gui_magic)
+							foleys_gui_magic)
 
 get_target_property (tests_sources FoleysGUIMagicTests SOURCES)
 
