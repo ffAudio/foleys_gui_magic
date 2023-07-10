@@ -9,9 +9,10 @@ project (foleys_gui_magic
 
 list (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMakeIncludes")
 
+include (PGMPluginval)
+
 option (FOLEYS_BUILD_TESTS "Build and run the unit tests" ON)
 option (FOLEYS_BUILD_EXAMPLES "Build the examples" ON)
-option (FOLEYS_RUN_PLUGINVAL "Run pluginval on the examples" ON)
 
 set_property (GLOBAL PROPERTY USE_FOLDERS ON)
 set_property (GLOBAL PROPERTY DEBUG_CONFIGURATIONS Debug)
@@ -48,15 +49,11 @@ FetchContent_MakeAvailable (juce)
 add_subdirectory (modules)
 
 if (FOLEYS_BUILD_EXAMPLES)
+    option (FOLEYS_RUN_PLUGINVAL "Run pluginval on the examples" ON)
     message(Build examples)
     add_subdirectory(Examples)
 endif ()
 
-if (FOLEYS_RUN_PLUGINVAL)
-    include (CMakeIncludes/Pluginval.cmake)
-endif ()
-
-# tests
 if(FOLEYS_BUILD_TESTS)
     enable_testing()
     add_subdirectory (Tests)
