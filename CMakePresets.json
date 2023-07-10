@@ -1,7 +1,7 @@
 {
 	"buildPresets": [
 		{
-	      "cleanFirst": true,
+	      "cleanFirst": false,
 	      "configuration": "Debug",
 	      "configurePreset": "default",
 	      "displayName": "The default build",
@@ -39,7 +39,8 @@
 	      "warnings": {
 	        "deprecated": true,
 	        "dev": true,
-	        "uninitialized": true
+	        "uninitialized": false,
+	        "unusedCli": false
 	      },
 	      "cacheVariables": {
 	      	"FGM_BUILD_TESTS": "ON"
@@ -77,7 +78,7 @@
 	      },
 	      "displayName": "Configure cross-compiling for iOS",
 	      "generator": "Xcode",
-	      "inherits": "default",
+	      "inherits": "maintainer",
 	      "name": "iOS"
 	    },
 	    {
@@ -102,7 +103,7 @@
 	"testPresets": [
 		{
 	      "configuration": "Debug",
-	      "configurePreset": "default",
+	      "configurePreset": "maintainer",
 	      "execution": {
 	        "jobs": 4,
 	        "noTestsAction": "error"
@@ -112,9 +113,9 @@
 	          "name": "foleys_gui_magic."
 	        }
 	      },
-	      "name": "default",
+	      "name": "maintainer",
 	      "output": {
-	        "outputLogFile": "${sourceDir}/Builds/test_log.log",
+	        "outputLogFile": "${sourceDir}/logs/test_log.log",
 	        "outputOnFailure": true,
 	        "shortProgress": true,
 	        "verbosity": "verbose"

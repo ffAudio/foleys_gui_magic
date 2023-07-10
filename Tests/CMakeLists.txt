@@ -2,17 +2,12 @@
 
 Unit tests for foleys_gui_magic
 
-The Catch2 library is used to build the unit test runner. 
-A simple find module is included in the Cmake/ directory -- if no system install 
-of Catch2 is found, the sources will be fetched from GitHub at configure time.
+The Catch2 library is used to build the unit test runner. Catch2 is fetched at
+configure time using FetchContent.
 
 The option FGM_TEST_INSTALL, when on, calls find_package(foleys_gui_magic) and 
 builds the unit test runner against this installed package. This can be used to
 test the installation process. Defaults to off.
-
-For each category of tests, a CTest test will be created, which executes the 
-unit test runner and runs only the tests in that category. Each test will be
-named `foleys_gui_magic.<category>`.
 
 ]]
 
@@ -52,18 +47,27 @@ if (FGM_TEST_INSTALL OR PROJECT_IS_TOP_LEVEL)
 	find_package (foleys_gui_magic "${PROJECT_VERSION}" EXACT REQUIRED CONFIG)
 endif ()
 
-if(PROJECT_IS_TOP_LEVEL)
-	list (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../CMake")
+include (FetchContent)
+
+FetchContent_Declare (Catch2 
+					  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+					  GIT_TAG origin/devel)
+
+FetchContent_MakeAvailable (Catch2)
+
+if(catch2_SOURCE_DIR)
+    list (APPEND CMAKE_MODULE_PATH "${catch2_SOURCE_DIR}/extras")
 endif()
 
-find_package (Catch2 3 REQUIRED)
+include (Catch)
 
 juce_add_console_app (FoleysGUIMagicTests VERSION ${FOLEYS_VERSION}
 		BUNDLE_ID "com.foleysfinest.foleys_gui_magic.tests")
 
 target_sources (FoleysGUIMagicTests PRIVATE 
 					foleys_MagicProcessorTests.cpp 
-					foleys_GuiTreeTests.cpp)
+					foleys_GuiTreeTests.cpp
+					foleys_TestProcessors.h)
 
 set_target_properties (
 	FoleysGUIMagicTests
@@ -74,22 +78,16 @@ set_target_properties (
 
 target_link_libraries (FoleysGUIMagicTests PRIVATE 
 							Catch2::Catch2WithMain 
-							foleys_gui_magic)
+							foleys::foleys_gui_magic)
 
-get_target_property (tests_sources FoleysGUIMagicTests SOURCES)
-
-source_group (TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${tests_sources})
-
-# execute each category of unit test cases as a separate test
-set (test_categories processor gui)
-
-foreach (tag IN LISTS test_categories)
-	add_test (NAME "foleys_gui_magic.${tag}" 
-			  COMMAND FoleysGUIMagicTests "[${tag}]" 
-			  			--warn NoAssertions 
-			  			--order rand 
-			  			--colour-mode ansi 
-			  			--verbosity high)
-
-	set_tests_properties ("foleys_gui_magic.${tag}" PROPERTIES LABELS "foleys_gui_magic;UnitTests")
-endforeach ()
+catch_discover_tests (
+    FoleysGUIMagicTests
+    TEST_PREFIX foleys_gui_magic.
+    EXTRA_ARGS
+    	--warn NoAssertions
+    	--order rand
+    	--verbosity high
+    PROPERTIES
+    	SKIP_REGULAR_EXPRESSION "SKIPPED:"
+    	FAIL_REGULAR_EXPRESSION "FAILED:"
+)

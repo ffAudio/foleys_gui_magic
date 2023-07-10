@@ -1,4 +1,6 @@
 **/.DS_*
 **/.idea
 cmake-build-*
-Builds
+[Bb]uilds/
+[Bb]build/
+logs/
