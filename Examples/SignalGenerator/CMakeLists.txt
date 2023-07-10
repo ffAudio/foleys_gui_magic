@@ -63,3 +63,8 @@ foreach(FORMAT ${FORMATS})
     get_target_property(ARTEFACTS_DIR ${PROJECT_NAME}_${FORMAT} LIBRARY_OUTPUT_DIRECTORY)
     add_custom_command(TARGET ${PROJECT_NAME}_${FORMAT} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${ARTEFACTS_DIR} ${COPY_FOLDER})
 endforeach()
+
+if(FOLEYS_RUN_PLUGINVAL)
+    pgm_add_pluginval_tests (SignalGenerator 
+        TEST_BASE_NAME foleys_gui_magic.examples.SignalGenerator.pluginval)
+endif()
