@@ -1,9 +1,16 @@
 #[[
 
+PGMPluginval
+--------------
+
 This module provides utility functions for setting up pluginval test cases.
 
 This module searches for pluginval in your PATH; this module currently does not download or build 
 pluginval if it can't be found, it will simply issue a warning and not create any test cases.
+
+To help this module find pluginval, either make sure it can be found in your PATH (ie, check by
+running `which pluginval` on Mac or `where pluginval` on Windows), or you can also explicitly set the
+variable PLUGINVAL_PROGRAM to the full path to the pluginval executable.
 
 ]]
 
@@ -34,12 +41,12 @@ mark_as_advanced (PLUGINVAL_PROGRAM PLUGINVAL_STRICTNESS PLUGINVAL_REPEATS PLUGI
 
 #[[
 
-This function registers CTest test cases to run pluginval on the `pluginTarget`. 
+  pgm_add_pluginval_tests (<pluginTarget>
+  						  [TEST_BASE_NAME <name>])
 
-Of the formats we build, pluginval supports VST3, VST2, and AU (on Mac). Each one will be tested 
-as a separate CTest test case, named `pluginval.<pluginTarget>.<format>`.
+This function registers CTest test cases to run pluginval on each format of the `pluginTarget`. 
 
-This function does nothing if the `LBA_TESTS` option is not enabled.
+Pluginval supports VST3, VST2, and AU (on Mac). Each one will be tested as a separate CTest test case.
 
 On Mac, pluginval can only find audio units that are in the system AU directories, so the AU test
 will only be added if the `JUCE_COPY_PLUGIN_AFTER_BUILD` option is enabled.
@@ -47,17 +54,31 @@ will only be added if the `JUCE_COPY_PLUGIN_AFTER_BUILD` option is enabled.
 `pluginTarget` should be the name of your plugin's shared code target (the name you passed to
 `juce_add_plugin`).
 
+Example usages:
+
+ juce_add_plugin (Foo ...)
+ pgm_add_pluginval_tests (Foo)
+
+ juce_add_plugin (Bar ...)
+ pgm_add_pluginval_tests (Bar TEST_BASE_NAME BarTests)
+
 ]]
-function (lba_add_pluginval_tests pluginTarget)
+function (pgm_add_pluginval_tests pluginTarget)
 
 	if (NOT TARGET "${pluginTarget}")
 		message (
 			FATAL_ERROR "${CMAKE_CURRENT_FUNCTION} - plugin target ${pluginTarget} does not exist!")
 	endif ()
 
-	if (NOT (LBA_TESTS AND PLUGINVAL_PROGRAM))
+	if (NOT PLUGINVAL_PROGRAM)
 		return ()
 	endif ()
+
+	cmake_parse_arguments (ARG "" "TEST_BASE_NAME" "" ${ARGN})
+
+	if(NOT ARG_TEST_BASE_NAME)
+		set (ARG_TEST_BASE_NAME "${pluginTarget}.pluginval")
+	endif()
 
 	list (JOIN PLUGINVAL_SAMPLERATES "," sample_rates)
 	list (JOIN PLUGINVAL_BLOCKSIZES "," block_sizes)
@@ -84,7 +105,7 @@ function (lba_add_pluginval_tests pluginTarget)
 		get_target_property (plugin_artefact "${format_target}" JUCE_PLUGIN_ARTEFACT_FILE)
 
 		add_test (
-			NAME "lobith.pluginval.${pluginTarget}.${formatName}"
+			NAME "${ARG_TEST_BASE_NAME}.${formatName}"
 			COMMAND "${PLUGINVAL_PROGRAM}"
 						--strictness-level "${PLUGINVAL_STRICTNESS}"
 						--sample-rates "${sample_rates}"
