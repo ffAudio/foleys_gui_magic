@@ -2,12 +2,10 @@ cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 set (FGM_VERSION 1.4.0)
 
-project ("foleys_gui_magic"
+project (foleys_gui_magic
         DESCRIPTION "PluginGuiMagic"
         HOMEPAGE_URL "https://foleysfinest.com/PluginGuiMagic"
         LANGUAGES CXX)
-
-enable_testing()
 
 list (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMakeIncludes")
 
@@ -49,10 +47,6 @@ FetchContent_MakeAvailable (juce)
 
 add_subdirectory (modules)
 
-if (FOLEYS_BUILD_TESTS)
-    message(Tests are TODO)
-endif ()
-
 if (FOLEYS_BUILD_EXAMPLES)
     message(Build examples)
     add_subdirectory(Examples)
@@ -62,11 +56,14 @@ if (FOLEYS_RUN_PLUGINVAL)
     include (CMakeIncludes/Pluginval.cmake)
 endif ()
 
-project (foleys_gui_magic)
-
 # tests
 if(FOLEYS_BUILD_TESTS)
+    enable_testing()
     add_subdirectory (Tests)
+
+    if(foleys_gui_magic_IS_TOP_LEVEL)
+        include (CTest)
+    endif()
 endif()
 
 # install rules
