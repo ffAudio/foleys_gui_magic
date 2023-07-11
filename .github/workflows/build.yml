@@ -8,15 +8,14 @@ on:
       - 'next-generation'
   pull_request: {}
 
-env:
-  BUILD_TYPE: Release
-
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} - ${{ matrix.build_type }}
     strategy:
       matrix:
         os: [macos-latest, windows-latest]
+        build_type: [Debug, Release]
       fail-fast: false
 
     steps:
@@ -28,7 +27,7 @@ jobs:
         run: cmake --preset maintainer --log-level=VERBOSE
 
       - name: Build
-        run: cmake --build --preset maintainer --config ${{ env.BUILD_TYPE }}
+        run: cmake --build --preset maintainer --config ${{ matrix.build_type }}
 
       - name: Run tests
-        run: ctest --preset maintainer -j 4 -C ${{ env.BUILD_TYPE }}
+        run: ctest --preset maintainer -j 4 -C ${{ matrix.build_type }}
