@@ -11,8 +11,9 @@ list (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMakeIncludes")
 
 include (PGMPluginval)
 
-option (FOLEYS_BUILD_TESTS "Build and run the unit tests" ON)
 option (FOLEYS_BUILD_EXAMPLES "Build the examples" ON)
+option (FOLEYS_BUILD_TESTS "Build and run the unit tests" ON)
+option (FOLEYS_RUN_PLUGINVAL "Build and run the unit tests" ON)
 
 set_property (GLOBAL PROPERTY USE_FOLDERS ON)
 set_property (GLOBAL PROPERTY DEBUG_CONFIGURATIONS Debug)
