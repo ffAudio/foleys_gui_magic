@@ -13,7 +13,7 @@ include (PGMPluginval)
 
 option (FOLEYS_BUILD_EXAMPLES "Build the examples" ON)
 option (FOLEYS_BUILD_TESTS "Build and run the unit tests" ON)
-option (FOLEYS_RUN_PLUGINVAL "Build and run the unit tests" ON)
+option (FOLEYS_RUN_PLUGINVAL "Run pluginval on the example plugins" ON)
 
 set_property (GLOBAL PROPERTY USE_FOLDERS ON)
 set_property (GLOBAL PROPERTY DEBUG_CONFIGURATIONS Debug)
@@ -49,12 +49,6 @@ FetchContent_MakeAvailable (juce)
 
 add_subdirectory (modules)
 
-if (FOLEYS_BUILD_EXAMPLES)
-    option (FOLEYS_RUN_PLUGINVAL "Run pluginval on the examples" ON)
-    message(Build examples)
-    add_subdirectory(Examples)
-endif ()
-
 if(FOLEYS_BUILD_TESTS)
     enable_testing()
     add_subdirectory (Tests)
@@ -63,6 +57,11 @@ if(FOLEYS_BUILD_TESTS)
         include (CTest)
     endif()
 endif()
+
+# this must be AFTER the enable_testing() call above!
+if (FOLEYS_BUILD_EXAMPLES)
+    add_subdirectory(Examples)
+endif ()
 
 # install rules
 

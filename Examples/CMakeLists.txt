@@ -1,5 +1,22 @@
 # Add examples
 
+message (STATUS "Build examples")
+message (STATUS "Run pluginval on examples: ${FOLEYS_RUN_PLUGINVAL}")
+
+if(FOLEYS_RUN_PLUGINVAL)
+    include (PGMPluginval)
+endif()
+
+# for our internal use only
+# this function only adds pluginval tests if FOLEYS_RUN_PLUGINVAL is on, and uses our test naming convention
+function(__pgm_internal_add_pluginval_tests pluginTarget)
+    if(FOLEYS_RUN_PLUGINVAL)
+        pgm_add_pluginval_tests ("${pluginTarget}" 
+            TEST_BASE_NAME "foleys_gui_magic.examples.${pluginTarget}.pluginval")
+    endif()
+endfunction()
+
+
 # check which formats we want to build
 set(FORMATS "VST3" "Standalone")
 if(APPLE OR WIN32) # no AAX on Linux
