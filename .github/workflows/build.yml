@@ -8,6 +8,13 @@ on:
       - 'next-generation'
   pull_request: {}
 
+defaults:
+  run:
+    shell: bash
+
+env:
+  PLUGINVAL_VERSION: v1.0.3
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -23,8 +30,18 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Install pluginval
+        id: pluginval
+        env:
+          PLUGINVAL_BINARY: ${{ runner.os == 'macOS' && 'pluginval.app/Contents/MacOS/pluginval' || 'pluginval.exe' }}
+        run: |
+          curl -LO "https://github.com/Tracktion/pluginval/releases/download/${{ env.PLUGINVAL_VERSION }}/pluginval_${{ runner.os }}.zip"
+          7z x pluginval_${{ matrix.name }}.zip
+          echo PLUGINVAL_PATH=$(pwd)/$PLUGINVAL_BINARY >> $GITHUB_OUTPUT
+        working-directory: Builds/tmp
+
       - name: Configure CMake
-        run: cmake --preset maintainer --log-level=VERBOSE
+        run: cmake --preset maintainer --log-level=VERBOSE -D PLUGINVAL_PROGRAM=${{ steps.pluginval.outputs.PLUGINVAL_PATH }}
 
       - name: Build
         run: cmake --build --preset maintainer --config ${{ matrix.build_type }}
