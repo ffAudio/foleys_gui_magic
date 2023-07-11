@@ -34,11 +34,13 @@ jobs:
         id: pluginval
         env:
           PLUGINVAL_BINARY: ${{ runner.os == 'macOS' && 'pluginval.app/Contents/MacOS/pluginval' || 'pluginval.exe' }}
+          TEMP_DIR: Builds/tmp
         run: |
+          mkdir $TEMP_DIR
+          cd $TEMP_DIR
           curl -LO "https://github.com/Tracktion/pluginval/releases/download/${{ env.PLUGINVAL_VERSION }}/pluginval_${{ runner.os }}.zip"
           7z x pluginval_${{ matrix.name }}.zip
           echo PLUGINVAL_PATH=$(pwd)/$PLUGINVAL_BINARY >> $GITHUB_OUTPUT
-        working-directory: Builds/tmp
 
       - name: Configure CMake
         run: cmake --preset maintainer --log-level=VERBOSE -D PLUGINVAL_PROGRAM=${{ steps.pluginval.outputs.PLUGINVAL_PATH }}
