@@ -1,6 +1,12 @@
 name: CMake
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - 'main'
+      - 'develop'
+      - 'next-generation'
+  pull_request: {}
 
 env:
   BUILD_TYPE: Release

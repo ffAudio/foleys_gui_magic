@@ -1,6 +1,16 @@
 PluginGuiMagic - Versions history
 ================================
 
+1.4.0
+-----
+
+- Reorganised repository:
+  - The module is now in a subdirectory: modules/foleys_gui_magic
+  - Integrated examples
+  - Added unit tests using catch2
+  - Validates using pluginval, see https://github.com/Tracktion/pluginval
+- Replaced the develop branch with a fresh branch
+
 1.3.9 - 07.07.2023
 ------------------
 
