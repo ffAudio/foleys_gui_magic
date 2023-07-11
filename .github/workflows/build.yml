@@ -39,7 +39,7 @@ jobs:
           mkdir -p $TEMP_DIR
           cd $TEMP_DIR
           curl -LO "https://github.com/Tracktion/pluginval/releases/download/${{ env.PLUGINVAL_VERSION }}/pluginval_${{ runner.os }}.zip"
-          7z x pluginval_${{ matrix.name }}.zip
+          7z x pluginval_${{ runner.os }}.zip
           echo PLUGINVAL_PATH=$(pwd)/$PLUGINVAL_BINARY >> $GITHUB_OUTPUT
 
       - name: Configure CMake
