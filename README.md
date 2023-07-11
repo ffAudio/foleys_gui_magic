@@ -1,6 +1,15 @@
 foleys_gui_magic
 ===============
 
+DEPRECATION:
+the branch `develop` won't be updated and will be deleted soon.    
+The development continues in `devel` and will be merged regularly to `main`, so you can always fast-forward the main branch.
+
+main:    
+[![CMake](https://github.com/ffAudio/foleys_gui_magic/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/ffAudio/foleys_gui_magic/actions/workflows/build.yml)    
+devel:    
+[![CMake](https://github.com/ffAudio/foleys_gui_magic/actions/workflows/build.yml/badge.svg?branch=devel)](https://github.com/ffAudio/foleys_gui_magic/actions/workflows/build.yml)
+
 This module allows to create GUIs without any coding. It is created with a DOM model
 that provides a hierarchical information, and a CSS cascading stylesheet to define
 rules for the appearance of the GUI.
@@ -9,6 +18,18 @@ There is a drag and drop editor to add GUI elements, and to connect to
 parameters of your AudioProcessor. Also an editor in the style of FireBug
 to investigate the individual properties, and how they were obtained/calculated.
 
+Repository map
+--------------
+
+The module to add to your project is in `modules/foleys_gui_magic`. Ideally you just use the `juce_add_module()` in your CMakeLists.txt or add it via Projucer.
+
+In the folder `Examples` you find the example projects. The build will run pluginval on the examples (where it applies).    
+The CMake option for the examples is `FOLEYS_BUILD_EXAMPLES` and for pluginval `FOLEYS_RUN_PLUGINVAL`.
+
+In `Tests` there are the Catch2 unit tests. Each build will run those unit tests against the latest version.    
+The CMake option for the unit tests is `FOLEYS_BUILD_TESTS`.
+
+CMake will be responsible to fetch JUCE, pluginval and Catch2 if switched on.
 
 Support
 -------
@@ -132,13 +153,6 @@ The View component serves as container, that has the option to layer all child c
 or to layout them using flex-box.
 
 
-Demo projects
--------------
-
-There is a repository with demo projects, that includes this module as git submodule:
-[PluginGuiMagic examples](https://github.com/ffAudio/PluginGuiMagic)
-
-
 Contributing
 ------------
 
@@ -153,13 +167,14 @@ These will be built on our CI for OSX and Windows 10, so we catch hopefully any 
 early on. 
 Clone that repository using:
 ```
-git clone --recurse-submodules https://github.com/ffAudio/PluginGuiMagic.git
+git clone https://github.com/ffAudio/PluginGuiMagic.git
 ```
 To update:
 ```
-git pull origin master
-git submodule update
+git pull origin main
 ```
+
+Good luck and happy coding, erm designing, erm... both actually :-)
 
 
 Brighton, UK - started Sept. 2019
