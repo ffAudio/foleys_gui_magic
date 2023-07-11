@@ -29,7 +29,10 @@
 	        "unusedCli": false
 	      },
 	      "cacheVariables": {
-	      	"FGM_BUILD_TESTS": "OFF"
+	      	"FOLEYS_BUILD_TESTS": {
+	      		"type": "BOOL",
+	      		"value": "OFF"
+	      	}
 	      }
 	    },
 	    {
@@ -43,7 +46,18 @@
 	        "unusedCli": false
 	      },
 	      "cacheVariables": {
-	      	"FGM_BUILD_TESTS": "ON"
+	      	"FOLEYS_BUILD_TESTS": {
+	      		"type": "BOOL",
+	      		"value": "ON"
+	      	},
+	      	"FOLEYS_BUILD_EXAMPLES": {
+	      		"type": "BOOL",
+	      		"value": "ON"
+	      	},
+	      	"FOLEYS_RUN_PLUGINVAL": {
+	      		"type": "BOOL",
+	      		"value": "ON"
+	      	}
 	      }
 	    },
 	    {
@@ -110,7 +124,7 @@
 	      },
 	      "filter": {
 	        "include": {
-	          "name": "foleys_gui_magic."
+	          "name": "^foleys_gui_magic.+"
 	        }
 	      },
 	      "name": "maintainer",

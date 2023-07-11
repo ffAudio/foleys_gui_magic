@@ -25,7 +25,7 @@ jobs:
           submodules: recursive
 
       - name: Configure CMake
-        run: cmake --preset maintainer
+        run: cmake --preset maintainer --log-level=VERBOSE
 
       - name: Build
         run: cmake --build --preset maintainer --config ${{ env.BUILD_TYPE }}
