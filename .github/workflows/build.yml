@@ -36,7 +36,7 @@ jobs:
           PLUGINVAL_BINARY: ${{ runner.os == 'macOS' && 'pluginval.app/Contents/MacOS/pluginval' || 'pluginval.exe' }}
           TEMP_DIR: Builds/tmp
         run: |
-          mkdir $TEMP_DIR
+          mkdir -p $TEMP_DIR
           cd $TEMP_DIR
           curl -LO "https://github.com/Tracktion/pluginval/releases/download/${{ env.PLUGINVAL_VERSION }}/pluginval_${{ runner.os }}.zip"
           7z x pluginval_${{ matrix.name }}.zip
