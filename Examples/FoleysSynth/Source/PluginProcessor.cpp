@@ -101,6 +101,8 @@ void FoleysSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
 {
     juce::ScopedNoDenormals noDenormals;
 
+    buffer.clear();
+
     // MAGIC GUI: send midi messages to the keyboard state and MidiLearn
     magicState.processMidiBuffer (midiMessages, buffer.getNumSamples(), true);
 
