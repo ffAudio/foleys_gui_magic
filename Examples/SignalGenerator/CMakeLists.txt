@@ -21,7 +21,9 @@ juce_add_plugin(${PROJECT_NAME}
                 COMPANY_EMAIL "info@foleysfinest.com"
                 BUNDLE_ID "com.foleysfinest.SignalGenerator"
                 PLUGIN_NAME "PGM-SignalGenerator"
-                PRODUCT_NAME "PGM-SignalGenerator")
+                PRODUCT_NAME "PGM-SignalGenerator"
+                NEEDS_WEB_BROWSER FALSE
+                NEEDS_CURL FALSE)
 
 juce_add_binary_data(${PROJECT_NAME}_data
     SOURCES

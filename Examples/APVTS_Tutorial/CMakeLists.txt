@@ -19,7 +19,9 @@ juce_add_plugin(${PROJECT_NAME}
                 COMPANY_EMAIL "info@foleysfinest.com"
                 BUNDLE_ID "com.foleysfinest.APVTS-Tutorial"
                 PLUGIN_NAME "PGM-APVTS-Tutorial"
-                PRODUCT_NAME "PGM-APVTS-Tutorial")
+                PRODUCT_NAME "PGM-APVTS-Tutorial"
+                NEEDS_WEB_BROWSER FALSE
+                NEEDS_CURL FALSE)
 
 
 juce_generate_juce_header (${PROJECT_NAME})
