@@ -62,7 +62,13 @@ endif()
 include (Catch)
 
 juce_add_console_app (FoleysGUIMagicTests VERSION ${FOLEYS_VERSION}
-		BUNDLE_ID "com.foleysfinest.foleys_gui_magic.tests")
+		BUNDLE_ID "com.foleysfinest.foleys_gui_magic.tests"
+		NEEDS_WEB_BROWSER FALSE
+        NEEDS_CURL FALSE)
+
+target_compile_definitions (FoleysGUIMagicTests PRIVATE
+	JUCE_USE_CURL=0
+    JUCE_WEB_BROWSER=0)
 
 target_sources (FoleysGUIMagicTests PRIVATE 
 					foleys_MagicProcessorTests.cpp 
