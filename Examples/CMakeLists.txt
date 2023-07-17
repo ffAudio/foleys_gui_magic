@@ -64,6 +64,10 @@ if (APPLE)
     list(APPEND FORMATS "AU")
 endif()
 
+if (LINUX)
+    list(APPEND FORMATS "LV2")
+endif()
+
 # setup the copying to the output folder
 if (APPLE)
     set(COPY_FOLDER ${CMAKE_SOURCE_DIR}/Builds/MacOSX)
