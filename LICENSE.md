@@ -15,9 +15,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Non commercial usage
 --------------------
 
-This project is free to use of any charge for non commercial projects
-under the terms of the BSD 3-Clause License:
-
+This project is free to use of any charge under the terms of the 
+BSD 3-Clause License:
 
 **BSD 3-Clause License**
 
@@ -37,15 +36,3 @@ modification, are permitted provided that the following conditions are met:
 3. Neither the name of the copyright holder nor the names of its
    contributors may be used to endorse or promote products derived from
    this software without specific prior written permission.
-
-Commercial usage
-----------------
-
-To use this project in paid products you can buy a license at https://foleysfinest.com/developer/pluginguimagic/
-
-The paid license entitles you to publish and sell products with the foleys_gui_magic included in which format you want.
-You will get support on how to use it and how to integrate your own features into the gui builder by giving examples.
-
-There won't be free individual support, like checking or fixing your code.
-
-Feature requests and bug reports from license holders will be prioritised.
