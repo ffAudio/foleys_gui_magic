@@ -153,6 +153,11 @@ The View component serves as container, that has the option to layer all child c
 or to layout them using flex-box.
 
 
+Demo projects
+-------------
+
+You find the demo projects in the folder `Examples`. We use CMake for building the examples and running the unit tests.
+
 Contributing
 ------------
 
@@ -162,17 +167,10 @@ many people as possible, so please give your ideas as github issues and send pul
 We might ask you to change things in your pull requests to keep the style consistent and
 to keep the API as concise as possible.
 
-We have a repository containing example projects, that are our reference what must not break.
-These will be built on our CI for OSX and Windows 10, so we catch hopefully any breakage 
-early on. 
-Clone that repository using:
-```
-git clone https://github.com/ffAudio/PluginGuiMagic.git
-```
-To update:
-```
-git pull origin main
-```
+We have a discord server to discuss features, bugs or ideas:  
+[Discord](https://discord.gg/gxtjTx6fNg)
+
+If you make changes, make sure that the unit tests in `Tests` still succeed and the examples in the `Examples` folder still compile and work.
 
 Good luck and happy coding, erm designing, erm... both actually :-)
 

@@ -1,9 +1,9 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2022 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2019-2023 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
-    License for non-commercial projects:
+    **BSD 3-Clause License**
 
     Redistribution and use in source and binary forms, with or without modification,
     are permitted provided that the following conditions are met:
@@ -16,10 +16,7 @@
        may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    License for commercial products:
-
-    To sell commercial products containing this module, you are required to buy a
-    License from https://foleysfinest.com/developer/pluginguimagic/
+ ==============================================================================
 
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
     ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -45,7 +42,7 @@
                    juce_cryptography
 
     website:       https://foleysfinest.com/
-    license:       Dual license: non commercial under BSD V2 3-clause
+    license:       BSD V2 3-clause
 
     END_JUCE_MODULE_DECLARATION
 
