@@ -6,6 +6,7 @@
   ==============================================================================
 */
 
+#include "AudioThumbnail.h"
 #include "MainComponent.h"
 
 //==============================================================================
@@ -15,7 +16,9 @@ MainComponent::MainComponent()
 
     magicBuilder.registerJUCELookAndFeels();
     magicBuilder.registerJUCEFactories();
+    magicBuilder.registerFactory("Waveform", &foleys::WaveformItem::factory);
 
+    audioThumbnail = magicState.createAndAddObject<foleys::AudioThumbnail>("Waveform", thumbnailCache, manager);
 
     magicState.addTrigger ("start", [&] { transport.start(); });
     magicState.addTrigger ("stop", [&] { transport.stop(); });
@@ -86,6 +89,8 @@ MainComponent::~MainComponent()
 void MainComponent::loadFile (const juce::File& file)
 {
     lastFolder = file.getParentDirectory();
+
+    audioThumbnail->setAudioFile(file);
 
     auto reader = manager.createReaderFor (file);
     if (reader)

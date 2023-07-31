@@ -10,16 +10,22 @@
 
 #include <JuceHeader.h>
 
+namespace foleys
+{
+class AudioThumbnail;
+}
+
 //==============================================================================
 /*
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent   : public juce::AudioAppComponent,
-                        public juce::Slider::Listener,
-                        private juce::Value::Listener,
-                        private juce::ChangeListener,
-                        private juce::Timer
+class MainComponent
+  : public juce::AudioAppComponent
+  , public juce::Slider::Listener
+  , private juce::Value::Listener
+  , private juce::ChangeListener
+  , private juce::Timer
 {
 public:
     //==============================================================================
@@ -38,7 +44,6 @@ public:
     void resized() override;
 
 private:
-
     void valueChanged (juce::Value&) override;
     void sliderValueChanged (juce::Slider*) override;
     void changeListenerCallback (juce::ChangeBroadcaster*) override;
@@ -53,14 +58,17 @@ private:
     juce::File               lastFolder = juce::File::getSpecialLocation (juce::File::userMusicDirectory);
 
     std::unique_ptr<juce::AudioFormatReaderSource> source;
-    juce::AudioTransportSource  transport;
-    juce::Value                 gainValue { 1.0f };
+    juce::AudioTransportSource                     transport;
+    juce::Value                                    gainValue { 1.0f };
 
-    foleys::MagicGUIState       magicState;
-    foleys::MagicGUIBuilder     magicBuilder { magicState };
+    juce::AudioThumbnailCache thumbnailCache { 64 };
 
-    foleys::MagicPlotSource*    outputAnalyser { nullptr };
-    foleys::MagicLevelSource*   outputLevel    { nullptr };
+    foleys::MagicGUIState   magicState;
+    foleys::MagicGUIBuilder magicBuilder { magicState };
+    foleys::AudioThumbnail* audioThumbnail = nullptr;
+
+    foleys::MagicPlotSource*  outputAnalyser { nullptr };
+    foleys::MagicLevelSource* outputLevel { nullptr };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
