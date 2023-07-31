@@ -12,13 +12,28 @@ namespace foleys
 
 // ================================================================================
 
-class AudioThumbnail : public juce::ChangeBroadcaster
+/*!
+ * @class AudioThumbnail
+ * @brief An AudioThumbnail backend to be displayed in the GUI
+ *
+ * This serves as backend for an audio file to be displayed in the GUI.
+ * The WaveformDisplay will react to a change of the file.
+ */
+class WaveformHolder : public juce::ChangeBroadcaster
 {
 public:
-    AudioThumbnail (juce::AudioThumbnailCache& cache, juce::AudioFormatManager& manager);
-    ~AudioThumbnail() override;
+    WaveformHolder (juce::AudioThumbnailCache& cache, juce::AudioFormatManager& manager);
+    ~WaveformHolder() override;
 
+    /*!
+     * Set the audiofile to display
+     * @param file the audiofile
+     */
     void       setAudioFile (juce::File file);
+
+    /*!
+     * @return the currently displayed audio file
+     */
     juce::File getAudioFile() const;
 
     juce::AudioThumbnailCache& getCache();
@@ -29,8 +44,8 @@ private:
     juce::AudioThumbnailCache& thumbnailCache;
     juce::File                 audioFile;
 
-    JUCE_DECLARE_WEAK_REFERENCEABLE (AudioThumbnail)
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioThumbnail)
+    JUCE_DECLARE_WEAK_REFERENCEABLE (WaveformHolder)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveformHolder)
 };
 
 // ================================================================================
@@ -40,18 +55,24 @@ class WaveformDisplay
   , juce::ChangeListener
 {
 public:
-    WaveformDisplay() = default;
+    enum ColourIds
+    {
+        waveformBackgroundColour = 0x2002020,
+        waveformForegroundColour
+    };
+
+    WaveformDisplay();
     ~WaveformDisplay() override;
 
     void paint (juce::Graphics& g) override;
 
-    void setAudioThumbnail (AudioThumbnail* thumb);
+    void setAudioThumbnail (WaveformHolder* thumb);
     void updateAudioFile();
 
     void changeListenerCallback ([[maybe_unused]] juce::ChangeBroadcaster* sender) override;
 
 private:
-    AudioThumbnail*                       audioThumb = nullptr;
+    WaveformHolder*                       audioThumb = nullptr;
     std::unique_ptr<juce::AudioThumbnail> thumbnail;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveformDisplay)

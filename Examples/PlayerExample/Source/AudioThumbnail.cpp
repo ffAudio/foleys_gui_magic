@@ -9,38 +9,44 @@ namespace foleys
 
 // ================================================================================
 
-AudioThumbnail::AudioThumbnail (juce::AudioThumbnailCache& cache, juce::AudioFormatManager& managerToUse) : formatManager (managerToUse), thumbnailCache (cache)
+WaveformHolder::WaveformHolder (juce::AudioThumbnailCache& cache, juce::AudioFormatManager& managerToUse) : formatManager (managerToUse), thumbnailCache (cache)
 {
 }
 
-AudioThumbnail::~AudioThumbnail()
+WaveformHolder::~WaveformHolder()
 {
     masterReference.clear();
 }
 
-void AudioThumbnail::setAudioFile (juce::File file)
+void WaveformHolder::setAudioFile (juce::File file)
 {
     audioFile = file;
 
     sendChangeMessage();
 }
 
-juce::File AudioThumbnail::getAudioFile() const
+juce::File WaveformHolder::getAudioFile() const
 {
     return audioFile;
 }
 
-juce::AudioThumbnailCache& AudioThumbnail::getCache()
+juce::AudioThumbnailCache& WaveformHolder::getCache()
 {
     return thumbnailCache;
 }
 
-juce::AudioFormatManager& AudioThumbnail::getManager()
+juce::AudioFormatManager& WaveformHolder::getManager()
 {
     return formatManager;
 }
 
 // ================================================================================
+
+WaveformDisplay::WaveformDisplay()
+{
+    setColour (ColourIds::waveformBackgroundColour, juce::Colours::transparentBlack);
+    setColour (ColourIds::waveformForegroundColour, juce::Colours::orangered);
+}
 
 WaveformDisplay::~WaveformDisplay()
 {
@@ -50,7 +56,15 @@ WaveformDisplay::~WaveformDisplay()
 
 void WaveformDisplay::paint (juce::Graphics& g)
 {
-    g.setColour (juce::Colours::red);
+    auto background = findColour (ColourIds::waveformBackgroundColour);
+    auto foreground = findColour (ColourIds::waveformForegroundColour);
+
+    if (!background.isTransparent())
+    {
+        g.fillAll (background);
+    }
+
+    g.setColour (foreground);
 
     if (thumbnail)
     {
@@ -61,7 +75,7 @@ void WaveformDisplay::paint (juce::Graphics& g)
         g.drawFittedText (TRANS ("No File"), getLocalBounds(), juce::Justification::centred, 1);
 }
 
-void WaveformDisplay::setAudioThumbnail (AudioThumbnail* thumb)
+void WaveformDisplay::setAudioThumbnail (WaveformHolder* thumb)
 {
     if (audioThumb)
         audioThumb->removeChangeListener (this);
@@ -103,13 +117,16 @@ void WaveformDisplay::changeListenerCallback ([[maybe_unused]] juce::ChangeBroad
 
 WaveformItem::WaveformItem (MagicGUIBuilder& builder, const juce::ValueTree& node) : GuiItem (builder, node)
 {
+    setColourTranslation ({ { "waveform-background", WaveformDisplay::ColourIds::waveformBackgroundColour },
+                            { "waveform-colour", WaveformDisplay::ColourIds::waveformForegroundColour } });
+
     addAndMakeVisible (waveformDisplay);
 }
 
 void WaveformItem::update()
 {
     auto& state          = getMagicState();
-    auto* audioThumbnail = state.getObjectWithType<AudioThumbnail> ("Waveform");
+    auto* audioThumbnail = state.getObjectWithType<WaveformHolder> ("Waveform");
 
     waveformDisplay.setAudioThumbnail (audioThumbnail);
 }
