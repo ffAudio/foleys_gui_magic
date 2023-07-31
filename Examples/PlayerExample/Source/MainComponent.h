@@ -61,13 +61,14 @@ private:
     std::unique_ptr<juce::AudioFormatReaderSource> source;
     juce::AudioTransportSource                     transport;
     juce::Value                                    gainValue { 1.0f };
+    juce::AudioThumbnailCache                      thumbnailCache { 64 };
 
-    juce::AudioThumbnailCache thumbnailCache { 64 };
-
+    // Every GuiMagic view needs a MagicGuiState and a MagicBuilder, which will populate the view later on
     foleys::MagicGUIState   magicState;
     foleys::MagicGUIBuilder magicBuilder { magicState };
-    foleys::WaveformHolder* audioThumbnail = nullptr;
 
+    // The following are optional backends for specific GUI widgets to find signals or other information in the magicState
+    foleys::WaveformHolder*   audioThumbnail { nullptr };
     foleys::MagicPlotSource*  outputAnalyser { nullptr };
     foleys::MagicLevelSource* outputLevel { nullptr };
 

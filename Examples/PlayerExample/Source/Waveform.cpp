@@ -2,7 +2,7 @@
 // Created by Daniel Walz on 31.07.23.
 //
 
-#include "AudioThumbnail.h"
+#include "Waveform.h"
 
 namespace foleys
 {

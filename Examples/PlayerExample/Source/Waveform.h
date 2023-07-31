@@ -50,6 +50,10 @@ private:
 
 // ================================================================================
 
+/*!
+ * @class WaveformDisplay
+ * @brief This widget displays an audio file using juce::AudioThumbnail
+ */
 class WaveformDisplay
   : public juce::Component
   , juce::ChangeListener
@@ -80,6 +84,10 @@ private:
 
 // ================================================================================
 
+/*!
+ * @class WaveformItem
+ * @brief This is a wrapper class so the WaveformDisplay can be used in GuiMagic
+ */
 class WaveformItem : public GuiItem
 {
 public:
