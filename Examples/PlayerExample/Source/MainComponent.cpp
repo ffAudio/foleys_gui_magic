@@ -1,12 +1,15 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
+    An example of an AudioPlayer app made with FoleysGuiMagic
+    Note that this example is not a plugin, which was also important to show.
 
   ==============================================================================
 */
 
 #include "MainComponent.h"
+
+#include "Waveform.h"
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -15,8 +18,11 @@ MainComponent::MainComponent()
 
     magicBuilder.registerJUCELookAndFeels();
     magicBuilder.registerJUCEFactories();
+    magicBuilder.registerFactory("Waveform", &foleys::WaveformItem::factory);
 
+    audioThumbnail = magicState.createAndAddObject<foleys::WaveformHolder>("Waveform", thumbnailCache, manager);
 
+    // Triggers are functions that buttons in the GUI can be connected to
     magicState.addTrigger ("start", [&] { transport.start(); });
     magicState.addTrigger ("stop", [&] { transport.stop(); });
     magicState.addTrigger ("rewind", [&] { transport.setNextReadPosition (0); });
@@ -38,7 +44,6 @@ MainComponent::MainComponent()
         });
 
         magicBuilder.showOverlayDialog (std::move (dialog));
-
     });
 
     outputLevel    = magicState.createAndAddObject<foleys::MagicLevelSource>("level");
@@ -49,10 +54,11 @@ MainComponent::MainComponent()
     gainValue.addListener (this);
     gainValue.setValue (1.0);
 
+    // Finally populate the GUI with the child components
     magicState.setGuiValueTree (BinaryData::magic_xml, BinaryData::magic_xmlSize);
     magicBuilder.createGUI (*this);
-    updatePositionSlider();
 
+    updatePositionSlider();
     setSize (800, 600);
 
     transport.addChangeListener (this);
@@ -86,6 +92,8 @@ MainComponent::~MainComponent()
 void MainComponent::loadFile (const juce::File& file)
 {
     lastFolder = file.getParentDirectory();
+
+    audioThumbnail->setAudioFile(file);
 
     auto reader = manager.createReaderFor (file);
     if (reader)
