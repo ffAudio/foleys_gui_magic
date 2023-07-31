@@ -21,8 +21,8 @@ juce_generate_juce_header(${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME} PRIVATE
         Source/Main.cpp
-        Source/AudioThumbnail.cpp
-        Source/AudioThumbnail.h
+        Source/Waveform.cpp
+        Source/Waveform.h
         Source/MainComponent.cpp
         Source/MainComponent.h)
 
