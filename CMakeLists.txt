@@ -31,7 +31,7 @@
 
 cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
-set (FGM_VERSION 1.4.0)
+set (FGM_VERSION 1.4.1)
 
 project (foleys_gui_magic
         DESCRIPTION "PluginGuiMagic"
@@ -55,6 +55,8 @@ set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set (CMAKE_CXX_VISIBILITY_PRESET hidden)
 set (CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+
+set (BUILD_SHARED_LIBS OFF)
 
 # universal binaries on Mac
 set (CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING

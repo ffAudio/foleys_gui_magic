@@ -66,7 +66,9 @@ set (PLUGINVAL_SAMPLERATES "44100;44800;96000" CACHE STRING "list of samplerates
 
 set (PLUGINVAL_BLOCKSIZES "1;250;512" CACHE STRING "list of blocksizes to test in pluginval")
 
-mark_as_advanced (PLUGINVAL_PROGRAM PLUGINVAL_STRICTNESS PLUGINVAL_REPEATS PLUGINVAL_SAMPLERATES PLUGINVAL_BLOCKSIZES)
+set (PLUGINVAL_OUTPUT_DIR "${CMAKE_BINARY_DIR}/pluginval" CACHE PATH "Directory to write pluginval logs to")
+
+mark_as_advanced (PLUGINVAL_PROGRAM PLUGINVAL_STRICTNESS PLUGINVAL_REPEATS PLUGINVAL_SAMPLERATES PLUGINVAL_BLOCKSIZES PLUGINVAL_OUTPUT_DIR)
 
 #
 
@@ -141,8 +143,10 @@ function (pgm_add_pluginval_tests pluginTarget)
 						--strictness-level "${PLUGINVAL_STRICTNESS}"
 						--sample-rates "${sample_rates}"
 						--block-sizes "${block_sizes}"
-						--repeat "${PLUGINVAL_REPEATS}" --randomise
-						--validate "${plugin_artefact}")
+						--repeat "${PLUGINVAL_REPEATS}"
+						--validate "${plugin_artefact}"
+						--output-dir "${PLUGINVAL_OUTPUT_DIR}"
+						--randomise --verbose)
 
 		message (VERBOSE "Added pluginval test for plugin target ${format_target}")
 
