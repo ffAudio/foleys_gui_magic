@@ -18,7 +18,7 @@ MainComponent::MainComponent()
     magicBuilder.registerJUCEFactories();
     magicBuilder.registerFactory("Waveform", &foleys::WaveformItem::factory);
 
-    audioThumbnail = magicState.createAndAddObject<foleys::AudioThumbnail>("Waveform", thumbnailCache, manager);
+    audioThumbnail = magicState.createAndAddObject<foleys::WaveformHolder>("Waveform", thumbnailCache, manager);
 
     magicState.addTrigger ("start", [&] { transport.start(); });
     magicState.addTrigger ("stop", [&] { transport.stop(); });

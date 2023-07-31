@@ -1,7 +1,8 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
+    An example of an AudioPlayer app made with FoleysGuiMagic
+    Note that this example is not a plugin, which was also important to show.
 
   ==============================================================================
 */
@@ -12,7 +13,7 @@
 
 namespace foleys
 {
-class AudioThumbnail;
+class WaveformHolder;
 }
 
 //==============================================================================
@@ -65,7 +66,7 @@ private:
 
     foleys::MagicGUIState   magicState;
     foleys::MagicGUIBuilder magicBuilder { magicState };
-    foleys::AudioThumbnail* audioThumbnail = nullptr;
+    foleys::WaveformHolder* audioThumbnail = nullptr;
 
     foleys::MagicPlotSource*  outputAnalyser { nullptr };
     foleys::MagicLevelSource* outputLevel { nullptr };
