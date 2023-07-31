@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<magic>
+    <Styles>
+        <Style name="default">
+            <Nodes/>
+            <Classes>
+                <group border="2" flex-direction="column" padding="1"/>
+            </Classes>
+            <Types>
+                <Slider border="0"/>
+                <ToggleButton border="0" max-height="50" caption-size="0"/>
+                <TextButton border="0" max-height="50" caption-size="0"/>
+                <ComboBox border="0" max-height="50" caption-size="0"/>
+                <Plot border="0" margin="0" padding="0" background-color="00000000"/>
+            </Types>
+            <Palettes>
+                <default/>
+            </Palettes>
+        </Style>
+    </Styles>
+    <View id="root" flex-direction="column" resizable="1" resize-corner="1">
+        <Label text="Hello Gui-Magic!" label-text="ffff0000"/>
+    </View>
+</magic>
