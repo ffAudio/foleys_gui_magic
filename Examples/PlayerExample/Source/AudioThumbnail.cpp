@@ -53,7 +53,10 @@ void WaveformDisplay::paint (juce::Graphics& g)
     g.setColour (juce::Colours::red);
 
     if (thumbnail)
-        thumbnail->drawChannels (g, getLocalBounds().reduced (3), 0.0, 10.0, 1.0);
+    {
+        auto peak = thumbnail->getApproximatePeak();
+        thumbnail->drawChannels (g, getLocalBounds().reduced (3), 0.0, thumbnail->getTotalLength(), peak > 0.0f ? 1.0f / peak : 1.0f);
+    }
     else
         g.drawFittedText (TRANS ("No File"), getLocalBounds(), juce::Justification::centred, 1);
 }
@@ -78,6 +81,9 @@ void WaveformDisplay::updateAudioFile()
         thumbnail.reset();
         return;
     }
+
+    if (!audioThumb->getAudioFile().existsAsFile())
+        return;
 
     thumbnail = std::make_unique<juce::AudioThumbnail> (256, audioThumb->getManager(), audioThumb->getCache());
     thumbnail->setSource (new juce::FileInputSource (audioThumb->getAudioFile()));
