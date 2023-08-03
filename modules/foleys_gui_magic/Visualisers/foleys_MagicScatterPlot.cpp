@@ -119,8 +119,6 @@ void MagicScatterPlot::createPlotPaths (juce::Path& path, juce::Path& filledPath
         }
     }
 
-    // ToDo: Sum channels here if X and Y are multichannel and overlay is false
-
     path.clear();
     path.startNewSubPath (juce::jmap (dataX [position], -1.0f, 1.0f, bounds.getX(), bounds.getRight()),
                           juce::jmap (dataY [position], -1.0f, 1.0f, bounds.getBottom(), bounds.getY()));
@@ -134,8 +132,6 @@ void MagicScatterPlot::createPlotPaths (juce::Path& path, juce::Path& filledPath
         path.lineTo (juce::jmap (dataX [position], -1.0f, 1.0f, bounds.getX(), bounds.getRight()),
                      juce::jmap (dataY [position], -1.0f, 1.0f, bounds.getBottom(), bounds.getY()));
     }
-
-    // ToDo: Make more paths here if X and Y are multichannel and overlay is true
 
     filledPath = path;
     filledPath.lineTo (bounds.getBottomRight());
