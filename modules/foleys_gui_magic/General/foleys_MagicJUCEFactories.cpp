@@ -40,6 +40,7 @@
 #include "../Widgets/foleys_MagicLevelMeter.h"
 #include "../Widgets/foleys_MagicPlotComponent.h"
 #include "../Widgets/foleys_MidiLearnComponent.h"
+#include "../Widgets/foleys_MidiDisplayComponent.h"
 #include "../Widgets/foleys_MidiDrumpadComponent.h"
 #include "../Helpers/foleys_PopupMenuHelper.h"
 
@@ -891,6 +892,34 @@ private:
 
 //==============================================================================
 
+class MidiDisplayItem : public GuiItem
+{
+public:
+    FOLEYS_DECLARE_GUI_FACTORY (MidiDisplayItem)
+
+    MidiDisplayItem (MagicGUIBuilder& builder, const juce::ValueTree& node) : GuiItem (builder, node)
+    {
+        if (auto* state = dynamic_cast<MagicProcessorState*>(&builder.getMagicState()))
+            midiDisplay.setMagicProcessorState (state);
+
+        addAndMakeVisible (midiDisplay);
+    }
+
+    void update() override {}
+
+    juce::Component* getWrappedComponent() override
+    {
+        return &midiDisplay;
+    }
+
+private:
+    MidiDisplayComponent midiDisplay;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiDisplayItem)
+};
+
+//==============================================================================
+
 class ListBoxItem : public GuiItem,
                     public juce::ChangeListener
 {
@@ -995,6 +1024,7 @@ void MagicGUIBuilder::registerJUCEFactories()
     registerFactory (IDs::drumpadComponent, &DrumpadItem::factory);
     registerFactory (IDs::meter, &LevelMeterItem::factory);
     registerFactory ("MidiLearn", &MidiLearnItem::factory);
+    registerFactory ("MidiDisplay", &MidiDisplayItem::factory);
     registerFactory (IDs::listBox, &ListBoxItem::factory);
 
 #if JUCE_MODULE_AVAILABLE_juce_gui_extra && JUCE_WEB_BROWSER
