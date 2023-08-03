@@ -285,7 +285,7 @@ protected:
 
     int getReadPosition(const float* data, const int pos0)
     {
-        if (not triggeredPos and not triggeredNeg)
+        if (! triggeredPos and ! triggeredNeg)
           return (pos0 >= 0 ? pos0 : pos0+samples.getNumSamples());
 
         int posW = pos0;
