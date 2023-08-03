@@ -1,9 +1,9 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2023 Julius Smith and Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
-    License for non-commercial projects:
+    **BSD 3-Clause License**
 
     Redistribution and use in source and binary forms, with or without modification,
     are permitted provided that the following conditions are met:
@@ -16,10 +16,7 @@
        may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    License for commercial products:
-
-    To sell commercial products containing this module, you are required to buy a
-    License from https://foleysfinest.com/developer/pluginguimagic/
+ ==============================================================================
 
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
     ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -39,6 +36,20 @@
 #include <juce_graphics/juce_graphics.h>
 #include <juce_audio_basics/juce_audio_basics.h>
 
+/**
+ * @file foleys_MagicAudioPlotSource.h
+ * @brief API-compatible replacement for foleys_MagicPlotSource.h
+ *
+ * This file contains proposed extensions for MagicPlotSource
+ * motivated by various audio needs.  It is in a separate file with a
+ * different class name simply so that merges are never necessary
+ * until adoption, if ever.
+ *
+ * @author Julius Smith
+ * @date 2023-08-03
+ * @version 0.1
+ */
+
 namespace foleys
 {
 
@@ -52,7 +63,7 @@ class MagicAudioPlotSource // not worth the trouble : public MagicPlotSource
 {
 public:
 
-    /** Constructor. */
+    /** Default Constructor. */
     MagicAudioPlotSource()=default;
 
     /** Constructor allowing specification of a channel to display, or -1 to indicate all channels. */
