@@ -1,9 +1,9 @@
 /*
  ==============================================================================
-    Copyright (c) 2019-2021 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2023  Julius Smith and Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
-    License for non-commercial projects:
+    **BSD 3-Clause License**
 
     Redistribution and use in source and binary forms, with or without modification,
     are permitted provided that the following conditions are met:
@@ -16,10 +16,7 @@
        may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    License for commercial products:
-
-    To sell commercial products containing this module, you are required to buy a
-    License from https://foleysfinest.com/developer/pluginguimagic/
+ ==============================================================================
 
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
     ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -122,7 +119,7 @@ void MagicScatterPlot::createPlotPaths (juce::Path& path, juce::Path& filledPath
         }
     }
 
-    // FIXME: Sum channels here if X and Y are multichannel and overlay is false
+    // ToDo: Sum channels here if X and Y are multichannel and overlay is false
 
     path.clear();
     path.startNewSubPath (juce::jmap (dataX [position], -1.0f, 1.0f, bounds.getX(), bounds.getRight()),
@@ -138,7 +135,7 @@ void MagicScatterPlot::createPlotPaths (juce::Path& path, juce::Path& filledPath
                      juce::jmap (dataY [position], -1.0f, 1.0f, bounds.getBottom(), bounds.getY()));
     }
 
-    // FIXME: Make more paths here if X and Y are multichannel and overlay is true
+    // ToDo: Make more paths here if X and Y are multichannel and overlay is true
 
     filledPath = path;
     filledPath.lineTo (bounds.getBottomRight());
