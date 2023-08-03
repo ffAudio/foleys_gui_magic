@@ -123,11 +123,15 @@
 #include "Visualisers/foleys_MagicFilterPlot.h"
 #include "Visualisers/foleys_MagicAnalyser.h"
 #include "Visualisers/foleys_MagicOscilloscope.h"
+#include "Visualisers/foleys_MagicOscilloscopeAudio.h"
 #include "Visualisers/foleys_MagicScatterPlot.h"
+// Helps with writing code compatible with older PGM versions:
+#define HAVE_SCATTER_PLOT
 
 #include "Widgets/foleys_AutoOrientationSlider.h"
 #include "Widgets/foleys_MagicLevelMeter.h"
 #include "Widgets/foleys_MagicPlotComponent.h"
+#include "Widgets/foleys_MagicAudioPlotComponent.h"
 #include "Widgets/foleys_XYDragComponent.h"
 #include "Widgets/foleys_FileBrowserDialog.h"
 #include "Widgets/foleys_MidiLearnComponent.h"
