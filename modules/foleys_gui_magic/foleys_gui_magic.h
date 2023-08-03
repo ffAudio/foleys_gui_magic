@@ -122,6 +122,7 @@
 #include "Visualisers/foleys_MagicFilterPlot.h"
 #include "Visualisers/foleys_MagicAnalyser.h"
 #include "Visualisers/foleys_MagicOscilloscope.h"
+#include "Visualisers/foleys_MagicScatterPlot.h"
 
 #include "Widgets/foleys_AutoOrientationSlider.h"
 #include "Widgets/foleys_MagicLevelMeter.h"
