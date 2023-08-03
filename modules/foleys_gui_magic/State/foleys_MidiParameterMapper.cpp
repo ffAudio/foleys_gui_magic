@@ -132,6 +132,21 @@ int MidiParameterMapper::getLastController() const
     return lastController.load();
 }
 
+int MidiParameterMapper::getLastMidiChannel() const
+{
+    return lastMidiChannel.load();
+}
+
+int MidiParameterMapper::getLastMidiNote() const
+{
+    return lastMidiNote.load();
+}
+
+int MidiParameterMapper::getLastMidiVelocity() const
+{
+    return lastMidiVelocity.load();
+}
+
 juce::ValueTree MidiParameterMapper::getMappingSettings()
 {
     return settings->settings.getOrCreateChildWithName (IDs::mappings, nullptr);
