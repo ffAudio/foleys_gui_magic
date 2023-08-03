@@ -113,6 +113,9 @@ private:
 
     MagicProcessorState&        state;
     std::atomic<int>            lastController { -1 };
+    std::atomic<int>            lastMidiChannel { -1 };
+    std::atomic<int>            lastMidiNote { -1 };
+    std::atomic<int>            lastMidiVelocity { -1 };
     MidiMapping                 midiMapper;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiParameterMapper)
