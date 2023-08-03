@@ -77,6 +77,21 @@ public:
     int  getLastController() const;
 
     /*!
+     * @return the last MIDI Channel on which MIDI was received by MIDI Mapper
+     */
+    int  getLastMidiChannel() const;
+
+    /*!
+     * @return the last MIDI Note received by MIDI Mapper
+     */
+    int  getLastMidiNote() const;
+
+    /*!
+     * @return the last MIDI Velocity received by MIDI Mapper
+     */
+    int  getLastMidiVelocity() const;
+
+    /*!
      * Grant access to the ValueTree to save or restore the mappings manually
      * @return the ValueTree containing the mappings
      */
