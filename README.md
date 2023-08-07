@@ -7,8 +7,6 @@ The development continues in `devel` and will be merged regularly to `main`, so 
 
 main:    
 [![CMake](https://github.com/ffAudio/foleys_gui_magic/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/ffAudio/foleys_gui_magic/actions/workflows/build.yml)    
-devel:    
-[![CMake](https://github.com/ffAudio/foleys_gui_magic/actions/workflows/build.yml/badge.svg?branch=devel)](https://github.com/ffAudio/foleys_gui_magic/actions/workflows/build.yml)
 
 This module allows to create GUIs without any coding. It is created with a DOM model
 that provides a hierarchical information, and a CSS cascading stylesheet to define
@@ -176,3 +174,4 @@ Good luck and happy coding, erm designing, erm... both actually :-)
 
 
 Brighton, UK - started Sept. 2019
+Esslingen, Germany - 2020 - 2023
