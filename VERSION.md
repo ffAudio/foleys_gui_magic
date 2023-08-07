@@ -4,6 +4,8 @@ PluginGuiMagic - Versions history
 1.4.1
 -----
 
+- Added waveform component to the player example
+
 1.4.0 - 27.07.2023
 ------------------
 
