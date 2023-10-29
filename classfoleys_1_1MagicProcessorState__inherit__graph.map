@@ -1,0 +1,5 @@
+<map id="MagicProcessorState" name="MagicProcessorState">
+<area shape="rect" id="Node000001" title="The MagicProcessorState is a subclass of MagicGUIState, that adds AudioProcessor specific functionali..." alt="" coords="5,79,152,105"/>
+<area shape="rect" id="Node000002" href="$classfoleys_1_1MagicGUIState.html" title="The MagicGuiState is the docking station for the MagicGUIBuilder." alt="" coords="23,5,134,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="81,46,81,79,76,79,76,46"/>
+</map>

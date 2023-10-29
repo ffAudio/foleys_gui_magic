@@ -1,0 +1,31 @@
+<map id="GuiItem" name="GuiItem">
+<area shape="rect" id="Node000001" title="The GuiItem class will draw borders and descriptions around widgets, if defined." alt="" coords="5,301,73,327"/>
+<area shape="rect" id="Node000002" href="$classfoleys_1_1ComboBoxItem.html" title=" " alt="" coords="128,5,238,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="38,285,43,234,55,169,79,101,97,69,119,40,133,30,136,34,123,44,101,72,84,103,60,171,48,235,44,286"/>
+<area shape="rect" id="Node000003" href="$classfoleys_1_1Container.html" title="The Container is a GuiItem, that can hold multiple Components." alt="" coords="145,55,221,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="40,286,48,244,61,191,84,137,100,112,119,89,143,74,146,79,122,94,104,115,89,140,67,193,53,245,46,287"/>
+<area shape="rect" id="Node000005" href="$classfoleys_1_1DrumpadItem.html" title=" " alt="" coords="133,104,233,130"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="44,285,54,252,69,213,90,174,119,139,134,128,137,132,122,143,95,177,74,216,59,254,49,287"/>
+<area shape="rect" id="Node000006" href="$classfoleys_1_1KeyboardItem.html" title=" " alt="" coords="132,153,234,179"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="49,286,77,237,96,211,119,188,136,177,139,182,122,192,100,214,81,240,54,289"/>
+<area shape="rect" id="Node000007" href="$classfoleys_1_1LabelItem.html" title=" " alt="" coords="143,203,223,228"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="60,288,87,262,119,237,142,226,144,230,122,242,90,266,64,292"/>
+<area shape="rect" id="Node000008" href="$classfoleys_1_1LevelMeterItem.html" title=" " alt="" coords="127,252,239,278"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="87,295,142,276,144,281,88,300"/>
+<area shape="rect" id="Node000009" href="$classfoleys_1_1ListBoxItem.html" title=" " alt="" coords="137,301,229,327"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="88,312,137,312,137,317,88,317"/>
+<area shape="rect" id="Node000010" href="$classfoleys_1_1MidiLearnItem.html" title=" " alt="" coords="131,351,235,376"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="88,328,144,348,142,353,87,333"/>
+<area shape="rect" id="Node000011" href="$classfoleys_1_1PlotItem.html" title=" " alt="" coords="148,400,218,426"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="64,337,90,362,122,387,149,400,146,404,119,391,87,366,60,340"/>
+<area shape="rect" id="Node000012" href="$classfoleys_1_1SliderItem.html" title=" " alt="" coords="143,449,223,475"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="54,340,81,389,100,414,122,436,144,449,141,453,119,440,96,417,77,392,49,342"/>
+<area shape="rect" id="Node000013" href="$classfoleys_1_1TextButtonItem.html" title=" " alt="" coords="128,499,238,524"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="49,341,59,374,74,413,95,452,122,486,137,496,134,500,119,489,90,455,69,415,54,376,44,343"/>
+<area shape="rect" id="Node000014" href="$classfoleys_1_1ToggleButtonItem.html" title=" " alt="" coords="121,548,245,574"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="46,341,53,384,67,435,89,488,104,513,123,535,137,545,133,550,119,539,100,516,84,491,61,437,48,385,40,342"/>
+<area shape="rect" id="Node000015" href="$classfoleys_1_1XYDraggerItem.html" title=" " alt="" coords="128,597,238,623"/>
+<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="44,342,48,393,60,458,84,525,101,556,123,584,136,595,133,599,119,588,97,559,79,527,55,459,43,394,38,343"/>
+<area shape="rect" id="Node000004" href="$classfoleys_1_1RootItem.html" title=" " alt="" coords="293,55,367,80"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="237,65,293,65,293,70,237,70"/>
+</map>

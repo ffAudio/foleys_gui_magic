@@ -1,0 +1,5 @@
+<map id="MagicOscilloscope" name="MagicOscilloscope">
+<area shape="rect" id="Node000001" title="This class collects your samples in a circular buffer and allows the GUI to draw it in the style of a..." alt="" coords="5,79,137,105"/>
+<area shape="rect" id="Node000002" href="$classfoleys_1_1MagicPlotSource.html" title="The MagicPlotSources act as an interface, so the GUI can visualise an arbitrary plot of data." alt="" coords="11,5,131,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="74,46,74,79,68,79,68,46"/>
+</map>

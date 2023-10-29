@@ -1,0 +1,5 @@
+<map id="MidiLearnItem" name="MidiLearnItem">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,79,110,105"/>
+<area shape="rect" id="Node000002" href="$classfoleys_1_1GuiItem.html" title="The GuiItem class will draw borders and descriptions around widgets, if defined." alt="" coords="24,5,91,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="60,46,60,79,55,79,55,46"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="RootItem" name="RootItem">
+<area shape="rect" id="Node000001" title=" " alt="" coords="6,153,81,178"/>
+<area shape="rect" id="Node000002" href="$classfoleys_1_1Container.html" title="The Container is a GuiItem, that can hold multiple Components." alt="" coords="5,79,82,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="46,120,46,152,41,152,41,120"/>
+<area shape="rect" id="Node000003" href="$classfoleys_1_1GuiItem.html" title="The GuiItem class will draw borders and descriptions around widgets, if defined." alt="" coords="10,5,77,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="46,46,46,79,41,79,41,46"/>
+</map>

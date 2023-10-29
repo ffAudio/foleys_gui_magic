@@ -1,0 +1,7 @@
+<map id="JuceLookAndFeel_V4" name="JuceLookAndFeel_V4">
+<area shape="rect" id="Node000001" title=" " alt="" coords="43,5,192,31"/>
+<area shape="rect" id="Node000002" href="$classfoleys_1_1LookAndFeel.html" title=" " alt="" coords="5,79,104,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="99,44,67,80,63,77,95,41"/>
+<area shape="rect" id="Node000003" href="$classfoleys_1_1Skeuomorphic.html" title=" " alt="" coords="128,79,232,105"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="140,41,171,77,167,80,136,44"/>
+</map>

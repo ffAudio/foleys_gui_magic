@@ -1,0 +1,9 @@
+<map id="MagicPlotSource" name="MagicPlotSource">
+<area shape="rect" id="Node000001" title="The MagicPlotSources act as an interface, so the GUI can visualise an arbitrary plot of data." alt="" coords="130,5,251,31"/>
+<area shape="rect" id="Node000002" href="$classfoleys_1_1MagicAnalyser.html" title="This will plot the magnitudes of the frequencies in a signal." alt="" coords="5,79,112,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="156,41,82,81,80,76,154,36"/>
+<area shape="rect" id="Node000003" href="$classfoleys_1_1MagicFilterPlot.html" title="This will plot the frequency responce for a juce IIR filter." alt="" coords="136,79,245,105"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="193,46,193,79,188,79,188,46"/>
+<area shape="rect" id="Node000004" href="$classfoleys_1_1MagicOscilloscope.html" title="This class collects your samples in a circular buffer and allows the GUI to draw it in the style of a..." alt="" coords="269,79,400,105"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="230,36,311,76,309,81,227,41"/>
+</map>

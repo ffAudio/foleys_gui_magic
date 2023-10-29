@@ -1,0 +1,5 @@
+<map id="SliderItem" name="SliderItem">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,79,86,105"/>
+<area shape="rect" id="Node000002" href="$classfoleys_1_1GuiItem.html" title="The GuiItem class will draw borders and descriptions around widgets, if defined." alt="" coords="12,5,79,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="48,46,48,79,43,79,43,46"/>
+</map>
