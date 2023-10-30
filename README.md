@@ -3,7 +3,7 @@ foleys_gui_magic
 
 DEPRECATION:
 the branch `develop` won't be updated and will be deleted soon.    
-The development continues in `devel` and will be merged regularly to `main`, so you can always fast-forward the main branch.
+The development is done in feature branches which are merged directly to `main`, so you can always fast-forward the main branch.
 
 main:    
 [![CMake](https://github.com/ffAudio/foleys_gui_magic/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/ffAudio/foleys_gui_magic/actions/workflows/build.yml)    
@@ -32,8 +32,13 @@ CMake will be responsible to fetch JUCE, pluginval and Catch2 if switched on.
 Support
 -------
 
+You can find the api docs in https://foleysfinest.com/foleys_gui_magic/
+
 For the modules of Foleys Finest Audio there is a new forum where you can search for information 
 and ask questions: https://forum.foleysfinest.com
+
+Or join the discussion on [discord](https://discord.gg/Xhn58BrAjG)
+
 All feedback is welcome.
 
 Setup
