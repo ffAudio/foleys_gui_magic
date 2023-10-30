@@ -100,7 +100,7 @@ public:
     void updateStylesheet();
 
     /**
-     Recreates all components from the <View/> tree.
+     Recreates all components from the `<View/>` tree.
      If no div tree is found, createDefaultGUITree is called to give subclasses
      a chance to create a suitable default.
      */

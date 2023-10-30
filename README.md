@@ -138,18 +138,18 @@ Currently available Components
 It is completely possible to register your own bespoke Components into the builder. These Components
 are already available:
 
-- Slider (attachable to parameters)
-- ComboBox ( -"- )
-- ToggleButton ( -"- )
-- TextButton ( -"- )
-- XYDragComponent (attachable to two parameters)
-- Plot (displays various 2-d data)
-- LevelMeter (displays different RMS / Max levels)
-- Label
-- MidiKeyboardComponent
-- MidiLearn
-- ListBox
-- WebBrowserComponent
+ - Slider (attachable to parameters)
+ - ComboBox (attachable to parameters)
+ - ToggleButton (attachable to parameters)
+ - TextButton (attachable to parameters)
+ - XYDragComponent (attachable to two parameters)
+ - Plot (displays various 2-d data)
+ - LevelMeter (displays different RMS / Max levels)
+ - Label
+ - MidiKeyboardComponent
+ - MidiLearn
+ - ListBox
+ - WebBrowserComponent
 
 All Components have the option to add margins/paddings and a border also with rounded corners.
 The View component serves as container, that has the option to layer all child components on top of each other
