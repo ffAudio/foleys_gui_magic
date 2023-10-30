@@ -19,15 +19,6 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115384200-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'UA-115384200-1');
-</script>
-<!-- END Global site tag - Google Analytics -->
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -35,9 +26,9 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr style="height: 56px;">
-  <td id="projectlogo"><a href="https://foleysfinest.com"><img alt="Logo" src="Logo-FF.png"/></a></td>
+  <td id="projectlogo"><a href="https://foleysfinest.com"><img alt="Foleys Logo - open foleysfinest.com" src="Logo-FF.png"/></a></td>
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">foleys_gui_magic
+   <div id="projectname"><a href="https://github.com/ffAudio/foleys_gui_magic/">foleys_gui_magic</a>
    </div>
    <div id="projectbrief">WYSWYG editor for JUCE GUIs including Visualisers</div>
   </td>
@@ -343,12 +334,6 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Read the style classes and connect variables. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">builder</td><td>is the managed builder instance, so the style class can connect to the variables </td></tr>
-  </table>
-  </dd>
-</dl>
 
 <p class="reference">References <a class="el" href="classfoleys_1_1MagicGUIBuilder.html#aaef237f655db41e906c13d14267512be">MagicGUIBuilder::getMagicState()</a>, and <a class="el" href="classfoleys_1_1MagicGUIState.html#a7f0d5fa3164aae0ad944d3543d7cbbee">MagicGUIState::getPropertyAsValue()</a>.</p>
 
@@ -498,6 +483,8 @@ Static Public Member Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">name</td><td>the name of the property. </td></tr>
     <tr><td class="paramname">node</td><td>is the node in the DOM. This is used for inheritance by traversing upwards. </td></tr>
+    <tr><td class="paramname">inherit</td><td>if this is true, it will impact child nodes as well </td></tr>
+    <tr><td class="paramname">definedHere</td><td>this is a hint for the editor where the property was actually set </td></tr>
   </table>
   </dd>
 </dl>
@@ -925,7 +912,7 @@ Static Public Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespacefoleys.html">foleys</a></li><li class="navelem"><a class="el" href="classfoleys_1_1Stylesheet.html">Stylesheet</a></li>
-    <li class="footer">Generated on Mon Oct 30 2023 10:09:48 for foleys_gui_magic by
+    <li class="footer">Generated on Mon Oct 30 2023 15:49:30 for foleys_gui_magic by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
