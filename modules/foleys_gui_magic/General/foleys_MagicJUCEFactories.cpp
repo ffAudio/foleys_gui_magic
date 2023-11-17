@@ -401,8 +401,6 @@ public:
             button.setRadioGroupId (groupID);
             button.setClickingTogglesState (true);
         }
-
-        handler.setRadioGroupValue(radioValue, getMagicState().getParameter(parameterName));
     }
 
     std::vector<SettableProperty> getSettableProperties() const override
