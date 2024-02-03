@@ -64,7 +64,7 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 include(FetchContent)
 
 # JUCE if needed
-if (FOLEYS_BUILD_EXAMPLES OR FOLEYS_BUILD_EXAMPLES)
+if (FOLEYS_BUILD_EXAMPLES OR FOLEYS_BUILD_TESTS)
     include(Juce)
 endif ()
 
