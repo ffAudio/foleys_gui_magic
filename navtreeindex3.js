@@ -52,7 +52,6 @@ var NAVTREEINDEX3 =
 "structfoleys_1_1MagicLevelMeter_1_1LookAndFeelMethods.html#a60ade24b57926428cf83fc41c8cd4d90":[1,0,0,24,0,0],
 "structfoleys_1_1MagicLevelMeter_1_1LookAndFeelMethods.html#ab7f7fe794b53bcf23a1846e6a418ee9a":[1,0,0,24,0,1],
 "structfoleys_1_1SettableProperty.html":[1,0,0,47],
-"structfoleys_1_1SettableProperty.html#a2366a7467e02f34b687d54a3b843ef96":[1,0,0,47,5],
 "structfoleys_1_1SettableProperty.html#a586885fbebf656fcf85ead6508943be5":[1,0,0,47,4],
 "structfoleys_1_1SettableProperty.html#a6b9e3d5246e6cb71fa29bdcd10b75336":[1,0,0,47,2],
 "structfoleys_1_1SettableProperty.html#a7ff5a5c54f182b86d1cd993cf4512c87":[1,0,0,47,0],
@@ -63,5 +62,6 @@ var NAVTREEINDEX3 =
 "structfoleys_1_1SettableProperty.html#a7ff5a5c54f182b86d1cd993cf4512c87aadd31e0ae0bc3c65905fdbb5b2c2633d":[1,0,0,47,0,5],
 "structfoleys_1_1SettableProperty.html#a7ff5a5c54f182b86d1cd993cf4512c87afa620f80ceb585b771a878cc135c4035":[1,0,0,47,0,1],
 "structfoleys_1_1SettableProperty.html#a8448759cd6a9859ce5056be8261b8d69":[1,0,0,47,3],
+"structfoleys_1_1SettableProperty.html#ae8272f0c05efdcbd729f176aa13e951e":[1,0,0,47,5],
 "structfoleys_1_1SettableProperty.html#afdf2d81eff053ac6bf704b137f3bd107":[1,0,0,47,1]
 };

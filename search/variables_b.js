@@ -16,7 +16,7 @@ var searchData=
   ['pminvalue_13',['pMinValue',['../classfoleys_1_1SliderItem.html#ae988cdd6a20b2b97682063591c6e78eb',1,'foleys::SliderItem']]],
   ['pnumimages_14',['pNumImages',['../classfoleys_1_1SliderItem.html#ab81265658cd64274a7fc72a2497dcd02',1,'foleys::SliderItem']]],
   ['ponclick_15',['pOnClick',['../classfoleys_1_1TextButtonItem.html#a51fca2011a3a6e8fd63968ae5f90c168',1,'foleys::TextButtonItem']]],
-  ['pproperty_16',['pproperty',['../classfoleys_1_1ToggleButtonItem.html#a3cb3ae48e64fdf8cbf7090b5165e9688',1,'foleys::ToggleButtonItem::pProperty'],['../classfoleys_1_1TextButtonItem.html#a3cb3ae48e64fdf8cbf7090b5165e9688',1,'foleys::TextButtonItem::pProperty']]],
+  ['pproperty_16',['pProperty',['../classfoleys_1_1TextButtonItem.html#a3cb3ae48e64fdf8cbf7090b5165e9688',1,'foleys::TextButtonItem::pProperty'],['../classfoleys_1_1ToggleButtonItem.html#a3cb3ae48e64fdf8cbf7090b5165e9688',1,'foleys::ToggleButtonItem::pProperty']]],
   ['pradius_17',['pRadius',['../classfoleys_1_1XYDraggerItem.html#a435d935c69952ab5479fe8d6c5a93a64',1,'foleys::XYDraggerItem']]],
   ['prootnote_18',['pRootNote',['../classfoleys_1_1DrumpadItem.html#a270af79800b143b4b708a0deb9648d84',1,'foleys::DrumpadItem']]],
   ['property_19',['property',['../classfoleys_1_1StylePropertyComponent.html#ad417a18038a464a5f4a1f0a19f100cfd',1,'foleys::StylePropertyComponent']]],
@@ -26,8 +26,8 @@ var searchData=
   ['pslidertype_23',['pSliderType',['../classfoleys_1_1SliderItem.html#a0e8dd44fb495896b930ace3841b76d68',1,'foleys::SliderItem']]],
   ['pslidertypes_24',['pSliderTypes',['../classfoleys_1_1SliderItem.html#aaf7923c316c694386e3d84856a8f5c44',1,'foleys::SliderItem']]],
   ['psuffix_25',['pSuffix',['../classfoleys_1_1SliderItem.html#ae2a5b6a184e23cc023e18b85ef2e9b33',1,'foleys::SliderItem']]],
-  ['ptext_26',['ptext',['../classfoleys_1_1TextButtonItem.html#adb60b75a08ac91853e3273e40457450e',1,'foleys::TextButtonItem::pText'],['../classfoleys_1_1ToggleButtonItem.html#adb60b75a08ac91853e3273e40457450e',1,'foleys::ToggleButtonItem::pText'],['../classfoleys_1_1LabelItem.html#adb60b75a08ac91853e3273e40457450e',1,'foleys::LabelItem::pText']]],
+  ['ptext_26',['pText',['../classfoleys_1_1TextButtonItem.html#adb60b75a08ac91853e3273e40457450e',1,'foleys::TextButtonItem::pText'],['../classfoleys_1_1ToggleButtonItem.html#adb60b75a08ac91853e3273e40457450e',1,'foleys::ToggleButtonItem::pText'],['../classfoleys_1_1LabelItem.html#adb60b75a08ac91853e3273e40457450e',1,'foleys::LabelItem::pText']]],
   ['ptextboxpositions_27',['pTextBoxPositions',['../classfoleys_1_1SliderItem.html#ab19f843055b7fcbf97c7f4e8f56f35c6',1,'foleys::SliderItem']]],
-  ['pvalue_28',['pvalue',['../classfoleys_1_1SliderItem.html#a85e5f5fc07a9dff4b8ef74294d3e5808',1,'foleys::SliderItem::pValue'],['../classfoleys_1_1LabelItem.html#a85e5f5fc07a9dff4b8ef74294d3e5808',1,'foleys::LabelItem::pValue']]],
+  ['pvalue_28',['pValue',['../classfoleys_1_1SliderItem.html#a85e5f5fc07a9dff4b8ef74294d3e5808',1,'foleys::SliderItem::pValue'],['../classfoleys_1_1LabelItem.html#a85e5f5fc07a9dff4b8ef74294d3e5808',1,'foleys::LabelItem::pValue']]],
   ['pwheelparameter_29',['pWheelParameter',['../classfoleys_1_1XYDraggerItem.html#a03f3ab165ef11f3eac3efec4118ffaa6',1,'foleys::XYDraggerItem']]]
 ];

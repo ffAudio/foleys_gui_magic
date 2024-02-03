@@ -24,11 +24,6 @@ var classfoleys_1_1MagicGUIBuilder =
     [ "showOverlayDialog", "classfoleys_1_1MagicGUIBuilder.html#aef3daa659f35fba512eab7621bccf537", null ],
     [ "closeOverlayDialog", "classfoleys_1_1MagicGUIBuilder.html#a97ed5c560959843658a5f7b77f7dc356", null ],
     [ "getFactoryNames", "classfoleys_1_1MagicGUIBuilder.html#a30e85ba29e7ff67e2a6d5479c013f574", null ],
-    [ "createChoicesMenuLambda", "classfoleys_1_1MagicGUIBuilder.html#a1bfb1daba5339f819f5c2fe9cae33fc2", null ],
-    [ "createParameterMenuLambda", "classfoleys_1_1MagicGUIBuilder.html#aed217a4e68505455f1416aa2dcd2cd6b", null ],
-    [ "createPropertiesMenuLambda", "classfoleys_1_1MagicGUIBuilder.html#a02a0628ad1e98e3f119d5a741e3c38e0", null ],
-    [ "createTriggerMenuLambda", "classfoleys_1_1MagicGUIBuilder.html#a8c27aabc5b0a7cdc51ec817a65f0eb0c", null ],
-    [ "createObjectsMenuLambda", "classfoleys_1_1MagicGUIBuilder.html#a24605b550c25d4520d86a5fa25b2ff03", null ],
     [ "getRadioButtonManager", "classfoleys_1_1MagicGUIBuilder.html#ae1c27cb14d4a7c2d4b3b71eaa346abb9", null ],
     [ "changeListenerCallback", "classfoleys_1_1MagicGUIBuilder.html#a93a58e3c8beb83b4c77b6792292a002b", null ],
     [ "valueTreeRedirected", "classfoleys_1_1MagicGUIBuilder.html#a1686ddd7fabc6d863a99a1ff7a82d3c0", null ],
@@ -41,5 +36,10 @@ var classfoleys_1_1MagicGUIBuilder =
     [ "setSelectedNode", "classfoleys_1_1MagicGUIBuilder.html#af97ab31a00c8c9a941da5a3095eaf976", null ],
     [ "getSelectedNode", "classfoleys_1_1MagicGUIBuilder.html#aacb618356033bb07a90f81c474f40e9d", null ],
     [ "draggedItemOnto", "classfoleys_1_1MagicGUIBuilder.html#a15361562ed6d4a0bc463641846abf658", null ],
-    [ "getMagicToolBox", "classfoleys_1_1MagicGUIBuilder.html#ac56bfe92b24859dcbef11cce2c7b3a39", null ]
+    [ "getMagicToolBox", "classfoleys_1_1MagicGUIBuilder.html#ac56bfe92b24859dcbef11cce2c7b3a39", null ],
+    [ "createChoicesMenuLambda", "classfoleys_1_1MagicGUIBuilder.html#ad6a0d3456f362eb5dc84aea21a986cb2", null ],
+    [ "createParameterMenuLambda", "classfoleys_1_1MagicGUIBuilder.html#a7ae8e8e8c4b8b5c8f447eb28daf44e21", null ],
+    [ "createPropertiesMenuLambda", "classfoleys_1_1MagicGUIBuilder.html#accf7870b0a5cfce0a10440ff7433b036", null ],
+    [ "createTriggerMenuLambda", "classfoleys_1_1MagicGUIBuilder.html#ae3c3cea7b685a3f1688097bd90779f0b", null ],
+    [ "createObjectsMenuLambda", "classfoleys_1_1MagicGUIBuilder.html#a13dcb1779c357dbd5bc5dff08ddeb23f", null ]
 ];

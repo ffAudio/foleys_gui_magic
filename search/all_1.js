@@ -9,7 +9,7 @@ var searchData=
   ['binarydata_6',['BinaryData',['../namespaceBinaryData.html',1,'']]],
   ['binarydatafallbacks_7',['BinaryDataFallbacks',['../namespaceBinaryDataFallbacks.html',1,'']]],
   ['bottom_8',['bottom',['../structfoleys_1_1Box.html#adacd636ce133312813693b22f6672aa1',1,'foleys::Box']]],
-  ['box_9',['box',['../structfoleys_1_1Box.html',1,'Box&lt; T &gt;'],['../structfoleys_1_1Box.html#ab35f0568f1775ad9ae0b7c63c47f0362',1,'foleys::Box::Box()=default'],['../structfoleys_1_1Box.html#a8ba3c49036da130cb8b3300fcb0b1e17',1,'foleys::Box::Box(T value)']]],
+  ['box_9',['Box',['../structfoleys_1_1Box.html',1,'Box&lt; T &gt;'],['../structfoleys_1_1Box.html#ab35f0568f1775ad9ae0b7c63c47f0362',1,'foleys::Box::Box()=default'],['../structfoleys_1_1Box.html#a8ba3c49036da130cb8b3300fcb0b1e17',1,'foleys::Box::Box(T value)']]],
   ['box_3c_20float_20_3e_10',['Box&lt; float &gt;',['../structfoleys_1_1Box.html',1,'foleys']]],
   ['builder_11',['builder',['../classfoleys_1_1StylePropertyComponent.html#a27a72235d1551a38bc38090c89638322',1,'foleys::StylePropertyComponent']]],
   ['buttonactivated_12',['buttonActivated',['../classfoleys_1_1RadioButtonManager.html#a4dcd8362ac7f490b3b935501603fcbd1',1,'foleys::RadioButtonManager']]]

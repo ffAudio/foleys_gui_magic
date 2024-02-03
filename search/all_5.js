@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['filebrowserdialog_0',['filebrowserdialog',['../classfoleys_1_1FileBrowserDialog.html#a29a5860c8c8bc6634e6ffce7d025bb20',1,'foleys::FileBrowserDialog::FileBrowserDialog()'],['../classfoleys_1_1FileBrowserDialog.html',1,'FileBrowserDialog']]],
-  ['findguiitem_1',['findguiitem',['../classfoleys_1_1MagicGUIBuilder.html#a95da577b43bffa35ead141ec4ea434d5',1,'foleys::MagicGUIBuilder::findGuiItem()'],['../classfoleys_1_1Container.html#a28648133e368b451656e64459d9f719a',1,'foleys::Container::findGuiItem()'],['../classfoleys_1_1GuiItem.html#a95da577b43bffa35ead141ec4ea434d5',1,'foleys::GuiItem::findGuiItem()']]],
-  ['findguiitemwithid_2',['findguiitemwithid',['../classfoleys_1_1MagicGUIBuilder.html#aee2b32e43d9fc686d99b51daea2afeff',1,'foleys::MagicGUIBuilder::findGuiItemWithId()'],['../classfoleys_1_1Container.html#a7eef3252ec8c214bc4fde840c81c64c0',1,'foleys::Container::findGuiItemWithId()'],['../classfoleys_1_1GuiItem.html#aee2b32e43d9fc686d99b51daea2afeff',1,'foleys::GuiItem::findGuiItemWithId()']]],
+  ['filebrowserdialog_0',['FileBrowserDialog',['../classfoleys_1_1FileBrowserDialog.html',1,'FileBrowserDialog'],['../classfoleys_1_1FileBrowserDialog.html#a29a5860c8c8bc6634e6ffce7d025bb20',1,'foleys::FileBrowserDialog::FileBrowserDialog()']]],
+  ['findguiitem_1',['findGuiItem',['../classfoleys_1_1MagicGUIBuilder.html#a95da577b43bffa35ead141ec4ea434d5',1,'foleys::MagicGUIBuilder::findGuiItem()'],['../classfoleys_1_1Container.html#a28648133e368b451656e64459d9f719a',1,'foleys::Container::findGuiItem()'],['../classfoleys_1_1GuiItem.html#a95da577b43bffa35ead141ec4ea434d5',1,'foleys::GuiItem::findGuiItem()']]],
+  ['findguiitemwithid_2',['findGuiItemWithId',['../classfoleys_1_1MagicGUIBuilder.html#aee2b32e43d9fc686d99b51daea2afeff',1,'foleys::MagicGUIBuilder::findGuiItemWithId()'],['../classfoleys_1_1Container.html#a7eef3252ec8c214bc4fde840c81c64c0',1,'foleys::Container::findGuiItemWithId()'],['../classfoleys_1_1GuiItem.html#aee2b32e43d9fc686d99b51daea2afeff',1,'foleys::GuiItem::findGuiItemWithId()']]],
   ['flexbox_3',['FlexBox',['../namespacefoleys.html#aaf71c596602a7233419387100afbd329a51df0bcf52afdbfe048277e82308a4c2',1,'foleys']]],
   ['flexitem_4',['flexItem',['../classfoleys_1_1GuiItem.html#a44cf8e179ab02bb4a83b0a2e380d468a',1,'foleys::GuiItem']]],
   ['foleys_5',['foleys',['../namespacefoleys.html',1,'']]],

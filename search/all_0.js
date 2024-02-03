@@ -14,11 +14,11 @@ var searchData=
   ['addtrigger_11',['addTrigger',['../classfoleys_1_1MagicGUIState.html#a10d7cebd842af92a5eb88efb88e4e4ef',1,'foleys::MagicGUIState']]],
   ['addtypeproperties_12',['addTypeProperties',['../classfoleys_1_1PropertiesEditor.html#afa46a04a441e51096c97fc73180a0b97',1,'foleys::PropertiesEditor']]],
   ['angle_13',['angle',['../classfoleys_1_1GradientBackground.html#ab8ef1bf8a70cc07c6d55823c390a7e76',1,'foleys::GradientBackground']]],
-  ['applicationsettings_14',['applicationsettings',['../classfoleys_1_1ApplicationSettings.html#a49ec76faf55fbcb17768aeae5e15be8d',1,'foleys::ApplicationSettings::ApplicationSettings()'],['../classfoleys_1_1ApplicationSettings.html',1,'ApplicationSettings']]],
-  ['atomicvalueattachment_15',['atomicvalueattachment',['../classfoleys_1_1AtomicValueAttachment.html#a1bbbacdc50758f88226e83e954029257',1,'foleys::AtomicValueAttachment::AtomicValueAttachment()'],['../classfoleys_1_1AtomicValueAttachment.html',1,'AtomicValueAttachment&lt; T &gt;']]],
+  ['applicationsettings_14',['ApplicationSettings',['../classfoleys_1_1ApplicationSettings.html',1,'ApplicationSettings'],['../classfoleys_1_1ApplicationSettings.html#a49ec76faf55fbcb17768aeae5e15be8d',1,'foleys::ApplicationSettings::ApplicationSettings()']]],
+  ['atomicvalueattachment_15',['AtomicValueAttachment',['../classfoleys_1_1AtomicValueAttachment.html',1,'AtomicValueAttachment&lt; T &gt;'],['../classfoleys_1_1AtomicValueAttachment.html#a1bbbacdc50758f88226e83e954029257',1,'foleys::AtomicValueAttachment::AtomicValueAttachment()']]],
   ['attachto_16',['attachTo',['../classfoleys_1_1MouseLambdas.html#adc3835402db972acb2262567b6d6c83a',1,'foleys::MouseLambdas']]],
   ['attachtoolboxtowindow_17',['attachToolboxToWindow',['../classfoleys_1_1MagicGUIBuilder.html#a11117aab6f5133011454b4840d278f3a',1,'foleys::MagicGUIBuilder']]],
   ['attachtoparameter_18',['attachToParameter',['../classfoleys_1_1ParameterAttachment.html#accb0f3e885038b632a3cf659fbda4ad9',1,'foleys::ParameterAttachment']]],
   ['attachtovalue_19',['attachToValue',['../classfoleys_1_1AtomicValueAttachment.html#a562ed0f7cce746c20cb14c04e39b71d4',1,'foleys::AtomicValueAttachment']]],
-  ['autoorientationslider_20',['autoorientationslider',['../classfoleys_1_1AutoOrientationSlider.html',1,'AutoOrientationSlider'],['../classfoleys_1_1AutoOrientationSlider.html#a3737757bf2c65607198497c064f78dce',1,'foleys::AutoOrientationSlider::AutoOrientationSlider()']]]
+  ['autoorientationslider_20',['AutoOrientationSlider',['../classfoleys_1_1AutoOrientationSlider.html',1,'AutoOrientationSlider'],['../classfoleys_1_1AutoOrientationSlider.html#a3737757bf2c65607198497c064f78dce',1,'foleys::AutoOrientationSlider::AutoOrientationSlider()']]]
 ];
