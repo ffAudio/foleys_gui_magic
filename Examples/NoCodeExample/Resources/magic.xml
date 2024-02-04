@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<magic>
+    <Parameters>
+        <Group GroupID="bandQ1" GroupName="Q1" Separator="|">
+            <Parameter ParamID="Q1type" ParamName="Q1: Filter Type" ParamType="Choice"
+                       Default="1">
+                <Choice Name="No Filter"/>
+                <Choice Name="High Pass"/>
+                <Choice Name="High Shelf"/>
+                <Choice Name="Peak Filter"/>
+                <Choice Name="Notch Filter"/>
+                <Choice Name="Low Shelf"/>
+                <Choice Name="Low Pass"/>
+            </Parameter>
+            <Parameter ParamID="Q1active" ParamName="Q1: Active" ParamType="Boolean" ParamDefault="true"/>
+            <Parameter ParamID="Q1freq" ParamName="Q1: Frequency" ParamMin="20.0" ParamMax="20000.0"
+                       ParamStep="0.0"/>
+            <Parameter ParamID="Q1quality" ParamName="Q1: Quality" ParamMin="0.1000000014901161"
+                       ParamMax="10.0" ParamStep="0.1000000014901161"/>
+            <Parameter ParamID="Q1gain" ParamName="Q1: Gain" ParamMin="-24.0" ParamMax="24.0"
+                       ParamStep="0.1000000014901161"/>
+        </Group>
+        <Group GroupID="bandQ2" GroupName="Q2" Separator="|">
+            <Parameter ParamID="Q2type" ParamName="Q2: Filter Type" ParamType="Choice"
+                       Default="2">
+                <Choice Name="No Filter"/>
+                <Choice Name="High Pass"/>
+                <Choice Name="High Shelf"/>
+                <Choice Name="Peak Filter"/>
+                <Choice Name="Notch Filter"/>
+                <Choice Name="Low Shelf"/>
+                <Choice Name="Low Pass"/>
+            </Parameter>
+            <Parameter ParamID="Q2active" ParamName="Q2: Active" ParamType="Boolean" ParamDefault="true"/>
+            <Parameter ParamID="Q2freq" ParamName="Q2: Frequency" ParamMin="20.0" ParamMax="20000.0"
+                       ParamStep="0.0"/>
+            <Parameter ParamID="Q2quality" ParamName="Q2: Quality" ParamMin="0.1000000014901161"
+                       ParamMax="10.0" ParamStep="0.1000000014901161"/>
+            <Parameter ParamID="Q2gain" ParamName="Q2: Gain" ParamMin="-24.0" ParamMax="24.0"
+                       ParamStep="0.1000000014901161"/>
+        </Group>
+        <Group GroupID="bandQ3" GroupName="Q3" Separator="|">
+            <Parameter ParamID="Q3type" ParamName="Q3: Filter Type" ParamType="Choice"
+                       Default="3">
+                <Choice Name="No Filter"/>
+                <Choice Name="High Pass"/>
+                <Choice Name="High Shelf"/>
+                <Choice Name="Peak Filter"/>
+                <Choice Name="Notch Filter"/>
+                <Choice Name="Low Shelf"/>
+                <Choice Name="Low Pass"/>
+            </Parameter>
+            <Parameter ParamID="Q3active" ParamName="Q3: Active" ParamMin="0.0" ParamMax="1.0"
+                       ParamStep="1.0"/>
+            <Parameter ParamID="Q3freq" ParamName="Q3: Frequency" ParamMin="20.0" ParamMax="20000.0"
+                       ParamStep="0.0"/>
+            <Parameter ParamID="Q3quality" ParamName="Q3: Quality" ParamMin="0.1000000014901161"
+                       ParamMax="10.0" ParamStep="0.1000000014901161"/>
+            <Parameter ParamID="Q3gain" ParamName="Q3: Gain" ParamMin="-24.0" ParamMax="24.0"
+                       ParamStep="0.1000000014901161"/>
+        </Group>
+        <Group GroupID="bandQ4" GroupName="Q4" Separator="|">
+            <Parameter ParamID="Q4type" ParamName="Q4: Filter Type" ParamType="Choice"
+                       Default="3">
+                <Choice Name="No Filter"/>
+                <Choice Name="High Pass"/>
+                <Choice Name="High Shelf"/>
+                <Choice Name="Peak Filter"/>
+                <Choice Name="Notch Filter"/>
+                <Choice Name="Low Shelf"/>
+                <Choice Name="Low Pass"/>
+            </Parameter>
+            <Parameter ParamID="Q4active" ParamName="Q4: Active" ParamType="Boolean" ParamDefault="true"/>
+            <Parameter ParamID="Q4freq" ParamName="Q4: Frequency" ParamMin="20.0" ParamMax="20000.0"
+                       ParamStep="0.0"/>
+            <Parameter ParamID="Q4quality" ParamName="Q4: Quality" ParamMin="0.1000000014901161"
+                       ParamMax="10.0" ParamStep="0.1000000014901161"/>
+            <Parameter ParamID="Q4gain" ParamName="Q4: Gain" ParamMin="-24.0" ParamMax="24.0"
+                       ParamStep="0.1000000014901161"/>
+        </Group>
+        <Group GroupID="bandQ5" GroupName="Q5" Separator="|">
+            <Parameter ParamID="Q5type" ParamName="Q5: Filter Type" ParamType="Choice"
+                       Default="5">
+                <Choice Name="No Filter"/>
+                <Choice Name="High Pass"/>
+                <Choice Name="High Shelf"/>
+                <Choice Name="Peak Filter"/>
+                <Choice Name="Notch Filter"/>
+                <Choice Name="Low Shelf"/>
+                <Choice Name="Low Pass"/>
+            </Parameter>
+            <Parameter ParamID="Q5active" ParamName="Q5: Active" ParamType="Boolean" ParamDefault="true"/>
+            <Parameter ParamID="Q5freq" ParamName="Q5: Frequency" ParamMin="20.0" ParamMax="20000.0"
+                       ParamStep="0.0"/>
+            <Parameter ParamID="Q5quality" ParamName="Q5: Quality" ParamMin="0.1000000014901161"
+                       ParamMax="10.0" ParamStep="0.1000000014901161"/>
+            <Parameter ParamID="Q5gain" ParamName="Q5: Gain" ParamMin="-24.0" ParamMax="24.0"
+                       ParamStep="0.1000000014901161"/>
+        </Group>
+        <Group GroupID="bandQ6" GroupName="Q6" Separator="|">
+            <Parameter ParamID="Q6type" ParamName="Q6: Filter Type" ParamType="Choice"
+                       Default="6">
+                <Choice Name="No Filter"/>
+                <Choice Name="High Pass"/>
+                <Choice Name="High Shelf"/>
+                <Choice Name="Peak Filter"/>
+                <Choice Name="Notch Filter"/>
+                <Choice Name="Low Shelf"/>
+                <Choice Name="Low Pass"/>
+            </Parameter>
+            <Parameter ParamID="Q6active" ParamName="Q6: Active" ParamType="Boolean" ParamDefault="true"/>
+            <Parameter ParamID="Q6freq" ParamName="Q6: Frequency" ParamMin="20.0" ParamMax="20000.0"
+                       ParamStep="0.0"/>
+            <Parameter ParamID="Q6quality" ParamName="Q6: Quality" ParamMin="0.1000000014901161"
+                       ParamMax="10.0" ParamStep="0.1000000014901161"/>
+            <Parameter ParamID="Q6gain" ParamName="Q6: Gain" ParamMin="-24.0" ParamMax="24.0"
+                       ParamStep="0.1000000014901161"/>
+        </Group>
+        <Group GroupID="global" GroupName="Globals" Separator="|">
+            <Parameter ParamID="output" ParamName="Output" ParamMin="-100.00.0" ParamMax="12.0"
+                       ParamStep="0.01" Default="0.0"/>
+        </Group>
+    </Parameters>
+    <DSP>
+        <Program>
+            <InputAudio Name="Input" Format="Stereo" NumChannels="2"/>
+            <OutputAudio Name="Output" Format="Stereo" NumChannels="2" Input="Gain"/>
+            <IIR Name="Q1" Input="Input">
+                <Parameter paramID="Q1type" Control="Type"/>
+                <Parameter paramID="Q1freq" Control="Frequency"/>
+                <Parameter paramID="Q1gain" Control="Gain"/>
+                <Parameter paramID="Q1quality" Control="Quality"/>
+            </IIR>
+            <Gain Name="Master" Input="Q1">
+                <Parameter paramID="output" Control="Gain"/>
+            </Gain>
+            <LevelMeter Name="outputMeter" Input="Gain"/>
+            <Analyzer Name="output" Input="Gain"/>
+        </Program>
+    </DSP>
+    <Styles>
+        <Style name="default">
+            <Nodes>
+                <root display="flexbox" flex-grow="1.0" padding="0"/>
+                <main border="0" flex-direction="column" padding="0" margin="0" background-color="ff343541"/>
+                <frame display="contents" border="2.0" background-color="ff000000"/>
+                <nomargin border="0" margin="0" padding="0"/>
+                <horizontal flex-direction="row" border="0" padding="0" background-color="80141521"
+                            background-image=" " background-gradient="none" flex-grow="2"/>
+            </Nodes>
+            <Classes>
+                <plot-view border="2" background-color="black" display="contents" border-color="">
+                    <media/>
+                </plot-view>
+                <group padding="1" flex-direction="column" background-gradient="linear-gradient(ff414151, ff151521)"
+                       border="">
+                    <media/>
+                </group>
+                <logo background-image="Logo_png" border="0"/>
+                <frequency flex-grow="3" padding="3"/>
+                <small padding="3" slider-textbox="textbox-below" margin="0" background-color="00000000"/>
+                <nomargin border="0" margin="0" padding="0" background-color="00000000"
+                          recursive="1">
+                    <media/>
+                </nomargin>
+                <q1 background-color="$q1" plot-color="$q1" rotary-fill="$q1" plot-inactive-color="$q1dark"
+                    xy-drag-handle="$q1dark" xy-drag-handle-over="$q1" xy-horizontal="$q1dark"
+                    xy-vertical="$q1dark" xy-horizontal-over="$q1" xy-vertical-over="$q1"
+                    recursive="1">
+                    <media/>
+                </q1>
+                <q2 background-color="$q2" plot-color="$q2" rotary-fill="$q2" plot-inactive-color="$q2dark"
+                    xy-drag-handle="$q2dark" xy-horizontal="$q2dark" xy-vertical="$q2dark"
+                    xy-drag-handle-over="$q2" xy-horizontal-over="$q2" xy-vertical-over="$q2"
+                    recursive="1">
+                    <media/>
+                </q2>
+                <q3 background-color="$q3" plot-color="$q3" rotary-fill="$q3" plot-inactive-color="$q3dark"
+                    xy-drag-handle="$q3dark" xy-horizontal="$q3dark" xy-vertical="$q3dark"
+                    xy-drag-handle-over="$q3" xy-horizontal-over="$q3" xy-vertical-over="$q3"
+                    recursive="1">
+                    <media/>
+                </q3>
+                <q4 background-color="$q4" plot-color="$q4" rotary-fill="$q4" plot-inactive-color="$q4dark"
+                    xy-drag-handle="$q4dark" xy-horizontal="$q4dark" xy-vertical="$q4dark"
+                    xy-drag-handle-over="$q4" xy-horizontal-over="$q4" xy-vertical-over="$q4"
+                    recursive="1">
+                    <media/>
+                </q4>
+                <q5 background-color="$q5" plot-color="$q5" rotary-fill="$q5" plot-inactive-color="$q5dark"
+                    xy-drag-handle="$q5dark" xy-horizontal="$q5dark" xy-vertical="$q5dark"
+                    xy-drag-handle-over="$q5" xy-horizontal-over="$q5" xy-vertical-over="$q5"
+                    recursive="1">
+                    <media/>
+                </q5>
+                <q6 background-color="$q6" plot-color="$q6" rotary-fill="$q6" plot-inactive-color="$q6dark"
+                    xy-drag-handle="$q6dark" xy-horizontal="$q6dark" xy-vertical="$q6dark"
+                    xy-drag-handle-over="$q6" xy-horizontal-over="$q6" xy-vertical-over="$q6"
+                    recursive="1">
+                    <media/>
+                </q6>
+                <gain plot-color="silver" rotary-fill="silver" recursive="1">
+                    <media/>
+                </gain>
+                <orange background-color="ffffa500"/>
+                <input toggle-text="$input" plot-color="$input" plot-fill-color="30DF0E0E"
+                       toggle-tick="$input" plot-inactive-color="" toggle-tick-disabled="$input">
+                    <media/>
+                </input>
+                <output plot-color="$output" plot-fill-color="300E23DF" toggle-text="$output"
+                        toggle-tick="$output" toggle-tick-disabled="$output">
+                    <media/>
+                </output>
+                <collapse recursive="0" display="tabbed">
+                    <media recursive="1" max-width="650" max-height="999999"/>
+                </collapse>
+                <hidden flex-grow="0" flex-shrink="0">
+                    <media max-height="450"/>
+                </hidden>
+            </Classes>
+            <Types>
+                <ComboBox border="0" max-height="40" combo-background="00000000" combo-outline="transparent"
+                          caption-size="0" combo-text="silver" combo-arrow="silver" background-gradient="none"
+                          background-color="00000000" margin="" padding="" lookAndFeel="FoleysFinest"
+                          combo-menu-background="80141521" combo-menu-text="silver"
+                          combo-menu-background-highlight="80323452"/>
+                <ToggleButton border="0" background-color="00000000" max-height="40" caption-size="0"
+                              text="Active" toggle-text="silver" toggle-tick="silver" background-gradient="none"/>
+                <Slider border="0" background-color="80141521" lookAndFeel="Skeuomorphic"
+                        slider-fill="red" slider-textbox="textbox-below" background-gradient="none"
+                        slider-text-outline="ff414151"/>
+                <Plot border="0" margin="0" padding="0" plot-fill-color="00000000"
+                      background-color=""/>
+                <XYDragComponent border="0" margin="0" padding="0" background-color="00000000"
+                                 xy-crosshair="horizontal"/>
+            </Types>
+            <Palettes>
+                <default q1="FFFF0000" q1dark="FFA30000" q2="FF00C600" q2dark="green"
+                         q3="FFFFBF00" q3dark="FFB58700" q4="cyan" q4dark="FF00A0A0" q5="FF8C00C8"
+                         q5dark="FF5D0085" q6="yellow" q6dark="FFA8A800" input="FFE40000"
+                         output="FF2100DE"/>
+            </Palettes>
+        </Style>
+    </Styles>
+    <View id="root" resizable="1" resize-corner="1" min-width="400" min-height="400"
+          margin="0" tooltip-text="silver" tooltip-background="FF210444"
+          tooltip-outline="FF9581AD">
+        <View id="main" visibility="analyser:foo" radius="0">
+            <View id="frame" class="plot-view" background-gradient="linear-gradient(0,0% ff5e5f6f,100% ff030303)">
+                <View display="flexbox" flex-direction="column" background-color="00000000"
+                      class="nomargin" flex-justify-content="" flex-align-self="">
+                    <ToggleButton text="Input" value="analyser:input" flex-align-self="auto" max-height="40"
+                                  class="input" tooltip="Show input analyser"/>
+                    <ToggleButton text="Output" value="analyser:output" flex-align-self="auto"
+                                  max-height="40" class="output" tooltip="Show output analyser"/>
+                </View>
+                <Plot source="plot1" class="nomargin q1" plot-fill-color="30FF0000"/>
+                <Plot source="plot2" class="nomargin q2" plot-fill-color="3000FF00"/>
+                <Plot source="plot3" class="nomargin q3" plot-fill-color="30FFA500"
+                      plot-color="FFFFA500"/>
+                <Plot source="plot4" class="nomargin q4" plot-color="FF00FFFF" plot-fill-color="3000FFFF"/>
+                <Plot source="plot5" class="nomargin q5" plot-fill-color="300000FF"/>
+                <Plot source="plot6" class="nomargin q6" plot-fill-color="30FFFF00"
+                      plot-color="FFFFFF00"/>
+                <Plot source="plotSum" class="nomargin gain" plot-fill-color="30C0C0C0"
+                      plot-color="FFC0C0C0"/>
+                <Plot source="input" class="nomargin input" visibility="analyser:input"
+                      plot-color="FFDF0E0E"/>
+                <Plot source="output" class="nomargin output" visibility="analyser:output"
+                      plot-color="FF0E23DF"/>
+                <XYDragComponent class="nomargin q1" parameter-x="Q1freq" parameter-y="Q1gain"
+                                 parameter-right-click="Q1type" right-click="Q1type"
+                                 tooltip="Drag Q1 frequency and gain"/>
+                <XYDragComponent class="nomargin q2" parameter-x="Q2freq" parameter-y="Q2gain"
+                                 parameter-right-click="Q2type" right-click="Q2type"
+                                 tooltip="Drag Q2 frequency and gain"/>
+                <XYDragComponent class="nomargin q3" parameter-x="Q3freq" parameter-y="Q3gain"
+                                 parameter-right-click="Q3type" right-click="Q3type"
+                                 tooltip="Drag Q3 frequency and gain"/>
+                <XYDragComponent class="nomargin q4" parameter-x="Q4freq" parameter-y="Q4gain"
+                                 parameter-right-click="Q4type" right-click="Q4type"
+                                 tooltip="Drag Q4 frequency and gain"/>
+                <XYDragComponent class="nomargin q5" parameter-x="Q5freq" parameter-y="Q5gain"
+                                 parameter-right-click="Q5type" right-click="Q5type"
+                                 tooltip="Drag Q5 frequency and gain"/>
+                <XYDragComponent class="nomargin q6" parameter-x="Q6freq" parameter-y="Q6gain"
+                                 parameter-right-click="Q6type" right-click="Q6type"
+                                 tooltip="Drag Q6 frequency and gain"/>
+            </View>
+            <View id="nomargin" background-color="ff343541" class="collapse hidden"
+                  lookAndFeel="FoleysFinest" radius="0">
+                <View caption="Q1" class="group q1" tab-color="red"
+                      background-gradient="linear-gradient(0,0% ff2e2e4b,100% ff161622)">
+                    <View class="" id="horizontal" max-height="40" flex-grow="1">
+                        <ToggleButton parameter="Q1active" text="" max-width="40" class="nomargin"
+                                      tooltip="Toggle Q1"/>
+                        <ComboBox parameter="Q1type" class="nomargin" combo-menu-background="80141521"
+                                  combo-menu-text="silver" tooltip="Select filter type for Q1"/>
+                    </View>
+                    <View id="horizontal">
+                        <Slider class="small" caption="Quality" parameter="Q1quality"
+                                tooltip="Select the steepness for Q1"/>
+                        <Slider class="small" caption="Gain" parameter="Q1gain" tooltip="Select the gain for Q1"/>
+                    </View>
+                    <Slider class="frequency" caption="Frequency" parameter="Q1freq" flex-grow="3"
+                            slider-textbox="" tooltip="Select the frequency for Q1"/>
+                </View>
+                <View caption="Q2" class="group q2" tab-color="green"
+                      background-gradient="linear-gradient(0,0% ff2e2e4b,100% ff161622)">
+                    <View class="" id="horizontal" max-height="40" flex-grow="1">
+                        <ToggleButton parameter="Q2active" max-width="40" text="" class="nomargin"
+                                      tooltip="Toggle Q2"/>
+                        <ComboBox parameter="Q2type" class="nomargin" tooltip="Select filter type for Q2"/>
+                    </View>
+                    <View id="horizontal">
+                        <Slider class="small" caption="Quality" parameter="Q2quality"
+                                tooltip="Select the steepness for Q2"/>
+                        <Slider class="small" caption="Gain" parameter="Q2gain" tooltip="Select the gain for Q2"/>
+                    </View>
+                    <Slider class="frequency" caption="Frequency" parameter="Q2freq"
+                            tooltip="Select the frequency for Q2"/>
+                </View>
+                <View caption="Q3" class="group q3" tab-color="orange"
+                      background-gradient="linear-gradient(0,0% ff2e2e4b,100% ff161622)">
+                    <View class="" id="horizontal" max-height="40" flex-grow="1">
+                        <ToggleButton parameter="Q3active" text="" max-width="40" class="nomargin"
+                                      tooltip="Toggle Q3"/>
+                        <ComboBox parameter="Q3type" class="nomargin" tooltip="Select filter type for Q3"/>
+                    </View>
+                    <View id="horizontal">
+                        <Slider class="small" caption="Quality" parameter="Q3quality"
+                                tooltip="Select the steepness for Q3"/>
+                        <Slider class="small" caption="Gain" parameter="Q3gain" tooltip="Select the gain for Q3"/>
+                    </View>
+                    <Slider class="frequency" caption="Frequency" parameter="Q3freq"
+                            tooltip="Select the frequency for Q3"/>
+                </View>
+                <View caption="Q4" class="group q4" tab-color="cyan"
+                      background-gradient="linear-gradient(0,0% ff2e2e4b,100% ff161622)">
+                    <View class="" id="horizontal" max-height="40" flex-grow="1">
+                        <ToggleButton parameter="Q4active" text="" max-width="40" class="nomargin"
+                                      tooltip="Toggle Q4"/>
+                        <ComboBox parameter="Q4type" class="nomargin" tooltip="Select filter type for Q4"/>
+                    </View>
+                    <View id="horizontal">
+                        <Slider class="small" caption="Quality" parameter="Q4quality"
+                                tooltip="Select the steepness for Q4"/>
+                        <Slider class="small" caption="Gain" parameter="Q4gain" tooltip="Select the gain for Q4"/>
+                    </View>
+                    <Slider class="frequency" caption="Frequency" parameter="Q4freq"
+                            tooltip="Select the frequency for Q4"/>
+                </View>
+                <View caption="Q5" class="group q5" tab-color="blue"
+                      background-gradient="linear-gradient(0,0% ff2e2e4b,100% ff161622)">
+                    <View class="" id="horizontal" max-height="40" flex-grow="1">
+                        <ToggleButton parameter="Q5active" text="" max-width="40" class="nomargin"
+                                      tooltip="Toggle Q5"/>
+                        <ComboBox parameter="Q5type" class="nomargin" tooltip="Select filter type for Q5"/>
+                    </View>
+                    <View id="horizontal">
+                        <Slider class="small" caption="Quality" parameter="Q5quality"
+                                tooltip="Select the steepness for Q5"/>
+                        <Slider class="small" caption="Gain" parameter="Q5gain" tooltip="Select the gain for Q5"/>
+                    </View>
+                    <Slider class="frequency" caption="Frequency" parameter="Q5freq"
+                            tooltip="Select the frequency for Q5"/>
+                </View>
+                <View caption="Q6" class="group q6" tab-color="yellow" lookAndFeel="FoleysFinest"
+                      background-gradient="linear-gradient(0,0% ff2e2e4b,100% ff161622)">
+                    <View class="" id="horizontal" max-height="40" flex-grow="1">
+                        <ToggleButton parameter="Q6active" text="" max-width="40" class="nomargin"
+                                      background-gradient="none" tooltip="Toggle Q6"/>
+                        <ComboBox parameter="Q6type" class="nomargin" tooltip="Select filter type for Q6"/>
+                    </View>
+                    <View id="horizontal">
+                        <Slider class="small" caption="Quality" parameter="Q6quality"
+                                tooltip="Select the steepness for Q6"/>
+                        <Slider class="small" caption="Gain" parameter="Q6gain" tooltip="Select the gain for Q6"/>
+                    </View>
+                    <Slider class="frequency" caption="Frequency" parameter="Q6freq"
+                            tooltip="Select the frequency for Q6"/>
+                </View>
+                <View caption="Globals" class="group gain" flex-direction="row"
+                      background-gradient="linear-gradient(0,0% ff2e2e4b,100% ff161622)">
+                    <View padding="3" border="0" background-color="80141521" background-gradient="none"
+                          flex-direction="column">
+                        <View flex-direction="row" background-color="" background-gradient="">
+                            <Slider caption="Output" parameter="output" padding="3" background-color="00000000"
+                                    slider-type="rotary" slider-textbox="textbox-below" lookAndFeel="Skeuomorphic"
+                                    slider-text="FFFFFFFF" slider-text-outline="ff414151"
+                                    tooltip="Control main output gain"/>
+                            <Meter source="outputMeter" flex-grow="0.5" outline-color="00000000"
+                                   background-gradient="" background-color="" bar-background-color="ff141521"
+                                   class="nomargin" tooltip="Output level"/>
+                        </View>
+                        <View class="logo" background-gradient="none" margin="0" background-color="00000000"
+                              tooltip="visit https://foleysfinest.com"/>
+                    </View>
+                </View>
+            </View>
+        </View>
+    </View>
+</magic>

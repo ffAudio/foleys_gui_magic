@@ -71,6 +71,7 @@ elseif(WIN32)
     set(COPY_FOLDER ${CMAKE_SOURCE_DIR}/Builds/VisualStudio2019)
 endif()
 
+add_subdirectory(NoCodeExample)
 add_subdirectory(APVTS_Tutorial)
 add_subdirectory(EqualizerExample)
 add_subdirectory(ExtendingExample)
