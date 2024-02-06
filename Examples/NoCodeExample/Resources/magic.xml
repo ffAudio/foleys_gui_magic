@@ -3,10 +3,17 @@
 <magic>
     <Parameters>
         <Group GroupID="bandQ1" GroupName="Q1" Separator="|">
-            <Parameter ParamID="Q1type" ParamName="Q1: Filter Type" ParamMin="0.0" ParamMax="9.0"
-                       ParamStep="1.0"/>
-            <Parameter ParamID="Q1active" ParamName="Q1: Active" ParamMin="0.0" ParamMax="1.0"
-                       ParamStep="1.0"/>
+            <Parameter ParamID="Q1type" ParamName="Q1: Filter Type" ParamType="Choice"
+                       Default="1">
+                <Choice Name="No Filter"/>
+                <Choice Name="High Pass"/>
+                <Choice Name="High Shelf"/>
+                <Choice Name="Peak Filter"/>
+                <Choice Name="Notch Filter"/>
+                <Choice Name="Low Shelf"/>
+                <Choice Name="Low Pass"/>
+            </Parameter>
+            <Parameter ParamID="Q1active" ParamName="Q1: Active" ParamType="Boolean" ParamDefault="true"/>
             <Parameter ParamID="Q1freq" ParamName="Q1: Frequency" ParamMin="20.0" ParamMax="20000.0"
                        ParamStep="0.0"/>
             <Parameter ParamID="Q1quality" ParamName="Q1: Quality" ParamMin="0.1000000014901161"
@@ -15,10 +22,17 @@
                        ParamStep="0.1000000014901161"/>
         </Group>
         <Group GroupID="bandQ2" GroupName="Q2" Separator="|">
-            <Parameter ParamID="Q2type" ParamName="Q2: Filter Type" ParamMin="0.0" ParamMax="9.0"
-                       ParamStep="1.0"/>
-            <Parameter ParamID="Q2active" ParamName="Q2: Active" ParamMin="0.0" ParamMax="1.0"
-                       ParamStep="1.0"/>
+            <Parameter ParamID="Q2type" ParamName="Q2: Filter Type" ParamType="Choice"
+                       Default="2">
+                <Choice Name="No Filter"/>
+                <Choice Name="High Pass"/>
+                <Choice Name="High Shelf"/>
+                <Choice Name="Peak Filter"/>
+                <Choice Name="Notch Filter"/>
+                <Choice Name="Low Shelf"/>
+                <Choice Name="Low Pass"/>
+            </Parameter>
+            <Parameter ParamID="Q2active" ParamName="Q2: Active" ParamType="Boolean" ParamDefault="true"/>
             <Parameter ParamID="Q2freq" ParamName="Q2: Frequency" ParamMin="20.0" ParamMax="20000.0"
                        ParamStep="0.0"/>
             <Parameter ParamID="Q2quality" ParamName="Q2: Quality" ParamMin="0.1000000014901161"
@@ -27,8 +41,16 @@
                        ParamStep="0.1000000014901161"/>
         </Group>
         <Group GroupID="bandQ3" GroupName="Q3" Separator="|">
-            <Parameter ParamID="Q3type" ParamName="Q3: Filter Type" ParamMin="0.0" ParamMax="9.0"
-                       ParamStep="1.0"/>
+            <Parameter ParamID="Q3type" ParamName="Q3: Filter Type" ParamType="Choice"
+                       Default="3">
+                <Choice Name="No Filter"/>
+                <Choice Name="High Pass"/>
+                <Choice Name="High Shelf"/>
+                <Choice Name="Peak Filter"/>
+                <Choice Name="Notch Filter"/>
+                <Choice Name="Low Shelf"/>
+                <Choice Name="Low Pass"/>
+            </Parameter>
             <Parameter ParamID="Q3active" ParamName="Q3: Active" ParamMin="0.0" ParamMax="1.0"
                        ParamStep="1.0"/>
             <Parameter ParamID="Q3freq" ParamName="Q3: Frequency" ParamMin="20.0" ParamMax="20000.0"
@@ -39,10 +61,17 @@
                        ParamStep="0.1000000014901161"/>
         </Group>
         <Group GroupID="bandQ4" GroupName="Q4" Separator="|">
-            <Parameter ParamID="Q4type" ParamName="Q4: Filter Type" ParamMin="0.0" ParamMax="9.0"
-                       ParamStep="1.0"/>
-            <Parameter ParamID="Q4active" ParamName="Q4: Active" ParamMin="0.0" ParamMax="1.0"
-                       ParamStep="1.0"/>
+            <Parameter ParamID="Q4type" ParamName="Q4: Filter Type" ParamType="Choice"
+                       Default="3">
+                <Choice Name="No Filter"/>
+                <Choice Name="High Pass"/>
+                <Choice Name="High Shelf"/>
+                <Choice Name="Peak Filter"/>
+                <Choice Name="Notch Filter"/>
+                <Choice Name="Low Shelf"/>
+                <Choice Name="Low Pass"/>
+            </Parameter>
+            <Parameter ParamID="Q4active" ParamName="Q4: Active" ParamType="Boolean" ParamDefault="true"/>
             <Parameter ParamID="Q4freq" ParamName="Q4: Frequency" ParamMin="20.0" ParamMax="20000.0"
                        ParamStep="0.0"/>
             <Parameter ParamID="Q4quality" ParamName="Q4: Quality" ParamMin="0.1000000014901161"
@@ -51,10 +80,17 @@
                        ParamStep="0.1000000014901161"/>
         </Group>
         <Group GroupID="bandQ5" GroupName="Q5" Separator="|">
-            <Parameter ParamID="Q5type" ParamName="Q5: Filter Type" ParamMin="0.0" ParamMax="9.0"
-                       ParamStep="1.0"/>
-            <Parameter ParamID="Q5active" ParamName="Q5: Active" ParamMin="0.0" ParamMax="1.0"
-                       ParamStep="1.0"/>
+            <Parameter ParamID="Q5type" ParamName="Q5: Filter Type" ParamType="Choice"
+                       Default="5">
+                <Choice Name="No Filter"/>
+                <Choice Name="High Pass"/>
+                <Choice Name="High Shelf"/>
+                <Choice Name="Peak Filter"/>
+                <Choice Name="Notch Filter"/>
+                <Choice Name="Low Shelf"/>
+                <Choice Name="Low Pass"/>
+            </Parameter>
+            <Parameter ParamID="Q5active" ParamName="Q5: Active" ParamType="Boolean" ParamDefault="true"/>
             <Parameter ParamID="Q5freq" ParamName="Q5: Frequency" ParamMin="20.0" ParamMax="20000.0"
                        ParamStep="0.0"/>
             <Parameter ParamID="Q5quality" ParamName="Q5: Quality" ParamMin="0.1000000014901161"
@@ -63,10 +99,17 @@
                        ParamStep="0.1000000014901161"/>
         </Group>
         <Group GroupID="bandQ6" GroupName="Q6" Separator="|">
-            <Parameter ParamID="Q6type" ParamName="Q6: Filter Type" ParamMin="0.0" ParamMax="9.0"
-                       ParamStep="1.0"/>
-            <Parameter ParamID="Q6active" ParamName="Q6: Active" ParamMin="0.0" ParamMax="1.0"
-                       ParamStep="1.0"/>
+            <Parameter ParamID="Q6type" ParamName="Q6: Filter Type" ParamType="Choice"
+                       Default="6">
+                <Choice Name="No Filter"/>
+                <Choice Name="High Pass"/>
+                <Choice Name="High Shelf"/>
+                <Choice Name="Peak Filter"/>
+                <Choice Name="Notch Filter"/>
+                <Choice Name="Low Shelf"/>
+                <Choice Name="Low Pass"/>
+            </Parameter>
+            <Parameter ParamID="Q6active" ParamName="Q6: Active" ParamType="Boolean" ParamDefault="true"/>
             <Parameter ParamID="Q6freq" ParamName="Q6: Frequency" ParamMin="20.0" ParamMax="20000.0"
                        ParamStep="0.0"/>
             <Parameter ParamID="Q6quality" ParamName="Q6: Quality" ParamMin="0.1000000014901161"
@@ -75,8 +118,8 @@
                        ParamStep="0.1000000014901161"/>
         </Group>
         <Group GroupID="global" GroupName="Globals" Separator="|">
-            <Parameter ParamID="output" ParamName="Output" ParamMin="0.0" ParamMax="2.0"
-                       ParamStep="0.009999999776482582"/>
+            <Parameter ParamID="output" ParamName="Output" ParamMin="-100.00.0" ParamMax="12.0"
+                       ParamStep="0.01" Default="0.0"/>
         </Group>
     </Parameters>
     <DSP>

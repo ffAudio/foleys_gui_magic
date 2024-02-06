@@ -9,7 +9,10 @@
 namespace foleys
 {
 
-MagicDspBuilder::MagicDspBuilder (MagicGUIState& magicState) : m_magicState (magicState) { }
+MagicDspBuilder::MagicDspBuilder (MagicGUIState& magicState) : m_magicState (magicState)
+{
+    registerBuiltinFactories();
+}
 
 
 void MagicDspBuilder::registerBuiltinFactories()
@@ -35,8 +38,12 @@ void MagicDspBuilder::registerDspFactory (const juce::Identifier& name, DspFacto
 
 std::unique_ptr<DspProgram> MagicDspBuilder::createProgram (const juce::ValueTree& tree)
 {
-    return std::make_unique<DspProgram> (tree);
+    return std::make_unique<DspProgram> (*this, tree);
 }
 
+MagicGUIState& MagicDspBuilder::getMagicState()
+{
+    return m_magicState;
+}
 
 }  // namespace foleys

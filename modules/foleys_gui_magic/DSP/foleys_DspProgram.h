@@ -12,7 +12,7 @@ namespace foleys
 class DspProgram
 {
 public:
-    explicit DspProgram (const juce::ValueTree& tree);
+    explicit DspProgram (MagicDspBuilder& builder, const juce::ValueTree& tree);
 
     void prepareToPlay(double sampleRate, int expectedNumSamples);
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi);

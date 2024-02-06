@@ -23,6 +23,8 @@ public:
 
     std::unique_ptr<DspProgram> createProgram (const juce::ValueTree& tree);
 
+    MagicGUIState& getMagicState();
+
 private:
     MagicGUIState& m_magicState;
 

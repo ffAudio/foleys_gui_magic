@@ -9,17 +9,23 @@ namespace foleys::ParametersSerialisation
 
 namespace IDs
 {
-static constexpr auto* parameters = "Parameters";
-static constexpr auto* parameter  = "Parameter";
-static constexpr auto* paramID    = "ParamID";
-static constexpr auto* paramName  = "ParamName";
-static constexpr auto* paramMin   = "ParamMin";
-static constexpr auto* paramMax   = "ParamMax";
-static constexpr auto* paramStep  = "ParamStep";
-static constexpr auto* group      = "Group";
-static constexpr auto* groupID    = "GroupID";
-static constexpr auto* groupName  = "GroupName";
-static constexpr auto* separator  = "Separator";
+static constexpr auto* parameters   = "Parameters";
+static constexpr auto* parameter    = "Parameter";
+static constexpr auto* paramID      = "ParamID";
+static constexpr auto* paramName    = "ParamName";
+static constexpr auto* paramType    = "ParamType";
+static constexpr auto* typeFloat    = "Float";
+static constexpr auto* typeChoice   = "Choice";
+static constexpr auto* choiceName   = "Name";
+static constexpr auto* typeBoolean  = "Boolean";
+static constexpr auto* paramMin     = "ParamMin";
+static constexpr auto* paramMax     = "ParamMax";
+static constexpr auto* paramStep    = "ParamStep";
+static constexpr auto* paramDefault = "Default";
+static constexpr auto* group        = "Group";
+static constexpr auto* groupID      = "GroupID";
+static constexpr auto* groupName    = "GroupName";
+static constexpr auto* separator    = "Separator";
 }  // namespace IDs
 
 /**
@@ -78,9 +84,25 @@ static inline void restoreParameterNode (juce::AudioProcessorParameterGroup* gro
 {
     if (tree.hasType (IDs::parameter))
     {
-        group->addChild (std::make_unique<juce::AudioParameterFloat> (
-          juce::ParameterID (tree.getProperty (IDs::paramID), 1), tree.getProperty (IDs::paramName),
-          juce::NormalisableRange<float> (tree.getProperty (IDs::paramMin), tree.getProperty (IDs::paramMax), tree.getProperty (IDs::paramStep)), 0.0f));
+        auto type = tree.getProperty (IDs::paramType, IDs::typeFloat).toString();
+        if (type.equalsIgnoreCase (IDs::typeBoolean))
+            group->addChild (std::make_unique<juce::AudioParameterBool> (juce::ParameterID (tree.getProperty (IDs::paramID), 1),
+                                                                         tree.getProperty (IDs::paramName), tree.getProperty (IDs::paramDefault, false)));
+        else if (type.equalsIgnoreCase (IDs::typeChoice))
+        {
+            juce::StringArray choices;
+            for (const auto& item: tree)
+                if (item.hasType (IDs::typeChoice))
+                    choices.add (item.getProperty (IDs::choiceName));
+
+            group->addChild (std::make_unique<juce::AudioParameterChoice> (juce::ParameterID (tree.getProperty (IDs::paramID), 1),
+                                                                           tree.getProperty (IDs::paramName), choices, tree.getProperty (IDs::paramDefault, 0)));
+        }
+        else
+            group->addChild (std::make_unique<juce::AudioParameterFloat> (juce::ParameterID (tree.getProperty (IDs::paramID), 1), tree.getProperty (IDs::paramName),
+                                                                          juce::NormalisableRange<float> (tree.getProperty (IDs::paramMin), tree.getProperty (IDs::paramMax),
+                                                                                                          tree.getProperty (IDs::paramStep)),
+                                                                          tree.getProperty (IDs::paramDefault, tree.getProperty (IDs::paramMin))));
     }
     else if (tree.hasType (IDs::group))
     {

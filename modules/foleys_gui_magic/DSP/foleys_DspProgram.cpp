@@ -7,8 +7,11 @@
 namespace foleys
 {
 
-DspProgram::DspProgram (const juce::ValueTree& tree)
-{}
+DspProgram::DspProgram (MagicDspBuilder& builder, const juce::ValueTree& tree)
+{
+
+
+}
 
 void DspProgram::prepareToPlay(double sampleRate, int expectedNumSamples)
 {
