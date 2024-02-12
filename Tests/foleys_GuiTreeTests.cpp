@@ -1,9 +1,9 @@
 /*
  ==============================================================================
-    Copyright (c) 2022 Foleys Finest Audio - Daniel Walz
+    Copyright (c) 2023 Foleys Finest Audio - Daniel Walz
     All rights reserved.
 
-    License for non-commercial projects:
+    **BSD 3-Clause License**
 
     Redistribution and use in source and binary forms, with or without modification,
     are permitted provided that the following conditions are met:
@@ -16,10 +16,7 @@
        may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    License for commercial products:
-
-    To sell commercial products containing this module, you are required to buy a
-    License from https://foleysfinest.com/developer/pluginguimagic/
+ ==============================================================================
 
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
     ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -34,15 +31,16 @@
  ==============================================================================
  */
 
-#include <foleys_gui_magic/foleys_gui_magic.h>
-#include <catch2/catch_test_macros.hpp>
-
-
 #include "foleys_TestProcessors.h"
+
+#include <catch2/catch_test_macros.hpp>
+#include <foleys_gui_magic/foleys_gui_magic.h>
 
 TEST_CASE ("GUI tree test", "[gui]")
 {
-std::unique_ptr<juce::AudioProcessor> processor (new UnitTestProcessor());
-std::unique_ptr<juce::AudioProcessorEditor> editor (processor->createEditor());
-REQUIRE (editor.get() != nullptr);
+    const juce::ScopedJuceInitialiser_GUI init;
+
+    std::unique_ptr<juce::AudioProcessor>       processor (new UnitTestProcessor());
+    std::unique_ptr<juce::AudioProcessorEditor> editor (processor->createEditor());
+    REQUIRE (editor.get() != nullptr);
 }
