@@ -5,7 +5,8 @@
               pluginVSTCategory="kPlugCategGenerator" projectLineFeed="&#10;"
               companyName="Foleys Finest Audio" companyWebsite="https://foleysfinest.com"
               bundleIdentifier="com.foleysfinest.signalgenerator" pluginManufacturerCode="FFAU"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" version="1.3.2">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" version="1.3.2"
+              displaySplashScreen="1">
   <MAINGROUP id="KtcAG2" name="SignalGenerator">
     <GROUP id="{C9FD3DD7-E1DA-CA2D-54CB-B4D603FF3A7D}" name="Source">
       <FILE id="GPUQn8" name="PluginProcessor.cpp" compile="1" resource="0"

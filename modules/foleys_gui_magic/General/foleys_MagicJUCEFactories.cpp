@@ -39,6 +39,7 @@
 #include "../Widgets/foleys_XYDragComponent.h"
 #include "../Widgets/foleys_MagicLevelMeter.h"
 #include "../Widgets/foleys_MagicPlotComponent.h"
+#include "../Widgets/foleys_MagicAudioPlotComponent.h"
 #include "../Widgets/foleys_MidiLearnComponent.h"
 #include "../Widgets/foleys_MidiDrumpadComponent.h"
 #include "../Helpers/foleys_PopupMenuHelper.h"
@@ -593,6 +594,120 @@ const juce::Identifier  PlotItem::pGradient {"plot-gradient"};
 
 //==============================================================================
 
+class AudioPlotItem : public GuiItem //? : public PlotItem
+{
+public:
+
+    FOLEYS_DECLARE_GUI_FACTORY (AudioPlotItem)
+
+    static const juce::Identifier  pDecay;
+    static const juce::Identifier  pGradient;
+
+    static const juce::Identifier  pTriggeredPos;
+    static const juce::Identifier  pTriggeredNeg;
+    static const juce::Identifier  pOverlay;
+    static const juce::Identifier  pNormalize;
+    static const juce::Identifier  pLatch;
+    static const juce::Identifier  pChannel;
+    static const juce::Identifier  pNumChannels;
+    static const juce::Identifier  pPlotLength;
+    static const juce::Identifier  pPlotOffset;
+
+    AudioPlotItem (MagicGUIBuilder& builder, const juce::ValueTree& node) : GuiItem (builder, node) //? PlotItem (builder, node) { }
+    {
+        setColourTranslation (
+        {
+            { "plot-color", MagicAudioPlotComponent::plotColourId },
+            { "plot-fill-color", MagicAudioPlotComponent::plotFillColourId },
+            { "plot-inactive-color", MagicAudioPlotComponent::plotInactiveColourId },
+            { "plot-inactive-fill-color", MagicAudioPlotComponent::plotInactiveFillColourId }
+        });
+
+        addAndMakeVisible (plot);
+    }
+
+    void update() override // and REPLACE, since plotSource must be our specific derived class MagicAudioPlotSource
+    {
+        auto sourceID = configNode.getProperty (IDs::source, juce::String()).toString();
+        if (sourceID.isNotEmpty())
+            plot.setPlotSource (getMagicState().getObjectWithType<MagicAudioPlotSource>(sourceID));
+
+        auto decay = float (getProperty (pDecay));
+        plot.setDecayFactor (decay);
+
+        auto gradient = configNode.getProperty (pGradient, juce::String()).toString();
+        plot.setGradientFromString (gradient, magicBuilder.getStylesheet());
+
+        auto triggeredPos = bool (getProperty (pTriggeredPos));
+        plot.setTriggeredPos (triggeredPos);
+
+        auto triggeredNeg = bool (getProperty (pTriggeredNeg));
+        plot.setTriggeredNeg (triggeredNeg);
+
+        auto overlay = bool (getProperty (pOverlay));
+        plot.setOverlay (overlay);
+
+        auto normalize = bool (getProperty (pNormalize));
+        plot.setNormalize (normalize);
+
+        auto latch = bool (getProperty (pLatch));
+        plot.setLatch (latch);
+
+        auto channel = int (getProperty (pChannel));
+        plot.setChannel (channel);
+
+        auto numChannels = int (getProperty (pNumChannels));
+        plot.setNumChannels (numChannels);
+
+        auto plotLength = int (getProperty (pPlotLength));
+        plot.setPlotLength (plotLength);
+
+        auto plotOffset = float (getProperty (pPlotOffset));
+        plot.setPlotOffset (plotOffset);
+    }
+
+    std::vector<SettableProperty> getSettableProperties() const override
+    {
+        std::vector<SettableProperty> props; //? { AudioPlotItem::getSettableProperties() };
+        props.push_back ({ configNode, IDs::source, SettableProperty::Choice, {}, magicBuilder.createObjectsMenuLambda<MagicAudioPlotSource>() });
+        props.push_back ({ configNode, pDecay,         SettableProperty::Number, {}, {} });
+        props.push_back ({ configNode, pGradient,      SettableProperty::Gradient, {}, {} });
+        props.push_back ({ configNode, pTriggeredPos,     SettableProperty::Toggle, {}, {} });
+        props.push_back ({ configNode, pTriggeredNeg,     SettableProperty::Toggle, {}, {} });
+        props.push_back ({ configNode, pOverlay,       SettableProperty::Toggle, {}, {} });
+        props.push_back ({ configNode, pNormalize,     SettableProperty::Toggle, {}, {} });
+        props.push_back ({ configNode, pLatch,         SettableProperty::Toggle, {}, {} });
+        props.push_back ({ configNode, pChannel,       SettableProperty::Number, {}, {} });
+        props.push_back ({ configNode, pNumChannels,   SettableProperty::Number, {}, {} });
+        props.push_back ({ configNode, pPlotLength,    SettableProperty::Number, {}, {} });
+        props.push_back ({ configNode, pPlotOffset,    SettableProperty::Number, {}, {} });
+        return props;
+    }
+
+    juce::Component* getWrappedComponent() override
+    {
+        return &plot;
+    }
+
+private:
+    MagicAudioPlotComponent plot;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPlotItem)
+};
+const juce::Identifier  AudioPlotItem::pDecay {"plot-decay"};
+const juce::Identifier  AudioPlotItem::pGradient {"plot-gradient"};
+const juce::Identifier  AudioPlotItem::pTriggeredPos {"plot-triggered-pos"};
+const juce::Identifier  AudioPlotItem::pTriggeredNeg {"plot-triggered-neg"};
+const juce::Identifier  AudioPlotItem::pOverlay {"plot-overlay"};
+const juce::Identifier  AudioPlotItem::pNormalize {"plot-normalize"};
+const juce::Identifier  AudioPlotItem::pLatch {"plot-latch"};
+const juce::Identifier  AudioPlotItem::pChannel {"plot-channel"};
+const juce::Identifier  AudioPlotItem::pNumChannels {"plot-num-channels"};
+const juce::Identifier  AudioPlotItem::pPlotLength {"plot-length"};
+const juce::Identifier  AudioPlotItem::pPlotOffset {"plot-offset"};
+
+//==============================================================================
+
 class XYDraggerItem : public GuiItem
 {
 public:
@@ -990,6 +1105,7 @@ void MagicGUIBuilder::registerJUCEFactories()
     registerFactory (IDs::toggleButton, &ToggleButtonItem::factory);
     registerFactory (IDs::label, &LabelItem::factory);
     registerFactory (IDs::plot, &PlotItem::factory);
+    registerFactory (IDs::audioPlot, &AudioPlotItem::factory);
     registerFactory (IDs::xyDragComponent, &XYDraggerItem::factory);
     registerFactory (IDs::keyboardComponent, &KeyboardItem::factory);
     registerFactory (IDs::drumpadComponent, &DrumpadItem::factory);
