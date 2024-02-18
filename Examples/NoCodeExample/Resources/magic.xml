@@ -123,7 +123,21 @@
         </Group>
     </Parameters>
     <DSP>
-
+        <Program>
+            <InputAudio Name="Input" Format="Stereo" NumChannels="2"/>
+            <OutputAudio Name="Output" Format="Stereo" NumChannels="2" Input="Gain"/>
+            <IIR Name="Q1" Input="Input">
+                <Parameter paramID="Q1type" Control="Type"/>
+                <Parameter paramID="Q1freq" Control="Frequency"/>
+                <Parameter paramID="Q1gain" Control="Gain"/>
+                <Parameter paramID="Q1quality" Control="Quality"/>
+            </IIR>
+            <Gain Name="Master" Input="Q1">
+                <Parameter paramID="output" Control="Gain"/>
+            </Gain>
+            <LevelMeter Name="outputMeter" Input="Gain"/>
+            <Analyzer Name="output" Input="Gain"/>
+        </Program>
     </DSP>
     <Styles>
         <Style name="default">
