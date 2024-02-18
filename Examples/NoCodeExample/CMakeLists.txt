@@ -33,6 +33,7 @@ target_sources(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
         ${PROJECT_NAME}_data
+        foleys_dsp_magic
         foleys_gui_magic
         juce::juce_audio_basics
         juce::juce_audio_plugin_client

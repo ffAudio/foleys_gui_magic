@@ -44,7 +44,6 @@
 #include "General/foleys_MagicGUIBuilder.cpp"
 #include "General/foleys_MagicPluginEditor.cpp"
 #include "General/foleys_MagicProcessor.cpp"
-#include "General/foleys_NoCodeProcessor.cpp"
 #include "General/foleys_Resources.cpp"
 #include "General/foleys_MagicJUCEFactories.cpp"
 
@@ -78,11 +77,6 @@
 #include "LookAndFeels/foleys_JuceLookAndFeels.cpp"
 #include "LookAndFeels/foleys_LookAndFeel.cpp"
 #include "LookAndFeels/foleys_Skeuomorphic.cpp"
-
-#include "DSP/foleys_DspNode.cpp"
-#include "DSP/foleys_BuiltinNodes.cpp"
-#include "DSP/foleys_DspProgram.cpp"
-#include "DSP/foleys_MagicDspBuilder.cpp"
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 

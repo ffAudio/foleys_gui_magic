@@ -1,6 +1,6 @@
 
 #include "BinaryData.h"
-#include <foleys_gui_magic/foleys_gui_magic.h>
+#include <foleys_dsp_magic/foleys_dsp_magic.h>
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {

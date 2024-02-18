@@ -106,11 +106,6 @@
 #include "Helpers/foleys_Conversions.h"
 #include "Helpers/foleys_DefaultGuiTrees.h"
 
-#include "DSP/foleys_DspNode.h"
-#include "DSP/foleys_BuiltinNodes.h"
-#include "DSP/foleys_DspProgram.h"
-#include "DSP/foleys_MagicDspBuilder.h"
-
 #include "Layout/foleys_GradientBackground.h"
 #include "Layout/foleys_BoxModel.h"
 #include "Layout/foleys_Stylesheet.h"
@@ -146,4 +141,3 @@
 #include "General/foleys_MagicGUIBuilder.h"
 #include "General/foleys_MagicPluginEditor.h"
 #include "General/foleys_MagicProcessor.h"
-#include "General/foleys_NoCodeProcessor.h"

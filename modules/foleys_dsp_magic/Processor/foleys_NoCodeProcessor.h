@@ -5,7 +5,6 @@
 #pragma once
 
 #include "../DSP/foleys_MagicDspBuilder.h"
-#include "foleys_MagicProcessor.h"
 
 namespace foleys
 {
