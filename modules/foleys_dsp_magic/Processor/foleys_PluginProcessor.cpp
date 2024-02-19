@@ -2,13 +2,13 @@
 // Created by Daniel Walz on 04.02.24.
 //
 
-#include "foleys_NoCodeProcessor.h"
+#include "foleys_PluginProcessor.h"
 
 namespace foleys
 {
 
 
-NoCodeProcessor::NoCodeProcessor (const char* magic, size_t magic_size)
+PluginProcessor::PluginProcessor (const char* magic, size_t magic_size)
 {
     auto tree = juce::ValueTree::fromXml (juce::String (magic, magic_size));
 
@@ -30,14 +30,14 @@ NoCodeProcessor::NoCodeProcessor (const char* magic, size_t magic_size)
 
 // ================================================================================
 
-void NoCodeProcessor::prepareToPlay (double sampleRate, int expectedNumSamples)
+void PluginProcessor::prepareToPlay (double sampleRate, int expectedNumSamples)
 {
     juce::ScopedLock lock (m_programLock);
     if (m_currentProgram)
         m_currentProgram->prepareToPlay (sampleRate, expectedNumSamples);
 }
 
-void NoCodeProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
+void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
 {
     juce::ScopedLock lock (m_programLock);
     if (!m_currentProgram)
@@ -49,7 +49,7 @@ void NoCodeProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Midi
     m_currentProgram->processBlock (buffer, midi);
 }
 
-void NoCodeProcessor::releaseResources()
+void PluginProcessor::releaseResources()
 {
     juce::ScopedLock lock (m_programLock);
     if (m_currentProgram)
@@ -58,19 +58,19 @@ void NoCodeProcessor::releaseResources()
 
 // ================================================================================
 
-bool NoCodeProcessor::acceptsMidi() const
+bool PluginProcessor::acceptsMidi() const
 {
     juce::ScopedLock lock (m_programLock);
     return m_currentProgram ? m_currentProgram->acceptsMidi() : false;
 }
 
-bool NoCodeProcessor::producesMidi() const
+bool PluginProcessor::producesMidi() const
 {
     juce::ScopedLock lock (m_programLock);
     return m_currentProgram ? m_currentProgram->producesMidi() : false;
 }
 
-bool NoCodeProcessor::isMidiEffect() const
+bool PluginProcessor::isMidiEffect() const
 {
     juce::ScopedLock lock (m_programLock);
     return m_currentProgram ? m_currentProgram->isMidiEffect() : false;

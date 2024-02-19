@@ -51,19 +51,8 @@
 
 #include <foleys_gui_magic/foleys_gui_magic.h>
 
-#include <juce_core/juce_core.h>
-#include <juce_audio_basics/juce_audio_basics.h>
-#include <juce_audio_processors/juce_audio_processors.h>
-#include <juce_gui_basics/juce_gui_basics.h>
-#include <juce_audio_devices/juce_audio_devices.h>
-#include <juce_audio_formats/juce_audio_formats.h>
-#include <juce_audio_utils/juce_audio_utils.h>
-#include <juce_dsp/juce_dsp.h>
-
-
-#include "DSP/foleys_DspNode.h"
 #include "DSP/foleys_BuiltinNodes.h"
+#include "DSP/foleys_DspNode.h"
 #include "DSP/foleys_DspProgram.h"
 #include "DSP/foleys_MagicDspBuilder.h"
-
-#include "Processor/foleys_NoCodeProcessor.h"
+#include "Processor/foleys_PluginProcessor.h"

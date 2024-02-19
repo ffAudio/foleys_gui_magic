@@ -4,15 +4,17 @@
 
 #pragma once
 
+#include <foleys_gui_magic/foleys_gui_magic.h>
+
 #include "../DSP/foleys_MagicDspBuilder.h"
 
 namespace foleys
 {
 
 /**
- * The NoCodeProcessor is an entire plugin in a XML ValueTree
+ * The PluginProcessor is an entire plugin in a XML ValueTree
  */
-class NoCodeProcessor : public MagicProcessor
+class PluginProcessor : public MagicProcessor
 {
 public:
     /**
@@ -20,7 +22,7 @@ public:
      * @param magic
      * @param magic_size
      */
-    NoCodeProcessor (const char* magic, size_t magic_size);
+    PluginProcessor (const char* magic, size_t magic_size);
 
     void prepareToPlay (double sampleRate, int expectedNumSamples) override;
     void processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi) override;
@@ -38,7 +40,7 @@ private:
 
     std::unique_ptr<DspProgram> m_currentProgram;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NoCodeProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginProcessor)
 };
 
 }  // namespace foleys

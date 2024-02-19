@@ -31,15 +31,12 @@
  ==============================================================================
  */
 
-#include <stack>
-#include <numeric>
 
 #include "foleys_dsp_magic.h"
 
-
-#include "DSP/foleys_DspNode.cpp"
 #include "DSP/foleys_BuiltinNodes.cpp"
+#include "DSP/foleys_DspNode.cpp"
 #include "DSP/foleys_DspProgram.cpp"
 #include "DSP/foleys_MagicDspBuilder.cpp"
 
-#include "Processor/foleys_NoCodeProcessor.cpp"
+#include "Processor/foleys_PluginProcessor.cpp"
