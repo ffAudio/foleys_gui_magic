@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include <foleys_gui_magic/foleys_gui_magic.h>
-
 #include "../DSP/foleys_MagicDspBuilder.h"
+
+#include <foleys_gui_magic/foleys_gui_magic.h>
 
 namespace foleys
 {
@@ -24,6 +24,8 @@ public:
      */
     PluginProcessor (const char* magic, size_t magic_size);
 
+    const juce::String getName() const override { return m_name; }
+
     void prepareToPlay (double sampleRate, int expectedNumSamples) override;
     void processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi) override;
     void releaseResources() override;
@@ -36,7 +38,9 @@ public:
 
 private:
     juce::CriticalSection m_programLock;
-    MagicDspBuilder       m_magicDspBuilder { magicState };
+    juce::String          m_name { "Plugin-Gui-Magic" };
+
+    MagicDspBuilder m_magicDspBuilder { magicState };
 
     std::unique_ptr<DspProgram> m_currentProgram;
 

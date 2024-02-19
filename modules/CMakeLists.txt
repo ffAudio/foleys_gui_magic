@@ -1,5 +1,6 @@
 
 # add modules to juce. You need to list it in `target_link_libraries` too
-juce_add_modules(foleys_gui_magic
+juce_add_modules(
+        foleys_gui_magic
         foleys_dsp_magic
         ALIAS_NAMESPACE foleys)

@@ -14,6 +14,9 @@ PluginProcessor::PluginProcessor (const char* magic, size_t magic_size)
 
     if (tree.isValid())
     {
+        if (tree.hasProperty (IDs::name))
+            m_name = tree.getProperty (IDs::name);
+
         juce::AudioProcessorParameterGroup parameterTree;
         foleys::ParametersSerialisation::restoreParameterTree (&parameterTree, tree);
         setParameterTree (std::move (parameterTree));
