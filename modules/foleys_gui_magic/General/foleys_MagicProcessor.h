@@ -106,6 +106,8 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    double getTailLengthSeconds() const override { return 0.0; }
+
     //==============================================================================
     int getNumPrograms() override                           { return 1; }
     int getCurrentProgram() override                        { return 0; }

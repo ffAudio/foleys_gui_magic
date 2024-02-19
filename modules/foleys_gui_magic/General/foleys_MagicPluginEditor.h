@@ -60,7 +60,7 @@ public:
     /**
      Setup a GUI from a previously stored ValueTree
 
-     @param gui the ValueTree that defines the Stylesheet, colour palette and GUI components of the editor
+     @param config the ValueTree that defines the Stylesheet, colour palette and GUI components of the editor
      */
     void setConfigTree (const juce::ValueTree& config);
 
