@@ -668,7 +668,7 @@ public:
                 break;
             }
         }
-        if (not matched)
+        if (! matched)
         {
             dragger.setDotType (DOT_TYPE_DOT);
         }
