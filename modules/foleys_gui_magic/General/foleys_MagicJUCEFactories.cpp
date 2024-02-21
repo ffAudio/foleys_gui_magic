@@ -600,7 +600,10 @@ public:
 
     static const juce::Identifier  pCrosshair;
     static const juce::StringArray pCrosshairTypes;
+    static const juce::Identifier  pDotType;
+    static const juce::StringArray pDotTypes;
     static const juce::Identifier  pRadius;
+    static const juce::Identifier  pLineThickness;
     static const juce::Identifier  pWheelParameter;
     static const juce::Identifier  pContextParameter;
     static const juce::Identifier  pSenseFactor;
@@ -654,9 +657,29 @@ public:
         else
             dragger.setCrossHair (true, true);
 
+        juce::String dotType = getProperty (pDotType);
+        bool matched = false;
+        for (int i=0; i<4; i++)
+        {
+            if (dotType == pDotTypes [i])
+            {
+                dragger.setDotType ((DOT_TYPE)i);
+                matched = true;
+                break;
+            }
+        }
+        if (! matched)
+        {
+            dragger.setDotType (DOT_TYPE_DOT);
+        }
+
         auto radius = getProperty (pRadius);
         if (! radius.isVoid())
             dragger.setRadius (radius);
+
+        auto lineThickness = getProperty (pLineThickness);
+        if (! lineThickness.isVoid())
+            dragger.setLineThickness (lineThickness);
 
         auto factor = getProperty (pSenseFactor);
         if (! factor.isVoid())
@@ -676,7 +699,9 @@ public:
         props.push_back ({ configNode, pContextParameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
         props.push_back ({ configNode, pWheelParameter, SettableProperty::Choice, {}, magicBuilder.createParameterMenuLambda() });
         props.push_back ({ configNode, pCrosshair, SettableProperty::Choice, {}, magicBuilder.createChoicesMenuLambda (pCrosshairTypes) });
+        props.push_back ({ configNode, pDotType, SettableProperty::Choice, {}, magicBuilder.createChoicesMenuLambda (pDotTypes) });
         props.push_back ({ configNode, pRadius, SettableProperty::Number, {}, {}});
+        props.push_back ({ configNode, pLineThickness, SettableProperty::Number, {}, {}});
         props.push_back ({ configNode, pSenseFactor, SettableProperty::Number, {}, {}});
         props.push_back ({ configNode, pJumpToClick, SettableProperty::Toggle, {}, {}});
 
@@ -695,7 +720,10 @@ private:
 };
 const juce::Identifier  XYDraggerItem::pCrosshair       { "xy-crosshair" };
 const juce::StringArray XYDraggerItem::pCrosshairTypes  { "no-crosshair", "vertical", "horizontal", "crosshair" };
+const juce::Identifier  XYDraggerItem::pDotType         { "xy-dot" };
+const juce::StringArray XYDraggerItem::pDotTypes        { "xy-dot", "xy-pole", "xy-zero", "xy-pole-zero" };
 const juce::Identifier  XYDraggerItem::pRadius          { "xy-radius" };
+const juce::Identifier  XYDraggerItem::pLineThickness   { "xy-line-thickness" };
 const juce::Identifier  XYDraggerItem::pWheelParameter  { "wheel-parameter" };
 const juce::Identifier  XYDraggerItem::pContextParameter { "right-click" };
 const juce::Identifier  XYDraggerItem::pSenseFactor     { "xy-sense-factor" };
