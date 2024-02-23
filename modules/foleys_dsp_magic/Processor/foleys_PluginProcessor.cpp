@@ -7,27 +7,44 @@
 namespace foleys
 {
 
+namespace IDs
+{
+static constexpr auto* parameters   = "Parameters";
+}
 
 PluginProcessor::PluginProcessor (const char* magic, size_t magic_size)
 {
     auto tree = juce::ValueTree::fromXml (juce::String (magic, magic_size));
 
-    if (tree.isValid())
+    setValueTree (tree);
+}
+
+// ================================================================================
+
+void PluginProcessor::setValueTree (const juce::ValueTree& mainConfig)
+{
+    if (mainConfig.isValid())
     {
-        if (tree.hasProperty (IDs::name))
-            m_name = tree.getProperty (IDs::name);
+        if (mainConfig.hasProperty (IDs::name))
+            m_name = mainConfig.getProperty (IDs::name);
 
-        juce::AudioProcessorParameterGroup parameterTree;
-        foleys::ParametersSerialisation::restoreParameterTree (&parameterTree, tree);
-        setParameterTree (std::move (parameterTree));
+        auto oldParameterNode = m_config.getChildWithName (IDs::parameters);
+        if (!oldParameterNode.isValid() || !oldParameterNode.isEquivalentTo (mainConfig.getChildWithName (IDs::parameters)))
+        {
+            juce::AudioProcessorParameterGroup parameterTree;
+            foleys::ParametersSerialisation::restoreParameterTree (&parameterTree, mainConfig);
+            setParameterTree (std::move (parameterTree));
+        }
 
-        auto program = m_magicDspBuilder.createProgram (tree.getChildWithName ("DSP"));
+        auto program = m_magicDspBuilder.createProgram (mainConfig.getChildWithName ("DSP"));
         {
             juce::ScopedLock lock (m_programLock);
             m_currentProgram = std::move (program);
         }
 
-        magicState.setGuiValueTree (tree);
+        magicState.setGuiValueTree (mainConfig);
+
+        m_config = mainConfig;
     }
 }
 

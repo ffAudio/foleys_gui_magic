@@ -17,12 +17,20 @@ namespace foleys
 class PluginProcessor : public MagicProcessor
 {
 public:
+    PluginProcessor() = default;
+
     /**
      * Create this processor from the BinaryData
      * @param magic
      * @param magic_size
      */
     PluginProcessor (const char* magic, size_t magic_size);
+
+    /**
+     * Set the whole config consisting of parameters, DSP chain and GUI
+     * @param mainConfig
+     */
+    void setValueTree (const juce::ValueTree& mainConfig);
 
     const juce::String getName() const override { return m_name; }
 
@@ -37,11 +45,11 @@ public:
     bool isMidiEffect() const override;
 
 private:
-    juce::CriticalSection m_programLock;
-    juce::String          m_name { "Plugin-Gui-Magic" };
-
     MagicDspBuilder m_magicDspBuilder { magicState };
 
+    juce::ValueTree             m_config;
+    juce::String                m_name { "Plugin-Gui-Magic" };
+    juce::CriticalSection       m_programLock;
     std::unique_ptr<DspProgram> m_currentProgram;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginProcessor)
