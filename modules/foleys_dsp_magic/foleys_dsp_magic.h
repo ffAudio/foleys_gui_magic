@@ -56,3 +56,6 @@
 #include "DSP/foleys_DspProgram.h"
 #include "DSP/foleys_MagicDspBuilder.h"
 #include "Processor/foleys_PluginProcessor.h"
+
+#include "Nodes/foleys_Oscillator.h"
+#include "Nodes/foleys_PlotOutput.h"

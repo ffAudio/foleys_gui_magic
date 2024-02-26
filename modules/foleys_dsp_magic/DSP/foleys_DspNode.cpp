@@ -4,7 +4,7 @@
 
 #include "foleys_DspNode.h"
 
-namespace foleys
+namespace foleys::dsp
 {
 
 DspNode::DspNode(const juce::ValueTree& node)
@@ -19,4 +19,4 @@ DspNode::~DspNode()
 
 
 
-} // namespace foleys
+} // namespace foleys::dsp

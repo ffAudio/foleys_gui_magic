@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace foleys
+namespace foleys::dsp
 {
 
 /**
@@ -33,4 +33,4 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicDspBuilder)
 };
 
-}  // namespace foleys
+}  // namespace foleys::dsp

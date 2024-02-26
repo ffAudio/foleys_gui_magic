@@ -6,9 +6,9 @@
 
 #include "foleys_MagicDspBuilder.h"
 
-namespace foleys
+namespace foleys::dsp
 {
 
 
 
-}  // namespace foleys
+}  // namespace foleys::dsp

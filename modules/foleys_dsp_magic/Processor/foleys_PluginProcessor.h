@@ -8,7 +8,7 @@
 
 #include <foleys_gui_magic/foleys_gui_magic.h>
 
-namespace foleys
+namespace foleys::dsp
 {
 
 /**
@@ -52,7 +52,10 @@ private:
     juce::CriticalSection       m_programLock;
     std::unique_ptr<DspProgram> m_currentProgram;
 
+    double sampleRate         = 0.0;
+    int    expectedNumSamples = 0;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginProcessor)
 };
 
-}  // namespace foleys
+}  // namespace foleys::dsp

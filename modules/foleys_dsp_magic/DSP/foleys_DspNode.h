@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace foleys
+namespace foleys::dsp
 {
 
 class DspNode
@@ -21,11 +21,11 @@ private:
 };
 
 #define FOLEYS_DECLARE_DSP_FACTORY(itemName) \
-static inline std::unique_ptr<DspNode> factory (foleys::MagicDspBuilder& builder, const juce::ValueTree& node)\
+static inline std::unique_ptr<DspNode> factory (foleys::dsp::MagicDspBuilder& builder, const juce::ValueTree& node)\
 {\
     return std::make_unique<itemName>(builder, node);\
 }                                            \
 static constexpr auto ID=#itemName;
 
-}
+} // namespace foleys::dsp
 

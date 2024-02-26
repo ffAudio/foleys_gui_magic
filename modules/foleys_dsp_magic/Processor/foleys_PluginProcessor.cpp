@@ -4,13 +4,14 @@
 
 #include "foleys_PluginProcessor.h"
 
-namespace foleys
+namespace foleys::dsp
 {
 
 namespace IDs
 {
-static constexpr auto* parameters   = "Parameters";
-}
+static constexpr auto* name       = "name";
+static constexpr auto* parameters = "Parameters";
+}  // namespace IDs
 
 PluginProcessor::PluginProcessor (const char* magic, size_t magic_size)
 {
@@ -38,6 +39,9 @@ void PluginProcessor::setValueTree (const juce::ValueTree& mainConfig)
 
         auto program = m_magicDspBuilder.createProgram (mainConfig.getChildWithName ("DSP"));
         {
+            if (sampleRate > 0.0)
+                program->prepareToPlay (sampleRate, expectedNumSamples);
+
             juce::ScopedLock lock (m_programLock);
             m_currentProgram = std::move (program);
         }
@@ -50,8 +54,11 @@ void PluginProcessor::setValueTree (const juce::ValueTree& mainConfig)
 
 // ================================================================================
 
-void PluginProcessor::prepareToPlay (double sampleRate, int expectedNumSamples)
+void PluginProcessor::prepareToPlay (double newSampleRate, int newExpectedNumSamples)
 {
+    sampleRate         = newSampleRate;
+    expectedNumSamples = newExpectedNumSamples;
+
     juce::ScopedLock lock (m_programLock);
     if (m_currentProgram)
         m_currentProgram->prepareToPlay (sampleRate, expectedNumSamples);
@@ -97,4 +104,4 @@ bool PluginProcessor::isMidiEffect() const
 }
 
 
-}  // namespace foleys
+}  // namespace foleys::dsp

@@ -7,7 +7,7 @@
 #include "foleys_DspNode.h"
 
 
-namespace foleys
+namespace foleys::dsp
 {
 
 class MagicDspBuilder;

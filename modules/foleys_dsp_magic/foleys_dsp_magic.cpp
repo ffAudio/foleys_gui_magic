@@ -40,3 +40,5 @@
 #include "DSP/foleys_MagicDspBuilder.cpp"
 
 #include "Processor/foleys_PluginProcessor.cpp"
+
+#include "Nodes/foleys_Oscillator.cpp"

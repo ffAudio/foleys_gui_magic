@@ -6,7 +6,9 @@
 
 #include "foleys_BuiltinNodes.h"
 
-namespace foleys
+#include <juce_dsp/juce_dsp.h>
+
+namespace foleys::dsp
 {
 
 class DspProgram
@@ -29,8 +31,10 @@ private:
     std::vector<std::unique_ptr<AudioInput>> m_audioInputs;
     std::vector<std::unique_ptr<AudioInput>> m_audioOutputs;
 
+    juce::dsp::Oscillator<float> m_oscillator;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DspProgram)
 };
 
 
-}  // namespace foleys
+}  // namespace foleys::dsp

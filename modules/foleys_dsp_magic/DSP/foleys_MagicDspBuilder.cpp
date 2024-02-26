@@ -6,7 +6,7 @@
 
 #include "foleys_BuiltinNodes.h"
 
-namespace foleys
+namespace foleys::dsp
 {
 
 MagicDspBuilder::MagicDspBuilder (MagicGUIState& magicState) : m_magicState (magicState)
@@ -46,4 +46,4 @@ MagicGUIState& MagicDspBuilder::getMagicState()
     return m_magicState;
 }
 
-}  // namespace foleys
+}  // namespace foleys::dsp
