@@ -20,18 +20,18 @@ public:
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi);
     void releaseResources();
 
-    bool acceptsMidi() const { return m_midiInput != nullptr; }
-    bool producesMidi() const { return m_midiOutput != nullptr; }
-    bool isMidiEffect() const { return false; }
+    bool acceptsMidi() const { return midiInput != nullptr; }
+    bool producesMidi() const { return midiOutput != nullptr; }
+    bool isMidiEffect() const { return acceptsMidi() && producesMidi(); }
 
 private:
-    std::unique_ptr<MidiInput>  m_midiInput;
-    std::unique_ptr<MidiOutput> m_midiOutput;
+    std::vector<std::unique_ptr<DspNode>> nodes;
 
-    std::vector<std::unique_ptr<AudioInput>> m_audioInputs;
-    std::vector<std::unique_ptr<AudioInput>> m_audioOutputs;
+    juce::WeakReference<DspNode>  midiInput;
+    juce::WeakReference<DspNode> midiOutput;
 
-    juce::dsp::Oscillator<float> m_oscillator;
+    std::vector<juce::WeakReference<DspNode>> audioInputs;
+    std::vector<juce::WeakReference<DspNode>> audioOutputs;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DspProgram)
 };

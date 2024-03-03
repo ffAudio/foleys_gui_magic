@@ -23,12 +23,18 @@ public:
 
     std::unique_ptr<DspProgram> createProgram (const juce::ValueTree& tree);
 
+    std::unique_ptr<DspNode> createNode (const juce::ValueTree& node);
+
     MagicGUIState& getMagicState();
 
-private:
-    MagicGUIState& m_magicState;
+    [[nodiscard]] int nextUID();
+    void              setNextUID (int uid);
 
-    std::map<juce::Identifier, DspFactory> m_factories;
+private:
+    MagicGUIState& magicState;
+
+    std::map<juce::Identifier, DspFactory> factories;
+    int                                    lastUID = 0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicDspBuilder)
 };

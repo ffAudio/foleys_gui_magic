@@ -15,7 +15,11 @@ class MagicDspBuilder;
 class AudioInput : public DspNode
 {
 public:
-    AudioInput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (node) { }
+    AudioInput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (builder, node) { }
+
+    void prepare (juce::dsp::ProcessSpec spec) override { }
+    void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override { }
+    void release() override { }
 
     FOLEYS_DECLARE_DSP_FACTORY (AudioInput)
 private:
@@ -25,7 +29,11 @@ private:
 class AudioOutput : public DspNode
 {
 public:
-    AudioOutput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (node) { }
+    AudioOutput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (builder, node) { }
+
+    void prepare (juce::dsp::ProcessSpec spec) override { }
+    void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override { }
+    void release() override { }
 
     FOLEYS_DECLARE_DSP_FACTORY (AudioOutput)
 private:
@@ -35,7 +43,11 @@ private:
 class MidiInput : public DspNode
 {
 public:
-    MidiInput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (node) { }
+    MidiInput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (builder, node) { }
+
+    void prepare (juce::dsp::ProcessSpec spec) override { }
+    void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override { }
+    void release() override { }
 
     FOLEYS_DECLARE_DSP_FACTORY (MidiInput)
 private:
@@ -45,7 +57,11 @@ private:
 class MidiOutput : public DspNode
 {
 public:
-    MidiOutput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (node) { }
+    MidiOutput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (builder, node) { }
+
+    void prepare (juce::dsp::ProcessSpec spec) override { }
+    void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override { }
+    void release() override { }
 
     FOLEYS_DECLARE_DSP_FACTORY (MidiOutput)
 private:
@@ -53,4 +69,4 @@ private:
 };
 
 
-}
+}  // namespace foleys::dsp

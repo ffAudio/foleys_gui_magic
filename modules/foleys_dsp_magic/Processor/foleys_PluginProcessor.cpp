@@ -15,6 +15,8 @@ static constexpr auto* parameters = "Parameters";
 
 PluginProcessor::PluginProcessor (const char* magic, size_t magic_size)
 {
+    m_magicDspBuilder.registerBuiltinFactories();
+
     auto tree = juce::ValueTree::fromXml (juce::String (magic, magic_size));
 
     setValueTree (tree);
@@ -37,7 +39,7 @@ void PluginProcessor::setValueTree (const juce::ValueTree& mainConfig)
             setParameterTree (std::move (parameterTree));
         }
 
-        auto program = m_magicDspBuilder.createProgram (mainConfig.getChildWithName ("DSP"));
+        auto program = m_magicDspBuilder.createProgram (mainConfig.getChildWithName ("DSP").getChildWithName("Program"));
         {
             if (sampleRate > 0.0)
                 program->prepareToPlay (sampleRate, expectedNumSamples);

@@ -34,6 +34,8 @@
 
 #include "foleys_dsp_magic.h"
 
+#define DECLARE_ID(arg) static constexpr auto arg=#arg;
+
 #include "DSP/foleys_BuiltinNodes.cpp"
 #include "DSP/foleys_DspNode.cpp"
 #include "DSP/foleys_DspProgram.cpp"
@@ -42,3 +44,4 @@
 #include "Processor/foleys_PluginProcessor.cpp"
 
 #include "Nodes/foleys_Oscillator.cpp"
+#include "Nodes/foleys_PlotOutput.cpp"

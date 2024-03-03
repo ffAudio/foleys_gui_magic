@@ -7,9 +7,26 @@
 namespace foleys::dsp
 {
 
-DspNode::DspNode(const juce::ValueTree& node)
+namespace NodeIDs
 {
+DECLARE_ID (name)
+DECLARE_ID (uid)
+}
 
+DspNode::DspNode (MagicDspBuilder& builder, const juce::ValueTree& node) : config (node)
+{
+    nodeName = node.getProperty (NodeIDs::name, "noname");
+    nodeType = node.getType().toString();
+    if (config.hasProperty(NodeIDs::uid))
+    {
+        uid = config.getProperty(NodeIDs::uid);
+        builder.setNextUID(uid);
+    }
+    else
+    {
+        uid = builder.nextUID();
+        config.setProperty(NodeIDs::uid, uid, nullptr);
+    }
 }
 
 DspNode::~DspNode()
@@ -18,5 +35,4 @@ DspNode::~DspNode()
 }
 
 
-
-} // namespace foleys::dsp
+}  // namespace foleys::dsp

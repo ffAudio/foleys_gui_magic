@@ -8,27 +8,51 @@
 namespace foleys::dsp
 {
 
-DspProgram::DspProgram (MagicDspBuilder& builder, const juce::ValueTree& tree) { }
+DspProgram::DspProgram (MagicDspBuilder& builder, const juce::ValueTree& tree)
+{
+    for (auto node: tree)
+    {
+        auto child = builder.createNode (node);
+        if (child)
+        {
+            nodes.push_back (std::move (child));
+        }
+    }
+
+    for (const auto& node: nodes)
+    {
+        if (auto* input = dynamic_cast<AudioInput*> (node.get()))
+            audioInputs.emplace_back (input);
+        else if (auto* output = dynamic_cast<AudioOutput*> (node.get()))
+            audioOutputs.emplace_back (output);
+        else if (auto* minput = dynamic_cast<MidiInput*> (node.get()))
+            midiInput = minput;
+        else if (auto* moutput = dynamic_cast<MidiOutput*> (node.get()))
+            midiOutput = moutput;
+    }
+}
 
 void DspProgram::prepareToPlay (double sampleRate, int expectedNumSamples)
 {
-    m_oscillator.initialise ([] (float t) { return std::sin (t); }, 1024);
-    m_oscillator.setFrequency (440.0f);
     juce::dsp::ProcessSpec spec;
     spec.sampleRate       = sampleRate;
-    spec.maximumBlockSize = expectedNumSamples;
     spec.numChannels      = 2;
-    m_oscillator.prepare (spec);
+    spec.maximumBlockSize = expectedNumSamples;
+
+    for (const auto& node: nodes)
+        node->prepare (spec);
 }
 
 void DspProgram::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
 {
-    buffer.clear();
-    juce::dsp::AudioBlock<float> block (buffer);
-    m_oscillator.process (juce::dsp::ProcessContextReplacing (block));
+
 }
 
-void DspProgram::releaseResources() { }
+void DspProgram::releaseResources()
+{
+    for (const auto& node: nodes)
+        node->release();
+}
 
 
 }  // namespace foleys::dsp

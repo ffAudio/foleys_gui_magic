@@ -12,7 +12,17 @@ namespace foleys::dsp
 class Oscillator : public DspNode
 {
 public:
+    Oscillator (MagicDspBuilder& builder, const juce::ValueTree& config);
+
+    void prepare (juce::dsp::ProcessSpec spec) override;
+    void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override;
+    void release() override;
+
+    FOLEYS_DECLARE_DSP_FACTORY (Oscillator)
+
 private:
+    juce::dsp::Oscillator<float> m_oscillator;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Oscillator)
 };
 

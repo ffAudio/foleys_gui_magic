@@ -12,6 +12,14 @@ namespace foleys::dsp
 class PlotOutput : public DspNode
 {
 public:
+    PlotOutput (MagicDspBuilder& builder, const juce::ValueTree& config);
+
+    void prepare (juce::dsp::ProcessSpec spec) override { }
+    void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override { }
+    void release() override { }
+
+    FOLEYS_DECLARE_DSP_FACTORY (PlotOutput)
+
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlotOutput)
 };

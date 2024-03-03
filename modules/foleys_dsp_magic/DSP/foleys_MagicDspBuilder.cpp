@@ -9,7 +9,7 @@
 namespace foleys::dsp
 {
 
-MagicDspBuilder::MagicDspBuilder (MagicGUIState& magicState) : m_magicState (magicState)
+MagicDspBuilder::MagicDspBuilder (MagicGUIState& state) : magicState (state)
 {
     registerBuiltinFactories();
 }
@@ -22,18 +22,21 @@ void MagicDspBuilder::registerBuiltinFactories()
     registerDspFactory (AudioOutput::ID, &AudioOutput::factory);
     registerDspFactory (MidiInput::ID, &MidiInput::factory);
     registerDspFactory (MidiOutput::ID, &MidiOutput::factory);
+
+    registerDspFactory (Oscillator::ID, &Oscillator::factory);
+    registerDspFactory (PlotOutput::ID, &PlotOutput::factory);
 }
 
 void MagicDspBuilder::registerDspFactory (const juce::Identifier& name, DspFactory&& factory)
 {
-    if (m_factories.find (name) != m_factories.cend())
+    if (factories.find (name) != factories.cend())
     {
         DBG ("Factory with name " << name << " already exists! - skipping");
         jassertfalse;
         return;
     }
 
-    m_factories[name] = factory;
+    factories[name] = factory;
 }
 
 std::unique_ptr<DspProgram> MagicDspBuilder::createProgram (const juce::ValueTree& tree)
@@ -41,9 +44,33 @@ std::unique_ptr<DspProgram> MagicDspBuilder::createProgram (const juce::ValueTre
     return std::make_unique<DspProgram> (*this, tree);
 }
 
+std::unique_ptr<DspNode> MagicDspBuilder::createNode (const juce::ValueTree& node)
+{
+    auto factory = factories.find (node.getType());
+    if (factory != factories.end())
+    {
+        auto item = factory->second (*this, node);
+        return item;
+    }
+
+    DBG ("No factory for: " << node.getType().toString());
+    return {};
+}
+
 MagicGUIState& MagicDspBuilder::getMagicState()
 {
-    return m_magicState;
+    return magicState;
 }
+
+int MagicDspBuilder::nextUID()
+{
+    return ++lastUID;
+}
+
+void MagicDspBuilder::setNextUID (int uid)
+{
+    lastUID = std::max (lastUID, uid);
+}
+
 
 }  // namespace foleys::dsp
