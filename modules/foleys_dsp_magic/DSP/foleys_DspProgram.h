@@ -16,8 +16,8 @@ class DspProgram
 public:
     explicit DspProgram (MagicDspBuilder& builder, const juce::ValueTree& tree);
 
-    void prepareToPlay(double sampleRate, int expectedNumSamples);
-    void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi);
+    void prepareToPlay (double sampleRate, int expectedNumSamples);
+    void processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi);
     void releaseResources();
 
     bool acceptsMidi() const { return midiInput != nullptr; }
@@ -26,8 +26,9 @@ public:
 
 private:
     std::vector<std::unique_ptr<DspNode>> nodes;
+    std::map<int, DspNode*>               nodeLookup;
 
-    juce::WeakReference<DspNode>  midiInput;
+    juce::WeakReference<DspNode> midiInput;
     juce::WeakReference<DspNode> midiOutput;
 
     std::vector<juce::WeakReference<DspNode>> audioInputs;

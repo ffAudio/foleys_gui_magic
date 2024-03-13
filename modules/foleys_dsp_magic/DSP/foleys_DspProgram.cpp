@@ -15,6 +15,7 @@ DspProgram::DspProgram (MagicDspBuilder& builder, const juce::ValueTree& tree)
         auto child = builder.createNode (node);
         if (child)
         {
+            nodeLookup[child->getUID()] = child.get();
             nodes.push_back (std::move (child));
         }
     }
@@ -34,19 +35,13 @@ DspProgram::DspProgram (MagicDspBuilder& builder, const juce::ValueTree& tree)
 
 void DspProgram::prepareToPlay (double sampleRate, int expectedNumSamples)
 {
-    juce::dsp::ProcessSpec spec;
-    spec.sampleRate       = sampleRate;
-    spec.numChannels      = 2;
-    spec.maximumBlockSize = expectedNumSamples;
+    juce::dsp::ProcessSpec spec { sampleRate, static_cast<juce::uint32> (expectedNumSamples), 2 };
 
     for (const auto& node: nodes)
         node->prepare (spec);
 }
 
-void DspProgram::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
-{
-
-}
+void DspProgram::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi) { }
 
 void DspProgram::releaseResources()
 {

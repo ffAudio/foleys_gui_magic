@@ -39,7 +39,7 @@ void PluginProcessor::setValueTree (const juce::ValueTree& mainConfig)
             setParameterTree (std::move (parameterTree));
         }
 
-        auto program = m_magicDspBuilder.createProgram (mainConfig.getChildWithName ("DSP").getChildWithName("Program"));
+        auto program = m_magicDspBuilder.createProgram (mainConfig.getChildWithName ("DSP").getChildWithName ("Program"));
         {
             if (sampleRate > 0.0)
                 program->prepareToPlay (sampleRate, expectedNumSamples);
@@ -68,12 +68,12 @@ void PluginProcessor::prepareToPlay (double newSampleRate, int newExpectedNumSam
 
 void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
 {
+    for (int i = getTotalNumInputChannels(); i < getTotalNumOutputChannels(); ++i)
+        buffer.clear (i, 0, buffer.getNumSamples());
+
     juce::ScopedLock lock (m_programLock);
     if (!m_currentProgram)
-    {
-        buffer.clear();
         return;
-    }
 
     m_currentProgram->processBlock (buffer, midi);
 }
