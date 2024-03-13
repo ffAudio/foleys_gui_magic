@@ -62,6 +62,10 @@ void PluginProcessor::prepareToPlay (double newSampleRate, int newExpectedNumSam
     expectedNumSamples = newExpectedNumSamples;
 
     juce::ScopedLock lock (m_programLock);
+    hasMidiIn  = m_currentProgram && m_currentProgram->acceptsMidi();
+    hasMidiOut = m_currentProgram && m_currentProgram->producesMidi();
+    midiEffect = m_currentProgram && m_currentProgram->isMidiEffect();
+
     if (m_currentProgram)
         m_currentProgram->prepareToPlay (sampleRate, expectedNumSamples);
 }
@@ -89,20 +93,17 @@ void PluginProcessor::releaseResources()
 
 bool PluginProcessor::acceptsMidi() const
 {
-    juce::ScopedLock lock (m_programLock);
-    return m_currentProgram ? m_currentProgram->acceptsMidi() : false;
+    return hasMidiIn;
 }
 
 bool PluginProcessor::producesMidi() const
 {
-    juce::ScopedLock lock (m_programLock);
-    return m_currentProgram ? m_currentProgram->producesMidi() : false;
+    return hasMidiOut;
 }
 
 bool PluginProcessor::isMidiEffect() const
 {
-    juce::ScopedLock lock (m_programLock);
-    return m_currentProgram ? m_currentProgram->isMidiEffect() : false;
+    return midiEffect;
 }
 
 

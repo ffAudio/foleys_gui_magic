@@ -54,6 +54,9 @@ private:
 
     double sampleRate         = 0.0;
     int    expectedNumSamples = 0;
+    bool   hasMidiIn          = false;
+    bool   hasMidiOut         = false;
+    bool   midiEffect         = false;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginProcessor)
 };
