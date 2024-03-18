@@ -44,6 +44,8 @@ public:
     bool producesMidi() const override;
     bool isMidiEffect() const override;
 
+    MagicDspBuilder& getMagicDspBuilder() { return m_magicDspBuilder; }
+
 private:
     MagicDspBuilder m_magicDspBuilder { magicState };
 
