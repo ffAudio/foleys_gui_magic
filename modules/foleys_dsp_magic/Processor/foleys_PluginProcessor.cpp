@@ -54,6 +54,11 @@ void PluginProcessor::setValueTree (const juce::ValueTree& mainConfig)
     }
 }
 
+juce::ValueTree PluginProcessor::getValueTree()
+{
+    return m_config;
+}
+
 // ================================================================================
 
 void PluginProcessor::prepareToPlay (double newSampleRate, int newExpectedNumSamples)

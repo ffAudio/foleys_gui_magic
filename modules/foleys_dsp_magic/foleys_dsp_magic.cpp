@@ -44,4 +44,6 @@
 #include "Processor/foleys_PluginProcessor.cpp"
 
 #include "Nodes/foleys_Oscillator.cpp"
+#include "Nodes/foleys_Noise.cpp"
+#include "Nodes/foleys_Analyser.cpp"
 #include "Nodes/foleys_PlotOutput.cpp"

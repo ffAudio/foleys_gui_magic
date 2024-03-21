@@ -30,7 +30,8 @@ public:
      * Set the whole config consisting of parameters, DSP chain and GUI
      * @param mainConfig
      */
-    void setValueTree (const juce::ValueTree& mainConfig);
+    void                          setValueTree (const juce::ValueTree& mainConfig);
+    [[nodiscard]] juce::ValueTree getValueTree();
 
     const juce::String getName() const override { return m_name; }
 

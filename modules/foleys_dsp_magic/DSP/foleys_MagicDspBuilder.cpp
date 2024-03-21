@@ -23,8 +23,10 @@ void MagicDspBuilder::registerBuiltinFactories()
     registerDspFactory (MidiInput::ID, &MidiInput::factory);
     registerDspFactory (MidiOutput::ID, &MidiOutput::factory);
 
+    registerDspFactory (Noise::ID, &Noise::factory);
     registerDspFactory (Oscillator::ID, &Oscillator::factory);
     registerDspFactory (PlotOutput::ID, &PlotOutput::factory);
+    registerDspFactory (Analyser::ID, &Analyser::factory);
 }
 
 void MagicDspBuilder::registerDspFactory (const juce::Identifier& name, DspFactory&& factory)

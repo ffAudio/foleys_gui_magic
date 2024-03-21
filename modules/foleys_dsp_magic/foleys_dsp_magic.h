@@ -58,4 +58,6 @@
 #include "Processor/foleys_PluginProcessor.h"
 
 #include "Nodes/foleys_Oscillator.h"
+#include "Nodes/foleys_Noise.h"
 #include "Nodes/foleys_PlotOutput.h"
+#include "Nodes/foleys_Analyser.h"
