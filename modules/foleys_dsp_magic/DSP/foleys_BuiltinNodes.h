@@ -16,6 +16,7 @@ class AudioInput : public DspNode
 {
 public:
     AudioInput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (builder, node) { }
+    [[nodiscard]] juce::String getCategory() const override { return Category::Audio; }
 
     void prepare (juce::dsp::ProcessSpec spec) override { }
     void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override { }
@@ -30,6 +31,7 @@ class AudioOutput : public DspNode
 {
 public:
     AudioOutput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (builder, node) { }
+    [[nodiscard]] juce::String getCategory() const override { return Category::Audio; }
 
     void prepare (juce::dsp::ProcessSpec spec) override { }
     void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override { }
@@ -44,6 +46,7 @@ class MidiInput : public DspNode
 {
 public:
     MidiInput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (builder, node) { }
+    [[nodiscard]] juce::String getCategory() const override { return Category::Audio; }
 
     void prepare (juce::dsp::ProcessSpec spec) override { }
     void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override { }
@@ -58,6 +61,7 @@ class MidiOutput : public DspNode
 {
 public:
     MidiOutput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (builder, node) { }
+    [[nodiscard]] juce::String getCategory() const override { return Category::Audio; }
 
     void prepare (juce::dsp::ProcessSpec spec) override { }
     void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override { }

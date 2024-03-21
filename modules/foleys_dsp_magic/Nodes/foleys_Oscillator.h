@@ -13,6 +13,7 @@ class Oscillator : public DspNode
 {
 public:
     Oscillator (MagicDspBuilder& builder, const juce::ValueTree& config);
+    [[nodiscard]] juce::String getCategory() const override { return Category::Generators; }
 
     void prepare (juce::dsp::ProcessSpec spec) override;
     void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override;

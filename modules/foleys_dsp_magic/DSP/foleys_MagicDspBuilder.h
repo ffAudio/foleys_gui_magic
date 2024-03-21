@@ -30,6 +30,9 @@ public:
     [[nodiscard]] int nextUID();
     void              setNextUID (int uid);
 
+    std::map<juce::Identifier, DspFactory>::iterator begin() {return factories.begin();}
+    std::map<juce::Identifier, DspFactory>::iterator end() {return factories.end();}
+
 private:
     MagicGUIState& magicState;
 

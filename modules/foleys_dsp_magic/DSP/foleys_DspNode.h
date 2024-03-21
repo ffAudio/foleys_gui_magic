@@ -9,11 +9,23 @@ namespace foleys::dsp
 
 class MagicDspBuilder;
 
+namespace Category
+{
+static constexpr auto Audio = "Audio";
+static constexpr auto Parameters = "Parameters";
+static constexpr auto Generators = "Generators";
+static constexpr auto Visualisers = "Visualisers";
+static constexpr auto Filters = "Filters";
+static constexpr auto Scripts = "Scripts";
+}
+
 class DspNode
 {
 public:
     explicit DspNode (MagicDspBuilder& builder, const juce::ValueTree& node);
     virtual ~DspNode();
+
+    [[nodiscard]] virtual juce::String getCategory() const = 0;
 
     [[nodiscard]] juce::String getName() const { return nodeName; }
     [[nodiscard]] juce::String getType() const { return nodeType; }
