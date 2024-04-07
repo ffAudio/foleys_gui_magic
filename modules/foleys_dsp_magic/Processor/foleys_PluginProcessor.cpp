@@ -13,6 +13,15 @@ static constexpr auto* name       = "name";
 static constexpr auto* parameters = "Parameters";
 }  // namespace IDs
 
+PluginProcessor::PluginProcessor()
+{
+    auto tree = MagicProcessor::createGuiValueTree();
+    tree.appendChild (juce::ValueTree ("Parameters"), nullptr);
+    tree.appendChild (juce::ValueTree ("DSP", {}, { juce::ValueTree ("Program") }), nullptr);
+
+    setValueTree (tree);
+}
+
 PluginProcessor::PluginProcessor (const char* magic, size_t magic_size)
 {
     m_magicDspBuilder.registerBuiltinFactories();

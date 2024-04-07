@@ -17,7 +17,7 @@ namespace foleys::dsp
 class PluginProcessor : public MagicProcessor
 {
 public:
-    PluginProcessor() = default;
+    PluginProcessor();
 
     /**
      * Create this processor from the BinaryData
