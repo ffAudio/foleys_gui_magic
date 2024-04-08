@@ -57,6 +57,7 @@ MagicGUIBuilder::MagicGUIBuilder (MagicGUIState& state) : magicState (state)
 MagicGUIBuilder::~MagicGUIBuilder()
 {
     getConfigTree().removeListener (this);
+    masterReference.clear();
 }
 
 Stylesheet& MagicGUIBuilder::getStylesheet()
