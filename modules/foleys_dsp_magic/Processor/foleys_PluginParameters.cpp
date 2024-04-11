@@ -92,11 +92,22 @@ juce::String getParameterDescription (const juce::ValueTree& node)
 
 juce::Array<juce::PropertyComponent*> createPropertyEditors (juce::ValueTree node, juce::UndoManager* undo)
 {
+    auto type = getParameterType (node);
+
+    if (type == ParameterType::Separator || type == ParameterType::Invalid)
+        return {};
+
     juce::Array<juce::PropertyComponent*> comps;
+
+    if (type == ParameterType::Group)
+    {
+        comps.add (new juce::TextPropertyComponent (node.getPropertyAsValue (IDs::groupID, undo), TRANS ("Group ID"), 64, false));
+        comps.add (new juce::TextPropertyComponent (node.getPropertyAsValue (IDs::groupName, undo), TRANS ("Group Name"), 64, false));
+        return comps;
+    }
+
     comps.add (new juce::TextPropertyComponent (node.getPropertyAsValue (IDs::paramID, undo), TRANS ("Parameter ID"), 64, false));
     comps.add (new juce::TextPropertyComponent (node.getPropertyAsValue (IDs::paramName, undo), TRANS ("Parameter Name"), 64, false));
-
-    auto type = getParameterType (node);
 
     switch (type)
     {
