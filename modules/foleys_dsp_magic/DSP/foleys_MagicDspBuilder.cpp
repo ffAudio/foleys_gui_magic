@@ -55,7 +55,7 @@ std::unique_ptr<DspNode> MagicDspBuilder::createNode (const juce::ValueTree& nod
         return item;
     }
 
-    DBG ("No factory for: " << node.getType().toString());
+    DBG ("No DSP factory for: " << node.getType().toString());
     return {};
 }
 

@@ -93,7 +93,7 @@ std::unique_ptr<GuiItem> MagicGUIBuilder::createGuiItem (const juce::ValueTree& 
         return item;
     }
 
-    DBG ("No factory for: " << node.getType().toString());
+    DBG ("No GUI factory for: " << node.getType().toString());
     return {};
 }
 
