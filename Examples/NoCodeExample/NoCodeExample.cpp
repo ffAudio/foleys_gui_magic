@@ -4,5 +4,5 @@
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new foleys::PluginProcessor (BinaryData::magic_xml, BinaryData::magic_xmlSize);
+    return new foleys::dsp::PluginProcessor (BinaryData::magic_xml, BinaryData::magic_xmlSize);
 }
