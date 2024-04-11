@@ -44,8 +44,11 @@ void PluginProcessor::setValueTree (const juce::ValueTree& mainConfig)
         if (!oldParameterNode.isValid() || !oldParameterNode.isEquivalentTo (mainConfig.getChildWithName (IDs::parameters)))
         {
             juce::AudioProcessorParameterGroup parameterTree;
-            foleys::ParametersSerialisation::restoreParameterTree (&parameterTree, mainConfig);
+            foleys::dsp::Parameters::restoreParameterTree (&parameterTree, mainConfig);
             setParameterTree (std::move (parameterTree));
+
+            updateHostDisplay (juce::AudioProcessor::ChangeDetails().withParameterInfoChanged (true));
+            magicState.updateParameterMap();
         }
 
         auto program = m_magicDspBuilder.createProgram (mainConfig.getChildWithName ("DSP").getChildWithName ("Program"));
