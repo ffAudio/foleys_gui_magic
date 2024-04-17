@@ -7,7 +7,7 @@
 namespace foleys::dsp
 {
 
-Noise::Noise (MagicDspBuilder& builder, const juce::ValueTree& config) : DspNode (builder, config) { }
+Noise::Noise (DspProgram& program, const juce::ValueTree& config) : DspNode (program, config) { }
 
 void Noise::prepare (juce::dsp::ProcessSpec spec)
 {

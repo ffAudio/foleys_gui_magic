@@ -46,17 +46,23 @@ std::unique_ptr<DspProgram> MagicDspBuilder::createProgram (const juce::ValueTre
     return std::make_unique<DspProgram> (*this, tree);
 }
 
-std::unique_ptr<DspNode> MagicDspBuilder::createNode (const juce::ValueTree& node)
+std::unique_ptr<DspNode> MagicDspBuilder::createNode (DspProgram& program, const juce::ValueTree& node)
 {
     auto factory = factories.find (node.getType());
     if (factory != factories.end())
     {
-        auto item = factory->second (*this, node);
+        auto item = factory->second (program, node);
         return item;
     }
 
     DBG ("No DSP factory for: " << node.getType().toString());
     return {};
+}
+
+bool MagicDspBuilder::canCreate (const juce::ValueTree& node) const
+{
+    auto factory = factories.find (node.getType());
+    return (factory != factories.end());
 }
 
 MagicGUIState& MagicDspBuilder::getMagicState()

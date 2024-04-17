@@ -8,16 +8,13 @@
 namespace foleys::dsp
 {
 
-DspProgram::DspProgram (MagicDspBuilder& builder, const juce::ValueTree& tree)
+DspProgram::DspProgram (MagicDspBuilder& builder) : dspBuilder (builder) { }
+
+DspProgram::DspProgram (MagicDspBuilder& builder, const juce::ValueTree& tree) : dspBuilder (builder), dspConfig (tree)
 {
     for (auto node: tree)
     {
-        auto child = builder.createNode (node);
-        if (child)
-        {
-            nodeLookup[child->getUID()] = child.get();
-            nodes.push_back (std::move (child));
-        }
+        createNode (node);
     }
 
     for (const auto& node: nodes)
@@ -33,6 +30,53 @@ DspProgram::DspProgram (MagicDspBuilder& builder, const juce::ValueTree& tree)
     }
 }
 
+bool DspProgram::addNode (const juce::ValueTree& newNode)
+{
+    auto success = createNode (newNode);
+    if (success)
+        dspConfig.appendChild (newNode, nullptr);
+
+    return success;
+}
+
+bool DspProgram::createNode (const juce::ValueTree& newNode)
+{
+    auto child = dspBuilder.createNode (*this, newNode);
+    if (child)
+    {
+        auto uid = child->getUID();
+        if (uid > 0)
+        {
+            if (nodeLookup.find (uid) != nodeLookup.cend())
+            {
+                /*
+                 * This uid already exists!
+                 */
+                jassertfalse;
+                return false;
+            }
+        }
+        else
+        {
+            uid = uidCounter + 1;
+            child->setUID (uid);
+        }
+        uidCounter = std::max (uidCounter, uid);
+
+        nodeLookup[child->getUID()] = child.get();
+        nodes.push_back (std::move (child));
+
+        return true;
+    }
+    return false;
+}
+
+bool DspProgram::connectNodes (DspNode::ConnectionType connectionType, int sourceUID, int sourceIndex, int targetUID, int targetIndex)
+{
+
+}
+
+
 void DspProgram::prepareToPlay (double sampleRate, int expectedNumSamples)
 {
     juce::dsp::ProcessSpec spec { sampleRate, static_cast<juce::uint32> (expectedNumSamples), 2 };
@@ -47,6 +91,15 @@ void DspProgram::releaseResources()
 {
     for (const auto& node: nodes)
         node->release();
+}
+
+DspNode* DspProgram::getNodeWithUID (int uid)
+{
+    const auto& it = std::find_if (nodes.begin(), nodes.end(), [uid] (const auto& node) { return node->getUID() == uid; });
+    if (it != nodes.end())
+        return it->get();
+
+    return nullptr;
 }
 
 

@@ -7,7 +7,7 @@
 namespace foleys::dsp
 {
 
-Oscillator::Oscillator (MagicDspBuilder& builder, const juce::ValueTree& config) : DspNode (builder, config) { }
+Oscillator::Oscillator (DspProgram& program, const juce::ValueTree& config) : DspNode (program, config) { }
 
 void Oscillator::prepare (juce::dsp::ProcessSpec spec)
 {

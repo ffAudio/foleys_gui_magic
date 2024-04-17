@@ -11,27 +11,42 @@ namespace NodeIDs
 {
 DECLARE_ID (name)
 DECLARE_ID (uid)
-}
+}  // namespace NodeIDs
 
-DspNode::DspNode (MagicDspBuilder& builder, const juce::ValueTree& node) : config (node)
+DspNode::DspNode (DspProgram& program, const juce::ValueTree& node) : config (node)
 {
-    nodeName = node.getProperty (NodeIDs::name, "noname");
     nodeType = node.getType().toString();
-    if (config.hasProperty(NodeIDs::uid))
-    {
-        uid = config.getProperty(NodeIDs::uid);
-        builder.setNextUID(uid);
-    }
-    else
-    {
-        uid = builder.nextUID();
-        config.setProperty(NodeIDs::uid, uid, nullptr);
-    }
 }
 
 DspNode::~DspNode()
 {
     masterReference.clear();
+}
+
+/* static */
+int DspNode::getUID (const juce::ValueTree& tree)
+{
+    return tree.getProperty (NodeIDs::uid, 0);
+}
+
+juce::String DspNode::getName() const
+{
+    return config.getProperty (NodeIDs::name, "unnamed").toString();
+}
+
+int DspNode::getUID() const
+{
+    return config.getProperty (NodeIDs::uid, 0);
+}
+
+void DspNode::setName (const juce::String& newName)
+{
+    config.setProperty (NodeIDs::name, newName, nullptr);
+}
+
+void DspNode::setUID (int newUID)
+{
+    config.setProperty (NodeIDs::uid, newUID, nullptr);
 }
 
 

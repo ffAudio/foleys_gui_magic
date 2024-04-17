@@ -7,7 +7,7 @@
 namespace foleys::dsp
 {
 
-PlotOutput::PlotOutput (MagicDspBuilder& builder, const juce::ValueTree& config) : DspNode (builder, config) { }
+PlotOutput::PlotOutput (DspProgram& program, const juce::ValueTree& config) : DspNode (program, config) { }
 
 
 }  // namespace foleys::dsp

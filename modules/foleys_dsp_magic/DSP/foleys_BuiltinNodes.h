@@ -15,11 +15,11 @@ class MagicDspBuilder;
 class AudioInput : public DspNode
 {
 public:
-    AudioInput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (builder, node) { }
+    AudioInput (DspProgram& program, const juce::ValueTree& node) : DspNode (program, node) { }
     [[nodiscard]] juce::String getCategory() const override { return Category::Audio; }
 
-    void prepare (juce::dsp::ProcessSpec spec) override { }
-    void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override { }
+    void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
+    void process ([[maybe_unused]] juce::dsp::AudioBlock<float>& buffer, [[maybe_unused]] juce::MidiBuffer& midi) override { }
     void release() override { }
 
     FOLEYS_DECLARE_DSP_FACTORY (AudioInput)
@@ -30,11 +30,11 @@ private:
 class AudioOutput : public DspNode
 {
 public:
-    AudioOutput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (builder, node) { }
+    AudioOutput (DspProgram& program, const juce::ValueTree& node) : DspNode (program, node) { }
     [[nodiscard]] juce::String getCategory() const override { return Category::Audio; }
 
-    void prepare (juce::dsp::ProcessSpec spec) override { }
-    void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override { }
+    void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
+    void process ([[maybe_unused]] juce::dsp::AudioBlock<float>& buffer, [[maybe_unused]] juce::MidiBuffer& midi) override { }
     void release() override { }
 
     FOLEYS_DECLARE_DSP_FACTORY (AudioOutput)
@@ -45,11 +45,11 @@ private:
 class MidiInput : public DspNode
 {
 public:
-    MidiInput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (builder, node) { }
+    MidiInput (DspProgram& program, const juce::ValueTree& node) : DspNode (program, node) { }
     [[nodiscard]] juce::String getCategory() const override { return Category::Audio; }
 
-    void prepare (juce::dsp::ProcessSpec spec) override { }
-    void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override { }
+    void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
+    void process ([[maybe_unused]] juce::dsp::AudioBlock<float>& buffer, [[maybe_unused]] juce::MidiBuffer& midi) override { }
     void release() override { }
 
     FOLEYS_DECLARE_DSP_FACTORY (MidiInput)
@@ -60,11 +60,11 @@ private:
 class MidiOutput : public DspNode
 {
 public:
-    MidiOutput (MagicDspBuilder& builder, const juce::ValueTree& node) : DspNode (builder, node) { }
+    MidiOutput (DspProgram& program, const juce::ValueTree& node) : DspNode (program, node) { }
     [[nodiscard]] juce::String getCategory() const override { return Category::Audio; }
 
-    void prepare (juce::dsp::ProcessSpec spec) override { }
-    void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override { }
+    void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
+    void process ([[maybe_unused]] juce::dsp::AudioBlock<float>& buffer, [[maybe_unused]] juce::MidiBuffer& midi) override { }
     void release() override { }
 
     FOLEYS_DECLARE_DSP_FACTORY (MidiOutput)

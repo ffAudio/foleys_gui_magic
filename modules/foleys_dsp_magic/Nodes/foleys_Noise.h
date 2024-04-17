@@ -12,7 +12,7 @@ namespace foleys::dsp
 class Noise : public DspNode
 {
 public:
-    Noise (MagicDspBuilder& builder, const juce::ValueTree& config);
+    Noise (DspProgram& program, const juce::ValueTree& config);
     [[nodiscard]] juce::String getCategory() const override { return Category::Generators; }
 
     void prepare (juce::dsp::ProcessSpec spec) override;

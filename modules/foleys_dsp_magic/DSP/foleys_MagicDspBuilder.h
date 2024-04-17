@@ -13,7 +13,7 @@ namespace foleys::dsp
 class MagicDspBuilder
 {
 public:
-    using DspFactory = std::function<std::unique_ptr<DspNode> (MagicDspBuilder& builder, const juce::ValueTree& node)>;
+    using DspFactory = std::function<std::unique_ptr<DspNode> (DspProgram& program, const juce::ValueTree& node)>;
 
     explicit MagicDspBuilder (MagicGUIState& magicState);
 
@@ -23,15 +23,17 @@ public:
 
     std::unique_ptr<DspProgram> createProgram (const juce::ValueTree& tree);
 
-    std::unique_ptr<DspNode> createNode (const juce::ValueTree& node);
+    std::unique_ptr<DspNode> createNode (DspProgram& program, const juce::ValueTree& node);
+
+    bool canCreate (const juce::ValueTree& node) const;
 
     MagicGUIState& getMagicState();
 
     [[nodiscard]] int nextUID();
     void              setNextUID (int uid);
 
-    std::map<juce::Identifier, DspFactory>::iterator begin() {return factories.begin();}
-    std::map<juce::Identifier, DspFactory>::iterator end() {return factories.end();}
+    std::map<juce::Identifier, DspFactory>::iterator begin() { return factories.begin(); }
+    std::map<juce::Identifier, DspFactory>::iterator end() { return factories.end(); }
 
 private:
     MagicGUIState& magicState;

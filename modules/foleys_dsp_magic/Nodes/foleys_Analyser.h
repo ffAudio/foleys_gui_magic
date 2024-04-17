@@ -12,7 +12,7 @@ namespace foleys::dsp
 class Analyser : public DspNode
 {
 public:
-    Analyser (MagicDspBuilder& builder, const juce::ValueTree& config);
+    Analyser (DspProgram& program, const juce::ValueTree& config);
     [[nodiscard]] juce::String getCategory() const override { return Category::Visualisers; }
 
     void prepare (juce::dsp::ProcessSpec spec) override { }

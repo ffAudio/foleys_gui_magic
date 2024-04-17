@@ -12,7 +12,7 @@ namespace foleys::dsp
 class PlotOutput : public DspNode
 {
 public:
-    PlotOutput (MagicDspBuilder& builder, const juce::ValueTree& config);
+    PlotOutput (DspProgram& program, const juce::ValueTree& config);
     [[nodiscard]] juce::String getCategory() const override { return Category::Visualisers; }
 
     void prepare (juce::dsp::ProcessSpec spec) override { }

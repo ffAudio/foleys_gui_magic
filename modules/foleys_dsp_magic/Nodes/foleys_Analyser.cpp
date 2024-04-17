@@ -7,7 +7,7 @@
 namespace foleys::dsp
 {
 
-Analyser::Analyser (MagicDspBuilder& builder, const juce::ValueTree& config) : DspNode (builder, config) { }
+Analyser::Analyser (DspProgram& program, const juce::ValueTree& config) : DspNode (program, config) { }
 
 
 }  // namespace foleys::dsp
