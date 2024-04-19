@@ -53,6 +53,7 @@
 
 #include "DSP/foleys_BuiltinNodes.h"
 #include "DSP/foleys_DspNode.h"
+#include "DSP/foleys_Connection.h"
 #include "DSP/foleys_DspProgram.h"
 #include "DSP/foleys_MagicDspBuilder.h"
 #include "Processor/foleys_PluginParameters.h"

@@ -20,7 +20,8 @@ public:
     bool addNode (const juce::ValueTree& newNode);
     bool createNode (const juce::ValueTree& newNode);
 
-    bool connectNodes (DspNode::ConnectionType connectionType, int sourceUID, int sourceIndex, int targetUID, int targetIndex);
+    bool connectNodes (Connection::ConnectionType connectionType, int sourceUID, int sourceIndex, int targetUID, int targetIndex);
+    void disconnect (int nodeUID, Connection::ConnectionType connectionType, int connectorIndex, bool input);
 
     void prepareToPlay (double sampleRate, int expectedNumSamples);
     void processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi);

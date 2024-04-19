@@ -28,6 +28,9 @@ DspProgram::DspProgram (MagicDspBuilder& builder, const juce::ValueTree& tree) :
         else if (auto* moutput = dynamic_cast<MidiOutput*> (node.get()))
             midiOutput = moutput;
     }
+
+    for (const auto& node: nodes)
+        node->updateConnections();
 }
 
 bool DspProgram::addNode (const juce::ValueTree& newNode)
@@ -44,6 +47,8 @@ bool DspProgram::createNode (const juce::ValueTree& newNode)
     auto child = dspBuilder.createNode (*this, newNode);
     if (child)
     {
+        child->updateConnections();
+
         auto uid = child->getUID();
         if (uid > 0)
         {
@@ -71,11 +76,42 @@ bool DspProgram::createNode (const juce::ValueTree& newNode)
     return false;
 }
 
-bool DspProgram::connectNodes (DspNode::ConnectionType connectionType, int sourceUID, int sourceIndex, int targetUID, int targetIndex)
+bool DspProgram::connectNodes (Connection::ConnectionType connectionType, int sourceUID, int sourceIndex, int targetUID, int targetIndex)
 {
+    auto* sourceNode = getNodeWithUID (sourceUID);
+    auto* targetNode = getNodeWithUID (targetUID);
 
+    if (!sourceNode || !targetNode)
+        return false;
+
+    auto connection = Connection (*targetNode, connectionType, targetIndex).withSource (sourceNode, sourceIndex);
+
+    DBG (connection.toValueTree().toXmlString());
+
+    auto config = targetNode->getConfig();
+    config.appendChild (connection.toValueTree(), nullptr);
+
+    targetNode->updateConnections();
+
+    return true;
 }
 
+void DspProgram::disconnect (int nodeUID, Connection::ConnectionType connectionType, int connectorIndex, bool input)
+{
+    if (input)
+    {
+        if (auto* node = getNodeWithUID (nodeUID))
+        {
+            if (auto* connector = node->getConnection (connectionType, connectorIndex))
+            {
+                connector->sourceNode = nullptr;
+                node->updateConnections();
+            }
+        }
+    }
+
+    // TODO: disconnect all that are connected to
+}
 
 void DspProgram::prepareToPlay (double sampleRate, int expectedNumSamples)
 {
