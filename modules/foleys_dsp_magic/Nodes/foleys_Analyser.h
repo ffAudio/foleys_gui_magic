@@ -19,6 +19,8 @@ public:
     void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override { }
     void release() override { }
 
+    [[nodiscard]] int getNumAudioInputs() const override { return 1; }
+
     FOLEYS_DECLARE_DSP_FACTORY (Analyser)
 
 private:

@@ -63,3 +63,4 @@
 #include "Nodes/foleys_Noise.h"
 #include "Nodes/foleys_PlotOutput.h"
 #include "Nodes/foleys_Analyser.h"
+#include "Nodes/foleys_Biquad.h"

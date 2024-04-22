@@ -19,8 +19,9 @@ public:
     void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override { }
     void release() override { }
 
-    FOLEYS_DECLARE_DSP_FACTORY (PlotOutput)
+    [[nodiscard]] int getNumAudioInputs() const override { return 1; }
 
+    FOLEYS_DECLARE_DSP_FACTORY (PlotOutput)
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlotOutput)
 };

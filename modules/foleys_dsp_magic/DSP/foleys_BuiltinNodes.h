@@ -22,6 +22,8 @@ public:
     void process ([[maybe_unused]] juce::dsp::AudioBlock<float>& buffer, [[maybe_unused]] juce::MidiBuffer& midi) override { }
     void release() override { }
 
+    [[nodiscard]] int getNumAudioOutputs() const override { return 1; }
+
     FOLEYS_DECLARE_DSP_FACTORY (AudioInput)
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioInput)
@@ -36,6 +38,8 @@ public:
     void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
     void process ([[maybe_unused]] juce::dsp::AudioBlock<float>& buffer, [[maybe_unused]] juce::MidiBuffer& midi) override { }
     void release() override { }
+
+    [[nodiscard]] int getNumAudioInputs() const override { return 1; }
 
     FOLEYS_DECLARE_DSP_FACTORY (AudioOutput)
 private:
@@ -52,6 +56,8 @@ public:
     void process ([[maybe_unused]] juce::dsp::AudioBlock<float>& buffer, [[maybe_unused]] juce::MidiBuffer& midi) override { }
     void release() override { }
 
+    [[nodiscard]] bool hasMidiOutput() const override { return true; }
+
     FOLEYS_DECLARE_DSP_FACTORY (MidiInput)
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiInput)
@@ -66,6 +72,8 @@ public:
     void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
     void process ([[maybe_unused]] juce::dsp::AudioBlock<float>& buffer, [[maybe_unused]] juce::MidiBuffer& midi) override { }
     void release() override { }
+
+    [[nodiscard]] bool hasMidiInput() const override { return true; }
 
     FOLEYS_DECLARE_DSP_FACTORY (MidiOutput)
 private:

@@ -27,6 +27,7 @@ void MagicDspBuilder::registerBuiltinFactories()
     registerDspFactory (Oscillator::ID, &Oscillator::factory);
     registerDspFactory (PlotOutput::ID, &PlotOutput::factory);
     registerDspFactory (Analyser::ID, &Analyser::factory);
+    registerDspFactory (Biquad::ID, &Biquad::factory);
 }
 
 void MagicDspBuilder::registerDspFactory (const juce::Identifier& name, DspFactory&& factory)

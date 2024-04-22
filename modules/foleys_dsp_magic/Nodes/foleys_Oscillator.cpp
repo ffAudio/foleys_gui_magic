@@ -24,5 +24,20 @@ void Oscillator::process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer
 
 void Oscillator::release() { }
 
+int Oscillator::getNumParameterInputs() const
+{
+    return 3;
+}
+
+juce::String Oscillator::getParameterInputName (int index) const
+{
+    switch (index)
+    {
+        case 0: return TRANS ("Signal Type");
+        case 1: return TRANS ("Frequency");
+        case 2: return TRANS ("Gain");
+        default: return DspNode::getParameterInputName (index);
+    }
+}
 
 }  // namespace foleys::dsp

@@ -43,13 +43,19 @@ public:
 
     void updateConnections();
 
-    // throw-away default implementation, make pure virtual
-    virtual int  getNumAudioInputs() { return 1; }
-    virtual int  getNumAudioOutputs() { return 1; }
-    virtual int  getNumParameterInputs() { return 5; }
-    virtual int  getNumParameterOutputs() { return 1; }
-    virtual bool hasMidiInput() { return true; }
-    virtual bool hasMidiOutput() { return true; }
+    [[nodiscard]] virtual int  getNumAudioInputs() const { return 0; }
+    [[nodiscard]] virtual int  getNumAudioOutputs() const { return 0; }
+    [[nodiscard]] virtual int  getNumParameterInputs() const { return 0; }
+    [[nodiscard]] virtual int  getNumParameterOutputs() const { return 0; }
+    [[nodiscard]] virtual bool hasMidiInput() const { return false; }
+    [[nodiscard]] virtual bool hasMidiOutput() const { return false; }
+
+    [[nodiscard]] virtual juce::String getAudioInputName (int index) const { return TRANS ("Audio ") + juce::String (index); }
+    [[nodiscard]] virtual juce::String getAudioOutputName (int index) const { return TRANS ("Audio ") + juce::String (index); }
+    [[nodiscard]] virtual juce::String getParameterInputName (int index) const { return TRANS ("Parameter ") + juce::String (index); }
+    [[nodiscard]] virtual juce::String getParameterOutputName (int index) const { return TRANS ("Parameter ") + juce::String (index); }
+    [[nodiscard]] virtual juce::String getMidiInputName() const { return TRANS ("Midi In "); }
+    [[nodiscard]] virtual juce::String getMidiOutputName() const { return TRANS ("Midi Out "); }
 
     const Connection* getConnection (Connection::ConnectionType type, int index) const;
     Connection*       getConnection (Connection::ConnectionType type, int index);
