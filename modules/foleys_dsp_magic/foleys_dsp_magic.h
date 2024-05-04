@@ -50,17 +50,22 @@
 #pragma once
 
 #include <foleys_gui_magic/foleys_gui_magic.h>
+#include <juce_data_structures/juce_data_structures.h>
+#include <juce_dsp/juce_dsp.h>
 
-#include "DSP/foleys_BuiltinNodes.h"
-#include "DSP/foleys_DspNode.h"
 #include "DSP/foleys_Connection.h"
+#include "DSP/foleys_Output.h"
+#include "DSP/foleys_DspNode.h"
 #include "DSP/foleys_DspProgram.h"
 #include "DSP/foleys_MagicDspBuilder.h"
+#include "Nodes/foleys_BuiltinNodes.h"
+#include "Nodes/foleys_Gain.h"
+#include "Nodes/foleys_Summing.h"
+#include "Nodes/foleys_Analyser.h"
+#include "Nodes/foleys_Biquad.h"
+#include "Nodes/foleys_Noise.h"
+#include "Nodes/foleys_Oscillator.h"
+#include "Nodes/foleys_Oscilloscope.h"
 #include "Processor/foleys_PluginParameters.h"
 #include "Processor/foleys_PluginProcessor.h"
 
-#include "Nodes/foleys_Oscillator.h"
-#include "Nodes/foleys_Noise.h"
-#include "Nodes/foleys_PlotOutput.h"
-#include "Nodes/foleys_Analyser.h"
-#include "Nodes/foleys_Biquad.h"

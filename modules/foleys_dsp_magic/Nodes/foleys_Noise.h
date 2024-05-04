@@ -16,10 +16,7 @@ public:
     [[nodiscard]] juce::String getCategory() const override { return Category::Generators; }
 
     void prepare (juce::dsp::ProcessSpec spec) override;
-    void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override;
-    void release() override;
-
-    [[nodiscard]] int getNumAudioOutputs() const override { return 1; }
+    void process() override;
 
     FOLEYS_DECLARE_DSP_FACTORY (Noise)
 private:

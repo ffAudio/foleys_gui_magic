@@ -21,7 +21,7 @@ public:
 
     void registerDspFactory (const juce::Identifier& name, DspFactory&& factory);
 
-    std::unique_ptr<DspProgram> createProgram (const juce::ValueTree& tree);
+    std::unique_ptr<DspProgram> createProgram (const juce::ValueTree& tree, MagicProcessorState& magicState);
 
     std::unique_ptr<DspNode> createNode (DspProgram& program, const juce::ValueTree& node);
 

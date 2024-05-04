@@ -51,7 +51,7 @@ void PluginProcessor::setValueTree (const juce::ValueTree& mainConfig)
             magicState.updateParameterMap();
         }
 
-        auto program = m_magicDspBuilder.createProgram (mainConfig.getChildWithName ("DSP").getChildWithName ("Program"));
+        auto program = m_magicDspBuilder.createProgram (mainConfig.getChildWithName ("DSP").getChildWithName ("Program"), magicState);
         {
             if (sampleRate > 0.0)
                 program->prepareToPlay (sampleRate, expectedNumSamples);
@@ -96,7 +96,7 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Midi
     if (!m_currentProgram)
         return;
 
-    m_currentProgram->processBlock (buffer, midi);
+    m_currentProgram->processBlock (*this, buffer, midi);
 }
 
 void PluginProcessor::releaseResources()

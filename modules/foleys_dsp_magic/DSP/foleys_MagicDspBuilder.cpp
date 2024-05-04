@@ -4,7 +4,7 @@
 
 #include "foleys_MagicDspBuilder.h"
 
-#include "foleys_BuiltinNodes.h"
+#include "foleys_dsp_magic/Nodes/foleys_BuiltinNodes.h"
 
 namespace foleys::dsp
 {
@@ -20,12 +20,15 @@ void MagicDspBuilder::registerBuiltinFactories()
     // BuiltinNodes
     registerDspFactory (AudioInput::ID, &AudioInput::factory);
     registerDspFactory (AudioOutput::ID, &AudioOutput::factory);
+    registerDspFactory (ParameterInput::ID, &ParameterInput::factory);
     registerDspFactory (MidiInput::ID, &MidiInput::factory);
     registerDspFactory (MidiOutput::ID, &MidiOutput::factory);
 
+    registerDspFactory (Gain::ID, &Gain::factory);
+    registerDspFactory (Summing::ID, &Summing::factory);
     registerDspFactory (Noise::ID, &Noise::factory);
     registerDspFactory (Oscillator::ID, &Oscillator::factory);
-    registerDspFactory (PlotOutput::ID, &PlotOutput::factory);
+    registerDspFactory (Oscilloscope::ID, &Oscilloscope::factory);
     registerDspFactory (Analyser::ID, &Analyser::factory);
     registerDspFactory (Biquad::ID, &Biquad::factory);
 }
@@ -42,9 +45,9 @@ void MagicDspBuilder::registerDspFactory (const juce::Identifier& name, DspFacto
     factories[name] = factory;
 }
 
-std::unique_ptr<DspProgram> MagicDspBuilder::createProgram (const juce::ValueTree& tree)
+std::unique_ptr<DspProgram> MagicDspBuilder::createProgram (const juce::ValueTree& tree, MagicProcessorState& state)
 {
-    return std::make_unique<DspProgram> (*this, tree);
+    return std::make_unique<DspProgram> (*this, state, tree);
 }
 
 std::unique_ptr<DspNode> MagicDspBuilder::createNode (DspProgram& program, const juce::ValueTree& node)

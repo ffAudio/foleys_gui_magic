@@ -6,6 +6,8 @@
 
 #include "foleys_Connection.h"
 
+#include <juce_dsp/juce_dsp.h>
+
 namespace foleys::dsp
 {
 
@@ -13,6 +15,7 @@ class DspProgram;
 
 namespace Category
 {
+static constexpr auto InOut       = "Input/Output";
 static constexpr auto Audio       = "Audio";
 static constexpr auto Parameters  = "Parameters";
 static constexpr auto Generators  = "Generators";
@@ -37,28 +40,47 @@ public:
     void setName (const juce::String& newName);
     void setUID (int newUID);
 
-    virtual void prepare (juce::dsp::ProcessSpec spec)                                  = 0;
-    virtual void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) = 0;
-    virtual void release()                                                              = 0;
+    virtual void prepare (juce::dsp::ProcessSpec spec) = 0;
+    virtual void process()                             = 0;
+    virtual void release() { }
 
     void updateConnections();
 
-    [[nodiscard]] virtual int  getNumAudioInputs() const { return 0; }
-    [[nodiscard]] virtual int  getNumAudioOutputs() const { return 0; }
-    [[nodiscard]] virtual int  getNumParameterInputs() const { return 0; }
-    [[nodiscard]] virtual int  getNumParameterOutputs() const { return 0; }
+    [[nodiscard]] int          getNumAudioInputs() const;
+    [[nodiscard]] int          getNumParameterInputs() const;
+    [[nodiscard]] juce::String getAudioInputName (int index) const;
+    [[nodiscard]] juce::String getParameterInputName (int index) const;
+    [[nodiscard]] juce::String getMidiInputName() const;
+
+    [[nodiscard]] int          getNumAudioOutputs() const;
+    [[nodiscard]] int          getNumParameterOutputs() const;
+    [[nodiscard]] juce::String getAudioOutputName (int index) const;
+    [[nodiscard]] juce::String getParameterOutputName (int index) const;
+    [[nodiscard]] juce::String getMidiOutputName() const;
+
     [[nodiscard]] virtual bool hasMidiInput() const { return false; }
     [[nodiscard]] virtual bool hasMidiOutput() const { return false; }
 
-    [[nodiscard]] virtual juce::String getAudioInputName (int index) const { return TRANS ("Audio ") + juce::String (index); }
-    [[nodiscard]] virtual juce::String getAudioOutputName (int index) const { return TRANS ("Audio ") + juce::String (index); }
-    [[nodiscard]] virtual juce::String getParameterInputName (int index) const { return TRANS ("Parameter ") + juce::String (index); }
-    [[nodiscard]] virtual juce::String getParameterOutputName (int index) const { return TRANS ("Parameter ") + juce::String (index); }
-    [[nodiscard]] virtual juce::String getMidiInputName() const { return TRANS ("Midi In "); }
-    [[nodiscard]] virtual juce::String getMidiOutputName() const { return TRANS ("Midi Out "); }
+    void clearInputs (ConnectionType type);
+    void clearOutputs (ConnectionType type);
 
-    const Connection* getConnection (Connection::ConnectionType type, int index) const;
-    Connection*       getConnection (Connection::ConnectionType type, int index);
+    [[nodiscard]] Connection* getConnection (ConnectionType type, int index);
+
+    /**
+     * This is where the node delivers it's output
+     * @param type  the type of requested output
+     * @param index the index of the requested output
+     * @return the output instance, can be nullptr if that output doesn't exist
+     */
+    Output* getOutput ([[maybe_unused]] ConnectionType type, [[maybe_unused]] int index);
+
+    /**
+     * Returns the output of the node this input is feeding from
+     * @param type the type of the requested output
+     * @param inputIndex the input index the output is connected to
+     * @return An output instance, can be nullptr if it is not connected
+     */
+    Output* getConnectedOutput (ConnectionType type, int inputIndex);
 
     [[nodiscard]] const juce::ValueTree& getConfig() const { return config; }
 
@@ -66,16 +88,30 @@ public:
 
     DspProgram& getProgram() { return program; }
 
+    std::vector<DspNode*> getNodesToDependOn();
+
 private:
     DspProgram&     program;
     juce::ValueTree config;
     juce::String    nodeType;
 
-    Connection midiInput { *this, Connection::MIDI };
-
     std::vector<Connection> audioInputs;
     std::vector<Connection> parameterInputs;
 
+    std::vector<Output> audioOutputs;
+    std::vector<Output> parameterOutputs;
+
+protected:
+    void addAudioInput (const juce::String& name);
+    void addParameterInput (const juce::String& name);
+
+    void addAudioOutput (const juce::String& name);
+    void addParameterOutput (const juce::String& name);
+
+    const std::vector<Connection>& getAudioInputs() { return audioInputs; }
+    const std::vector<Connection>& getParameterInputs() { return parameterInputs; }
+
+    Connection midiInput { *this, ConnectionType::MIDI, TRANS ("MIDI in") };
 
     JUCE_DECLARE_WEAK_REFERENCEABLE (DspNode)
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DspNode)

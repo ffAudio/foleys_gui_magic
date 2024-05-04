@@ -23,27 +23,64 @@ DspNode::~DspNode()
     masterReference.clear();
 }
 
+void DspNode::addAudioInput (const juce::String& name)
+{
+    audioInputs.emplace_back (*this, ConnectionType::Audio, name, static_cast<int> (audioInputs.size()));
+}
+
+void DspNode::addParameterInput (const juce::String& name)
+{
+    parameterInputs.emplace_back (*this, ConnectionType::Parameter, name, static_cast<int> (parameterInputs.size()));
+}
+
+void DspNode::addAudioOutput (const juce::String& name)
+{
+    audioOutputs.emplace_back (*this, name);
+}
+
+void DspNode::addParameterOutput (const juce::String& name)
+{
+    parameterOutputs.emplace_back (*this, name);
+}
+
+Output* DspNode::getOutput (ConnectionType type, int index)
+{
+    if (type == ConnectionType::Audio && juce::isPositiveAndBelow (index, audioOutputs.size()))
+        return &audioOutputs[static_cast<size_t> (index)];
+
+    if (type == ConnectionType::Parameter && juce::isPositiveAndBelow (index, parameterOutputs.size()))
+        return &parameterOutputs[static_cast<size_t> (index)];
+
+    return nullptr;
+}
+
 void DspNode::updateConnections()
 {
-    for (int i = static_cast<int> (audioInputs.size()); i < getNumAudioInputs(); ++i)
-        audioInputs.emplace_back (*this, Connection::Audio, i);
-
-    for (int i = static_cast<int> (parameterInputs.size()); i < getNumParameterInputs(); ++i)
-        parameterInputs.emplace_back (*this, Connection::Parameter, i);
-
     for (const auto& connection: config)
     {
         switch (Connection::getType (connection))
         {
-            case Connection::MIDI: midiInput.connect (connection); break;
-            case Connection::Audio: Connection::connect (audioInputs, connection); break;
-            case Connection::Parameter: Connection::connect (parameterInputs, connection); break;
+            case ConnectionType::MIDI: midiInput.connect (connection); break;
+            case ConnectionType::Audio: Connection::connect (audioInputs, connection); break;
+            case ConnectionType::Parameter: Connection::connect (parameterInputs, connection); break;
 
             default: break;
         }
     }
 }
 
+Output* DspNode::getConnectedOutput (ConnectionType type, int inputIndex)
+{
+    if (auto* connection = getConnection (type, inputIndex))
+    {
+        jassert (inputIndex == connection->targetIndex);
+
+        if (connection->isConnected())
+            return connection->sourceNode->getOutput (type, connection->sourceIndex);
+    }
+
+    return nullptr;
+}
 
 /* static */
 int DspNode::getUID (const juce::ValueTree& tree)
@@ -71,20 +108,118 @@ void DspNode::setUID (int newUID)
     config.setProperty (NodeIDs::uid, newUID, nullptr);
 }
 
-const Connection* DspNode::getConnection (Connection::ConnectionType type, int index) const
-{
-    return getConnection (type, index);
-}
-
-Connection* DspNode::getConnection (Connection::ConnectionType type, int index)
+Connection* DspNode::getConnection (ConnectionType type, int index)
 {
     switch (type)
     {
-        case Connection::MIDI: return &midiInput;
-        case Connection::Audio: return &audioInputs[static_cast<size_t> (index)];
-        case Connection::Parameter: return &parameterInputs[static_cast<size_t> (index)];
+        case ConnectionType::MIDI: return &midiInput;
+        case ConnectionType::Audio: return &audioInputs[static_cast<size_t> (index)];
+        case ConnectionType::Parameter: return &parameterInputs[static_cast<size_t> (index)];
         default: jassertfalse; return nullptr;
     }
+}
+
+int DspNode::getNumAudioInputs() const
+{
+    return static_cast<int> (audioInputs.size());
+}
+
+int DspNode::getNumParameterInputs() const
+{
+    return static_cast<int> (parameterInputs.size());
+}
+
+int DspNode::getNumAudioOutputs() const
+{
+    return static_cast<int> (audioOutputs.size());
+}
+
+int DspNode::getNumParameterOutputs() const
+{
+    return static_cast<int> (parameterOutputs.size());
+}
+
+juce::String DspNode::getAudioInputName (int index) const
+{
+    if (juce::isPositiveAndBelow (index, audioInputs.size()))
+        return audioInputs[index].inputName;
+
+    jassertfalse;
+    return TRANS ("Audio ") + juce::String (index);
+}
+
+juce::String DspNode::getParameterInputName (int index) const
+{
+    if (juce::isPositiveAndBelow (index, parameterInputs.size()))
+        return parameterInputs[index].inputName;
+
+    jassertfalse;
+    return TRANS ("Parameter ") + juce::String (index);
+}
+
+juce::String DspNode::getAudioOutputName (int index) const
+{
+    if (juce::isPositiveAndBelow (index, audioOutputs.size()))
+        return audioOutputs[index].name;
+
+    jassertfalse;
+    return TRANS ("Audio ") + juce::String (index);
+}
+
+juce::String DspNode::getParameterOutputName (int index) const
+{
+    if (juce::isPositiveAndBelow (index, parameterOutputs.size()))
+        return parameterOutputs[index].name;
+
+    jassertfalse;
+    return TRANS ("Parameter ") + juce::String (index);
+}
+
+juce::String DspNode::getMidiOutputName() const
+{
+    return TRANS ("Midi Out");
+}
+
+juce::String DspNode::getMidiInputName() const
+{
+    return TRANS ("Midi In");
+}
+
+void DspNode::clearInputs (ConnectionType type)
+{
+    switch (type)
+    {
+        case ConnectionType::Audio: audioInputs.clear(); break;
+        case ConnectionType::Parameter: parameterInputs.clear(); break;
+        default: break;
+    }
+}
+
+void DspNode::clearOutputs (ConnectionType type)
+{
+    switch (type)
+    {
+        case ConnectionType::Audio: audioOutputs.clear(); break;
+        case ConnectionType::Parameter: parameterOutputs.clear(); break;
+        default: break;
+    }
+}
+
+std::vector<DspNode*> DspNode::getNodesToDependOn()
+{
+    std::vector<DspNode*> sources;
+    for (const auto& audio: audioInputs)
+        if (audio.isConnected())
+            sources.push_back (audio.sourceNode);
+
+    for (const auto& parameter: parameterInputs)
+        if (parameter.isConnected())
+            sources.push_back (parameter.sourceNode);
+
+    if (midiInput.isConnected())
+        sources.push_back (midiInput.sourceNode);
+
+    return sources;
 }
 
 

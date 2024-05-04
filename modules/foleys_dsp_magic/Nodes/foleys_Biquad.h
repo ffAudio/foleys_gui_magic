@@ -14,14 +14,7 @@ public:
     [[nodiscard]] juce::String getCategory() const override { return Category::Filters; }
 
     void prepare (juce::dsp::ProcessSpec spec) override;
-    void process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) override;
-    void release() override;
-
-    [[nodiscard]] int getNumAudioInputs() const override { return 1; }
-    [[nodiscard]] int getNumAudioOutputs() const override { return 1; }
-    [[nodiscard]] int getNumParameterInputs() const override;
-    [[nodiscard]] juce::String getParameterInputName (int index) const override;
-
+    void process() override;
 
     FOLEYS_DECLARE_DSP_FACTORY (Biquad)
 private:

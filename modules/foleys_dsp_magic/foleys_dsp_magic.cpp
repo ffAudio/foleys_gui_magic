@@ -36,17 +36,18 @@
 
 #define DECLARE_ID(arg) static constexpr auto arg=#arg;
 
-#include "DSP/foleys_BuiltinNodes.cpp"
+#include "DSP/foleys_Connection.cpp"
+#include "DSP/foleys_Output.cpp"
 #include "DSP/foleys_DspNode.cpp"
 #include "DSP/foleys_DspProgram.cpp"
-#include "DSP/foleys_Connection.cpp"
 #include "DSP/foleys_MagicDspBuilder.cpp"
-
-#include "Processor/foleys_PluginProcessor.cpp"
-#include "Processor/foleys_PluginParameters.cpp"
-
-#include "Nodes/foleys_Oscillator.cpp"
-#include "Nodes/foleys_Noise.cpp"
 #include "Nodes/foleys_Analyser.cpp"
-#include "Nodes/foleys_PlotOutput.cpp"
 #include "Nodes/foleys_Biquad.cpp"
+#include "Nodes/foleys_Gain.cpp"
+#include "Nodes/foleys_Noise.cpp"
+#include "Nodes/foleys_Oscillator.cpp"
+#include "Nodes/foleys_Oscilloscope.cpp"
+#include "Nodes/foleys_Summing.cpp"
+#include "Processor/foleys_PluginParameters.cpp"
+#include "Processor/foleys_PluginProcessor.cpp"
+#include "foleys_dsp_magic/Nodes/foleys_BuiltinNodes.cpp"

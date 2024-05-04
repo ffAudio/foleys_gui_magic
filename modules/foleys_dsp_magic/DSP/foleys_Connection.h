@@ -5,26 +5,26 @@
 #pragma once
 
 #include <juce_core/juce_core.h>
+#include <juce_data_structures/juce_data_structures.h>
 
 namespace foleys::dsp
 {
 
 class DspNode;
+class Output;
+
+enum class ConnectionType
+{
+    Invalid = 0,
+    Audio,
+    MIDI,
+    Parameter
+};
 
 struct Connection
 {
 
-    enum ConnectionType
-    {
-        Invalid = 0,
-        Audio,
-        MIDI,
-        Parameter
-    };
-
-    Connection (DspNode& owner, ConnectionType connectionType, int targetIndex = 0);
-
-    Connection (const Connection& other);
+    Connection (DspNode& owner, ConnectionType connectionType, const juce::String& name, int targetIndex = 0);
 
     bool isConnected() const;
 
@@ -40,9 +40,13 @@ struct Connection
     static ConnectionType getType (const juce::String& name);
     static juce::String   getTypeName (ConnectionType type);
 
-    DspNode&       targetNode;
-    ConnectionType type        = Invalid;
-    int            targetIndex = 0;
+    Output* getOutput() const;
+
+
+    DspNode&           targetNode;
+    ConnectionType     type = ConnectionType::Invalid;
+    const juce::String inputName;
+    int                targetIndex = 0;
 
     juce::WeakReference<DspNode> sourceNode;
     int                          sourceIndex = 0;

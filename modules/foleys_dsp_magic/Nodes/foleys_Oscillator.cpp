@@ -7,7 +7,14 @@
 namespace foleys::dsp
 {
 
-Oscillator::Oscillator (DspProgram& program, const juce::ValueTree& config) : DspNode (program, config) { }
+Oscillator::Oscillator (DspProgram& program, const juce::ValueTree& config) : DspNode (program, config)
+{
+    addAudioOutput (TRANS ("Audio Out"));
+
+    addParameterInput (TRANS ("Signal Type"));
+    addParameterInput (TRANS ("Frequency"));
+    addParameterInput (TRANS ("Gain"));
+}
 
 void Oscillator::prepare (juce::dsp::ProcessSpec spec)
 {
@@ -16,28 +23,9 @@ void Oscillator::prepare (juce::dsp::ProcessSpec spec)
     m_oscillator.prepare (spec);
 }
 
-void Oscillator::process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi)
+void Oscillator::process()
 {
-    buffer.clear();
-    m_oscillator.process (juce::dsp::ProcessContextReplacing (buffer));
-}
-
-void Oscillator::release() { }
-
-int Oscillator::getNumParameterInputs() const
-{
-    return 3;
-}
-
-juce::String Oscillator::getParameterInputName (int index) const
-{
-    switch (index)
-    {
-        case 0: return TRANS ("Signal Type");
-        case 1: return TRANS ("Frequency");
-        case 2: return TRANS ("Gain");
-        default: return DspNode::getParameterInputName (index);
-    }
+    //    m_oscillator.process (juce::dsp::ProcessContextReplacing (buffer));
 }
 
 }  // namespace foleys::dsp

@@ -8,15 +8,9 @@
 namespace foleys::dsp
 {
 
-Connection::Connection (DspNode& owner, ConnectionType connectionType, int targetIndexToUse)
-  : targetNode (owner), type (connectionType), targetIndex (targetIndexToUse)
+Connection::Connection (DspNode& owner, ConnectionType connectionType, const juce::String& name, int targetIndexToUse)
+  : targetNode (owner), type (connectionType), inputName (name), targetIndex (targetIndexToUse)
 {
-}
-
-Connection::Connection (const Connection& other) : Connection (other.targetNode, other.type, other.targetIndex)
-{
-    sourceNode  = other.sourceNode;
-    sourceIndex = other.sourceIndex;
 }
 
 Connection Connection::withSource (DspNode* source, int connectionIndex)
@@ -29,15 +23,13 @@ Connection Connection::withSource (DspNode* source, int connectionIndex)
 
 bool Connection::isConnected() const
 {
-    return type != Invalid && sourceNode;
+    return type != ConnectionType::Invalid && sourceNode;
 }
 
 void Connection::connect (const juce::ValueTree& tree)
 {
     jassert (type == Connection::getType (tree));
-    jassert (int (tree.getProperty (idTargetIdx, 0)) == targetIndex);
-
-    DBG ("connect: " << tree.toXmlString());
+    jassert (static_cast<int> (tree.getProperty (idTargetIdx, 0)) == targetIndex);
 
     sourceNode  = targetNode.getProgram().getNodeWithUID (tree.getProperty (idSource, 0));
     sourceIndex = tree.getProperty (idSourceIdx, 0);
@@ -46,10 +38,20 @@ void Connection::connect (const juce::ValueTree& tree)
 /* static */
 void Connection::connect (std::vector<Connection>& connections, const juce::ValueTree& tree)
 {
-    auto targetIndex = static_cast<int> (tree.getProperty (idTargetIdx), 0);
+    auto targetIndex = static_cast<int> (tree.getProperty (idTargetIdx, 0));
 
-    jassert (juce::isPositiveAndBelow (targetIndex, connections.size()));
-    connections[targetIndex].connect (tree);
+    if (juce::isPositiveAndBelow (targetIndex, connections.size()))
+        connections[static_cast<size_t> (targetIndex)].connect (tree);
+    else
+        jassertfalse;
+}
+
+Output* Connection::getOutput() const
+{
+    if (!sourceNode)
+        return nullptr;
+
+    return sourceNode->getOutput(type, sourceIndex);
 }
 
 juce::ValueTree Connection::toValueTree()
@@ -69,35 +71,35 @@ Connection Connection::fromValueTree (DspNode& owner, juce::ValueTree tree)
 }
 
 /* static */
-Connection::ConnectionType Connection::Connection::getType (const juce::ValueTree& tree)
+ConnectionType Connection::Connection::getType (const juce::ValueTree& tree)
 {
     if (!tree.hasType (idConnection) || !tree.hasProperty (idType))
-        return Invalid;
+        return ConnectionType::Invalid;
 
     return getType (tree.getProperty (idType).toString());
 }
 
-Connection::ConnectionType Connection::getType (const juce::String& name)
+ConnectionType Connection::getType (const juce::String& name)
 {
-    if (name == getTypeName (Audio))
-        return Audio;
+    if (name == getTypeName (ConnectionType::Audio))
+        return ConnectionType::Audio;
 
-    if (name == getTypeName (Parameter))
-        return Parameter;
+    if (name == getTypeName (ConnectionType::Parameter))
+        return ConnectionType::Parameter;
 
-    if (name == getTypeName (MIDI))
-        return MIDI;
+    if (name == getTypeName (ConnectionType::MIDI))
+        return ConnectionType::MIDI;
 
-    return Invalid;
+    return ConnectionType::Invalid;
 }
 
 juce::String Connection::getTypeName (ConnectionType type)
 {
     switch (type)
     {
-        case Audio: return "audio";
-        case Parameter: return "parameter";
-        case MIDI: return "midi";
+        case ConnectionType::Audio: return "audio";
+        case ConnectionType::Parameter: return "parameter";
+        case ConnectionType::MIDI: return "midi";
         default: return "invalid";
     }
 }

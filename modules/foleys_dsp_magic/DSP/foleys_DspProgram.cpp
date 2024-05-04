@@ -8,36 +8,23 @@
 namespace foleys::dsp
 {
 
-DspProgram::DspProgram (MagicDspBuilder& builder) : dspBuilder (builder) { }
-
-DspProgram::DspProgram (MagicDspBuilder& builder, const juce::ValueTree& tree) : dspBuilder (builder), dspConfig (tree)
+DspProgram::DspProgram (MagicDspBuilder& builder, MagicProcessorState& state, const juce::ValueTree& tree)
+  : dspBuilder (builder), magicState (state), dspConfig (tree)
 {
     for (auto node: tree)
-    {
         createNode (node);
-    }
 
-    for (const auto& node: nodes)
-    {
-        if (auto* input = dynamic_cast<AudioInput*> (node.get()))
-            audioInputs.emplace_back (input);
-        else if (auto* output = dynamic_cast<AudioOutput*> (node.get()))
-            audioOutputs.emplace_back (output);
-        else if (auto* minput = dynamic_cast<MidiInput*> (node.get()))
-            midiInput = minput;
-        else if (auto* moutput = dynamic_cast<MidiOutput*> (node.get()))
-            midiOutput = moutput;
-    }
-
-    for (const auto& node: nodes)
-        node->updateConnections();
+    updateConnections();
 }
 
 bool DspProgram::addNode (const juce::ValueTree& newNode)
 {
     auto success = createNode (newNode);
     if (success)
+    {
         dspConfig.appendChild (newNode, nullptr);
+        updateConnections();
+    }
 
     return success;
 }
@@ -76,7 +63,7 @@ bool DspProgram::createNode (const juce::ValueTree& newNode)
     return false;
 }
 
-bool DspProgram::connectNodes (Connection::ConnectionType connectionType, int sourceUID, int sourceIndex, int targetUID, int targetIndex)
+bool DspProgram::connectNodes (ConnectionType connectionType, int sourceUID, int sourceIndex, int targetUID, int targetIndex)
 {
     auto* sourceNode = getNodeWithUID (sourceUID);
     auto* targetNode = getNodeWithUID (targetUID);
@@ -84,7 +71,7 @@ bool DspProgram::connectNodes (Connection::ConnectionType connectionType, int so
     if (!sourceNode || !targetNode)
         return false;
 
-    auto connection = Connection (*targetNode, connectionType, targetIndex).withSource (sourceNode, sourceIndex);
+    auto connection = Connection (*targetNode, connectionType, "TODO", targetIndex).withSource (sourceNode, sourceIndex);
 
     DBG (connection.toValueTree().toXmlString());
 
@@ -96,7 +83,7 @@ bool DspProgram::connectNodes (Connection::ConnectionType connectionType, int so
     return true;
 }
 
-void DspProgram::disconnect (int nodeUID, Connection::ConnectionType connectionType, int connectorIndex, bool input)
+void DspProgram::disconnect (int nodeUID, ConnectionType connectionType, int connectorIndex, bool input)
 {
     if (input)
     {
@@ -121,7 +108,17 @@ void DspProgram::prepareToPlay (double sampleRate, int expectedNumSamples)
         node->prepare (spec);
 }
 
-void DspProgram::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi) { }
+void DspProgram::processBlock (juce::AudioProcessor& processor, juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
+{
+    for (size_t i = 0; i < audioInputs.size(); ++i)
+    {
+        auto busBuffer = processor.getBusBuffer (buffer, true, static_cast<int> (i));
+        audioInputs[i]->setAudioBuffer (busBuffer.getArrayOfWritePointers(), busBuffer.getNumChannels(), busBuffer.getNumSamples());
+    }
+
+    for (auto* node : order)
+        node->process();
+}
 
 void DspProgram::releaseResources()
 {
@@ -136,6 +133,64 @@ DspNode* DspProgram::getNodeWithUID (int uid)
         return it->get();
 
     return nullptr;
+}
+
+void DspProgram::updateConnections()
+{
+    audioInputs.clear();
+    audioOutputs.clear();
+    order.clear();
+
+    midiInput  = nullptr;
+    midiOutput = nullptr;
+
+    for (const auto& node: nodes)
+    {
+        if (auto* input = dynamic_cast<AudioInput*> (node.get()))
+            audioInputs.emplace_back (input);
+        else if (auto* output = dynamic_cast<AudioOutput*> (node.get()))
+            audioOutputs.emplace_back (output);
+        else if (auto* pInput = dynamic_cast<ParameterInput*> (node.get()))
+            parameterInputs.emplace_back (pInput);
+        else if (auto* mInput = dynamic_cast<MidiInput*> (node.get()))
+            midiInput = mInput;
+        else if (auto* mOutput = dynamic_cast<MidiOutput*> (node.get()))
+            midiOutput = mOutput;
+    }
+
+    if (auto* processor = magicState.getProcessor())
+    {
+        const auto& tree = processor->getParameterTree();
+
+        for (const auto& pn: parameterInputs)
+        {
+            pn->setParameterGroup (tree);
+        }
+    }
+
+
+    for (const auto& node: nodes)
+        node->updateConnections();
+
+    // determine order:
+
+    while (order.size() < nodes.size())
+    {
+        for (const auto& node: nodes)
+        {
+            if (std::find (order.begin(), order.end(), node.get()) != order.end())
+                continue;
+
+            auto dependsOn = node->getNodesToDependOn();
+
+            dependsOn.erase (std::remove_if (dependsOn.begin(), dependsOn.end(),
+                                             [&] (const auto& n) { return std::find (order.begin(), order.end(), n) != order.end(); }),
+                             dependsOn.end());
+
+            if (dependsOn.empty())
+                order.push_back (node.get());
+        }
+    }
 }
 
 

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "foleys_DspNode.h"
+#include "foleys_dsp_magic/DSP/foleys_DspNode.h"
 
 
 namespace foleys::dsp
@@ -15,14 +15,13 @@ class MagicDspBuilder;
 class AudioInput : public DspNode
 {
 public:
-    AudioInput (DspProgram& program, const juce::ValueTree& node) : DspNode (program, node) { }
-    [[nodiscard]] juce::String getCategory() const override { return Category::Audio; }
+    AudioInput (DspProgram& program, const juce::ValueTree& node);
+    [[nodiscard]] juce::String getCategory() const override { return Category::InOut; }
 
     void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
-    void process ([[maybe_unused]] juce::dsp::AudioBlock<float>& buffer, [[maybe_unused]] juce::MidiBuffer& midi) override { }
-    void release() override { }
+    void process() override { }
 
-    [[nodiscard]] int getNumAudioOutputs() const override { return 1; }
+    void setAudioBuffer (float* const* data, int numChannels, int numSamples);
 
     FOLEYS_DECLARE_DSP_FACTORY (AudioInput)
 private:
@@ -32,29 +31,43 @@ private:
 class AudioOutput : public DspNode
 {
 public:
-    AudioOutput (DspProgram& program, const juce::ValueTree& node) : DspNode (program, node) { }
-    [[nodiscard]] juce::String getCategory() const override { return Category::Audio; }
+    AudioOutput (DspProgram& program, const juce::ValueTree& node);
+    [[nodiscard]] juce::String getCategory() const override { return Category::InOut; }
 
     void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
-    void process ([[maybe_unused]] juce::dsp::AudioBlock<float>& buffer, [[maybe_unused]] juce::MidiBuffer& midi) override { }
-    void release() override { }
-
-    [[nodiscard]] int getNumAudioInputs() const override { return 1; }
+    void process() override { }
 
     FOLEYS_DECLARE_DSP_FACTORY (AudioOutput)
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioOutput)
 };
 
+class ParameterInput : public DspNode
+{
+public:
+    ParameterInput (DspProgram& program, const juce::ValueTree& node);
+    [[nodiscard]] juce::String getCategory() const override { return Category::InOut; }
+
+    void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
+    void process() override;
+
+    void setParameterGroup (const juce::AudioProcessorParameterGroup& group);
+
+    FOLEYS_DECLARE_DSP_FACTORY (ParameterInput)
+private:
+    std::vector<juce::RangedAudioParameter*> parameters;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParameterInput)
+};
+
 class MidiInput : public DspNode
 {
 public:
     MidiInput (DspProgram& program, const juce::ValueTree& node) : DspNode (program, node) { }
-    [[nodiscard]] juce::String getCategory() const override { return Category::Audio; }
+    [[nodiscard]] juce::String getCategory() const override { return Category::InOut; }
 
     void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
-    void process ([[maybe_unused]] juce::dsp::AudioBlock<float>& buffer, [[maybe_unused]] juce::MidiBuffer& midi) override { }
-    void release() override { }
+    void process() override { }
 
     [[nodiscard]] bool hasMidiOutput() const override { return true; }
 
@@ -67,11 +80,10 @@ class MidiOutput : public DspNode
 {
 public:
     MidiOutput (DspProgram& program, const juce::ValueTree& node) : DspNode (program, node) { }
-    [[nodiscard]] juce::String getCategory() const override { return Category::Audio; }
+    [[nodiscard]] juce::String getCategory() const override { return Category::InOut; }
 
     void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
-    void process ([[maybe_unused]] juce::dsp::AudioBlock<float>& buffer, [[maybe_unused]] juce::MidiBuffer& midi) override { }
-    void release() override { }
+    void process() override { }
 
     [[nodiscard]] bool hasMidiInput() const override { return true; }
 

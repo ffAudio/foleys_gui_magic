@@ -2,42 +2,39 @@
 // Created by Daniel Walz on 25.02.24.
 //
 
-#include "foleys_Analyser.h"
-
-#include "../DSP/foleys_Connection.h"
-#include "../DSP/foleys_Output.h"
+#include "foleys_Oscilloscope.h"
 
 namespace foleys::dsp
 {
 
-Analyser::Analyser (DspProgram& program, const juce::ValueTree& config) : DspNode (program, config)
+Oscilloscope::Oscilloscope (DspProgram& program, const juce::ValueTree& config) : DspNode (program, config)
 {
     addAudioInput (TRANS ("Audio In"));
     addAudioOutput (TRANS ("Audio Out"));
 
     auto& state = program.getMagicProcessorState();
-    analyser    = state.getObjectWithType<MagicAnalyser> (getName());
+    scope       = state.getObjectWithType<MagicOscilloscope> (getName());
 
-    if (!analyser)
-        analyser = state.createAndAddObject<MagicAnalyser> (getName());
+    if (!scope)
+        scope = state.createAndAddObject<MagicOscilloscope> (getName());
 }
 
-void Analyser::prepare (juce::dsp::ProcessSpec spec)
+void Oscilloscope::prepare (juce::dsp::ProcessSpec spec)
 {
-    if (!analyser)
+    if (!scope)
         return;
 
-    analyser->prepareToPlay (spec.sampleRate, spec.maximumBlockSize);
+    scope->prepareToPlay (spec.sampleRate, spec.maximumBlockSize);
 }
 
-void Analyser::process()
+void Oscilloscope::process()
 {
     auto* audioOutput = getOutput(ConnectionType::Audio, 0);
     jassert(audioOutput);
 
     audioOutput->setAudioBlock ({});
 
-    if (!analyser)
+    if (!scope)
         return;
 
     if (auto* output = getConnectedOutput (ConnectionType::Audio, 0))
@@ -48,7 +45,7 @@ void Analyser::process()
             pointers[c] = audio.getChannelPointer (c);
 
         juce::AudioBuffer<float> proxy (pointers, static_cast<int> (audio.getNumChannels()), static_cast<int> (audio.getNumSamples()));
-        analyser->pushSamples (proxy);
+        scope->pushSamples (proxy);
 
         audioOutput->setAudioBlock (audio);
     }

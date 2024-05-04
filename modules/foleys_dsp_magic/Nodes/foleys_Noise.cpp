@@ -7,22 +7,23 @@
 namespace foleys::dsp
 {
 
-Noise::Noise (DspProgram& program, const juce::ValueTree& config) : DspNode (program, config) { }
+Noise::Noise (DspProgram& program, const juce::ValueTree& config) : DspNode (program, config)
+{
+    addAudioOutput (TRANS ("Audio Out"));
+}
 
 void Noise::prepare (juce::dsp::ProcessSpec spec)
 {
-//    m_oscillator.initialise ([] (float t) { return std::sin (t); }, 1024);
-//    m_oscillator.setFrequency (440.0f);
-//    m_oscillator.prepare (spec);
+    //    m_oscillator.initialise ([] (float t) { return std::sin (t); }, 1024);
+    //    m_oscillator.setFrequency (440.0f);
+    //    m_oscillator.prepare (spec);
 }
 
-void Noise::process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi)
+void Noise::process()
 {
-    buffer.clear();
-//    m_oscillator.process (juce::dsp::ProcessContextReplacing (buffer));
+    //    buffer.clear();
+    //    m_oscillator.process (juce::dsp::ProcessContextReplacing (buffer));
 }
-
-void Noise::release() { }
 
 
 }  // namespace foleys::dsp

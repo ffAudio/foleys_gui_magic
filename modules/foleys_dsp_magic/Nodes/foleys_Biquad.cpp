@@ -7,30 +7,19 @@
 namespace foleys::dsp
 {
 
-Biquad::Biquad (DspProgram& program, const juce::ValueTree& config) : DspNode (program, config) { }
+Biquad::Biquad (DspProgram& program, const juce::ValueTree& config) : DspNode (program, config)
+{
+    addAudioInput (TRANS ("Audio In"));
+    addAudioOutput (TRANS ("Audio Out"));
+
+    addParameterInput (TRANS ("Filter Type"));
+    addParameterInput (TRANS ("Frequency"));
+    addParameterInput (TRANS ("Gain"));
+    addParameterInput (TRANS ("Quality"));
+}
 
 void Biquad::prepare (juce::dsp::ProcessSpec spec) { }
 
-void Biquad::process (juce::dsp::AudioBlock<float>& buffer, juce::MidiBuffer& midi) { }
-
-void Biquad::release() { }
-
-int Biquad::getNumParameterInputs() const
-{
-    return 4;
-}
-
-juce::String Biquad::getParameterInputName (int index) const
-{
-    switch (index)
-    {
-        case 0: return TRANS ("Filter Type");
-        case 1: return TRANS ("Frequency");
-        case 2: return TRANS ("Gain");
-        case 3: return TRANS ("Quality");
-        default: return DspNode::getParameterInputName (index);
-    }
-}
-
+void Biquad::process() { }
 
 }  // namespace foleys::dsp

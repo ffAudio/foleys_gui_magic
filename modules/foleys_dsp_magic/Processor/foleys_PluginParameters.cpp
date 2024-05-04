@@ -229,7 +229,7 @@ void saveParameterNode (juce::ValueTree tree, const juce::AudioProcessorParamete
  * @param parameterTree the current parameterTree to serialise
  * @return a ValueTree that can be used to populate an AudioProcessor
  */
-juce::ValueTree saveParameterTree (const juce::AudioProcessorParameterGroup& parameterTree)
+[[maybe_unused]] juce::ValueTree saveParameterTree (const juce::AudioProcessorParameterGroup& parameterTree)
 {
     juce::ValueTree tree { IDs::parameters };
 

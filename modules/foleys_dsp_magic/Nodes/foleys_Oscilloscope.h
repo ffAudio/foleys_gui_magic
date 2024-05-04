@@ -9,20 +9,21 @@
 namespace foleys::dsp
 {
 
-class Analyser : public DspNode
+class Oscilloscope : public DspNode
 {
 public:
-    Analyser (DspProgram& program, const juce::ValueTree& config);
+    Oscilloscope (DspProgram& program, const juce::ValueTree& config);
     [[nodiscard]] juce::String getCategory() const override { return Category::Visualisers; }
 
     void prepare (juce::dsp::ProcessSpec spec) override;
     void process() override;
 
-    FOLEYS_DECLARE_DSP_FACTORY (Analyser)
-
+    FOLEYS_DECLARE_DSP_FACTORY (Oscilloscope)
 private:
-    MagicAnalyser* analyser = nullptr;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Analyser)
+    MagicOscilloscope* scope = nullptr;
+
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Oscilloscope)
 };
 
 
