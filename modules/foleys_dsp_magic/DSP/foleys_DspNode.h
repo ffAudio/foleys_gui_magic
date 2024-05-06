@@ -77,7 +77,7 @@ public:
     void clearInputs (ConnectionType type);
     void clearOutputs (ConnectionType type);
 
-    [[nodiscard]] Connection* getConnection (ConnectionType type, int index);
+    [[nodiscard]] Input* getInput (ConnectionType type, int index);
 
     /**
      * This is where the node delivers it's output
@@ -108,8 +108,8 @@ private:
     juce::ValueTree config;
     juce::String    nodeType;
 
-    std::vector<Connection> audioInputs;
-    std::vector<Connection> parameterInputs;
+    std::vector<Input> audioInputs;
+    std::vector<Input> parameterInputs;
 
     std::vector<Output> audioOutputs;
     std::vector<Output> parameterOutputs;
@@ -121,10 +121,10 @@ protected:
     void addAudioOutput (const juce::String& name);
     void addParameterOutput (const juce::String& name);
 
-    std::vector<Connection>& getAudioInputs() { return audioInputs; }
-    std::vector<Connection>& getParameterInputs() { return parameterInputs; }
+    std::vector<Input>& getAudioInputs() { return audioInputs; }
+    std::vector<Input>& getParameterInputs() { return parameterInputs; }
 
-    Connection midiInput { *this, ConnectionType::MIDI, TRANS ("MIDI in") };
+    Input midiInput { *this, ConnectionType::MIDI, TRANS ("MIDI in") };
 
     JUCE_DECLARE_WEAK_REFERENCEABLE (DspNode)
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DspNode)

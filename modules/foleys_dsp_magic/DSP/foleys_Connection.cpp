@@ -8,25 +8,25 @@
 namespace foleys::dsp
 {
 
-Connection::Connection (DspNode& owner, ConnectionType connectionType, const juce::String& name, int targetIndexToUse)
+Input::Input (DspNode& owner, ConnectionType connectionType, const juce::String& name, int targetIndexToUse)
   : targetNode (owner), type (connectionType), inputName (name), targetIndex (targetIndexToUse)
 {
 }
 
-Connection Connection::withSource (DspNode* source, int connectionIndex)
+Input Input::withSource (DspNode* source, int connectionIndex)
 {
-    Connection out (*this);
+    Input out (*this);
     out.sourceNode  = source;
     out.sourceIndex = connectionIndex;
     return out;
 }
 
-bool Connection::isConnected() const
+bool Input::isConnected() const
 {
     return type != ConnectionType::Invalid && sourceNode;
 }
 
-void Connection::connect (ConnectionType type, juce::ValueTree config, int sourceUID, int sourceIdx, int targetIdx)
+void Input::connect (ConnectionType type, juce::ValueTree config, int sourceUID, int sourceIdx, int targetIdx)
 {
     for (auto child: config)
     {
@@ -45,7 +45,7 @@ void Connection::connect (ConnectionType type, juce::ValueTree config, int sourc
     config.appendChild (connection, nullptr);
 }
 
-void Connection::disconnect (ConnectionType type, juce::ValueTree config, int targetIdx)
+void Input::disconnect (ConnectionType type, juce::ValueTree config, int targetIdx)
 {
     for (int i = config.getNumChildren() - 1; i >= 0; --i)
     {
@@ -55,9 +55,9 @@ void Connection::disconnect (ConnectionType type, juce::ValueTree config, int ta
     }
 }
 
-void Connection::connect (const juce::ValueTree& tree)
+void Input::connect (const juce::ValueTree& tree)
 {
-    jassert (type == Connection::getType (tree));
+    jassert (type == Input::getType (tree));
     jassert (static_cast<int> (tree.getProperty (idTargetIdx, 0)) == targetIndex);
 
     sourceNode  = targetNode.getProgram().getNodeWithUID (tree.getProperty (idSource, 0));
@@ -65,7 +65,7 @@ void Connection::connect (const juce::ValueTree& tree)
 }
 
 /* static */
-void Connection::connect (std::vector<Connection>& connections, const juce::ValueTree& tree)
+void Input::connect (std::vector<Input>& connections, const juce::ValueTree& tree)
 {
     auto targetIndex = static_cast<int> (tree.getProperty (idTargetIdx, 0));
 
@@ -75,13 +75,13 @@ void Connection::connect (std::vector<Connection>& connections, const juce::Valu
         jassertfalse;
 }
 
-void Connection::disconnect()
+void Input::disconnect()
 {
     sourceNode  = nullptr;
     sourceIndex = 0;
 }
 
-Output* Connection::getOutput() const
+Output* Input::getOutput() const
 {
     if (!sourceNode)
         return nullptr;
@@ -89,7 +89,7 @@ Output* Connection::getOutput() const
     return sourceNode->getOutput (type, sourceIndex);
 }
 
-juce::ValueTree Connection::toValueTree()
+juce::ValueTree Input::toValueTree()
 {
     return juce::ValueTree {
         idConnection,
@@ -98,15 +98,15 @@ juce::ValueTree Connection::toValueTree()
 }
 
 /* static */
-Connection Connection::fromValueTree (DspNode& owner, juce::ValueTree tree)
+Input Input::fromValueTree (DspNode& owner, juce::ValueTree tree)
 {
-    Connection out (owner, Connection::getType (tree), tree.getProperty (idTargetIdx, 0));
+    Input out (owner, Input::getType (tree), tree.getProperty (idTargetIdx, 0));
     auto*      source = owner.getProgram().getNodeWithUID (tree.getProperty (idSource, 0));
     return out.withSource (source, tree.getProperty (idSourceIdx, 0));
 }
 
 /* static */
-ConnectionType Connection::Connection::getType (const juce::ValueTree& tree)
+ConnectionType Input::Input::getType (const juce::ValueTree& tree)
 {
     if (!tree.hasType (idConnection) || !tree.hasProperty (idType))
         return ConnectionType::Invalid;
@@ -114,7 +114,7 @@ ConnectionType Connection::Connection::getType (const juce::ValueTree& tree)
     return getType (tree.getProperty (idType).toString());
 }
 
-ConnectionType Connection::getType (const juce::String& name)
+ConnectionType Input::getType (const juce::String& name)
 {
     if (name == getTypeName (ConnectionType::Audio))
         return ConnectionType::Audio;
@@ -128,7 +128,7 @@ ConnectionType Connection::getType (const juce::String& name)
     return ConnectionType::Invalid;
 }
 
-juce::String Connection::getTypeName (ConnectionType type)
+juce::String Input::getTypeName (ConnectionType type)
 {
     switch (type)
     {

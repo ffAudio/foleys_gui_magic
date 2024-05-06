@@ -21,10 +21,10 @@ enum class ConnectionType
     Parameter
 };
 
-struct Connection
+struct Input
 {
 
-    Connection (DspNode& owner, ConnectionType connectionType, const juce::String& name, int targetIndex = 0);
+    Input (DspNode& owner, ConnectionType connectionType, const juce::String& name, int targetIndex = 0);
 
     bool isConnected() const;
 
@@ -32,13 +32,13 @@ struct Connection
     static void disconnect (ConnectionType type, juce::ValueTree config, int targetIdx);
 
 
-    Connection withSource (DspNode* source, int connectionIndex);
+    Input withSource (DspNode* source, int connectionIndex);
 
     juce::ValueTree   toValueTree();
-    static Connection fromValueTree (DspNode& owner, juce::ValueTree tree);
+    static Input fromValueTree (DspNode& owner, juce::ValueTree tree);
 
     void        connect (const juce::ValueTree& tree);
-    static void connect (std::vector<Connection>& connections, const juce::ValueTree& tree);
+    static void connect (std::vector<Input>& connections, const juce::ValueTree& tree);
     void        disconnect();
 
     static ConnectionType getType (const juce::ValueTree& tree);

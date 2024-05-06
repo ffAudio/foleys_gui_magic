@@ -65,11 +65,11 @@ void DspNode::updateConnections()
 
     for (const auto& connection: config)
     {
-        switch (Connection::getType (connection))
+        switch (Input::getType (connection))
         {
             case ConnectionType::MIDI: midiInput.connect (connection); break;
-            case ConnectionType::Audio: Connection::connect (audioInputs, connection); break;
-            case ConnectionType::Parameter: Connection::connect (parameterInputs, connection); break;
+            case ConnectionType::Audio: Input::connect (audioInputs, connection); break;
+            case ConnectionType::Parameter: Input::connect (parameterInputs, connection); break;
 
             default: break;
         }
@@ -78,7 +78,7 @@ void DspNode::updateConnections()
 
 Output* DspNode::getConnectedOutput (ConnectionType type, int inputIndex)
 {
-    if (auto* connection = getConnection (type, inputIndex))
+    if (auto* connection = getInput (type, inputIndex))
     {
         jassert (inputIndex == connection->targetIndex);
 
@@ -115,7 +115,7 @@ void DspNode::setUID (int newUID)
     config.setProperty (NodeIDs::uid, newUID, nullptr);
 }
 
-Connection* DspNode::getConnection (ConnectionType type, int index)
+Input* DspNode::getInput (ConnectionType type, int index)
 {
     switch (type)
     {

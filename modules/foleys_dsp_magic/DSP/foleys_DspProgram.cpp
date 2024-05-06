@@ -70,7 +70,7 @@ bool DspProgram::connectNodes (ConnectionType connectionType, int sourceUID, int
     if (!targetNode)
         return false;
 
-    Connection::connect (connectionType, targetNode->getConfig(), sourceUID, sourceIndex, targetIndex);
+    Input::connect (connectionType, targetNode->getConfig(), sourceUID, sourceIndex, targetIndex);
 
     targetNode->updateConnections();
 
@@ -83,7 +83,7 @@ void DspProgram::disconnect (int nodeUID, ConnectionType connectionType, int con
     {
         if (auto* node = getNodeWithUID (nodeUID))
         {
-            Connection::disconnect (connectionType, node->getConfig(), connectorIndex);
+            Input::disconnect (connectionType, node->getConfig(), connectorIndex);
         }
     }
 
