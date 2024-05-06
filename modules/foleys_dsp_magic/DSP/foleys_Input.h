@@ -28,8 +28,8 @@ struct Input
 
     bool isConnected() const;
 
-    static void connect (ConnectionType type, juce::ValueTree config, int sourceUID, int sourceIdx, int targetIdx);
-    static void disconnect (ConnectionType type, juce::ValueTree config, int targetIdx);
+    static void connect (ConnectionType type, juce::ValueTree config, int sourceUID, int sourceIdx, int targetIdx, juce::UndoManager* undo);
+    static void disconnect (ConnectionType type, juce::ValueTree config, int targetIdx, juce::UndoManager* undo);
 
 
     Input withSource (DspNode* source, int connectionIndex);

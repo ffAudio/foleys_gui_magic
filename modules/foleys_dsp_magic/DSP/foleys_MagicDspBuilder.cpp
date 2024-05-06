@@ -47,7 +47,7 @@ void MagicDspBuilder::registerDspFactory (const juce::Identifier& name, DspFacto
 
 std::unique_ptr<DspProgram> MagicDspBuilder::createProgram (const juce::ValueTree& tree, MagicProcessorState& state)
 {
-    return std::make_unique<DspProgram> (*this, state, tree);
+    return std::make_unique<DspProgram> (*this, state, tree, nullptr);
 }
 
 std::unique_ptr<DspNode> MagicDspBuilder::createNode (DspProgram& program, const juce::ValueTree& node)

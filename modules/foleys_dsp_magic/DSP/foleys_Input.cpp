@@ -26,14 +26,16 @@ bool Input::isConnected() const
     return type != ConnectionType::Invalid && sourceNode;
 }
 
-void Input::connect (ConnectionType type, juce::ValueTree config, int sourceUID, int sourceIdx, int targetIdx)
+void Input::connect (ConnectionType type, juce::ValueTree config, int sourceUID, int sourceIdx, int targetIdx, juce::UndoManager* undo)
 {
     for (auto child: config)
     {
         if (child.getProperty (idType).toString() == getTypeName (type) && static_cast<int> (child.getProperty (idTargetIdx)) == targetIdx)
         {
-            config.setProperty (idSource, sourceUID, nullptr);
-            config.setProperty (idSourceIdx, sourceIdx, nullptr);
+            if (undo)
+                undo->beginNewTransaction();
+            config.setProperty (idSource, sourceUID, undo);
+            config.setProperty (idSourceIdx, sourceIdx, undo);
             return;
         }
     }
@@ -42,16 +44,25 @@ void Input::connect (ConnectionType type, juce::ValueTree config, int sourceUID,
         idConnection,
         { { idType, getTypeName (type) }, { idSource, sourceUID }, { idSourceIdx, sourceIdx }, { idTarget, config.getProperty (idTarget) }, { idTargetIdx, targetIdx } }
     };
-    config.appendChild (connection, nullptr);
+
+    if (undo)
+        undo->beginNewTransaction();
+
+    config.appendChild (connection, undo);
 }
 
-void Input::disconnect (ConnectionType type, juce::ValueTree config, int targetIdx)
+void Input::disconnect (ConnectionType type, juce::ValueTree config, int targetIdx, juce::UndoManager* undo)
 {
     for (int i = config.getNumChildren() - 1; i >= 0; --i)
     {
         auto child = config.getChild (i);
         if (child.getProperty (idType).toString() == getTypeName (type) && static_cast<int> (child.getProperty (idTargetIdx)) == targetIdx)
-            config.removeChild (i, nullptr);
+        {
+            if (undo)
+                undo->beginNewTransaction();
+
+            config.removeChild (i, undo);
+        }
     }
 }
 

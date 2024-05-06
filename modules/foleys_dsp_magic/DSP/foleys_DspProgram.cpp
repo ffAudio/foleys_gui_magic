@@ -8,8 +8,8 @@
 namespace foleys::dsp
 {
 
-DspProgram::DspProgram (MagicDspBuilder& builder, MagicProcessorState& state, const juce::ValueTree& tree)
-  : dspBuilder (builder), magicState (state), dspConfig (tree)
+DspProgram::DspProgram (MagicDspBuilder& builder, MagicProcessorState& state, const juce::ValueTree& tree, juce::UndoManager* undo)
+  : dspBuilder (builder), magicState (state), dspConfig (tree), undoManager (undo)
 {
     for (auto node: tree)
         createNode (node);
@@ -22,7 +22,7 @@ bool DspProgram::addNode (const juce::ValueTree& newNode)
     auto success = createNode (newNode);
     if (success)
     {
-        dspConfig.appendChild (newNode, nullptr);
+        dspConfig.appendChild (newNode, undoManager);
         updateConnections();
     }
 
@@ -70,7 +70,7 @@ bool DspProgram::connectNodes (ConnectionType connectionType, int sourceUID, int
     if (!targetNode)
         return false;
 
-    Input::connect (connectionType, targetNode->getConfig(), sourceUID, sourceIndex, targetIndex);
+    Input::connect (connectionType, targetNode->getConfig(), sourceUID, sourceIndex, targetIndex, undoManager);
 
     targetNode->updateConnections();
 
@@ -83,7 +83,7 @@ void DspProgram::disconnect (int nodeUID, ConnectionType connectionType, int con
     {
         if (auto* node = getNodeWithUID (nodeUID))
         {
-            Input::disconnect (connectionType, node->getConfig(), connectorIndex);
+            Input::disconnect (connectionType, node->getConfig(), connectorIndex, undoManager);
         }
     }
 

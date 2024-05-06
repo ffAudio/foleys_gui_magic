@@ -15,7 +15,7 @@ namespace foleys::dsp
 class DspProgram
 {
 public:
-    DspProgram (MagicDspBuilder& builder, MagicProcessorState& magicState, const juce::ValueTree& tree);
+    DspProgram (MagicDspBuilder& builder, MagicProcessorState& magicState, const juce::ValueTree& tree, juce::UndoManager* undoManager);
 
     bool addNode (const juce::ValueTree& newNode);
     bool createNode (const juce::ValueTree& newNode);
@@ -44,7 +44,9 @@ private:
 
     MagicDspBuilder&     dspBuilder;
     MagicProcessorState& magicState;
-    juce::ValueTree      dspConfig { "Program" };
+
+    juce::UndoManager* undoManager = nullptr;
+    juce::ValueTree    dspConfig { "Program" };
 
     std::vector<std::unique_ptr<DspNode>> nodes;
     std::map<int, DspNode*>               nodeLookup;
