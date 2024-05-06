@@ -4,8 +4,6 @@
 
 #include "foleys_Analyser.h"
 
-#include "../DSP/foleys_Connection.h"
-#include "../DSP/foleys_Output.h"
 
 namespace foleys::dsp
 {

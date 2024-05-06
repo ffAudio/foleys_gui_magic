@@ -36,7 +36,7 @@
 
 #define DECLARE_ID(arg) static constexpr auto arg=#arg;
 
-#include "DSP/foleys_Connection.cpp"
+#include "DSP/foleys_Input.cpp"
 #include "DSP/foleys_Output.cpp"
 #include "DSP/foleys_DspNode.cpp"
 #include "DSP/foleys_DspProgram.cpp"

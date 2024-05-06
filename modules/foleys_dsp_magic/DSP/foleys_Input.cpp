@@ -2,7 +2,7 @@
 // Created by Daniel Walz on 19.04.24.
 //
 
-#include "foleys_Connection.h"
+#include "foleys_Input.h"
 
 
 namespace foleys::dsp

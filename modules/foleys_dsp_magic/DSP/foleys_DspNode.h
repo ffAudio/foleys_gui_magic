@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "foleys_Connection.h"
-
 #include <juce_dsp/juce_dsp.h>
 
 namespace foleys::dsp

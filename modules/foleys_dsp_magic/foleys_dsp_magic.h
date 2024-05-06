@@ -53,7 +53,7 @@
 #include <juce_data_structures/juce_data_structures.h>
 #include <juce_dsp/juce_dsp.h>
 
-#include "DSP/foleys_Connection.h"
+#include "DSP/foleys_Input.h"
 #include "DSP/foleys_Output.h"
 #include "DSP/foleys_DspNode.h"
 #include "DSP/foleys_DspProgram.h"
