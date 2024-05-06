@@ -14,7 +14,7 @@ public:
     [[nodiscard]] juce::String getCategory() const override { return Category::Filters; }
 
     void prepare (juce::dsp::ProcessSpec spec) override;
-    void process() override;
+    void process ([[maybe_unused]] int numSamples) override;
 
     FOLEYS_DECLARE_DSP_FACTORY (Biquad)
 private:

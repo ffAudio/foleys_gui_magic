@@ -16,11 +16,12 @@ public:
     [[nodiscard]] juce::String getCategory() const override { return Category::Generators; }
 
     void prepare (juce::dsp::ProcessSpec spec) override;
-    void process() override;
+    void process (int numSamples) override;
 
     FOLEYS_DECLARE_DSP_FACTORY (Oscillator)
 private:
-    juce::dsp::Oscillator<float> m_oscillator;
+    juce::AudioBuffer<float>     buffer;
+    juce::dsp::Oscillator<float> oscillator;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Oscillator)
 };

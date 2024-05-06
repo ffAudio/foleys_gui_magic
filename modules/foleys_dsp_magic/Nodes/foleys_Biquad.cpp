@@ -18,8 +18,8 @@ Biquad::Biquad (DspProgram& program, const juce::ValueTree& config) : DspNode (p
     addParameterInput (TRANS ("Quality"));
 }
 
-void Biquad::prepare (juce::dsp::ProcessSpec spec) { }
+void Biquad::prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) { }
 
-void Biquad::process() { }
+void Biquad::process ([[maybe_unused]] int numSamples) { }
 
 }  // namespace foleys::dsp

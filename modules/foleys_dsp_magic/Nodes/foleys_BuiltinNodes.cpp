@@ -31,7 +31,7 @@ AudioOutput::AudioOutput (DspProgram& program, const juce::ValueTree& node) : Ds
 
 ParameterInput::ParameterInput (DspProgram& program, const juce::ValueTree& node) : DspNode (program, node) { }
 
-void ParameterInput::process()
+void ParameterInput::process ([[maybe_unused]] int numSamples)
 {
     for (size_t i = 0; i < parameters.size(); ++i)
     {

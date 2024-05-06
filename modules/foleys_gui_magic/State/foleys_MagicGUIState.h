@@ -201,6 +201,15 @@ public:
     }
 
     /**
+     * This removes all objects managed by the MagicGuiState.
+     * Make sure all objects that depend on those objects are deleted first (especially GUI)
+     */
+    void clearAllObjects()
+    {
+        advertisedObjects.clear();
+    }
+
+    /**
      Call this method in your prepareToPlay implementation, to allow th visualisers to be
      properly setup
      */

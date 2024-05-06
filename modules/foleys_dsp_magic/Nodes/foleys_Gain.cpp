@@ -18,7 +18,7 @@ Gain::Gain (DspProgram& program, const juce::ValueTree& config) : DspNode (progr
 
 void Gain::prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) { }
 
-void Gain::process()
+void Gain::process ([[maybe_unused]] int numSamples)
 {
     auto* audioOutput = getOutput (ConnectionType::Audio, 0);
     jassert (audioOutput);

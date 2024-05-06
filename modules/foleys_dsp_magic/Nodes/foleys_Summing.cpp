@@ -17,12 +17,12 @@ Summing::Summing (DspProgram& program, const juce::ValueTree& config) : DspNode 
 }
 
 
-void Summing::prepare (juce::dsp::ProcessSpec spec) { }
+void Summing::prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) { }
 
-void Summing::process()
+void Summing::process ([[maybe_unused]] int numSamples)
 {
-    auto* audioOutput = getOutput(ConnectionType::Audio, 0);
-    jassert(audioOutput);
+    auto* audioOutput = getOutput (ConnectionType::Audio, 0);
+    jassert (audioOutput);
 
     audioOutput->setAudioBlock ({});
 

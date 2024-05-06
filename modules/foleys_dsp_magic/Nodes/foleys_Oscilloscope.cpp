@@ -27,10 +27,10 @@ void Oscilloscope::prepare (juce::dsp::ProcessSpec spec)
     scope->prepareToPlay (spec.sampleRate, spec.maximumBlockSize);
 }
 
-void Oscilloscope::process()
+void Oscilloscope::process ([[maybe_unused]] int numSamples)
 {
-    auto* audioOutput = getOutput(ConnectionType::Audio, 0);
-    jassert(audioOutput);
+    auto* audioOutput = getOutput (ConnectionType::Audio, 0);
+    jassert (audioOutput);
 
     audioOutput->setAudioBlock ({});
 

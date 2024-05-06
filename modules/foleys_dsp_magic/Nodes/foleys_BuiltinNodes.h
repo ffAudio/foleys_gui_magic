@@ -19,7 +19,7 @@ public:
     [[nodiscard]] juce::String getCategory() const override { return Category::InOut; }
 
     void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
-    void process() override { }
+    void process ([[maybe_unused]] int numSamples) override { }
 
     void setAudioBuffer (float* const* data, int numChannels, int numSamples);
 
@@ -35,7 +35,7 @@ public:
     [[nodiscard]] juce::String getCategory() const override { return Category::InOut; }
 
     void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
-    void process() override { }
+    void process ([[maybe_unused]] int numSamples) override { }
 
     FOLEYS_DECLARE_DSP_FACTORY (AudioOutput)
 private:
@@ -49,7 +49,7 @@ public:
     [[nodiscard]] juce::String getCategory() const override { return Category::InOut; }
 
     void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
-    void process() override;
+    void process (int numSamples) override;
 
     void setParameterGroup (const juce::AudioProcessorParameterGroup& group);
 
@@ -67,7 +67,7 @@ public:
     [[nodiscard]] juce::String getCategory() const override { return Category::InOut; }
 
     void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
-    void process() override { }
+    void process ([[maybe_unused]] int numSamples) override { }
 
     [[nodiscard]] bool hasMidiOutput() const override { return true; }
 
@@ -83,7 +83,7 @@ public:
     [[nodiscard]] juce::String getCategory() const override { return Category::InOut; }
 
     void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
-    void process() override { }
+    void process ([[maybe_unused]] int numSamples) override { }
 
     [[nodiscard]] bool hasMidiInput() const override { return true; }
 

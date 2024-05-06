@@ -51,6 +51,7 @@ void PluginProcessor::setValueTree (const juce::ValueTree& mainConfig)
             magicState.updateParameterMap();
         }
 
+        magicState.clearAllObjects();
         auto program = m_magicDspBuilder.createProgram (mainConfig.getChildWithName ("DSP").getChildWithName ("Program"), magicState);
         {
             if (sampleRate > 0.0)

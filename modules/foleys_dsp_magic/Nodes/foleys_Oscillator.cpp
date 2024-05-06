@@ -18,14 +18,29 @@ Oscillator::Oscillator (DspProgram& program, const juce::ValueTree& config) : Ds
 
 void Oscillator::prepare (juce::dsp::ProcessSpec spec)
 {
-    m_oscillator.initialise ([] (float t) { return std::sin (t); }, 1024);
-    m_oscillator.setFrequency (440.0f);
-    m_oscillator.prepare (spec);
+    oscillator.setFrequency (440.0f);
+    oscillator.initialise ([] (float t) { return std::sin (t); }, 1024);
+    oscillator.prepare (spec);
+
+    buffer.setSize (static_cast<int> (spec.numChannels), static_cast<int> (spec.maximumBlockSize));
 }
 
-void Oscillator::process()
+void Oscillator::process (int numSamples)
 {
-    //    m_oscillator.process (juce::dsp::ProcessContextReplacing (buffer));
+    buffer.clear();
+
+    auto* frequency = getConnectedOutput (ConnectionType::Parameter, 1);
+    if (frequency)
+        oscillator.setFrequency(frequency->getStaticValue());
+
+//    auto* gain      = getConnectedOutput (ConnectionType::Parameter, 2);
+
+
+    auto block = juce::dsp::AudioBlock<float> (buffer).getSubBlock (0, numSamples);
+    oscillator.process (juce::dsp::ProcessContextReplacing (block));
+
+    auto* output = getOutput (ConnectionType::Audio, 0);
+    output->setAudioBlock (block);
 }
 
 }  // namespace foleys::dsp

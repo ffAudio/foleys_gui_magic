@@ -40,8 +40,21 @@ public:
     void setName (const juce::String& newName);
     void setUID (int newUID);
 
+    /**
+     * Prepare the node with the necessary specs
+     * @param spec
+     */
     virtual void prepare (juce::dsp::ProcessSpec spec) = 0;
-    virtual void process()                             = 0;
+
+    /**
+     * Process the node
+     * @param numSamples the number of samples this run. Most nodes will deduce this from an audio input, but a generator wouldn't know.
+     */
+    virtual void process (int numSamples)              = 0;
+
+    /**
+     * Use RAII and this won't be needed. But for consistency this will be called.
+     */
     virtual void release() { }
 
     void updateConnections();
@@ -108,8 +121,8 @@ protected:
     void addAudioOutput (const juce::String& name);
     void addParameterOutput (const juce::String& name);
 
-    const std::vector<Connection>& getAudioInputs() { return audioInputs; }
-    const std::vector<Connection>& getParameterInputs() { return parameterInputs; }
+    std::vector<Connection>& getAudioInputs() { return audioInputs; }
+    std::vector<Connection>& getParameterInputs() { return parameterInputs; }
 
     Connection midiInput { *this, ConnectionType::MIDI, TRANS ("MIDI in") };
 

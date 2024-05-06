@@ -56,6 +56,13 @@ Output* DspNode::getOutput (ConnectionType type, int index)
 
 void DspNode::updateConnections()
 {
+    for (auto& audioInput: getAudioInputs())
+        audioInput.disconnect();
+    for (auto& parameterInput: getParameterInputs())
+        parameterInput.disconnect();
+
+    midiInput.disconnect();
+
     for (const auto& connection: config)
     {
         switch (Connection::getType (connection))
@@ -115,6 +122,7 @@ Connection* DspNode::getConnection (ConnectionType type, int index)
         case ConnectionType::MIDI: return &midiInput;
         case ConnectionType::Audio: return &audioInputs[static_cast<size_t> (index)];
         case ConnectionType::Parameter: return &parameterInputs[static_cast<size_t> (index)];
+        case ConnectionType::Invalid: return nullptr;
         default: jassertfalse; return nullptr;
     }
 }
@@ -142,7 +150,7 @@ int DspNode::getNumParameterOutputs() const
 juce::String DspNode::getAudioInputName (int index) const
 {
     if (juce::isPositiveAndBelow (index, audioInputs.size()))
-        return audioInputs[index].inputName;
+        return audioInputs[static_cast<size_t> (index)].inputName;
 
     jassertfalse;
     return TRANS ("Audio ") + juce::String (index);
@@ -151,7 +159,7 @@ juce::String DspNode::getAudioInputName (int index) const
 juce::String DspNode::getParameterInputName (int index) const
 {
     if (juce::isPositiveAndBelow (index, parameterInputs.size()))
-        return parameterInputs[index].inputName;
+        return parameterInputs[static_cast<size_t> (index)].inputName;
 
     jassertfalse;
     return TRANS ("Parameter ") + juce::String (index);
@@ -160,7 +168,7 @@ juce::String DspNode::getParameterInputName (int index) const
 juce::String DspNode::getAudioOutputName (int index) const
 {
     if (juce::isPositiveAndBelow (index, audioOutputs.size()))
-        return audioOutputs[index].name;
+        return audioOutputs[static_cast<size_t> (index)].name;
 
     jassertfalse;
     return TRANS ("Audio ") + juce::String (index);
@@ -169,7 +177,7 @@ juce::String DspNode::getAudioOutputName (int index) const
 juce::String DspNode::getParameterOutputName (int index) const
 {
     if (juce::isPositiveAndBelow (index, parameterOutputs.size()))
-        return parameterOutputs[index].name;
+        return parameterOutputs[static_cast<size_t> (index)].name;
 
     jassertfalse;
     return TRANS ("Parameter ") + juce::String (index);

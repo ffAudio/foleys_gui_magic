@@ -19,7 +19,7 @@ void Noise::prepare (juce::dsp::ProcessSpec spec)
     //    m_oscillator.prepare (spec);
 }
 
-void Noise::process()
+void Noise::process ([[maybe_unused]] int numSamples)
 {
     //    buffer.clear();
     //    m_oscillator.process (juce::dsp::ProcessContextReplacing (buffer));

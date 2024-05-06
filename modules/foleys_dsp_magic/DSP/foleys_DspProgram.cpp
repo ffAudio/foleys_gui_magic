@@ -65,18 +65,12 @@ bool DspProgram::createNode (const juce::ValueTree& newNode)
 
 bool DspProgram::connectNodes (ConnectionType connectionType, int sourceUID, int sourceIndex, int targetUID, int targetIndex)
 {
-    auto* sourceNode = getNodeWithUID (sourceUID);
     auto* targetNode = getNodeWithUID (targetUID);
 
-    if (!sourceNode || !targetNode)
+    if (!targetNode)
         return false;
 
-    auto connection = Connection (*targetNode, connectionType, "TODO", targetIndex).withSource (sourceNode, sourceIndex);
-
-    DBG (connection.toValueTree().toXmlString());
-
-    auto config = targetNode->getConfig();
-    config.appendChild (connection.toValueTree(), nullptr);
+    Connection::connect (connectionType, targetNode->getConfig(), sourceUID, sourceIndex, targetIndex);
 
     targetNode->updateConnections();
 
@@ -89,13 +83,11 @@ void DspProgram::disconnect (int nodeUID, ConnectionType connectionType, int con
     {
         if (auto* node = getNodeWithUID (nodeUID))
         {
-            if (auto* connector = node->getConnection (connectionType, connectorIndex))
-            {
-                connector->sourceNode = nullptr;
-                node->updateConnections();
-            }
+            Connection::disconnect (connectionType, node->getConfig(), connectorIndex);
         }
     }
+
+    updateConnections();
 
     // TODO: disconnect all that are connected to
 }
@@ -108,7 +100,7 @@ void DspProgram::prepareToPlay (double sampleRate, int expectedNumSamples)
         node->prepare (spec);
 }
 
-void DspProgram::processBlock (juce::AudioProcessor& processor, juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
+void DspProgram::processBlock (juce::AudioProcessor& processor, juce::AudioBuffer<float>& buffer, [[maybe_unused]] juce::MidiBuffer& midi)
 {
     for (size_t i = 0; i < audioInputs.size(); ++i)
     {
@@ -116,8 +108,8 @@ void DspProgram::processBlock (juce::AudioProcessor& processor, juce::AudioBuffe
         audioInputs[i]->setAudioBuffer (busBuffer.getArrayOfWritePointers(), busBuffer.getNumChannels(), busBuffer.getNumSamples());
     }
 
-    for (auto* node : order)
-        node->process();
+    for (auto* node: order)
+        node->process (buffer.getNumSamples());
 }
 
 void DspProgram::releaseResources()

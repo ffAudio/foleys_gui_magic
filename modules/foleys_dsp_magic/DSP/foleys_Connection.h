@@ -11,7 +11,7 @@ namespace foleys::dsp
 {
 
 class DspNode;
-class Output;
+struct Output;
 
 enum class ConnectionType
 {
@@ -28,6 +28,10 @@ struct Connection
 
     bool isConnected() const;
 
+    static void connect (ConnectionType type, juce::ValueTree config, int sourceUID, int sourceIdx, int targetIdx);
+    static void disconnect (ConnectionType type, juce::ValueTree config, int targetIdx);
+
+
     Connection withSource (DspNode* source, int connectionIndex);
 
     juce::ValueTree   toValueTree();
@@ -35,6 +39,7 @@ struct Connection
 
     void        connect (const juce::ValueTree& tree);
     static void connect (std::vector<Connection>& connections, const juce::ValueTree& tree);
+    void        disconnect();
 
     static ConnectionType getType (const juce::ValueTree& tree);
     static ConnectionType getType (const juce::String& name);

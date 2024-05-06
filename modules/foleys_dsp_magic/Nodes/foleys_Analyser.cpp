@@ -30,10 +30,10 @@ void Analyser::prepare (juce::dsp::ProcessSpec spec)
     analyser->prepareToPlay (spec.sampleRate, spec.maximumBlockSize);
 }
 
-void Analyser::process()
+void Analyser::process ([[maybe_unused]] int numSamples)
 {
-    auto* audioOutput = getOutput(ConnectionType::Audio, 0);
-    jassert(audioOutput);
+    auto* audioOutput = getOutput (ConnectionType::Audio, 0);
+    jassert (audioOutput);
 
     audioOutput->setAudioBlock ({});
 

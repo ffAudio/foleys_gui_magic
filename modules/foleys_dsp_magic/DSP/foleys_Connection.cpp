@@ -26,6 +26,35 @@ bool Connection::isConnected() const
     return type != ConnectionType::Invalid && sourceNode;
 }
 
+void Connection::connect (ConnectionType type, juce::ValueTree config, int sourceUID, int sourceIdx, int targetIdx)
+{
+    for (auto child: config)
+    {
+        if (child.getProperty (idType).toString() == getTypeName (type) && static_cast<int> (child.getProperty (idTargetIdx)) == targetIdx)
+        {
+            config.setProperty (idSource, sourceUID, nullptr);
+            config.setProperty (idSourceIdx, sourceIdx, nullptr);
+            return;
+        }
+    }
+
+    juce::ValueTree connection {
+        idConnection,
+        { { idType, getTypeName (type) }, { idSource, sourceUID }, { idSourceIdx, sourceIdx }, { idTarget, config.getProperty (idTarget) }, { idTargetIdx, targetIdx } }
+    };
+    config.appendChild (connection, nullptr);
+}
+
+void Connection::disconnect (ConnectionType type, juce::ValueTree config, int targetIdx)
+{
+    for (int i = config.getNumChildren() - 1; i >= 0; --i)
+    {
+        auto child = config.getChild (i);
+        if (child.getProperty (idType).toString() == getTypeName (type) && static_cast<int> (child.getProperty (idTargetIdx)) == targetIdx)
+            config.removeChild (i, nullptr);
+    }
+}
+
 void Connection::connect (const juce::ValueTree& tree)
 {
     jassert (type == Connection::getType (tree));
@@ -46,12 +75,18 @@ void Connection::connect (std::vector<Connection>& connections, const juce::Valu
         jassertfalse;
 }
 
+void Connection::disconnect()
+{
+    sourceNode  = nullptr;
+    sourceIndex = 0;
+}
+
 Output* Connection::getOutput() const
 {
     if (!sourceNode)
         return nullptr;
 
-    return sourceNode->getOutput(type, sourceIndex);
+    return sourceNode->getOutput (type, sourceIndex);
 }
 
 juce::ValueTree Connection::toValueTree()
