@@ -39,6 +39,7 @@ void ParameterInput::process ([[maybe_unused]] int numSamples)
         {
             auto* parameter = parameters[i];
             parameterOutput->setStaticValue (parameter->convertFrom0to1 (parameter->getValue()));
+            parameterOutput->setRange (parameter->getNormalisableRange().start, parameter->getNormalisableRange().end);
         }
     }
 }

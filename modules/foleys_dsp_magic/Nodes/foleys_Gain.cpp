@@ -32,7 +32,7 @@ void Gain::process ([[maybe_unused]] int numSamples)
 
     if (auto* gain = getParameterInputs().front().getOutput())
     {
-        gain->multiply (audioOutput->getAudio());
+        gain->multiply (audioOutput->getAudio(), 0.0f, 1.0f);
     }
 }
 

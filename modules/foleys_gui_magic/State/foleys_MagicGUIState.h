@@ -206,6 +206,7 @@ public:
      */
     void clearAllObjects()
     {
+        visualiserThread.removeAllClients();
         advertisedObjects.clear();
     }
 
