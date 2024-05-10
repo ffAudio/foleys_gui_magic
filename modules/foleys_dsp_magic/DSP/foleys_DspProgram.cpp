@@ -108,6 +108,12 @@ void DspProgram::processBlock (juce::AudioProcessor& processor, juce::AudioBuffe
         audioInputs[i]->setAudioBuffer (busBuffer.getArrayOfWritePointers(), busBuffer.getNumChannels(), busBuffer.getNumSamples());
     }
 
+    for (size_t i = 0; i < audioOutputs.size(); ++i)
+    {
+        auto busBuffer = processor.getBusBuffer (buffer, false, static_cast<int> (i));
+        audioOutputs[i]->setAudioBuffer (busBuffer.getArrayOfWritePointers(), busBuffer.getNumChannels(), busBuffer.getNumSamples());
+    }
+
     for (auto* node: order)
         node->process (buffer.getNumSamples());
 }

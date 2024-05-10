@@ -12,6 +12,7 @@ Gain::Gain (DspProgram& program, const juce::ValueTree& config) : DspNode (progr
 {
     addAudioInput (TRANS ("Audio In"));
     addParameterInput (TRANS ("Gain"));
+    addParameterInput (TRANS ("DC"));
 
     addAudioOutput (TRANS ("Audio Out"));
 }
@@ -25,12 +26,12 @@ void Gain::process ([[maybe_unused]] int numSamples)
 
     audioOutput->setAudioBlock ({});
 
-    if (auto* input = getAudioInputs().front().getOutput())
+    if (auto* input = getConnectedOutput (ConnectionType::Audio, 0))
         audioOutput->setAudioBlock (input->getAudio());
     else
         return;
 
-    if (auto* gain = getParameterInputs().front().getOutput())
+    if (auto* gain = getConnectedOutput (ConnectionType::Parameter, 0))
     {
         gain->multiply (audioOutput->getAudio(), 0.0f, 1.0f);
     }

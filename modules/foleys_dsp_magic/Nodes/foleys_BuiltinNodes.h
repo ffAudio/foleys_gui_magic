@@ -35,10 +35,13 @@ public:
     [[nodiscard]] juce::String getCategory() const override { return Category::InOut; }
 
     void prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) override { }
-    void process ([[maybe_unused]] int numSamples) override { }
+    void process ([[maybe_unused]] int numSamples) override;
+
+    void setAudioBuffer (float* const* data, int numChannels, int numSamples);
 
     FOLEYS_DECLARE_DSP_FACTORY (AudioOutput)
 private:
+    juce::AudioBuffer<float> buffer;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioOutput)
 };
 

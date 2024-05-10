@@ -12,6 +12,8 @@ Oscilloscope::Oscilloscope (DspProgram& program, const juce::ValueTree& config) 
     addAudioInput (TRANS ("Audio In"));
     addAudioOutput (TRANS ("Audio Out"));
 
+    addParameterInput (TRANS ("Parameter Input"));
+
     auto& state = program.getMagicProcessorState();
     scope       = state.getObjectWithType<MagicOscilloscope> (getName());
 
@@ -37,18 +39,25 @@ void Oscilloscope::process ([[maybe_unused]] int numSamples)
     if (!scope)
         return;
 
-    if (auto* output = getConnectedOutput (ConnectionType::Audio, 0))
-    {
-        auto   audio = output->getAudio();
-        float* pointers[audio.getNumChannels()];
-        for (size_t c = 0; c < audio.getNumChannels(); ++c)
-            pointers[c] = audio.getChannelPointer (c);
+    auto* source = getConnectedOutput (ConnectionType::Audio, 0);
+    if (!source)
+        source = getConnectedOutput (ConnectionType::Parameter, 0);
 
-        juce::AudioBuffer<float> proxy (pointers, static_cast<int> (audio.getNumChannels()), static_cast<int> (audio.getNumSamples()));
-        scope->pushSamples (proxy);
+    if (!source)
+        return;
 
-        audioOutput->setAudioBlock (audio);
-    }
+    auto audio = source->getAudio();
+    if (audio.getNumSamples() == 0)
+        return;
+
+    float* pointers[audio.getNumChannels()];
+    for (size_t c = 0; c < audio.getNumChannels(); ++c)
+        pointers[c] = audio.getChannelPointer (c);
+
+    juce::AudioBuffer<float> proxy (pointers, static_cast<int> (audio.getNumChannels()), static_cast<int> (audio.getNumSamples()));
+    scope->pushSamples (proxy);
+
+    audioOutput->setAudioBlock (audio);
 }
 
 

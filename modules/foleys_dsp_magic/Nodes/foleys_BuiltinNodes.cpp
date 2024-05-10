@@ -17,7 +17,7 @@ AudioInput::AudioInput (DspProgram& program, const juce::ValueTree& node) : DspN
 void AudioInput::setAudioBuffer (float* const* data, int numChannels, int numSamples)
 {
     if (auto* output = getOutput (ConnectionType::Audio, 0))
-        output->setAudioBlock (juce::dsp::AudioBlock<float> (data, numChannels, numSamples));
+        output->setAudioBlock (juce::dsp::AudioBlock<float> (data, static_cast<size_t> (numChannels), static_cast<size_t> (numSamples)));
 }
 
 // ================================================================================
@@ -27,6 +27,30 @@ AudioOutput::AudioOutput (DspProgram& program, const juce::ValueTree& node) : Ds
     addAudioInput (TRANS ("Audio In"));
 }
 
+void AudioOutput::setAudioBuffer (float* const* data, int numChannels, int numSamples)
+{
+    buffer.setDataToReferTo (data, numChannels, numSamples);
+}
+
+void AudioOutput::process ([[maybe_unused]] int numSamples)
+{
+    auto* source = getConnectedOutput (ConnectionType::Audio, 0);
+    if (!source)
+    {
+        buffer.clear();
+        return;
+    }
+
+    auto audio = source->getAudio();
+    for (int ch = 0; ch < std::min (buffer.getNumChannels(), static_cast<int> (audio.getNumChannels())); ++ch)
+        if (buffer.getWritePointer (ch) != audio.getChannelPointer (static_cast<size_t> (ch)))
+            buffer.copyFrom (ch, 0, source->getAudio().getChannelPointer (static_cast<size_t> (ch)), buffer.getNumSamples());
+
+    for (int ch = static_cast<int> (audio.getNumChannels()); ch < buffer.getNumChannels(); ++ch)
+        buffer.clear (ch, 0, buffer.getNumSamples());
+}
+
+
 // ================================================================================
 
 ParameterInput::ParameterInput (DspProgram& program, const juce::ValueTree& node) : DspNode (program, node) { }
@@ -35,7 +59,7 @@ void ParameterInput::process ([[maybe_unused]] int numSamples)
 {
     for (size_t i = 0; i < parameters.size(); ++i)
     {
-        if (auto* parameterOutput = getOutput (ConnectionType::Parameter, i))
+        if (auto* parameterOutput = getOutput (ConnectionType::Parameter, static_cast<int> (i)))
         {
             auto* parameter = parameters[i];
             parameterOutput->setStaticValue (parameter->convertFrom0to1 (parameter->getValue()));
