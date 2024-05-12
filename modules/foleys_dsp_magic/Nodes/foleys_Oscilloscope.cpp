@@ -12,7 +12,7 @@ Oscilloscope::Oscilloscope (DspProgram& program, const juce::ValueTree& config) 
     addAudioInput (TRANS ("Audio In"));
     addAudioOutput (TRANS ("Audio Out"));
 
-    addParameterInput (TRANS ("Parameter Input"));
+    addParameterInput (TRANS ("Param In"));
 
     auto& state = program.getMagicProcessorState();
     scope       = state.getObjectWithType<MagicOscilloscope> (getName());
@@ -26,7 +26,7 @@ void Oscilloscope::prepare (juce::dsp::ProcessSpec spec)
     if (!scope)
         return;
 
-    scope->prepareToPlay (spec.sampleRate, spec.maximumBlockSize);
+    scope->prepareToPlay (spec.sampleRate, static_cast<int> (spec.maximumBlockSize));
 }
 
 void Oscilloscope::process ([[maybe_unused]] int numSamples)
@@ -50,7 +50,7 @@ void Oscilloscope::process ([[maybe_unused]] int numSamples)
     if (audio.getNumSamples() == 0)
         return;
 
-    float* pointers[audio.getNumChannels()];
+    float* pointers[64];  // needs to be fixed
     for (size_t c = 0; c < audio.getNumChannels(); ++c)
         pointers[c] = audio.getChannelPointer (c);
 

@@ -18,8 +18,6 @@ Oscillator::Oscillator (DspProgram& program, const juce::ValueTree& config) : Ds
 
     addParameterInput (TRANS ("Signal Type"));
     addParameterInput (TRANS ("Frequency"));
-    addParameterInput (TRANS ("Amplitude"));
-    addParameterInput (TRANS ("Offset"));
 
     // make sure to repeat the first sample at the end for interpolation
     wavetable.resize (wavetablesize + 1, 0);
@@ -66,8 +64,6 @@ void Oscillator::process (int numSamples)
 
     auto* signalType = getConnectedOutput (ConnectionType::Parameter, 0);
     auto* frequency  = getConnectedOutput (ConnectionType::Parameter, 1);
-    auto* amplitude  = getConnectedOutput (ConnectionType::Parameter, 2);
-    auto* dcOffset   = getConnectedOutput (ConnectionType::Parameter, 3);
 
     if (signalType)
         setWaveType (static_cast<WaveType> (signalType->getStaticValue()));
@@ -110,12 +106,6 @@ void Oscillator::process (int numSamples)
                 phase -= 1.0f;
         }
     }
-
-    if (amplitude)
-        amplitude->multiply (block, 0.0f, 1.0f);
-
-    if (dcOffset)
-        dcOffset->add (block, -1.0f, 1.0f);
 
     for (size_t ch = 1; ch < block.getNumChannels(); ++ch)
         block.getSingleChannelBlock (ch).copyFrom (block.getSingleChannelBlock (0));

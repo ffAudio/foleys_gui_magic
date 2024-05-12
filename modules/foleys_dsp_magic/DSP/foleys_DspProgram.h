@@ -45,8 +45,8 @@ private:
     MagicDspBuilder&     dspBuilder;
     MagicProcessorState& magicState;
 
-    juce::UndoManager* undoManager = nullptr;
     juce::ValueTree    dspConfig { "Program" };
+    juce::UndoManager* undoManager = nullptr;
 
     std::vector<std::unique_ptr<DspNode>> nodes;
     std::map<int, DspNode*>               nodeLookup;
