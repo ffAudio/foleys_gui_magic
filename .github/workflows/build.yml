@@ -21,12 +21,12 @@ jobs:
     name: ${{ matrix.os }} - ${{ matrix.build_type }}
     strategy:
       matrix:
-        os: [macos-13, windows-latest]
+        os: [macos-14-arm64, windows-latest]
         build_type: [Debug, Release]
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 

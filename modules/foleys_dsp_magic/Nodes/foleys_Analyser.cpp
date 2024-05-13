@@ -41,7 +41,7 @@ void Analyser::process ([[maybe_unused]] int numSamples)
     if (auto* output = getConnectedOutput (ConnectionType::Audio, 0))
     {
         auto   audio = output->getAudio();
-        float* pointers[audio.getNumChannels()];
+        float* pointers[64];
         for (size_t c = 0; c < audio.getNumChannels(); ++c)
             pointers[c] = audio.getChannelPointer (c);
 
