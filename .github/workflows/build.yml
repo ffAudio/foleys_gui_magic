@@ -21,7 +21,7 @@ jobs:
     name: ${{ matrix.os }} - ${{ matrix.build_type }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest]
+        os: [macos-13, windows-latest]
         build_type: [Debug, Release]
       fail-fast: false
 
