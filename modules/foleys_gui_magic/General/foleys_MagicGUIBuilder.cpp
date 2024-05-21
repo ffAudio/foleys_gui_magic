@@ -135,7 +135,7 @@ void MagicGUIBuilder::showOverlayDialog (std::unique_ptr<juce::Component> dialog
     overlayDialog = std::move (dialog);
     parent->addAndMakeVisible (overlayDialog.get());
 
-    updateLayout();
+    parent->resized();
 }
 
 void MagicGUIBuilder::closeOverlayDialog()
@@ -171,31 +171,31 @@ void MagicGUIBuilder::updateComponents()
         root->setEditMode (editMode);
 }
 
-void MagicGUIBuilder::updateLayout()
+void MagicGUIBuilder::updateLayout (juce::Rectangle<int> bounds)
 {
     if (parent == nullptr)
         return;
 
     if (root.get() != nullptr)
     {
-        if (!stylesheet.setMediaSize (parent->getWidth(), parent->getHeight()))
+        if (!stylesheet.setMediaSize (bounds.getWidth(), bounds.getHeight()))
         {
             stylesheet.updateValidRanges();
             root->updateInternal();
         }
 
-        if (root->getBounds() == parent->getLocalBounds())
+        if (root->getBounds() == bounds)
             root->updateLayout();
         else
-            root->setBounds (parent->getLocalBounds());
+            root->setBounds (bounds);
     }
 
     if (overlayDialog)
     {
-        if (overlayDialog->getBounds() == parent->getLocalBounds())
+        if (overlayDialog->getBounds() == bounds)
             overlayDialog->resized();
         else
-            overlayDialog->setBounds (parent->getLocalBounds());
+            overlayDialog->setBounds (bounds);
     }
 
     parent->repaint();
@@ -365,7 +365,7 @@ void MagicGUIBuilder::changeListenerCallback (juce::ChangeBroadcaster*)
     if (root.get() != nullptr)
         root->updateInternal();
 
-    updateLayout();
+    root->resized();
 }
 
 void MagicGUIBuilder::valueTreeRedirected (juce::ValueTree& treeWhichHasBeenChanged)
