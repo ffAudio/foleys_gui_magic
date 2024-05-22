@@ -112,7 +112,7 @@ juce::ValueTree Input::toValueTree()
 Input Input::fromValueTree (DspNode& owner, juce::ValueTree tree)
 {
     Input out (owner, Input::getType (tree), tree.getProperty (idTargetIdx, 0));
-    auto*      source = owner.getProgram().getNodeWithUID (tree.getProperty (idSource, 0));
+    auto* source = owner.getProgram().getNodeWithUID (tree.getProperty (idSource, 0));
     return out.withSource (source, tree.getProperty (idSourceIdx, 0));
 }
 
@@ -146,6 +146,7 @@ juce::String Input::getTypeName (ConnectionType type)
         case ConnectionType::Audio: return "audio";
         case ConnectionType::Parameter: return "parameter";
         case ConnectionType::MIDI: return "midi";
+        case ConnectionType::Invalid: [[fallthrough]];
         default: return "invalid";
     }
 }
