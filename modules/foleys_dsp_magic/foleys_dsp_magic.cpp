@@ -44,6 +44,7 @@
 #include "Nodes/foleys_Analyser.cpp"
 #include "Nodes/foleys_Biquad.cpp"
 #include "Nodes/foleys_Gain.cpp"
+#include "Nodes/foleys_Multiplier.cpp"
 #include "Nodes/foleys_Noise.cpp"
 #include "Nodes/foleys_Oscillator.cpp"
 #include "Nodes/foleys_Oscilloscope.cpp"

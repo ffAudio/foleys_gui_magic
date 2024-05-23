@@ -60,6 +60,7 @@
 #include "DSP/foleys_MagicDspBuilder.h"
 #include "Nodes/foleys_BuiltinNodes.h"
 #include "Nodes/foleys_Gain.h"
+#include "Nodes/foleys_Multiplier.h"
 #include "Nodes/foleys_Summing.h"
 #include "Nodes/foleys_Analyser.h"
 #include "Nodes/foleys_Biquad.h"

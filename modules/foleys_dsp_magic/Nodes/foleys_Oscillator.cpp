@@ -79,7 +79,7 @@ void Oscillator::process (int numSamples)
     auto* ptr = block.getChannelPointer (0);
     if (frequency->isStatic())
     {
-        auto freq = frequency->normalize (frequency->getStaticValue()) * 20000.0;
+        auto freq = frequency->normalize (frequency->getStaticValue());
         auto inc  = std::clamp (static_cast<float> (freq / sampleRate), 0.0f, 1.0f);
         for (size_t i = 0; i < block.getNumSamples(); ++i)
         {
@@ -100,7 +100,7 @@ void Oscillator::process (int numSamples)
             auto p0  = static_cast<size_t> (pos);
             ptr[i]   = std::lerp (wavetable[p0], wavetable[p0 + 1], pos - static_cast<float> (p0));
 
-            auto freq = frequency->normalize (frequency->getValueAt (i)) * 20000.0;
+            auto freq = frequency->getValueAt (i);
             phase += std::clamp (static_cast<float> (freq / sampleRate), 0.0f, 1.0f);
             if (phase >= 1.0f)
                 phase -= 1.0f;

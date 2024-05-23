@@ -12,7 +12,6 @@ Gain::Gain (DspProgram& program, const juce::ValueTree& config) : DspNode (progr
 {
     addAudioInput (TRANS ("Audio In"));
     addParameterInput (TRANS ("Gain"));
-    addParameterInput (TRANS ("DC"));
     addParameterInput (TRANS ("Phase"));
 
     addAudioOutput (TRANS ("Audio Out"));
@@ -33,7 +32,7 @@ void Gain::process ([[maybe_unused]] int numSamples)
         return;
 
     bool phaseSwap = false;
-    if (auto* phaseParameter = getConnectedOutput (ConnectionType::Parameter, 2))
+    if (auto* phaseParameter = getConnectedOutput (ConnectionType::Parameter, 1))
         phaseSwap = phaseParameter->getStaticValue() < 0.5f;
 
     if (auto* gain = getConnectedOutput (ConnectionType::Parameter, 0))
@@ -47,9 +46,6 @@ void Gain::process ([[maybe_unused]] int numSamples)
     {
         audioOutput->getAudio().multiplyBy (-1.0);
     }
-
-    if (auto* offset = getConnectedOutput (ConnectionType::Parameter, 1))
-        offset->add (audioOutput->getAudio(), -1.0f, 1.0f);
 }
 
 

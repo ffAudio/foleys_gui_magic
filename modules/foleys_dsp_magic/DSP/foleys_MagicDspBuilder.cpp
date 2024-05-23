@@ -25,6 +25,7 @@ void MagicDspBuilder::registerBuiltinFactories()
     registerDspFactory (MidiOutput::ID, &MidiOutput::factory);
 
     registerDspFactory (Gain::ID, &Gain::factory);
+    registerDspFactory (Multiplier::ID, &Multiplier::factory);
     registerDspFactory (Summing::ID, &Summing::factory);
     registerDspFactory (Noise::ID, &Noise::factory);
     registerDspFactory (Oscillator::ID, &Oscillator::factory);
