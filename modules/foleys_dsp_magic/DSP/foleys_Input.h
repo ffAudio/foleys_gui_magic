@@ -28,30 +28,32 @@ struct Input
 
     bool isConnected() const;
 
-    static void connect (ConnectionType type, juce::ValueTree config, int sourceUID, int sourceIdx, int targetIdx, juce::UndoManager* undo);
-    static void disconnect (ConnectionType type, juce::ValueTree config, int targetIdx, juce::UndoManager* undo);
+    juce::ValueTree toValueTree();
 
+    juce::ValueTree getConfigForInput();
+    void            save();
+    void            restore();
 
-    Input withSource (DspNode* source, int connectionIndex);
+    void setRange (float minValue, float maxValue);
+    void setDefaultValue (float value);
 
-    juce::ValueTree   toValueTree();
-    static Input fromValueTree (DspNode& owner, juce::ValueTree tree);
-
-    void        connect (const juce::ValueTree& tree);
-    static void connect (std::vector<Input>& connections, const juce::ValueTree& tree);
-    void        disconnect();
+    void connect (int sourceUID, int sourceIndex);
+    void disconnect();
 
     static ConnectionType getType (const juce::ValueTree& tree);
     static ConnectionType getType (const juce::String& name);
     static juce::String   getTypeName (ConnectionType type);
 
-    Output* getOutput() const;
-
+    [[nodiscard]] Output* getOutput() const;
 
     DspNode&           targetNode;
     ConnectionType     type = ConnectionType::Invalid;
     const juce::String inputName;
     int                targetIndex = 0;
+
+    float minValue     = 0.0f;
+    float maxValue     = 1.0f;
+    float defaultValue = 0.0f;
 
     juce::WeakReference<DspNode> sourceNode;
     int                          sourceIndex = 0;
@@ -63,6 +65,9 @@ private:
     static constexpr auto* idSourceIdx  = "sourceIdx";
     static constexpr auto* idTarget     = "target";
     static constexpr auto* idTargetIdx  = "targetIdx";
+    static constexpr auto* idMinValue   = "minValue";
+    static constexpr auto* idMaxValue   = "maxValue";
+    static constexpr auto* idDefault    = "default";
 };
 
 

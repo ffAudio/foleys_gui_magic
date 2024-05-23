@@ -57,23 +57,11 @@ Output* DspNode::getOutput (ConnectionType type, int index)
 void DspNode::updateConnections()
 {
     for (auto& audioInput: getAudioInputs())
-        audioInput.disconnect();
+        audioInput.restore();
     for (auto& parameterInput: getParameterInputs())
-        parameterInput.disconnect();
+        parameterInput.restore();
 
-    midiInput.disconnect();
-
-    for (const auto& connection: config)
-    {
-        switch (Input::getType (connection))
-        {
-            case ConnectionType::MIDI: midiInput.connect (connection); break;
-            case ConnectionType::Audio: Input::connect (audioInputs, connection); break;
-            case ConnectionType::Parameter: Input::connect (parameterInputs, connection); break;
-
-            default: break;
-        }
-    }
+    midiInput.restore();
 }
 
 Output* DspNode::getConnectedOutput (ConnectionType type, int inputIndex)
@@ -122,6 +110,19 @@ Input* DspNode::getInput (ConnectionType type, int index)
         case ConnectionType::MIDI: return &midiInput;
         case ConnectionType::Audio: return &audioInputs[static_cast<size_t> (index)];
         case ConnectionType::Parameter: return &parameterInputs[static_cast<size_t> (index)];
+        case ConnectionType::Invalid: return nullptr;
+        default: jassertfalse; return nullptr;
+    }
+}
+
+Input* DspNode::getInputChecked (ConnectionType type, int idx)
+{
+    auto index = static_cast<size_t>(idx);
+    switch (type)
+    {
+        case ConnectionType::MIDI: return (hasMidiInput() ? &midiInput : nullptr);
+        case ConnectionType::Audio: return (juce::isPositiveAndBelow(index, audioInputs.size()) ? &audioInputs[index] : nullptr);
+        case ConnectionType::Parameter: return (juce::isPositiveAndBelow(index, parameterInputs.size()) ? &parameterInputs[index] : nullptr);
         case ConnectionType::Invalid: return nullptr;
         default: jassertfalse; return nullptr;
     }

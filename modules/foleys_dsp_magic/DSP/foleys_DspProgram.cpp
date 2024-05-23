@@ -70,26 +70,30 @@ bool DspProgram::connectNodes (ConnectionType connectionType, int sourceUID, int
     if (!targetNode)
         return false;
 
-    Input::connect (connectionType, targetNode->getConfig(), sourceUID, sourceIndex, targetIndex, undoManager);
+    if (auto* input = targetNode->getInputChecked(connectionType, targetIndex))
+    {
+        input->connect(sourceUID, sourceIndex);
+    }
 
     targetNode->updateConnections();
 
     return true;
 }
 
-void DspProgram::disconnect (int nodeUID, ConnectionType connectionType, int connectorIndex, bool input)
+void DspProgram::disconnect (int nodeUID, ConnectionType connectionType, int connectorIndex, bool isInput)
 {
-    if (input)
+    if (!isInput)
+        return; // not implemented, which to disconnect?
+
+    auto* targetNode = getNodeWithUID (nodeUID);
+
+    if (!targetNode)
+        return;
+
+    if (auto* input = targetNode->getInputChecked(connectionType, connectorIndex))
     {
-        if (auto* node = getNodeWithUID (nodeUID))
-        {
-            Input::disconnect (connectionType, node->getConfig(), connectorIndex, undoManager);
-        }
+        input->disconnect();
     }
-
-    updateConnections();
-
-    // TODO: disconnect all that are connected to
 }
 
 void DspProgram::prepareToPlay (double sampleRate, int expectedNumSamples)

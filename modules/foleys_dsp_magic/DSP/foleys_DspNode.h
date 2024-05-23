@@ -48,7 +48,7 @@ public:
      * Process the node
      * @param numSamples the number of samples this run. Most nodes will deduce this from an audio input, but a generator wouldn't know.
      */
-    virtual void process (int numSamples)              = 0;
+    virtual void process (int numSamples) = 0;
 
     /**
      * Use RAII and this won't be needed. But for consistency this will be called.
@@ -76,6 +76,7 @@ public:
     void clearOutputs (ConnectionType type);
 
     [[nodiscard]] Input* getInput (ConnectionType type, int index);
+    [[nodiscard]] Input* getInputChecked (ConnectionType type, int index);
 
     /**
      * This is where the node delivers it's output
@@ -94,6 +95,7 @@ public:
     Output* getConnectedOutput (ConnectionType type, int inputIndex);
 
     [[nodiscard]] const juce::ValueTree& getConfig() const { return config; }
+    [[nodiscard]] juce::ValueTree        getConfig() { return config; }
 
     static int getUID (const juce::ValueTree& tree);
 

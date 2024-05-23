@@ -11,14 +11,46 @@ namespace foleys::dsp
 Input::Input (DspNode& owner, ConnectionType connectionType, const juce::String& name, int targetIndexToUse)
   : targetNode (owner), type (connectionType), inputName (name), targetIndex (targetIndexToUse)
 {
+    restore();
 }
 
-Input Input::withSource (DspNode* source, int connectionIndex)
+void Input::setRange (float min, float max)
 {
-    Input out (*this);
-    out.sourceNode  = source;
-    out.sourceIndex = connectionIndex;
-    return out;
+    minValue = min;
+    maxValue = max;
+
+    save();
+}
+
+void Input::setDefaultValue (float value)
+{
+    defaultValue = value;
+
+    save();
+}
+
+void Input::save()
+{
+    auto node = getConfigForInput();
+
+    if (node.isValid())
+        node.copyPropertiesFrom (toValueTree(), nullptr);
+    else
+        targetNode.getConfig().appendChild (toValueTree(), nullptr);
+}
+
+void Input::restore()
+{
+    auto node = getConfigForInput();
+
+    if (!node.isValid())
+        return;
+
+    minValue     = node.getProperty (idMinValue, 0.0f);
+    maxValue     = node.getProperty (idMaxValue, 1.0f);
+    defaultValue = node.getProperty (idDefault, 0.0f);
+    sourceNode   = targetNode.getProgram().getNodeWithUID (node.getProperty (idSource, 0));
+    sourceIndex  = node.getProperty (idSourceIdx, -1);
 }
 
 bool Input::isConnected() const
@@ -26,70 +58,20 @@ bool Input::isConnected() const
     return type != ConnectionType::Invalid && sourceNode;
 }
 
-void Input::connect (ConnectionType type, juce::ValueTree config, int sourceUID, int sourceIdx, int targetIdx, juce::UndoManager* undo)
+void Input::connect (int sourceUID, int sourceIdx)
 {
-    for (auto child: config)
-    {
-        if (child.getProperty (idType).toString() == getTypeName (type) && static_cast<int> (child.getProperty (idTargetIdx)) == targetIdx)
-        {
-            if (undo)
-                undo->beginNewTransaction();
-            config.setProperty (idSource, sourceUID, undo);
-            config.setProperty (idSourceIdx, sourceIdx, undo);
-            return;
-        }
-    }
+    sourceNode = targetNode.getProgram().getNodeWithUID(sourceUID);
+    sourceIndex = sourceIdx;
 
-    juce::ValueTree connection {
-        idConnection,
-        { { idType, getTypeName (type) }, { idSource, sourceUID }, { idSourceIdx, sourceIdx }, { idTarget, config.getProperty (idTarget) }, { idTargetIdx, targetIdx } }
-    };
-
-    if (undo)
-        undo->beginNewTransaction();
-
-    config.appendChild (connection, undo);
-}
-
-void Input::disconnect (ConnectionType type, juce::ValueTree config, int targetIdx, juce::UndoManager* undo)
-{
-    for (int i = config.getNumChildren() - 1; i >= 0; --i)
-    {
-        auto child = config.getChild (i);
-        if (child.getProperty (idType).toString() == getTypeName (type) && static_cast<int> (child.getProperty (idTargetIdx)) == targetIdx)
-        {
-            if (undo)
-                undo->beginNewTransaction();
-
-            config.removeChild (i, undo);
-        }
-    }
-}
-
-void Input::connect (const juce::ValueTree& tree)
-{
-    jassert (type == Input::getType (tree));
-    jassert (static_cast<int> (tree.getProperty (idTargetIdx, 0)) == targetIndex);
-
-    sourceNode  = targetNode.getProgram().getNodeWithUID (tree.getProperty (idSource, 0));
-    sourceIndex = tree.getProperty (idSourceIdx, 0);
-}
-
-/* static */
-void Input::connect (std::vector<Input>& connections, const juce::ValueTree& tree)
-{
-    auto targetIndex = static_cast<int> (tree.getProperty (idTargetIdx, 0));
-
-    if (juce::isPositiveAndBelow (targetIndex, connections.size()))
-        connections[static_cast<size_t> (targetIndex)].connect (tree);
-    else
-        jassertfalse;
+    save();
 }
 
 void Input::disconnect()
 {
     sourceNode  = nullptr;
     sourceIndex = 0;
+
+    save();
 }
 
 Output* Input::getOutput() const
@@ -100,20 +82,26 @@ Output* Input::getOutput() const
     return sourceNode->getOutput (type, sourceIndex);
 }
 
-juce::ValueTree Input::toValueTree()
+juce::ValueTree Input::getConfigForInput()
 {
-    return juce::ValueTree {
-        idConnection,
-        { { idType, getTypeName (type) }, { idSource, sourceNode ? sourceNode->getUID() : 0 }, { idSourceIdx, sourceIndex }, { idTarget, targetNode.getUID() }, { idTargetIdx, targetIndex } }
-    };
+    for (const auto& child: targetNode.getConfig())
+        if (child.hasType (idConnection) && child.getProperty (idType).toString() == getTypeName (type) && static_cast<int> (child.getProperty (idTargetIdx)) == targetIndex)
+            return child;
+
+    return {};
 }
 
-/* static */
-Input Input::fromValueTree (DspNode& owner, juce::ValueTree tree)
+juce::ValueTree Input::toValueTree()
 {
-    Input out (owner, Input::getType (tree), tree.getProperty (idTargetIdx, 0));
-    auto* source = owner.getProgram().getNodeWithUID (tree.getProperty (idSource, 0));
-    return out.withSource (source, tree.getProperty (idSourceIdx, 0));
+    return juce::ValueTree { idConnection,
+                             { { idType, getTypeName (type) },
+                               { idSource, sourceNode ? sourceNode->getUID() : 0 },
+                               { idSourceIdx, sourceIndex },
+                               { idTarget, targetNode.getUID() },
+                               { idTargetIdx, targetIndex },
+                               { idMinValue, minValue },
+                               { idMaxValue, maxValue },
+                               { idDefault, defaultValue } } };
 }
 
 /* static */
