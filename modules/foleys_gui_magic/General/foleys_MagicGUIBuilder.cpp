@@ -32,9 +32,10 @@
  */
 
 #include "foleys_MagicGUIBuilder.h"
-#include "../Layout/foleys_RootItem.h"
-#include "../Layout/foleys_Container.h"
+
 #include "../Helpers/foleys_DefaultGuiTrees.h"
+#include "../Layout/foleys_Container.h"
+#include "../Layout/foleys_RootItem.h"
 #include "../LookAndFeels/foleys_JuceLookAndFeels.h"
 #include "../LookAndFeels/foleys_LookAndFeel.h"
 #include "../LookAndFeels/foleys_Skeuomorphic.h"
@@ -47,8 +48,7 @@ namespace foleys
 {
 
 
-MagicGUIBuilder::MagicGUIBuilder (MagicGUIState& state)
-  : magicState (state)
+MagicGUIBuilder::MagicGUIBuilder (MagicGUIState& state) : magicState (state)
 {
     updateStylesheet();
     getConfigTree().addListener (this);
@@ -57,6 +57,7 @@ MagicGUIBuilder::MagicGUIBuilder (MagicGUIState& state)
 MagicGUIBuilder::~MagicGUIBuilder()
 {
     getConfigTree().removeListener (this);
+    masterReference.clear();
 }
 
 Stylesheet& MagicGUIBuilder::getStylesheet()
@@ -78,8 +79,7 @@ std::unique_ptr<GuiItem> MagicGUIBuilder::createGuiItem (const juce::ValueTree& 
 {
     if (node.getType() == IDs::view)
     {
-        auto item = (node == getGuiRootNode()) ? std::make_unique<RootItem>(*this, node)
-                                               : std::make_unique<Container>(*this, node);
+        auto item = (node == getGuiRootNode()) ? std::make_unique<RootItem> (*this, node) : std::make_unique<Container> (*this, node);
         item->updateInternal();
         item->createSubComponents();
         return item;
@@ -93,7 +93,7 @@ std::unique_ptr<GuiItem> MagicGUIBuilder::createGuiItem (const juce::ValueTree& 
         return item;
     }
 
-    DBG ("No factory for: " << node.getType().toString());
+    DBG ("No GUI factory for: " << node.getType().toString());
     return {};
 }
 
@@ -135,7 +135,7 @@ void MagicGUIBuilder::showOverlayDialog (std::unique_ptr<juce::Component> dialog
     overlayDialog = std::move (dialog);
     parent->addAndMakeVisible (overlayDialog.get());
 
-    updateLayout();
+    parent->resized();
 }
 
 void MagicGUIBuilder::closeOverlayDialog()
@@ -167,37 +167,35 @@ void MagicGUIBuilder::updateComponents()
 
     root->setBounds (parent->getLocalBounds());
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     if (root.get() != nullptr)
         root->setEditMode (editMode);
-#endif
 }
 
-void MagicGUIBuilder::updateLayout()
+void MagicGUIBuilder::updateLayout (juce::Rectangle<int> bounds)
 {
     if (parent == nullptr)
         return;
 
     if (root.get() != nullptr)
     {
-        if (! stylesheet.setMediaSize (parent->getWidth(), parent->getHeight()))
+        if (!stylesheet.setMediaSize (bounds.getWidth(), bounds.getHeight()))
         {
             stylesheet.updateValidRanges();
             root->updateInternal();
         }
 
-        if (root->getBounds() == parent->getLocalBounds())
+        if (root->getBounds() == bounds)
             root->updateLayout();
         else
-            root->setBounds (parent->getLocalBounds());
+            root->setBounds (bounds);
     }
 
     if (overlayDialog)
     {
-        if (overlayDialog->getBounds() == parent->getLocalBounds())
+        if (overlayDialog->getBounds() == bounds)
             overlayDialog->resized();
         else
-            overlayDialog->setBounds (parent->getLocalBounds());
+            overlayDialog->setBounds (bounds);
     }
 
     parent->repaint();
@@ -225,7 +223,7 @@ GuiItem* MagicGUIBuilder::findGuiItem (const juce::ValueTree& node)
     return nullptr;
 }
 
-void MagicGUIBuilder::registerFactory (juce::Identifier type, std::unique_ptr<GuiItem>(*factory)(MagicGUIBuilder& builder, const juce::ValueTree&))
+void MagicGUIBuilder::registerFactory (juce::Identifier type, std::unique_ptr<GuiItem> (*factory) (MagicGUIBuilder& builder, const juce::ValueTree&))
 {
     if (factories.find (type) != factories.cend())
     {
@@ -235,7 +233,7 @@ void MagicGUIBuilder::registerFactory (juce::Identifier type, std::unique_ptr<Gu
         return;
     }
 
-    factories [type] = factory;
+    factories[type] = factory;
 }
 
 juce::StringArray MagicGUIBuilder::getFactoryNames() const
@@ -243,7 +241,7 @@ juce::StringArray MagicGUIBuilder::getFactoryNames() const
     juce::StringArray names { IDs::view.toString() };
 
     names.ensureStorageAllocated (int (factories.size()));
-    for (const auto& f : factories)
+    for (const auto& f: factories)
         names.add (f.first.toString());
 
     return names;
@@ -274,13 +272,13 @@ void MagicGUIBuilder::removeStyleClassReferences (juce::ValueTree tree, const ju
     if (tree.hasProperty (IDs::styleClass))
     {
         const auto separator = " ";
-        auto strings = juce::StringArray::fromTokens (tree.getProperty (IDs::styleClass).toString(), separator, "");
+        auto       strings   = juce::StringArray::fromTokens (tree.getProperty (IDs::styleClass).toString(), separator, "");
         strings.removeEmptyStrings (true);
         strings.removeString (name);
         tree.setProperty (IDs::styleClass, strings.joinIntoString (separator), &undo);
     }
 
-    for (auto child : tree)
+    for (auto child: tree)
         removeStyleClassReferences (child, name);
 }
 
@@ -293,60 +291,66 @@ juce::StringArray MagicGUIBuilder::getColourNames (juce::Identifier type)
     return {};
 }
 
-std::function<void(juce::ComboBox&)> MagicGUIBuilder::createChoicesMenuLambda (juce::StringArray choices) const
+std::function<void (juce::ComboBox&)> MagicGUIBuilder::createChoicesMenuLambda (juce::StringArray choices) const
 {
-    return [choices](juce::ComboBox& combo)
+    return [choices] (juce::ComboBox& combo)
     {
         int index = 0;
-        for (auto& choice : choices)
+        for (auto& choice: choices)
             combo.addItem (choice, ++index);
     };
 }
 
-std::function<void(juce::ComboBox&)> MagicGUIBuilder::createParameterMenuLambda() const
+std::function<void (juce::ComboBox&)> MagicGUIBuilder::createParameterMenuLambda() const
 {
-    return [this](juce::ComboBox& combo)
-    {
-        *combo.getRootMenu() = magicState.createParameterMenu();
-    };
+    return [this] (juce::ComboBox& combo) { *combo.getRootMenu() = magicState.createParameterMenu(); };
 }
 
-std::function<void(juce::ComboBox&)> MagicGUIBuilder::createPropertiesMenuLambda() const
+std::function<void (juce::ComboBox&)> MagicGUIBuilder::createPropertiesMenuLambda() const
 {
-    return [this](juce::ComboBox& combo)
-    {
-        magicState.populatePropertiesMenu (combo);
-    };
+    return [this] (juce::ComboBox& combo) { magicState.populatePropertiesMenu (combo); };
 }
 
-std::function<void(juce::ComboBox&)> MagicGUIBuilder::createTriggerMenuLambda() const
+std::function<void (juce::ComboBox&)> MagicGUIBuilder::createTriggerMenuLambda() const
 {
-    return [this](juce::ComboBox& combo)
-    {
-        *combo.getRootMenu() = magicState.createTriggerMenu();
-    };
+    return [this] (juce::ComboBox& combo) { *combo.getRootMenu() = magicState.createTriggerMenu(); };
 }
 
 juce::var MagicGUIBuilder::getPropertyDefaultValue (juce::Identifier property) const
 {
     // flexbox
-    if (property == IDs::flexDirection) return IDs::flexDirRow;
-    if (property == IDs::flexWrap)      return IDs::flexNoWrap;
-    if (property == IDs::flexAlignContent) return IDs::flexStretch;
-    if (property == IDs::flexAlignItems) return IDs::flexStretch;
-    if (property == IDs::flexJustifyContent) return IDs::flexStart;
-    if (property == IDs::flexAlignSelf) return IDs::flexStretch;
-    if (property == IDs::flexOrder) return 0;
-    if (property == IDs::flexGrow) return 1.0;
-    if (property == IDs::flexShrink) return 1.0;
-    if (property == IDs::minWidth) return 0.0;
-    if (property == IDs::minHeight) return 0.0;
-    if (property == IDs::display) return IDs::flexbox;
+    if (property == IDs::flexDirection)
+        return IDs::flexDirRow;
+    if (property == IDs::flexWrap)
+        return IDs::flexNoWrap;
+    if (property == IDs::flexAlignContent)
+        return IDs::flexStretch;
+    if (property == IDs::flexAlignItems)
+        return IDs::flexStretch;
+    if (property == IDs::flexJustifyContent)
+        return IDs::flexStart;
+    if (property == IDs::flexAlignSelf)
+        return IDs::flexStretch;
+    if (property == IDs::flexOrder)
+        return 0;
+    if (property == IDs::flexGrow)
+        return 1.0;
+    if (property == IDs::flexShrink)
+        return 1.0;
+    if (property == IDs::minWidth)
+        return 0.0;
+    if (property == IDs::minHeight)
+        return 0.0;
+    if (property == IDs::display)
+        return IDs::flexbox;
 
-    if (property == IDs::captionPlacement) return "centred-top";
-    if (property == IDs::lookAndFeel) return "FoleysFinest";
+    if (property == IDs::captionPlacement)
+        return "centred-top";
+    if (property == IDs::lookAndFeel)
+        return "FoleysFinest";
 
-    if (property == juce::Identifier ("font-size")) return 12.0;
+    if (property == juce::Identifier ("font-size"))
+        return 12.0;
 
     return {};
 }
@@ -361,7 +365,7 @@ void MagicGUIBuilder::changeListenerCallback (juce::ChangeBroadcaster*)
     if (root.get() != nullptr)
         root->updateInternal();
 
-    updateLayout();
+    root->resized();
 }
 
 void MagicGUIBuilder::valueTreeRedirected (juce::ValueTree& treeWhichHasBeenChanged)
@@ -379,8 +383,6 @@ juce::UndoManager& MagicGUIBuilder::getUndoManager()
 {
     return undo;
 }
-
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 
 void MagicGUIBuilder::setEditMode (bool shouldEdit)
 {
@@ -411,8 +413,8 @@ void MagicGUIBuilder::setSelectedNode (const juce::ValueTree& node)
             item->setDraggable (false);
 
         selectedNode = node;
-        if (magicToolBox.get() != nullptr)
-            magicToolBox->setSelectedNode (selectedNode);
+
+        listeners.call ([node] (Listener& l) { l.selectedItem (node); });
 
         if (auto* item = findGuiItem (selectedNode))
             item->setDraggable (true);
@@ -449,18 +451,21 @@ void MagicGUIBuilder::draggedItemOnto (juce::ValueTree dragged, juce::ValueTree 
         targetParent.addChild (dragged, index, &undo);
 }
 
+#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
+
 void MagicGUIBuilder::attachToolboxToWindow (juce::Component& window)
 {
     juce::Component::SafePointer<juce::Component> reference (&window);
 
-    juce::MessageManager::callAsync ([&, reference]
-                                     {
-                                         if (reference != nullptr)
-                                         {
-                                             magicToolBox = std::make_unique<ToolBox>(reference->getTopLevelComponent(), *this);
-                                             magicToolBox->setLastLocation (magicState.getResourcesFolder());
-                                         }
-                                     });
+    juce::MessageManager::callAsync (
+      [&, reference]
+      {
+          if (reference != nullptr)
+          {
+              magicToolBox = std::make_unique<ToolBox> (reference->getTopLevelComponent(), *this);
+              magicToolBox->setLastLocation (magicState.getResourcesFolder());
+          }
+      });
 }
 
 ToolBox& MagicGUIBuilder::getMagicToolBox()
@@ -476,4 +481,4 @@ ToolBox& MagicGUIBuilder::getMagicToolBox()
 #endif
 
 
-} // namespace foleys
+}  // namespace foleys

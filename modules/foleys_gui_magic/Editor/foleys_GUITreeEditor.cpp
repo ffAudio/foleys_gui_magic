@@ -64,7 +64,7 @@ void GUITreeEditor::resized()
     treeView.setBounds (bounds);
 }
 
-void GUITreeEditor::setValueTree (juce::ValueTree& refTree)
+void GUITreeEditor::setValueTree (const juce::ValueTree& refTree)
 {
     auto restorer = treeView.getRootItem() != nullptr ? treeView.getOpennessState (true)
                                                       : std::unique_ptr<juce::XmlElement>();

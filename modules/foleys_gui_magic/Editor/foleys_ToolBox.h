@@ -33,11 +33,11 @@
 
 #pragma once
 
-#include <juce_gui_basics/juce_gui_basics.h>
-
 #include "foleys_GUITreeEditor.h"
-#include "foleys_PropertiesEditor.h"
 #include "foleys_Palette.h"
+#include "foleys_PropertiesEditor.h"
+
+#include <juce_gui_basics/juce_gui_basics.h>
 
 namespace foleys
 {
@@ -47,10 +47,12 @@ class MagicGUIBuilder;
 /**
  The Toolbox defines a floating window, that allows live editing of the currently loaded GUI.
  */
-class ToolBox  : public juce::Component,
-                 public juce::DragAndDropContainer,
-                 public juce::KeyListener,
-                 private juce::MultiTimer
+class ToolBox
+  : public juce::Component
+  , public juce::DragAndDropContainer
+  , public juce::KeyListener
+  , private juce::MultiTimer
+  , private foleys::MagicGUIBuilder::Listener
 {
 public:
     /**
@@ -63,7 +65,12 @@ public:
     ToolBox (juce::Component* parent, MagicGUIBuilder& builder);
     ~ToolBox() override;
 
-    enum PositionOption  { left, right, detached };
+    enum PositionOption
+    {
+        left,
+        right,
+        detached
+    };
 
     void loadDialog();
     void saveDialog();
@@ -87,6 +94,9 @@ public:
     bool keyPressed (const juce::KeyPress& key) override;
     bool keyPressed (const juce::KeyPress& key, juce::Component* originalComponent) override;
 
+    void selectedItem (const juce::ValueTree& node) override;
+    void guiItemDropped ([[maybe_unused]] const juce::ValueTree& node, [[maybe_unused]] juce::ValueTree& droppedOnto) override { }
+
     static juce::PropertiesFile::Options getApplicationPropertyStorage();
 
     void setLastLocation (juce::File file);
@@ -94,11 +104,11 @@ public:
 private:
     enum Timers : int
     {
-        WindowDrag=1,
+        WindowDrag = 1,
         AutoSave
     };
 
-    static juce::String positionOptionToString (PositionOption option);
+    static juce::String   positionOptionToString (PositionOption option);
     static PositionOption positionOptionFromString (const juce::String& text);
 
     static std::unique_ptr<juce::FileFilter> getFileFilter();
@@ -109,18 +119,18 @@ private:
     juce::UndoManager&          undo;
     juce::ApplicationProperties appProperties;
 
-    juce::TextButton    fileMenu   { TRANS ("File...") };
-    juce::TextButton    viewMenu   { TRANS ("View...") };
+    juce::TextButton fileMenu { TRANS ("File...") };
+    juce::TextButton viewMenu { TRANS ("View...") };
 
-    juce::TextButton    undoButton { TRANS ("Undo") };
+    juce::TextButton undoButton { TRANS ("Undo") };
 
-    juce::TextButton    editSwitch { TRANS ("Edit") };
+    juce::TextButton editSwitch { TRANS ("Edit") };
 
-    PositionOption      positionOption      { left };
+    PositionOption positionOption { left };
 
-    GUITreeEditor       treeEditor          { builder };
-    PropertiesEditor    propertiesEditor    { builder };
-    Palette             palette             { builder };
+    GUITreeEditor    treeEditor { builder };
+    PropertiesEditor propertiesEditor { builder };
+    Palette          palette { builder };
 
     juce::StretchableLayoutManager    resizeManager;
     juce::StretchableLayoutResizerBar resizer1 { &resizeManager, 1, false };
@@ -130,9 +140,9 @@ private:
     juce::File                                  lastLocation;
     juce::File                                  autoSaveFile;
 
-    void updateToolboxPosition();
+    void                           updateToolboxPosition();
     juce::ResizableCornerComponent resizeCorner { this, nullptr };
-    juce::ComponentDragger componentDragger;
+    juce::ComponentDragger         componentDragger;
 
     void mouseDown (const juce::MouseEvent& e) override;
     void mouseDrag (const juce::MouseEvent& e) override;
@@ -140,4 +150,4 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToolBox)
 };
 
-} // namespace foleys
+}  // namespace foleys
