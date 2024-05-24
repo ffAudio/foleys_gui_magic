@@ -16,8 +16,8 @@ Oscillator::Oscillator (DspProgram& program, const juce::ValueTree& config) : Ds
     addAudioOutput (TRANS ("Audio Out"));
     addParameterOutput (TRANS ("Signal Out"));
 
-    addParameterInput (TRANS ("Signal Type"));
-    addParameterInput (TRANS ("Frequency"));
+    addParameterInput (TRANS ("Signal Type"), 1.0f, 0.0f, 5.0f);
+    addParameterInput (TRANS ("Frequency"), 440.0f, 20.0f, 20000.0f);
 
     // make sure to repeat the first sample at the end for interpolation
     wavetable.resize (wavetablesize + 1, 0);
@@ -62,13 +62,12 @@ void Oscillator::process (int numSamples)
     buffer.clear();
     auto block = juce::dsp::AudioBlock<float> (buffer).getSubBlock (0, numSamples);
 
-    auto* signalType = getConnectedOutput (ConnectionType::Parameter, 0);
-    auto* frequency  = getConnectedOutput (ConnectionType::Parameter, 1);
+    auto* frequency = getInput (ConnectionType::Parameter, 1);
+    jassert (frequency);
 
-    if (signalType)
-        setWaveType (static_cast<WaveType> (signalType->getStaticValue()));
+    setWaveType (static_cast<WaveType> (getInput (ConnectionType::Parameter, 0)->getStaticValue()));
 
-    if (!frequency || currentWaveType == WaveType::None)
+    if (currentWaveType == WaveType::None)
     {
         getOutput (ConnectionType::Audio, 0)->setStaticValue (0.0f);
         getOutput (ConnectionType::Parameter, 0)->setStaticValue (0.0f);
@@ -79,7 +78,7 @@ void Oscillator::process (int numSamples)
     auto* ptr = block.getChannelPointer (0);
     if (frequency->isStatic())
     {
-        auto freq = frequency->normalize (frequency->getStaticValue());
+        auto freq = frequency->getStaticValue();
         auto inc  = std::clamp (static_cast<float> (freq / sampleRate), 0.0f, 1.0f);
         for (size_t i = 0; i < block.getNumSamples(); ++i)
         {
@@ -94,14 +93,17 @@ void Oscillator::process (int numSamples)
     }
     else
     {
+        auto* frequencyInput = frequency->getOutput();
+        frequency->mapOutput();
+        auto* freqs = frequencyInput->getAudio().getChannelPointer (0);
+
         for (size_t i = 0; i < block.getNumSamples(); ++i)
         {
             auto pos = phase * wavetablesize;
             auto p0  = static_cast<size_t> (pos);
             ptr[i]   = std::lerp (wavetable[p0], wavetable[p0 + 1], pos - static_cast<float> (p0));
 
-            auto freq = frequency->getValueAt (i);
-            phase += std::clamp (static_cast<float> (freq / sampleRate), 0.0f, 1.0f);
+            phase += std::clamp (static_cast<float> (freqs[i] / sampleRate), 0.0f, 1.0f);
             if (phase >= 1.0f)
                 phase -= 1.0f;
         }

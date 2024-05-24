@@ -28,9 +28,12 @@ void DspNode::addAudioInput (const juce::String& name)
     audioInputs.emplace_back (*this, ConnectionType::Audio, name, static_cast<int> (audioInputs.size()));
 }
 
-void DspNode::addParameterInput (const juce::String& name)
+void DspNode::addParameterInput (const juce::String& name, float defaultValue, float minValue, float maxValue)
 {
-    parameterInputs.emplace_back (*this, ConnectionType::Parameter, name, static_cast<int> (parameterInputs.size()));
+    auto& newInput        = parameterInputs.emplace_back (*this, ConnectionType::Parameter, name, static_cast<int> (parameterInputs.size()));
+    newInput.defaultValue = defaultValue;
+    newInput.minValue     = minValue;
+    newInput.maxValue     = maxValue;
 }
 
 void DspNode::addAudioOutput (const juce::String& name)
@@ -117,12 +120,12 @@ Input* DspNode::getInput (ConnectionType type, int index)
 
 Input* DspNode::getInputChecked (ConnectionType type, int idx)
 {
-    auto index = static_cast<size_t>(idx);
+    auto index = static_cast<size_t> (idx);
     switch (type)
     {
         case ConnectionType::MIDI: return (hasMidiInput() ? &midiInput : nullptr);
-        case ConnectionType::Audio: return (juce::isPositiveAndBelow(index, audioInputs.size()) ? &audioInputs[index] : nullptr);
-        case ConnectionType::Parameter: return (juce::isPositiveAndBelow(index, parameterInputs.size()) ? &parameterInputs[index] : nullptr);
+        case ConnectionType::Audio: return (juce::isPositiveAndBelow (index, audioInputs.size()) ? &audioInputs[index] : nullptr);
+        case ConnectionType::Parameter: return (juce::isPositiveAndBelow (index, parameterInputs.size()) ? &parameterInputs[index] : nullptr);
         case ConnectionType::Invalid: return nullptr;
         default: jassertfalse; return nullptr;
     }

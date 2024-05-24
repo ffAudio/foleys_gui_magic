@@ -116,7 +116,7 @@ private:
 
 protected:
     void addAudioInput (const juce::String& name);
-    void addParameterInput (const juce::String& name);
+    void addParameterInput (const juce::String& name, float defaultValue, float minValue, float maxValue);
 
     void addAudioOutput (const juce::String& name);
     void addParameterOutput (const juce::String& name);

@@ -12,7 +12,7 @@ Oscilloscope::Oscilloscope (DspProgram& program, const juce::ValueTree& config) 
     addAudioInput (TRANS ("Audio In"));
     addAudioOutput (TRANS ("Audio Out"));
 
-    addParameterInput (TRANS ("Param In"));
+    addParameterInput (TRANS ("Param In"), 0.0f, -1.0f, 1.0f);
 
     auto& state = program.getMagicProcessorState();
     scope       = state.getObjectWithType<MagicOscilloscope> (getName());

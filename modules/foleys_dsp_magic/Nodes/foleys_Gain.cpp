@@ -11,8 +11,8 @@ namespace foleys::dsp
 Gain::Gain (DspProgram& program, const juce::ValueTree& config) : DspNode (program, config)
 {
     addAudioInput (TRANS ("Audio In"));
-    addParameterInput (TRANS ("Gain"));
-    addParameterInput (TRANS ("Phase"));
+    addParameterInput (TRANS ("Gain"), 1.0f, 0.0f, 1.0f);
+    addParameterInput (TRANS ("Phase"), 0.0f, 0.0f, 1.0f);
 
     addAudioOutput (TRANS ("Audio Out"));
 }

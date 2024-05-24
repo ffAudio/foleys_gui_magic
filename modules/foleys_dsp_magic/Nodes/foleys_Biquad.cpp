@@ -12,10 +12,10 @@ Biquad::Biquad (DspProgram& program, const juce::ValueTree& config) : DspNode (p
     addAudioInput (TRANS ("Audio In"));
     addAudioOutput (TRANS ("Audio Out"));
 
-    addParameterInput (TRANS ("Filter Type"));
-    addParameterInput (TRANS ("Frequency"));
-    addParameterInput (TRANS ("Gain"));
-    addParameterInput (TRANS ("Quality"));
+    addParameterInput (TRANS ("Type"), 0.0f, 0.0f, 5.0f);
+    addParameterInput (TRANS ("Frequency"), 1000.0f, 20.0f, 20000.0f);
+    addParameterInput (TRANS ("Gain"), 1.0f, 0.0f, 1.0f);
+    addParameterInput (TRANS ("Q"), 1.0f, 0.01f, 10.0f);
 }
 
 void Biquad::prepare ([[maybe_unused]] juce::dsp::ProcessSpec spec) { }

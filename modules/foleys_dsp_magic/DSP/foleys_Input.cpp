@@ -60,7 +60,7 @@ bool Input::isConnected() const
 
 void Input::connect (int sourceUID, int sourceIdx)
 {
-    sourceNode = targetNode.getProgram().getNodeWithUID(sourceUID);
+    sourceNode  = targetNode.getProgram().getNodeWithUID (sourceUID);
     sourceIndex = sourceIdx;
 
     save();
@@ -80,6 +80,45 @@ Output* Input::getOutput() const
         return nullptr;
 
     return sourceNode->getOutput (type, sourceIndex);
+}
+
+bool Input::isStatic() const
+{
+    if (auto* output = getOutput())
+        return output->isStatic();
+
+    return true;
+}
+
+float Input::getStaticValue() const
+{
+    if (auto* output = getOutput())
+    {
+        auto staticValue = output->getStaticValue();
+        return (minValue + output->normalize (staticValue) * (maxValue - minValue));
+    }
+
+    return defaultValue;
+}
+
+void Input::mapOutput()
+{
+    if (auto* output = getOutput())
+    {
+        auto srcMin = output->getRangeMin();
+        auto srcMax = output->getRangeMax();
+
+        if (juce::approximatelyEqual (srcMin, minValue) && juce::approximatelyEqual (srcMax, maxValue))
+            return;
+
+        auto  block   = output->getAudio();
+        auto* samples = block.getChannelPointer (0);
+
+        for (size_t i = 0; i < block.getNumSamples(); ++i)
+        {
+            samples[i] = minValue + ((samples[i] - srcMin) / (srcMax - srcMin)) * (maxValue - minValue);
+        }
+    }
 }
 
 juce::ValueTree Input::getConfigForInput()

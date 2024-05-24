@@ -23,10 +23,9 @@ enum class ConnectionType
 
 struct Input
 {
-
     Input (DspNode& owner, ConnectionType connectionType, const juce::String& name, int targetIndex = 0);
 
-    bool isConnected() const;
+    [[nodiscard]] bool isConnected() const;
 
     juce::ValueTree toValueTree();
 
@@ -45,6 +44,13 @@ struct Input
     static juce::String   getTypeName (ConnectionType type);
 
     [[nodiscard]] Output* getOutput() const;
+    [[nodiscard]] bool    isStatic() const;
+    [[nodiscard]] float   getStaticValue() const;
+
+    /**
+     * This maps the AudioBlock from the source range to the input range
+     */
+    void mapOutput();
 
     DspNode&           targetNode;
     ConnectionType     type = ConnectionType::Invalid;
