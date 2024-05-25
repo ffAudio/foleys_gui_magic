@@ -40,9 +40,10 @@ namespace foleys
 
 class MagicLevelSource;
 
-class MagicLevelMeter : public juce::Component,
-                        public juce::SettableTooltipClient,
-                        private juce::Timer
+class MagicLevelMeter
+  : public juce::Component
+  , public juce::SettableTooltipClient
+  , private juce::Timer
 {
 public:
     enum ColourIds
@@ -56,11 +57,8 @@ public:
 
     struct LookAndFeelMethods
     {
-        virtual ~LookAndFeelMethods()=default;
-        virtual void drawLevelMeter (juce::Graphics& g,
-                                     MagicLevelMeter& meter,
-                                     MagicLevelSource* source,
-                                     juce::Rectangle<int> bounds) = 0;
+        virtual ~LookAndFeelMethods()                                                                                                  = default;
+        virtual void drawLevelMeter (juce::Graphics& g, MagicLevelMeter& meter, MagicLevelSource* source, juce::Rectangle<int> bounds) = 0;
     };
 
     MagicLevelMeter();
@@ -71,11 +69,23 @@ public:
 
     void timerCallback() override;
 
+    void lookAndFeelChanged() override;
+
 private:
     juce::WeakReference<MagicLevelSource> source;
+
+    class LookAndFeelFallback : public LookAndFeel, public LookAndFeelMethods
+    {
+    public:
+        LookAndFeelFallback() = default;
+        void drawLevelMeter (juce::Graphics& g, MagicLevelMeter& meter, MagicLevelSource* source, juce::Rectangle<int> bounds) override;
+    };
+
+    LookAndFeelFallback lookAndFeelFallback;
+    LookAndFeelMethods* actualLookAndFeel = &lookAndFeelFallback;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicLevelMeter)
 };
 
 
-} // namespace foleys
+}  // namespace foleys
