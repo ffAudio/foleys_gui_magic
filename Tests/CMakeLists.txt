@@ -80,6 +80,10 @@ target_link_libraries (FoleysGUIMagicTests PRIVATE
 							Catch2::Catch2WithMain 
 							foleys::foleys_gui_magic)
 
+target_compile_definitions(FoleysGUIMagicTests
+		PUBLIC
+		JUCE_SILENCE_XCODE_15_LINKER_WARNING=1)
+
 catch_discover_tests (
     FoleysGUIMagicTests
     TEST_PREFIX foleys_gui_magic.
