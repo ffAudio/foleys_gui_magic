@@ -55,7 +55,7 @@ PenaltyExcessCharacter: '1'
 PenaltyReturnTypeOnItsOwnLine: '20'
 PointerAlignment: Left
 ReflowComments: 'false'
-SortIncludes: 'true'
+SortIncludes: 'false'
 SortUsingDeclarations: 'true'
 SpaceAfterCStyleCast: 'true'
 SpaceAfterLogicalNot: 'false'

@@ -53,7 +53,7 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
-    void setValueTree (juce::ValueTree& refTree);
+    void setValueTree (const juce::ValueTree& refTree);
 
     void updateTree();
 

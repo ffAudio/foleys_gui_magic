@@ -102,9 +102,7 @@ void GuiItem::updateInternal()
 
     update();
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     setEditMode (magicBuilder.isEditModeOn());
-#endif
 
     repaint();
 }
@@ -250,10 +248,8 @@ juce::Rectangle<int> GuiItem::getClientBounds() const
 
 void GuiItem::resized()
 {
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     if (borderDragger)
         borderDragger->setBounds (getLocalBounds());
-#endif
 
     if (auto* component = getWrappedComponent())
     {
@@ -373,13 +369,11 @@ GuiItem* GuiItem::findGuiItem (const juce::ValueTree& node)
 
 void GuiItem::paintOverChildren (juce::Graphics& g)
 {
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     if (magicBuilder.isEditModeOn() && magicBuilder.getSelectedNode() == configNode)
     {
         g.setColour (juce::Colours::orange.withAlpha (0.5f));
         g.fillRoundedRectangle (getLocalBounds().toFloat(), 5.0f);
     }
-#endif
 
     if (highlight.isNotEmpty())
     {
@@ -387,8 +381,6 @@ void GuiItem::paintOverChildren (juce::Graphics& g)
         g.drawFittedText (highlight, getLocalBounds(), juce::Justification::centred, 3);
     }
 }
-
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 
 void GuiItem::setEditMode (bool shouldEdit)
 {
@@ -481,8 +473,6 @@ void GuiItem::mouseUp (const juce::MouseEvent& event)
         magicBuilder.setSelectedNode (configNode);
 }
 
-#endif
-
 bool GuiItem::isInterestedInDragSource (const juce::DragAndDropTarget::SourceDetails &)
 {
     return true;
@@ -505,7 +495,6 @@ void GuiItem::itemDropped (const juce::DragAndDropTarget::SourceDetails &dragSou
         return;
     }
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     if (dragSourceDetails.description == IDs::dragSelected)
     {
         auto dragged = magicBuilder.getSelectedNode();
@@ -519,7 +508,6 @@ void GuiItem::itemDropped (const juce::DragAndDropTarget::SourceDetails &dragSou
     auto node = juce::ValueTree::fromXml (dragSourceDetails.description.toString());
     if (node.isValid())
         magicBuilder.draggedItemOnto (node, configNode);
-#endif
 }
 
 
