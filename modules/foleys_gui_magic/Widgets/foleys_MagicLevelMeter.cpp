@@ -45,51 +45,14 @@ MagicLevelMeter::MagicLevelMeter()
     setColour (outlineColourId, juce::Colours::silver);
     setColour (tickmarkColourId, juce::Colours::silver);
 
+    lookAndFeelChanged();
+
     startTimerHz (30);
 }
 
 void MagicLevelMeter::paint (juce::Graphics& g)
 {
-    if (auto* lnf = dynamic_cast<LookAndFeelMethods*>(&getLookAndFeel()))
-    {
-        lnf->drawLevelMeter (g, *this, source, getLocalBounds());
-        return;
-    }
-
-    const auto backgroundColour = findColour (backgroundColourId);
-    if (!backgroundColour.isTransparent())
-        g.fillAll (backgroundColour);
-
-    if (source == nullptr)
-        return;
-
-    const auto numChannels = source->getNumChannels();
-    if (numChannels == 0)
-        return;
-
-    auto bounds = getLocalBounds().reduced (3).toFloat();
-
-    const auto width = bounds.getWidth() / numChannels;
-    const auto barBackgroundColour = findColour (barBackgroundColourId);
-    const auto barFillColour = findColour (barFillColourId);
-    const auto outlineColour = findColour (outlineColourId);
-
-    const auto infinity = -100.0f;
-    for (int i=0; i < numChannels; ++i)
-    {
-        auto bar = bounds.removeFromLeft (width).reduced (1);
-        g.setColour (barBackgroundColour);
-        g.fillRect (bar);
-        g.setColour (outlineColour);
-        g.drawRect (bar, 1.0f);
-        bar.reduce (1, 1);
-        g.setColour (barFillColour);
-        g.fillRect (bar.withTop (juce::jmap (juce::Decibels::gainToDecibels (source->getRMSvalue (i), infinity),
-                                             infinity, 0.0f, bar.getBottom(), bar.getY())));
-        g.drawHorizontalLine (juce::roundToInt (juce::jmap (juce::Decibels::gainToDecibels (source->getMaxValue (i), infinity),
-                                                            infinity, 0.0f, bar.getBottom (), bar.getY ())),
-                              static_cast<float>(bar.getX ()), static_cast<float>(bar.getRight ()));
-    }
+    actualLookAndFeel->drawLevelMeter (g, *this, source, getLocalBounds());
 }
 
 void MagicLevelMeter::setLevelSource (MagicLevelSource* newSource)
@@ -102,4 +65,56 @@ void MagicLevelMeter::timerCallback()
     repaint();
 }
 
-} // namespace foleys
+void MagicLevelMeter::lookAndFeelChanged()
+{
+    auto* lnf = dynamic_cast<LookAndFeelMethods*> (&getLookAndFeel());
+
+    if (lnf)
+        actualLookAndFeel = lnf;
+    else
+        actualLookAndFeel = &lookAndFeelFallback;
+
+    repaint();
+}
+
+// ================================================================================
+
+void MagicLevelMeter::LookAndFeelFallback::drawLevelMeter (juce::Graphics& g, MagicLevelMeter& meter, MagicLevelSource* source, juce::Rectangle<int> bounds)
+{
+    const auto backgroundColour = meter.findColour (backgroundColourId);
+    if (!backgroundColour.isTransparent())
+        g.fillAll (backgroundColour);
+
+    if (source == nullptr)
+        return;
+
+    const auto numChannels = source->getNumChannels();
+    if (numChannels == 0)
+        return;
+
+    auto inner = bounds.reduced (3).toFloat();
+
+    const auto width               = inner.getWidth() / static_cast<float> (numChannels);
+    const auto barBackgroundColour = meter.findColour (barBackgroundColourId);
+    const auto barFillColour       = meter.findColour (barFillColourId);
+    const auto outlineColour       = meter.findColour (outlineColourId);
+
+    const auto infinity = -100.0f;
+    for (int i = 0; i < numChannels; ++i)
+    {
+        auto bar = inner.removeFromLeft (width).reduced (1);
+        g.setColour (barBackgroundColour);
+        g.fillRect (bar);
+        g.setColour (outlineColour);
+        g.drawRect (bar, 1.0f);
+        bar.reduce (1, 1);
+        g.setColour (barFillColour);
+        g.fillRect (bar.withTop (juce::jmap (juce::Decibels::gainToDecibels (source->getRMSvalue (i), infinity), infinity, 0.0f, bar.getBottom(), bar.getY())));
+        g.drawHorizontalLine (juce::roundToInt (
+                                juce::jmap (juce::Decibels::gainToDecibels (source->getMaxValue (i), infinity), infinity, 0.0f, bar.getBottom(), bar.getY())),
+                              static_cast<float> (bar.getX()), static_cast<float> (bar.getRight()));
+    }
+}
+
+
+}  // namespace foleys
