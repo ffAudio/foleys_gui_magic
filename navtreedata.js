@@ -59,7 +59,7 @@ var NAVTREEINDEX =
 [
 "annotated.html",
 "classfoleys_1_1MagicGUIState.html#aa36d253c521d9c10653c23be63defe93",
-"classfoleys_1_1StyleGradientPropertyComponent.html#a3c8bab084391ca4068765bcb3a083d14",
+"classfoleys_1_1StyleGradientPropertyComponent.html#a31cc081b3c77bc8855de79094fc1da42",
 "functions_func.html"
 ];
 

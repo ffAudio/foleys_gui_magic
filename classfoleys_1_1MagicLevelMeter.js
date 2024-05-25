@@ -11,5 +11,6 @@ var classfoleys_1_1MagicLevelMeter =
     [ "MagicLevelMeter", "classfoleys_1_1MagicLevelMeter.html#a0d8bb4a1930bde45fe92ecd655ce0412", null ],
     [ "paint", "classfoleys_1_1MagicLevelMeter.html#a4f2c219a2cbbd6b61e7c41564dac6169", null ],
     [ "setLevelSource", "classfoleys_1_1MagicLevelMeter.html#a9953d0c94ebed3b05ca4c637d857c73b", null ],
-    [ "timerCallback", "classfoleys_1_1MagicLevelMeter.html#ac56f546a808974ae71f0aeb42c7fc847", null ]
+    [ "timerCallback", "classfoleys_1_1MagicLevelMeter.html#ac56f546a808974ae71f0aeb42c7fc847", null ],
+    [ "lookAndFeelChanged", "classfoleys_1_1MagicLevelMeter.html#a54772217abe5829e6ab7f02fc5634930", null ]
 ];

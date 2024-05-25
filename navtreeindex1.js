@@ -22,6 +22,7 @@ var NAVTREEINDEX1 =
 "classfoleys_1_1MagicLevelMeter.html#a4dde7f9621b7b13ca0f47b0b5b08f094aad4597bfece2e01034c84614445e4364":[1,0,0,24,1,3],
 "classfoleys_1_1MagicLevelMeter.html#a4dde7f9621b7b13ca0f47b0b5b08f094aedbec93d7edd0187ef63a72971dd7a41":[1,0,0,24,1,2],
 "classfoleys_1_1MagicLevelMeter.html#a4f2c219a2cbbd6b61e7c41564dac6169":[1,0,0,24,3],
+"classfoleys_1_1MagicLevelMeter.html#a54772217abe5829e6ab7f02fc5634930":[1,0,0,24,6],
 "classfoleys_1_1MagicLevelMeter.html#a9953d0c94ebed3b05ca4c637d857c73b":[1,0,0,24,4],
 "classfoleys_1_1MagicLevelMeter.html#ac56f546a808974ae71f0aeb42c7fc847":[1,0,0,24,5],
 "classfoleys_1_1MagicLevelSource.html":[1,0,0,25],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "classfoleys_1_1StyleColourPropertyComponent.html#a31cc081b3c77bc8855de79094fc1da42":[1,0,0,52,3],
 "classfoleys_1_1StyleColourPropertyComponent.html#a560bc2eed48662192cdcc685b64068ab":[1,0,0,52,2],
 "classfoleys_1_1StyleColourPropertyComponent.html#af7f37a5bfdaeee3b085c9b0ba96b16f1":[1,0,0,52,0],
-"classfoleys_1_1StyleGradientPropertyComponent.html":[1,0,0,53],
-"classfoleys_1_1StyleGradientPropertyComponent.html#a31cc081b3c77bc8855de79094fc1da42":[1,0,0,53,3]
+"classfoleys_1_1StyleGradientPropertyComponent.html":[1,0,0,53]
 };

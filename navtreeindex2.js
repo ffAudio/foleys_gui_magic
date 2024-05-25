@@ -1,5 +1,6 @@
 var NAVTREEINDEX2 =
 {
+"classfoleys_1_1StyleGradientPropertyComponent.html#a31cc081b3c77bc8855de79094fc1da42":[1,0,0,53,3],
 "classfoleys_1_1StyleGradientPropertyComponent.html#a3c8bab084391ca4068765bcb3a083d14":[1,0,0,53,0],
 "classfoleys_1_1StyleGradientPropertyComponent.html#a560bc2eed48662192cdcc685b64068ab":[1,0,0,53,2],
 "classfoleys_1_1StyleGradientPropertyComponent.html#a955f1aa72cf82e209827ff6c5b92b12f":[1,0,0,53,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX2 =
 "functions_e.html":[1,3,0,4],
 "functions_enum.html":[1,3,3],
 "functions_eval.html":[1,3,4],
-"functions_f.html":[1,3,0,5],
-"functions_func.html":[1,3,1]
+"functions_f.html":[1,3,0,5]
 };
