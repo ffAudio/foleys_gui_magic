@@ -40,12 +40,12 @@ XYDragComponent::XYDragComponent()
 {
     setOpaque (false);
 
-    setColour (xyDotColourId,            juce::Colours::orange.darker());
-    setColour (xyDotOverColourId,        juce::Colours::orange);
-    setColour (xyHorizontalColourId,     juce::Colours::orange.darker());
+    setColour (xyDotColourId, juce::Colours::orange.darker());
+    setColour (xyDotOverColourId, juce::Colours::orange);
+    setColour (xyHorizontalColourId, juce::Colours::orange.darker());
     setColour (xyHorizontalOverColourId, juce::Colours::orange);
-    setColour (xyVerticalColourId,       juce::Colours::orange.darker());
-    setColour (xyVerticalOverColourId,   juce::Colours::orange);
+    setColour (xyVerticalColourId, juce::Colours::orange.darker());
+    setColour (xyVerticalOverColourId, juce::Colours::orange);
 
     xAttachment.onParameterChangedAsync = [&] { repaint(); };
     yAttachment.onParameterChangedAsync = [&] { repaint(); };
@@ -59,14 +59,14 @@ XYDragComponent::XYDragComponent()
  */
 void XYDragComponent::setCrossHair (bool horizontal, bool vertical)
 {
-    wantsVerticalDrag = horizontal;
+    wantsVerticalDrag   = horizontal;
     wantsHorizontalDrag = vertical;
 }
 
 void XYDragComponent::paint (juce::Graphics& g)
 {
-    const auto x = getXposition();
-    const auto y = getYposition();
+    const auto x   = getXposition();
+    const auto y   = getYposition();
     const auto gap = radius * 1.8f;
 
     if (wantsVerticalDrag)
@@ -134,8 +134,8 @@ void XYDragComponent::updateWhichToDrag (juce::Point<float> pos)
     const auto centre = juce::Point<int> (getXposition(), getYposition()).toFloat();
 
     mouseOverDot = (centre.getDistanceFrom (pos) < radius * senseFactor);
-    mouseOverX = (wantsHorizontalDrag && std::abs (pos.getX() - centre.getX()) < senseFactor + 1.0f);
-    mouseOverY =  (wantsVerticalDrag && std::abs (pos.getY() - centre.getY()) < senseFactor + 1.0f);
+    mouseOverX   = (wantsHorizontalDrag && std::abs (pos.getX() - centre.getX()) < senseFactor + 1.0f);
+    mouseOverY   = (wantsVerticalDrag && std::abs (pos.getY() - centre.getY()) < senseFactor + 1.0f);
 
     repaint();
 }
@@ -145,8 +145,8 @@ bool XYDragComponent::hitTest (int x, int y)
     if (jumpToClick)
         return true;
 
-    const auto click = juce::Point<int> (x, y).toFloat ();
-    const auto centre = juce::Point<int> (getXposition (), getYposition ()).toFloat ();
+    const auto click  = juce::Point<int> (x, y).toFloat();
+    const auto centre = juce::Point<int> (getXposition(), getYposition()).toFloat();
 
     if (centre.getDistanceFrom (click) < radius * senseFactor)
         return true;
@@ -165,34 +165,32 @@ void XYDragComponent::mouseDown (const juce::MouseEvent& event)
     if (contextMenuParameter && (event.mods.isPopupMenu()))
     {
         juce::PopupMenu menu;
-        int id = 0;
-        auto current = contextMenuParameter->getCurrentValueAsText();
+        int             id      = 0;
+        auto            current = contextMenuParameter->getCurrentValueAsText();
 
-        for (const auto& item : contextMenuParameter->getAllValueStrings())
+        for (const auto& item: contextMenuParameter->getAllValueStrings())
             menu.addItem (++id, item, true, item == current);
 
-        menu.showMenuAsync (juce::PopupMenu::Options()
-                            .withTargetComponent (this)
-                            .withTargetScreenArea ({event.getScreenX(), event.getScreenY(), 1, 1}),
-                            [cmp = contextMenuParameter](int selected)
-        {
-            if (selected <= 0)
-                return;
+        menu.showMenuAsync (juce::PopupMenu::Options().withTargetComponent (this).withTargetScreenArea ({ event.getScreenX(), event.getScreenY(), 1, 1 }),
+                            [cmp = contextMenuParameter] (int selected)
+                            {
+                                if (selected <= 0)
+                                    return;
 
-            const auto& range = cmp->getNormalisableRange();
-            auto value = range.start + (selected-1) * range.interval;
-            cmp->beginChangeGesture();
-            cmp->setValueNotifyingHost (cmp->convertTo0to1 (value));
-            cmp->endChangeGesture();
-        });
+                                const auto& range = cmp->getNormalisableRange();
+                                auto        value = range.start + (static_cast<float> (selected - 1)) * range.interval;
+                                cmp->beginChangeGesture();
+                                cmp->setValueNotifyingHost (cmp->convertTo0to1 (value));
+                                cmp->endChangeGesture();
+                            });
 
         return;
     }
 
     if (jumpToClick)
     {
-        mouseOverX = true;
-        mouseOverY = true;
+        mouseOverX   = true;
+        mouseOverY   = true;
         mouseOverDot = true;
 
         xAttachment.beginGesture();
@@ -249,13 +247,13 @@ void XYDragComponent::mouseWheelMove (const juce::MouseEvent& event, const juce:
         wheelParameter->beginChangeGesture();
         auto range     = wheelParameter->getNormalisableRange();
         auto lastValue = range.convertFrom0to1 (wheelParameter->getValue());
-        auto interval = details.deltaY > 0.0f ? range.interval : -range.interval;
+        auto interval  = details.deltaY > 0.0f ? range.interval : -range.interval;
         wheelParameter->setValueNotifyingHost (range.convertTo0to1 (juce::jlimit (range.start, range.end, lastValue + interval)));
         wheelParameter->endChangeGesture();
         return;
     }
 
-    juce::Component::mouseWheelMove(event, details);
+    juce::Component::mouseWheelMove (event, details);
 }
 
 void XYDragComponent::mouseEnter (const juce::MouseEvent& event)
@@ -266,8 +264,8 @@ void XYDragComponent::mouseEnter (const juce::MouseEvent& event)
 void XYDragComponent::mouseExit (const juce::MouseEvent&)
 {
     mouseOverDot = false;
-    mouseOverX = false;
-    mouseOverY = false;
+    mouseOverX   = false;
+    mouseOverY   = false;
 
     repaint();
 }
@@ -282,4 +280,4 @@ int XYDragComponent::getYposition() const
     return juce::roundToInt ((1.0f - yAttachment.getNormalisedValue()) * getHeight());
 }
 
-} // namespace foleys
+}  // namespace foleys

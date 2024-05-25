@@ -184,5 +184,5 @@ void MainComponent::paint (juce::Graphics& g)
 
 void MainComponent::resized()
 {
-    magicBuilder.updateLayout();
+    magicBuilder.updateLayout (getLocalBounds());
 }

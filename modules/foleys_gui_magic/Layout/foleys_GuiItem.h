@@ -168,8 +168,6 @@ public:
      */
     virtual GuiItem* findGuiItem (const juce::ValueTree& node);
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-
     /**
      This method sets the GUI in edit mode, that allows to drag the components around.
      */
@@ -180,8 +178,6 @@ public:
     void mouseDown (const juce::MouseEvent& event) override;
     void mouseDrag (const juce::MouseEvent& event) override;
     void mouseUp (const juce::MouseEvent& event) override;
-
-#endif
 
     bool isInterestedInDragSource (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails) override;
     void itemDropped (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails) override;
