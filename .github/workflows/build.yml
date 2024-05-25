@@ -43,7 +43,7 @@ jobs:
           echo PLUGINVAL_PATH=$(pwd)/$PLUGINVAL_BINARY >> $GITHUB_OUTPUT
 
       - name: Configure CMake
-        run: cmake --preset maintainer --log-level=VERBOSE -D PLUGINVAL_PROGRAM=${{ steps.pluginval.outputs.PLUGINVAL_PATH }} -D JUCE_SILENCE_XCODE_15_LINKER_WARNING=1
+        run: cmake --preset maintainer --log-level=VERBOSE -D PLUGINVAL_PROGRAM=${{ steps.pluginval.outputs.PLUGINVAL_PATH }}
 
       - name: Build
         run: cmake --build --preset maintainer --config ${{ matrix.build_type }}
