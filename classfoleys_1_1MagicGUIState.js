@@ -27,6 +27,7 @@ var classfoleys_1_1MagicGUIState =
     [ "createAndAddObject", "classfoleys_1_1MagicGUIState.html#aa13205f3551f04a4ce63f055f6e76086", null ],
     [ "getObjectIDsByType", "classfoleys_1_1MagicGUIState.html#a68d8a127dfb087dca6c5b3a2856eb7b7", null ],
     [ "getObjectWithType", "classfoleys_1_1MagicGUIState.html#ad16f21b02335dd326aa5124aa42dd46f", null ],
+    [ "clearAllObjects", "classfoleys_1_1MagicGUIState.html#a48bd838b097c7e2c0a631ab921bacc71", null ],
     [ "prepareToPlay", "classfoleys_1_1MagicGUIState.html#a79eed67186a502d929e05a07f9a1b7d8", null ],
     [ "addBackgroundProcessing", "classfoleys_1_1MagicGUIState.html#a6bd245bee69b3bb07aed948278a4453a", null ],
     [ "getKeyboardState", "classfoleys_1_1MagicGUIState.html#aa9f8e25ec48881caac26f790f357977f", null ],

@@ -20,5 +20,7 @@ var classfoleys_1_1ToolBox =
     [ "stateWasReloaded", "classfoleys_1_1ToolBox.html#a3bc43348faee558ab0ed69ba8de12473", null ],
     [ "keyPressed", "classfoleys_1_1ToolBox.html#aaee4b337a9e4e190184f440b1b68ab21", null ],
     [ "keyPressed", "classfoleys_1_1ToolBox.html#ae75dc9dcda663c740d3824554a3167ca", null ],
+    [ "selectedItem", "classfoleys_1_1ToolBox.html#a5ea5ceff3678f595c5a86d009e26781c", null ],
+    [ "guiItemDropped", "classfoleys_1_1ToolBox.html#a55bbe24f35eb4ba5a2ee01756593b690", null ],
     [ "setLastLocation", "classfoleys_1_1ToolBox.html#adbfd1ae154150bebbfb3835d3f9517d7", null ]
 ];

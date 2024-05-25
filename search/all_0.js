@@ -6,7 +6,7 @@ var searchData=
   ['addcontainerproperties_3',['addContainerProperties',['../classfoleys_1_1PropertiesEditor.html#a7ae40257263620abc255bd6320ad3542',1,'foleys::PropertiesEditor']]],
   ['adddecoratorproperties_4',['addDecoratorProperties',['../classfoleys_1_1PropertiesEditor.html#aecfdabb619d10906a9d753b84470bdb3',1,'foleys::PropertiesEditor']]],
   ['addflexitemproperties_5',['addFlexItemProperties',['../classfoleys_1_1PropertiesEditor.html#a2386b07dc860a13576df9b95c17a9b0d',1,'foleys::PropertiesEditor']]],
-  ['addlistener_6',['addListener',['../classfoleys_1_1Stylesheet.html#a14430b5ac78b02c5aa14dd1878eb8bf5',1,'foleys::Stylesheet']]],
+  ['addlistener_6',['addListener',['../classfoleys_1_1MagicGUIBuilder.html#abf312004846c89cae4c3a05315494840',1,'foleys::MagicGUIBuilder::addListener()'],['../classfoleys_1_1Stylesheet.html#a14430b5ac78b02c5aa14dd1878eb8bf5',1,'foleys::Stylesheet::addListener(juce::ValueTree::Listener *listener)']]],
   ['addnewstyleclass_7',['addNewStyleClass',['../classfoleys_1_1Stylesheet.html#ac5360dbddf6f9462fdcc907a63b18995',1,'foleys::Stylesheet']]],
   ['addnodeproperties_8',['addNodeProperties',['../classfoleys_1_1PropertiesEditor.html#a8c9fc92106221c88403d100b674839d1',1,'foleys::PropertiesEditor']]],
   ['addpalettecolours_9',['addPaletteColours',['../classfoleys_1_1PropertiesEditor.html#a687d7a3b67f56a61a45aea9c9dcc00b8',1,'foleys::PropertiesEditor']]],

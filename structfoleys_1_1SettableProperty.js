@@ -12,5 +12,5 @@ var structfoleys_1_1SettableProperty =
     [ "name", "structfoleys_1_1SettableProperty.html#a6b9e3d5246e6cb71fa29bdcd10b75336", null ],
     [ "type", "structfoleys_1_1SettableProperty.html#a8448759cd6a9859ce5056be8261b8d69", null ],
     [ "defaultValue", "structfoleys_1_1SettableProperty.html#a586885fbebf656fcf85ead6508943be5", null ],
-    [ "menuCreationLambda", "structfoleys_1_1SettableProperty.html#ae8272f0c05efdcbd729f176aa13e951e", null ]
+    [ "menuCreationLambda", "structfoleys_1_1SettableProperty.html#a2366a7467e02f34b687d54a3b843ef96", null ]
 ];

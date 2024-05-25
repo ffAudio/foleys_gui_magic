@@ -68,6 +68,9 @@ var hierarchy =
     [ "KeyListener", null, [
       [ "ToolBox", "classfoleys_1_1ToolBox.html", null ]
     ] ],
+    [ "Listener", "classfoleys_1_1MagicGUIBuilder_1_1Listener.html", [
+      [ "ToolBox", "classfoleys_1_1ToolBox.html", null ]
+    ] ],
     [ "Listener", null, [
       [ "ParameterAttachment< float >", "classfoleys_1_1ParameterAttachment.html", null ],
       [ "ParameterAttachment< ValueType >", "classfoleys_1_1ParameterAttachment.html", null ]

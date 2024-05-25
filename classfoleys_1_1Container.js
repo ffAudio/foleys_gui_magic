@@ -17,5 +17,6 @@ var classfoleys_1_1Container =
     [ "configureFlexBox", "classfoleys_1_1Container.html#afcf053e8c92c17e8d216d8da48046f02", null ],
     [ "getWrappedComponent", "classfoleys_1_1Container.html#af8d9c539070503066e687919e9560ada", null ],
     [ "findGuiItemWithId", "classfoleys_1_1Container.html#a7eef3252ec8c214bc4fde840c81c64c0", null ],
-    [ "findGuiItem", "classfoleys_1_1Container.html#a28648133e368b451656e64459d9f719a", null ]
+    [ "findGuiItem", "classfoleys_1_1Container.html#a28648133e368b451656e64459d9f719a", null ],
+    [ "setEditMode", "classfoleys_1_1Container.html#a134446b67cb69cce1680150976c411cb", null ]
 ];

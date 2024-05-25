@@ -11,7 +11,7 @@ var searchData=
   ['top_8',['top',['../structfoleys_1_1Box.html#a840a6e82bf789f4846374af9e5578332',1,'foleys::Box']]],
   ['tostring_9',['toString',['../classfoleys_1_1GradientBackground.html#a5373ab0fd47880930356d245026c9fd1',1,'foleys::GradientBackground']]],
   ['touch_10',['touch',['../classfoleys_1_1MidiDrumpadComponent.html#a4dde7f9621b7b13ca0f47b0b5b08f094a126e1551ed956f996f40a666cf2e27b3',1,'foleys::MidiDrumpadComponent']]],
-  ['type_11',['type',['../structfoleys_1_1SettableProperty.html#a8448759cd6a9859ce5056be8261b8d69',1,'foleys::SettableProperty::type'],['../classfoleys_1_1GradientBackground.html#ab6f4e6d3fde00ce906e46494f60dfe7a',1,'foleys::GradientBackground::type']]],
-  ['type_12',['Type',['../classfoleys_1_1GradientBackground.html#a1d1cfd8ffb84e947f82999c682b666a7',1,'foleys::GradientBackground']]],
+  ['type_11',['Type',['../classfoleys_1_1GradientBackground.html#a1d1cfd8ffb84e947f82999c682b666a7',1,'foleys::GradientBackground']]],
+  ['type_12',['type',['../structfoleys_1_1SettableProperty.html#a8448759cd6a9859ce5056be8261b8d69',1,'foleys::SettableProperty::type'],['../classfoleys_1_1GradientBackground.html#ab6f4e6d3fde00ce906e46494f60dfe7a',1,'foleys::GradientBackground::type']]],
   ['typeedit_13',['TypeEdit',['../namespacefoleys.html#a894ef4256819f3a7689ebb458d448577a3ef60a70b4a79b56666ab73827a3170a',1,'foleys']]]
 ];

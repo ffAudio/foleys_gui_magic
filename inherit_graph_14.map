@@ -1,9 +1,9 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
 <area shape="rect" id="Node000000" href="$classfoleys_1_1MagicPlotSource.html" title="The MagicPlotSources act as an interface, so the GUI can visualise an arbitrary plot of data." alt="" coords="5,55,126,80"/>
 <area shape="rect" id="Node000001" href="$classfoleys_1_1MagicAnalyser.html" title="This will plot the magnitudes of the frequencies in a signal." alt="" coords="186,5,293,31"/>
-<area shape="poly" id="edge84_Node000000_Node000001" title=" " alt="" coords="128,47,191,29,192,34,129,52"/>
+<area shape="poly" id="edge85_Node000000_Node000001" title=" " alt="" coords="128,47,191,29,192,34,129,52"/>
 <area shape="rect" id="Node000002" href="$classfoleys_1_1MagicFilterPlot.html" title="This will plot the frequency responce for a juce IIR filter." alt="" coords="185,55,294,80"/>
-<area shape="poly" id="edge85_Node000000_Node000002" title=" " alt="" coords="141,65,185,65,185,70,141,70"/>
+<area shape="poly" id="edge86_Node000000_Node000002" title=" " alt="" coords="141,65,185,65,185,70,141,70"/>
 <area shape="rect" id="Node000003" href="$classfoleys_1_1MagicOscilloscope.html" title="This class collects your samples in a circular buffer and allows the GUI to draw it in the style of a..." alt="" coords="174,104,305,130"/>
-<area shape="poly" id="edge86_Node000000_Node000003" title=" " alt="" coords="129,83,192,101,191,106,128,88"/>
+<area shape="poly" id="edge87_Node000000_Node000003" title=" " alt="" coords="129,83,192,101,191,106,128,88"/>
 </map>
