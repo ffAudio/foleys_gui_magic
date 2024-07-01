@@ -127,14 +127,12 @@ public:
      */
     GuiItem* findGuiItem (const juce::ValueTree& node) override;
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     /**
      This switches this node and all it's descendents in the edit
      mode, which means, the components don't react, but instead you
      can move them around.
      */
     void setEditMode (bool shouldEdit) override;
-#endif
 
 private:
     class Scroller : public juce::Viewport

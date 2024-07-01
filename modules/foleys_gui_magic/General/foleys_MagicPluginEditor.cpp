@@ -142,7 +142,7 @@ void MagicPluginEditor::paint (juce::Graphics& g)
 
 void MagicPluginEditor::resized()
 {
-    builder->updateLayout();
+    builder->updateLayout (getLocalBounds());
 
     processorState.setLastEditorSize (getWidth(), getHeight());
 }

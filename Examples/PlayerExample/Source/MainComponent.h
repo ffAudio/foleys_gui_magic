@@ -1,7 +1,8 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
+    An example of an AudioPlayer app made with FoleysGuiMagic
+    Note that this example is not a plugin, which was also important to show.
 
   ==============================================================================
 */
@@ -10,16 +11,22 @@
 
 #include <JuceHeader.h>
 
+namespace foleys
+{
+class WaveformHolder;
+}
+
 //==============================================================================
 /*
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent   : public juce::AudioAppComponent,
-                        public juce::Slider::Listener,
-                        private juce::Value::Listener,
-                        private juce::ChangeListener,
-                        private juce::Timer
+class MainComponent
+  : public juce::AudioAppComponent
+  , public juce::Slider::Listener
+  , private juce::Value::Listener
+  , private juce::ChangeListener
+  , private juce::Timer
 {
 public:
     //==============================================================================
@@ -38,7 +45,6 @@ public:
     void resized() override;
 
 private:
-
     void valueChanged (juce::Value&) override;
     void sliderValueChanged (juce::Slider*) override;
     void changeListenerCallback (juce::ChangeBroadcaster*) override;
@@ -53,14 +59,18 @@ private:
     juce::File               lastFolder = juce::File::getSpecialLocation (juce::File::userMusicDirectory);
 
     std::unique_ptr<juce::AudioFormatReaderSource> source;
-    juce::AudioTransportSource  transport;
-    juce::Value                 gainValue { 1.0f };
+    juce::AudioTransportSource                     transport;
+    juce::Value                                    gainValue { 1.0f };
+    juce::AudioThumbnailCache                      thumbnailCache { 64 };
 
-    foleys::MagicGUIState       magicState;
-    foleys::MagicGUIBuilder     magicBuilder { magicState };
+    // Every GuiMagic view needs a MagicGuiState and a MagicBuilder, which will populate the view later on
+    foleys::MagicGUIState   magicState;
+    foleys::MagicGUIBuilder magicBuilder { magicState };
 
-    foleys::MagicPlotSource*    outputAnalyser { nullptr };
-    foleys::MagicLevelSource*   outputLevel    { nullptr };
+    // The following are optional backends for specific GUI widgets to find signals or other information in the magicState
+    foleys::WaveformHolder*   audioThumbnail { nullptr };
+    foleys::MagicPlotSource*  outputAnalyser { nullptr };
+    foleys::MagicLevelSource* outputLevel { nullptr };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

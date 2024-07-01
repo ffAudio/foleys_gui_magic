@@ -3,12 +3,10 @@ foleys_gui_magic
 
 DEPRECATION:
 the branch `develop` won't be updated and will be deleted soon.    
-The development continues in `devel` and will be merged regularly to `main`, so you can always fast-forward the main branch.
+The development is done in feature branches which are merged directly to `main`, so you can always fast-forward the main branch.
 
 main:    
 [![CMake](https://github.com/ffAudio/foleys_gui_magic/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/ffAudio/foleys_gui_magic/actions/workflows/build.yml)    
-devel:    
-[![CMake](https://github.com/ffAudio/foleys_gui_magic/actions/workflows/build.yml/badge.svg?branch=devel)](https://github.com/ffAudio/foleys_gui_magic/actions/workflows/build.yml)
 
 This module allows to create GUIs without any coding. It is created with a DOM model
 that provides a hierarchical information, and a CSS cascading stylesheet to define
@@ -34,8 +32,13 @@ CMake will be responsible to fetch JUCE, pluginval and Catch2 if switched on.
 Support
 -------
 
+You can find the api docs in https://foleysfinest.com/foleys_gui_magic/
+
 For the modules of Foleys Finest Audio there is a new forum where you can search for information 
 and ask questions: https://forum.foleysfinest.com
+
+Or join the discussion on [discord](https://discord.gg/Xhn58BrAjG)
+
 All feedback is welcome.
 
 Setup
@@ -135,18 +138,18 @@ Currently available Components
 It is completely possible to register your own bespoke Components into the builder. These Components
 are already available:
 
-- Slider (attachable to parameters)
-- ComboBox ( -"- )
-- ToggleButton ( -"- )
-- TextButton ( -"- )
-- XYDragComponent (attachable to two parameters)
-- Plot (displays various 2-d data)
-- LevelMeter (displays different RMS / Max levels)
-- Label
-- MidiKeyboardComponent
-- MidiLearn
-- ListBox
-- WebBrowserComponent
+ - Slider (attachable to parameters)
+ - ComboBox (attachable to parameters)
+ - ToggleButton (attachable to parameters)
+ - TextButton (attachable to parameters)
+ - XYDragComponent (attachable to two parameters)
+ - Plot (displays various 2-d data)
+ - LevelMeter (displays different RMS / Max levels)
+ - Label
+ - MidiKeyboardComponent
+ - MidiLearn
+ - ListBox
+ - WebBrowserComponent
 
 All Components have the option to add margins/paddings and a border also with rounded corners.
 The View component serves as container, that has the option to layer all child components on top of each other
@@ -176,3 +179,4 @@ Good luck and happy coding, erm designing, erm... both actually :-)
 
 
 Brighton, UK - started Sept. 2019
+Esslingen, Germany - 2020 - 2023

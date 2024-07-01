@@ -933,13 +933,13 @@ public:
 
     ~ListBoxItem() override
     {
-        if (auto* m = dynamic_cast<juce::ChangeBroadcaster*>(listBox.getModel()))
+        if (auto* m = dynamic_cast<juce::ChangeBroadcaster*>(listBox.getListBoxModel()))
             m->removeChangeListener (this);
     }
 
     void update() override
     {
-        if (auto* m = dynamic_cast<juce::ChangeBroadcaster*>(listBox.getModel()))
+        if (auto* m = dynamic_cast<juce::ChangeBroadcaster*>(listBox.getListBoxModel()))
             m->removeChangeListener (this);
 
         auto modelID = configNode.getProperty ("list-box-model", juce::String()).toString();

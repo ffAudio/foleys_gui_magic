@@ -41,6 +41,11 @@ MagicProcessorState::MagicProcessorState (juce::AudioProcessor& processorToUse)
 {
 }
 
+MagicProcessorState::~MagicProcessorState()
+{
+    stopTimer();
+}
+
 juce::StringArray MagicProcessorState::getParameterNames() const
 {
     return parameters.getParameterNames();

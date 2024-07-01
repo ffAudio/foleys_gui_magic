@@ -53,7 +53,6 @@ public:
      Set new coefficients to calculate the frequency response from.
 
      @param coefficients the coefficients to calculate the frequency response for
-     @param sampleRate is the sampleRate the processing is happening with
      @param maxDB is the maximum level in dB, that the curve will display
      */
     void setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::Ptr coefficients, float maxDB);
@@ -63,7 +62,6 @@ public:
 
      @param gain the overall added gain
      @param coefficients a vector of coefficients to sum up (multiply) to calculate the frequency response for
-     @param sampleRate is the sampleRate the processing is happening with
      @param maxDB is the maximum level in dB, that the curve will display
      */
     void setIIRCoefficients (float gain, std::vector<juce::dsp::IIR::Coefficients<float>::Ptr> coefficients, float maxDB);

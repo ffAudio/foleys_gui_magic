@@ -53,6 +53,7 @@ public:
      processor and it's internals.
      */
     MagicProcessorState (juce::AudioProcessor& processorToUse);
+    ~MagicProcessorState() override;
 
     /**
      Returns the IDs of AudioProcessorParameters for selection
