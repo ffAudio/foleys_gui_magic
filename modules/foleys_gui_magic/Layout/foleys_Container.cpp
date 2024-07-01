@@ -381,7 +381,6 @@ std::vector<std::unique_ptr<GuiItem>>::iterator Container::end()
     return children.end();
 }
 
-#if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
 void Container::setEditMode (bool shouldEdit)
 {
     for (auto& child : children)
@@ -389,7 +388,6 @@ void Container::setEditMode (bool shouldEdit)
 
     GuiItem::setEditMode (shouldEdit);
 }
-#endif
 
 //==============================================================================
 

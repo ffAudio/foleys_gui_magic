@@ -38,13 +38,11 @@ namespace foleys
 
 namespace IDs
 {
-    static juce::String lastLocation { "lastLocation" };
+static juce::String lastLocation { "lastLocation" };
 }
 
 ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToControl)
-  : parent (parentToUse),
-    builder (builderToControl),
-    undo (builder.getUndoManager())
+  : parent (parentToUse), builder (builderToControl), undo (builder.getUndoManager())
 {
     appProperties.setStorageParameters (getApplicationPropertyStorage());
 
@@ -54,11 +52,11 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
         setAlwaysOnTop (properties->getValue ("alwaysOnTop") == "true");
     }
 
-    EditorColours::background = findColour (juce::ResizableWindow::backgroundColourId);
-    EditorColours::outline = juce::Colours::silver;
-    EditorColours::text = juce::Colours::white;
-    EditorColours::disabledText = juce::Colours::grey;
-    EditorColours::removeButton = juce::Colours::darkred;
+    EditorColours::background         = findColour (juce::ResizableWindow::backgroundColourId);
+    EditorColours::outline            = juce::Colours::silver;
+    EditorColours::text               = juce::Colours::white;
+    EditorColours::disabledText       = juce::Colours::grey;
+    EditorColours::removeButton       = juce::Colours::darkred;
     EditorColours::selectedBackground = juce::Colours::darkorange;
 
     setOpaque (true);
@@ -81,9 +79,9 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
         file.addItem ("Load XML", [&] { loadDialog(); });
         file.addItem ("Save XML", [&] { saveDialog(); });
         file.addSeparator();
-        file.addItem ("Clear",    [&] { builder.clearGUI(); });
+        file.addItem ("Clear", [&] { builder.clearGUI(); });
         file.addSeparator();
-        file.addItem ("Refresh",  [&] { builder.updateComponents(); });
+        file.addItem ("Refresh", [&] { builder.updateComponents(); });
         file.showMenuAsync (juce::PopupMenu::Options());
     };
 
@@ -91,30 +89,26 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
     {
         juce::PopupMenu view;
 
-        view.addItem ("Left",  true, positionOption == left, [&]() { setToolboxPosition (left); });
+        view.addItem ("Left", true, positionOption == left, [&]() { setToolboxPosition (left); });
         view.addItem ("Right", true, positionOption == right, [&]() { setToolboxPosition (right); });
         view.addItem ("Detached", true, positionOption == detached, [&]() { setToolboxPosition (detached); });
         view.addSeparator();
-        view.addItem ("AlwaysOnTop", true, isAlwaysOnTop(), [&]() {
-            setAlwaysOnTop ( ! isAlwaysOnTop() );
-            if (auto* properties = appProperties.getUserSettings())
-                properties->setValue ("alwaysOnTop", isAlwaysOnTop() ? "true" : "false");
-        });
+        view.addItem ("AlwaysOnTop", true, isAlwaysOnTop(),
+                      [&]()
+                      {
+                          setAlwaysOnTop (!isAlwaysOnTop());
+                          if (auto* properties = appProperties.getUserSettings())
+                              properties->setValue ("alwaysOnTop", isAlwaysOnTop() ? "true" : "false");
+                      });
 
         view.showMenuAsync (juce::PopupMenu::Options());
     };
 
-    undoButton.onClick = [&]
-    {
-        undo.undo();
-    };
+    undoButton.onClick = [&] { undo.undo(); };
 
     editSwitch.setClickingTogglesState (true);
     editSwitch.setColour (juce::TextButton::buttonOnColourId, EditorColours::selectedBackground);
-    editSwitch.onStateChange = [&]
-    {
-        builder.setEditMode (editSwitch.getToggleState());
-    };
+    editSwitch.onStateChange = [&] { builder.setEditMode (editSwitch.getToggleState()); };
 
     addAndMakeVisible (treeEditor);
     addAndMakeVisible (resizer1);
@@ -140,11 +134,14 @@ ToolBox::ToolBox (juce::Component* parentToUse, MagicGUIBuilder& builderToContro
 
     stateWasReloaded();
 
+    builder.addListener (this);
     parent->addKeyListener (this);
 }
 
 ToolBox::~ToolBox()
 {
+    builder.removeListener (this);
+
     if (parent != nullptr)
         parent->removeKeyListener (this);
 
@@ -169,39 +166,35 @@ void ToolBox::mouseDrag (const juce::MouseEvent& e)
 
 void ToolBox::loadDialog()
 {
-    auto dialog = std::make_unique<FileBrowserDialog>(NEEDS_TRANS ("Cancel"), NEEDS_TRANS ("Load"),
-                                                      juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
-                                                      lastLocation, getFileFilter());
-    dialog->setAcceptFunction ([&, dlg=dialog.get()]
-    {
-        loadGUI (dlg->getFile());
-        builder.closeOverlayDialog();
-    });
-    dialog->setCancelFunction ([&]
-    {
-        builder.closeOverlayDialog();
-    });
+    auto dialog = std::make_unique<FileBrowserDialog> (NEEDS_TRANS ("Cancel"), NEEDS_TRANS ("Load"),
+                                                       juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles, lastLocation, getFileFilter());
+    dialog->setAcceptFunction (
+      [&, dlg = dialog.get()]
+      {
+          loadGUI (dlg->getFile());
+          builder.closeOverlayDialog();
+      });
+    dialog->setCancelFunction ([&] { builder.closeOverlayDialog(); });
 
     builder.showOverlayDialog (std::move (dialog));
 }
 
 void ToolBox::saveDialog()
 {
-    auto dialog = std::make_unique<FileBrowserDialog>(NEEDS_TRANS ("Cancel"), NEEDS_TRANS ("Save"),
-                                                      juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles | juce::FileBrowserComponent::warnAboutOverwriting,
-                                                      lastLocation, getFileFilter());
-    dialog->setAcceptFunction ([&, dlg=dialog.get()]
-    {
-        auto xmlFile = dlg->getFile();
-        saveGUI (xmlFile);
-        setLastLocation (xmlFile);
+    auto dialog = std::make_unique<FileBrowserDialog> (NEEDS_TRANS ("Cancel"), NEEDS_TRANS ("Save"),
+                                                       juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles
+                                                         | juce::FileBrowserComponent::warnAboutOverwriting,
+                                                       lastLocation, getFileFilter());
+    dialog->setAcceptFunction (
+      [&, dlg = dialog.get()]
+      {
+          auto xmlFile = dlg->getFile();
+          saveGUI (xmlFile);
+          setLastLocation (xmlFile);
 
-        builder.closeOverlayDialog();
-    });
-    dialog->setCancelFunction ([&]
-    {
-        builder.closeOverlayDialog();
-    });
+          builder.closeOverlayDialog();
+      });
+    dialog->setCancelFunction ([&] { builder.closeOverlayDialog(); });
 
     builder.showOverlayDialog (std::move (dialog));
 }
@@ -209,7 +202,7 @@ void ToolBox::saveDialog()
 void ToolBox::loadGUI (const juce::File& xmlFile)
 {
     juce::FileInputStream stream (xmlFile);
-    auto tree = juce::ValueTree::fromXml (stream.readEntireStreamAsString());
+    auto                  tree = juce::ValueTree::fromXml (stream.readEntireStreamAsString());
 
     if (tree.isValid() && tree.getType() == IDs::magic)
     {
@@ -267,36 +260,22 @@ void ToolBox::paint (juce::Graphics& g)
 
 void ToolBox::resized()
 {
-    auto bounds = getLocalBounds().reduced (2).withTop (24);
+    auto bounds  = getLocalBounds().reduced (2).withTop (24);
     auto buttons = bounds.removeFromTop (24);
-    auto w = buttons.getWidth() / 5;
+    auto w       = buttons.getWidth() / 5;
     fileMenu.setBounds (buttons.removeFromLeft (w));
     viewMenu.setBounds (buttons.removeFromLeft (w));
     undoButton.setBounds (buttons.removeFromLeft (w));
     editSwitch.setBounds (buttons.removeFromLeft (w));
 
-    juce::Component* comps[] = {
-        &treeEditor,
-        &resizer1,
-        &propertiesEditor,
-        &resizer3,
-        &palette
-    };
+    juce::Component* comps[] = { &treeEditor, &resizer1, &propertiesEditor, &resizer3, &palette };
 
-    resizeManager.layOutComponents (comps, 5,
-                                    bounds.getX(),
-                                    bounds.getY(),
-                                    bounds.getWidth(),
-                                    bounds.getHeight(),
-                                    true, true);
+    resizeManager.layOutComponents (comps, 5, bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), true, true);
 
-    const int resizeCornerSize { 20 };
+    const int  resizeCornerSize { 20 };
     const auto bottomRight { getLocalBounds().getBottomRight() };
 
-    juce::Rectangle<int> resizeCornerArea { bottomRight.getX() - resizeCornerSize,
-                                            bottomRight.getY() - resizeCornerSize,
-                                            resizeCornerSize,
-                                            resizeCornerSize };
+    juce::Rectangle<int> resizeCornerArea { bottomRight.getX() - resizeCornerSize, bottomRight.getY() - resizeCornerSize, resizeCornerSize, resizeCornerSize };
     resizeCorner.setBounds (resizeCornerArea);
 }
 
@@ -341,7 +320,7 @@ bool ToolBox::keyPressed (const juce::KeyPress& key)
 
     if (key.isKeyCode ('V') && key.getModifiers().isCommandDown())
     {
-        auto paste = juce::ValueTree::fromXml (juce::SystemClipboard::getTextFromClipboard());
+        auto paste    = juce::ValueTree::fromXml (juce::SystemClipboard::getTextFromClipboard());
         auto selected = builder.getSelectedNode();
         if (paste.isValid() && selected.isValid())
             builder.draggedItemOnto (paste, selected);
@@ -350,6 +329,11 @@ bool ToolBox::keyPressed (const juce::KeyPress& key)
     }
 
     return false;
+}
+
+void ToolBox::selectedItem (const juce::ValueTree& node)
+{
+    setSelectedNode (node);
 }
 
 void ToolBox::timerCallback (int timer)
@@ -362,7 +346,7 @@ void ToolBox::timerCallback (int timer)
 
 void ToolBox::setToolboxPosition (PositionOption position)
 {
-    positionOption = position;
+    positionOption        = position;
     const auto isDetached = (positionOption == PositionOption::detached);
 
     auto* userSettings = appProperties.getUserSettings();
@@ -391,7 +375,7 @@ void ToolBox::updateToolboxPosition()
         setBounds (parentBounds.getRight(), parentBounds.getY(), width, height);
 }
 
-void ToolBox::setLastLocation(juce::File file)
+void ToolBox::setLastLocation (juce::File file)
 {
     if (file.getFullPathName().isEmpty())
         return;
@@ -402,28 +386,24 @@ void ToolBox::setLastLocation(juce::File file)
     lastLocation = file;
 
     autoSaveFile.deleteFile();
-    autoSaveFile = lastLocation.getParentDirectory()
-                               .getNonexistentChildFile (file.getFileNameWithoutExtension() + ".sav", ".xml");
+    autoSaveFile = lastLocation.getParentDirectory().getNonexistentChildFile (file.getFileNameWithoutExtension() + ".sav", ".xml");
 
     startTimer (Timers::AutoSave, 10000);
 }
 
 std::unique_ptr<juce::FileFilter> ToolBox::getFileFilter()
 {
-    return std::make_unique<juce::WildcardFileFilter>("*.xml", "*", "XML files");
+    return std::make_unique<juce::WildcardFileFilter> ("*.xml", "*", "XML files");
 }
 
 juce::String ToolBox::positionOptionToString (PositionOption option)
 {
     switch (option)
     {
-        case PositionOption::right:
-            return "right";
-        case PositionOption::detached:
-            return "detached";
+        case PositionOption::right: return "right";
+        case PositionOption::detached: return "detached";
         case PositionOption::left:
-        default:
-            return "left";
+        default: return "left";
     }
 }
 
@@ -440,11 +420,11 @@ ToolBox::PositionOption ToolBox::positionOptionFromString (const juce::String& t
 juce::PropertiesFile::Options ToolBox::getApplicationPropertyStorage()
 {
     juce::PropertiesFile::Options options;
-    options.folderName      = "FoleysFinest";
-    options.applicationName = "foleys_gui_magic";
-    options.filenameSuffix  = ".settings";
+    options.folderName          = "FoleysFinest";
+    options.applicationName     = "foleys_gui_magic";
+    options.filenameSuffix      = ".settings";
     options.osxLibrarySubFolder = "Application Support";
     return options;
 }
 
-} // namespace foleys
+}  // namespace foleys

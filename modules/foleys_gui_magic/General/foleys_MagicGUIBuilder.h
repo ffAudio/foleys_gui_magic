@@ -33,12 +33,12 @@
 
 #pragma once
 
-#include <juce_gui_basics/juce_gui_basics.h>
-
 #include "../Layout/foleys_GuiItem.h"
 #include "../Layout/foleys_Stylesheet.h"
 #include "../State/foleys_MagicGUIState.h"
 #include "../State/foleys_RadioButtonManager.h"
+
+#include <juce_gui_basics/juce_gui_basics.h>
 
 namespace foleys
 {
@@ -50,8 +50,9 @@ namespace foleys
  The MagicGUIBuilder is responsible to recreate the GUI from a single ValueTree.
  You can add your own factories to the builder to allow additional components.
  */
-class MagicGUIBuilder : public juce::ChangeListener,
-                        public juce::ValueTree::Listener
+class MagicGUIBuilder
+  : public juce::ChangeListener
+  , public juce::ValueTree::Listener
 {
 public:
     MagicGUIBuilder (MagicGUIState& magicStateToUse);
@@ -100,7 +101,7 @@ public:
     void updateStylesheet();
 
     /**
-     Recreates all components from the <View/> tree.
+     Recreates all components from the `<View/>` tree.
      If no div tree is found, createDefaultGUITree is called to give subclasses
      a chance to create a suitable default.
      */
@@ -109,7 +110,7 @@ public:
     /**
      Recalculates the layout of all components
      */
-    void updateLayout();
+    void updateLayout (juce::Rectangle<int> bounds);
 
     /**
      Resolve all colours fresh, in case the palette has changed
@@ -119,7 +120,7 @@ public:
     /**
      Register a factory for Components to be available in the GUI editor. If you need a reference to the application, you can capture that in the factory lambda.
      */
-    void registerFactory (juce::Identifier type, std::unique_ptr<GuiItem>(*factory)(MagicGUIBuilder& builder, const juce::ValueTree&));
+    void registerFactory (juce::Identifier type, std::unique_ptr<GuiItem> (*factory) (MagicGUIBuilder& builder, const juce::ValueTree&));
 
     /**
      With that method you can register your custom LookAndFeel class and apply it to different components.
@@ -177,18 +178,18 @@ public:
     juce::StringArray getFactoryNames() const;
 
 
-    std::function<void(juce::ComboBox&)> createChoicesMenuLambda (juce::StringArray choices) const;
-    std::function<void(juce::ComboBox&)> createParameterMenuLambda() const;
-    std::function<void(juce::ComboBox&)> createPropertiesMenuLambda() const;
-    std::function<void(juce::ComboBox&)> createTriggerMenuLambda() const;
+    std::function<void (juce::ComboBox&)> createChoicesMenuLambda (juce::StringArray choices) const;
+    std::function<void (juce::ComboBox&)> createParameterMenuLambda() const;
+    std::function<void (juce::ComboBox&)> createPropertiesMenuLambda() const;
+    std::function<void (juce::ComboBox&)> createTriggerMenuLambda() const;
 
     template<typename ObjectType>
-    std::function<void(juce::ComboBox&)> createObjectsMenuLambda() const
+    std::function<void (juce::ComboBox&)> createObjectsMenuLambda() const
     {
-        return [this](juce::ComboBox& combo)
+        return [this] (juce::ComboBox& combo)
         {
             int index = 0;
-            for (const auto& name : magicState.getObjectIDsByType<ObjectType>())
+            for (const auto& name: magicState.getObjectIDsByType<ObjectType>())
                 combo.addItem (name, ++index);
         };
     }
@@ -215,22 +216,34 @@ public:
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
     void attachToolboxToWindow (juce::Component& window);
 
+    ToolBox& getMagicToolBox();
+#endif
+
+    class Listener
+    {
+    public:
+        /** This is called in edit mode, when the user selects an item */
+        virtual void selectedItem (const juce::ValueTree& node) = 0;
+
+        /** This is called when the user drops an item in edit node */
+        virtual void guiItemDropped (const juce::ValueTree& node, juce::ValueTree& droppedOnto) = 0;
+    };
+
+    void addListener (Listener* listener) { listeners.add (listener); }
+    void removeListener (Listener* listener) { listeners.remove (listener); }
+
     /**
      This method sets the GUI in edit mode, that allows to drag the components around.
      */
     void setEditMode (bool shouldEdit);
     bool isEditModeOn() const;
 
-    void setSelectedNode (const juce::ValueTree& node);
+    void                   setSelectedNode (const juce::ValueTree& node);
     const juce::ValueTree& getSelectedNode() const;
 
-    void draggedItemOnto (juce::ValueTree dropped, juce::ValueTree target, int index=-1);
-
-    ToolBox& getMagicToolBox();
-#endif
+    void draggedItemOnto (juce::ValueTree dropped, juce::ValueTree target, int index = -1);
 
 private:
-
     juce::UndoManager undo;
     Stylesheet        stylesheet { *this };
 
@@ -246,23 +259,25 @@ private:
 
     std::unique_ptr<juce::Component> overlayDialog;
 
-    std::map<juce::Identifier, std::unique_ptr<GuiItem>(*)(MagicGUIBuilder& builder, const juce::ValueTree&)> factories;
+    std::map<juce::Identifier, std::unique_ptr<GuiItem> (*) (MagicGUIBuilder& builder, const juce::ValueTree&)> factories;
+
+    juce::ListenerList<Listener> listeners;
+    bool                         editMode = false;
+    juce::ValueTree              selectedNode;
 
 #if FOLEYS_SHOW_GUI_EDITOR_PALLETTE
-    bool editMode = false;
-    juce::ValueTree selectedNode;
-
     std::unique_ptr<ToolBox> magicToolBox;
 #endif
 
+    JUCE_DECLARE_WEAK_REFERENCEABLE (MagicGUIBuilder)
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicGUIBuilder)
 };
 
-#define FOLEYS_DECLARE_GUI_FACTORY(itemName) \
-static inline std::unique_ptr<GuiItem> factory (foleys::MagicGUIBuilder& builder, const juce::ValueTree& node)\
-{\
-    return std::make_unique<itemName>(builder, node);\
-}
+#define FOLEYS_DECLARE_GUI_FACTORY(itemName)                                                                                                                   \
+    static inline std::unique_ptr<GuiItem> factory (foleys::MagicGUIBuilder& builder, const juce::ValueTree& node)                                             \
+    {                                                                                                                                                          \
+        return std::make_unique<itemName> (builder, node);                                                                                                     \
+    }
 
 
-} // namespace foleys
+}  // namespace foleys

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13.0)
 
-project("ExtendingExample" VERSION ${FGM_VERSION})
+project("Vanilla" VERSION ${FGM_VERSION})
 
 set(${PROJECT_NAME}_sources
     Source/PluginProcessor.cpp
@@ -11,20 +11,23 @@ juce_add_plugin(${PROJECT_NAME}
                 VERSION "${version}"
                 COMPANY_NAME "Foleys Finest Audio"
                 PLUGIN_MANUFACTURER_CODE "FFAU"
-                PLUGIN_CODE "PgmX"
+                PLUGIN_CODE "PgmV"
+                IS_SYNTH yes
                 FORMATS ${FORMATS}
-                VST3_CATEGORIES "Fx"
-                AAX_CATEGORY "AAX_ePlugInCategory_EQ"
-                AU_MAIN_TYPE "kAudioUnitType_Effect"
+                VST3_CATEGORIES "Fx" "Analyser" "EQ"
+                AAX_CATEGORY "AAX_ePlugInCategory_SWGenerators"
+                AU_MAIN_TYPE "kAudioUnitType_Generator"
                 COMPANY_WEBSITE "https://foleysfinest.com"
                 COMPANY_EMAIL "info@foleysfinest.com"
-                BUNDLE_ID "com.foleysfinest.EqualizerExample"
-                PLUGIN_NAME "PGM-Extending"
-                PRODUCT_NAME "PGM-Extending")
+                BUNDLE_ID "com.foleysfinest.Vanilla"
+                PLUGIN_NAME "PGM-Vanilla"
+                PRODUCT_NAME "PGM-Vanilla"
+                NEEDS_WEB_BROWSER FALSE
+                NEEDS_CURL FALSE)
 
 juce_add_binary_data(${PROJECT_NAME}_data
     SOURCES
-    Source/magic.xml)
+    Resources/magic.xml)
 
 juce_generate_juce_header (${PROJECT_NAME})
 
@@ -45,23 +48,23 @@ target_link_libraries(${PROJECT_NAME}
     juce::juce_dsp
     juce::juce_cryptography
     juce::juce_gui_extra
-    juce::juce_opengl
-    juce::juce_recommended_warning_flags 
+    juce::juce_recommended_warning_flags
     juce::juce_recommended_config_flags 
     juce::juce_recommended_lto_flags)
 
 target_compile_definitions(${PROJECT_NAME}
     PUBLIC 
     # switch the following off in the product to hide editor
-    FOLEYS_SHOW_GUI_EDITOR_PALLETTE=1
+    FOLEYS_SHOW_GUI_EDITOR_PALLETTE=0
     FOLEYS_SAVE_EDITED_GUI_IN_PLUGIN_STATE=0
     JUCE_VST3_CAN_REPLACE_VST2=0
+    JUCE_USE_CURL=0
     JUCE_SILENCE_XCODE_15_LINKER_WARNING=1
     JUCE_WEB_BROWSER=0)
 
-foreach(FORMAT ${FORMATS})
-    get_target_property(ARTEFACTS_DIR ${PROJECT_NAME}_${FORMAT} LIBRARY_OUTPUT_DIRECTORY)
-    add_custom_command(TARGET ${PROJECT_NAME}_${FORMAT} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${ARTEFACTS_DIR} ${COPY_FOLDER})
-endforeach()
+# foreach(FORMAT ${FORMATS})
+#     get_target_property(ARTEFACTS_DIR ${PROJECT_NAME}_${FORMAT} LIBRARY_OUTPUT_DIRECTORY)
+#     add_custom_command(TARGET ${PROJECT_NAME}_${FORMAT} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${ARTEFACTS_DIR} ${COPY_FOLDER})
+# endforeach()
 
 __pgm_internal_add_pluginval_tests (${PROJECT_NAME})
