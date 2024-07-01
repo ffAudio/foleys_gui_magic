@@ -203,7 +203,8 @@ ExtendingExampleAudioProcessor::~ExtendingExampleAudioProcessor() {}
 void ExtendingExampleAudioProcessor::initialiseBuilder (foleys::MagicGUIBuilder& builder)
 {
     builder.registerJUCEFactories();
-
+    builder.registerJUCELookAndFeels();
+    
     builder.registerFactory ("Lissajour", &LissajourItem::factory);
     builder.registerFactory ("Statistics", &StatisticsComponentItem::factory);
 }

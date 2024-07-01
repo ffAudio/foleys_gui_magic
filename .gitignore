@@ -4,3 +4,5 @@ cmake-build-*
 [Bb]uilds/
 [Bb]build/
 logs/
+docs/
+**/*.sav.xml

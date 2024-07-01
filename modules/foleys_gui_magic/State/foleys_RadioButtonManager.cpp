@@ -36,9 +36,7 @@ namespace foleys
 {
 
 
-RadioButtonHandler::RadioButtonHandler (juce::Button& buttonToControl, RadioButtonManager& manager)
-  : button (buttonToControl),
-    radioButtonManager (manager)
+RadioButtonHandler::RadioButtonHandler (juce::Button& buttonToControl, RadioButtonManager& manager) : button (buttonToControl), radioButtonManager (manager)
 {
     radioButtonManager.addButton (&button);
     button.addListener (this);
@@ -71,7 +69,7 @@ void RadioButtonHandler::setRadioGroupValue (juce::var value, juce::RangedAudioP
     {
         auto currentValue = parameter->convertFrom0to1 (parameter->getValue());
         // other than setToggleState this seems not to trigger circular updates
-        button.getToggleStateValue() = (currentValue == static_cast<float>(value));
+        button.getToggleStateValue() = juce::approximatelyEqual (currentValue, static_cast<float> (value));
     }
 }
 
@@ -97,7 +95,7 @@ void RadioButtonHandler::parameterValueChanged (int parameterIndex, float newVal
 
     auto value = parameter->convertFrom0to1 (newValue);
     // other than setToggleState this seems not to trigger circular updates
-    button.getToggleStateValue() = (value == static_cast<float>(radioButtonValue));
+    button.getToggleStateValue() = juce::approximatelyEqual (value, static_cast<float> (radioButtonValue));
 }
 
 // ==============================================================================
@@ -108,23 +106,21 @@ void RadioButtonManager::buttonActivated (juce::Button* button)
     if (groupID == 0)
         return;
 
-    for (auto& otherButton : buttons)
+    for (auto& otherButton: buttons)
         if (otherButton && button != otherButton && otherButton->getRadioGroupId() == groupID)
             otherButton->getToggleStateValue() = false;
 }
 
 void RadioButtonManager::addButton (juce::Button* button)
 {
-    if (std::find(buttons.begin(), buttons.end(), button) == buttons.end())
-        buttons.push_back(button);
+    if (std::find (buttons.begin(), buttons.end(), button) == buttons.end())
+        buttons.push_back (button);
 }
 
 void RadioButtonManager::removeButton (juce::Button* button)
 {
-    buttons.erase (std::remove_if (buttons.begin(), buttons.end(), [button](const auto& other)
-                        { return other == button || other == nullptr; }),
-                   buttons.end());
+    buttons.erase (std::remove_if (buttons.begin(), buttons.end(), [button] (const auto& other) { return other == button || other == nullptr; }), buttons.end());
 }
 
 
-} // namespace foleys
+}  // namespace foleys

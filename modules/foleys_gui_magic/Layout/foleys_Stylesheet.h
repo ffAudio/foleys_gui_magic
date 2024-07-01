@@ -73,8 +73,6 @@ public:
 
     /**
      Read the style classes and connect variables
-
-     @param builder is the managed builder instance, so the style class can connect to the variables
      */
     void updateStyleClasses();
 
@@ -96,6 +94,8 @@ public:
 
      @param name the name of the property.
      @param node is the node in the DOM. This is used for inheritance by traversing upwards.
+     @param inherit if this is true, it will impact child nodes as well
+     @param definedHere this is a hint for the editor where the property was actually set
      */
     juce::var getStyleProperty (const juce::Identifier& name, const juce::ValueTree& node, bool inherit=true, juce::ValueTree* definedHere=nullptr) const;
 
