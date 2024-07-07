@@ -49,13 +49,15 @@ public:
 
     MagicFilterPlot();
 
+    MagicFilterPlot(double minFreqHz, double maxFreqHz);
+
     /**
      Set new coefficients to calculate the frequency response from.
 
      @param coefficients the coefficients to calculate the frequency response for
      @param maxDB is the maximum level in dB, that the curve will display
      */
-    void setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::Ptr coefficients, float maxDB, juce::String plotID="Unnamed Filter");
+     void setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::Ptr coefficients, float maxDB, juce::String name="Unnamed Filter");
 
     /**
      Set new coefficients to calculate the frequency response from.
@@ -64,10 +66,15 @@ public:
      @param coefficients a vector of coefficients to sum up (multiply) to calculate the frequency response for
      @param maxDB is the maximum level in dB, that the curve will display
      */
-    void setIIRCoefficients (float gain, std::vector<juce::dsp::IIR::Coefficients<float>::Ptr> coefficients, float maxDB, juce::String plotID="Unnamed Filter");
+     void setIIRCoefficients (float gain, std::vector<juce::dsp::IIR::Coefficients<float>::Ptr> coefficients, float maxDB, juce::String name="Unnamed Filter");
 
     /**
-     Does nothing in this class
+     Gets the filter name, if any.
+     */
+     juce::String getName() { return filterName; }
+
+    /**
+     Does nothing in this class, as the plotted samples are computed from the coefficients when they are set.
      */
     void pushSamples (const juce::AudioBuffer<float>& buffer) override;
 
@@ -90,6 +97,7 @@ private:
     std::vector<double>     magnitudes;
     float                   maxDB      = 100.0f;
     double                  sampleRate = 0.0;
+    juce::String            filterName = { "Unnamed Filter" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MagicFilterPlot)
 };

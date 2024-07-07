@@ -38,36 +38,52 @@
 namespace foleys
 {
 
-MagicFilterPlot::MagicFilterPlot()
-{
-    frequencies.resize (300);
-    for (size_t i = 0; i < frequencies.size(); ++i)
-        frequencies [i] = 20.0 * std::pow (2.0, i / 30.0);
+static const int NUM_FREQS { 300 };
 
+static void initFrequencies(std::vector<double>& freqs, double freqMin, double freqMax)
+{
+  unsigned long numFreqs = freqs.size();
+  double freqRatio = std::pow( 2.0, ( std::log2(freqMax) - std::log2(freqMin) ) / double(numFreqs) );
+  double freq = freqMin;
+  for (size_t i = 0; i < numFreqs-1; ++i)
+    {
+      freqs [i] = freq;
+      freq *= freqRatio;
+    }
+  freqs[numFreqs-1] = freqMax; // avoid roundoff error
+}    
+
+MagicFilterPlot::MagicFilterPlot(double minFreqHz, double maxFreqHz)
+{
+    frequencies.resize (NUM_FREQS);
+    initFrequencies(frequencies, minFreqHz, maxFreqHz);
     magnitudes.resize (frequencies.size());
 }
 
-void MagicFilterPlot::setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::Ptr coefficients, float maxDBToDisplay, juce::String plotID)
+MagicFilterPlot::MagicFilterPlot() : MagicFilterPlot(20.0, 20000.0) {}
+
+void MagicFilterPlot::setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::Ptr coefficients, float maxDBToDisplay, juce::String name)
 {
-    DBG("MagicFilterPlot::setIIRCoefficients: Computing magnitude frequency response for filter `" << plotID << "'");
+    filterName = name;
 
     if (sampleRate < 20.0)
         return;
 
     const juce::ScopedWriteLock writeLock (plotLock);
 
+    DBG("MagicFilterPlot:: setIIRCoefficients() for filter " << filterName);
+
     maxDB = maxDBToDisplay;
     coefficients->getMagnitudeForFrequencyArray (frequencies.data(),
                                                  magnitudes.data(),
                                                  frequencies.size(),
                                                  sampleRate);
-
     resetLastDataFlag();
 }
 
-void MagicFilterPlot::setIIRCoefficients (float gain, std::vector<juce::dsp::IIR::Coefficients<float>::Ptr> coefficients, float maxDBToDisplay, juce::String plotID)
+void MagicFilterPlot::setIIRCoefficients (float gain, std::vector<juce::dsp::IIR::Coefficients<float>::Ptr> coefficients, float maxDBToDisplay, juce::String name)
 {
-    DBG("MagicFilterPlot::setIIRCoefficients: Computing magnitude frequency response for filter `" << plotID << "'");
+    filterName = name;
 
     if (sampleRate < 20.0)
         return;
@@ -100,21 +116,29 @@ void MagicFilterPlot::createPlotPaths (juce::Path& path, juce::Path& filledPath,
     const auto yFactor = 2.0f * bounds.getHeight() / juce::Decibels::decibelsToGain (maxDB);
     const auto xFactor = static_cast<double> (bounds.getWidth()) / frequencies.size();
 
+    DBG("MagicFilterPlot:: createPlotPaths() for filter " << getName());
+
     path.clear();
     path.startNewSubPath (bounds.getX(), float (magnitudes [0] > 0 ? bounds.getCentreY() - yFactor * std::log (magnitudes [0]) / std::log (2) : bounds.getBottom()));
     for (size_t i=1; i < frequencies.size(); ++i)
         path.lineTo (float (bounds.getX() + i * xFactor),
                      float (magnitudes [i] > 0 ? bounds.getCentreY() - yFactor * std::log (magnitudes [i]) / std::log (2) : bounds.getBottom()));
 
+#if 1
+    filledPath.clear(); // need for speed
+#else
     filledPath = path;
     filledPath.lineTo (bounds.getBottomRight());
     filledPath.lineTo (bounds.getBottomLeft());
     filledPath.closeSubPath();
+#endif
 }
 
 void MagicFilterPlot::prepareToPlay (double sampleRateToUse, int)
 {
-    sampleRate = sampleRateToUse;
+  sampleRate = sampleRateToUse;
+  if (sampleRate/2.0 < 20000.0)
+    initFrequencies( frequencies, 20.0, sampleRate/2.0 );
 }
 
 } // namespace foleys
