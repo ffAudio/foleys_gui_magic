@@ -47,8 +47,10 @@ MagicFilterPlot::MagicFilterPlot()
     magnitudes.resize (frequencies.size());
 }
 
-void MagicFilterPlot::setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::Ptr coefficients, float maxDBToDisplay)
+void MagicFilterPlot::setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::Ptr coefficients, float maxDBToDisplay, juce::String plotID)
 {
+    DBG("MagicFilterPlot::setIIRCoefficients: Computing magnitude frequency response for filter `" << plotID << "'");
+
     if (sampleRate < 20.0)
         return;
 
@@ -63,8 +65,10 @@ void MagicFilterPlot::setIIRCoefficients (juce::dsp::IIR::Coefficients<float>::P
     resetLastDataFlag();
 }
 
-void MagicFilterPlot::setIIRCoefficients (float gain, std::vector<juce::dsp::IIR::Coefficients<float>::Ptr> coefficients, float maxDBToDisplay)
+void MagicFilterPlot::setIIRCoefficients (float gain, std::vector<juce::dsp::IIR::Coefficients<float>::Ptr> coefficients, float maxDBToDisplay, juce::String plotID)
 {
+    DBG("MagicFilterPlot::setIIRCoefficients: Computing magnitude frequency response for filter `" << plotID << "'");
+
     if (sampleRate < 20.0)
         return;
 
