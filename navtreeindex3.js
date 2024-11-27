@@ -65,7 +65,7 @@ var NAVTREEINDEX3 =
 "structfoleys_1_1Decorator_1_1ClientBounds.html#ac76538f868208b286e0631825f007bd5":[1,0,0,6,0,0],
 "structfoleys_1_1MagicLevelMeter_1_1LookAndFeelMethods.html":[1,0,0,24,0],
 "structfoleys_1_1MagicLevelMeter_1_1LookAndFeelMethods.html#a60ade24b57926428cf83fc41c8cd4d90":[1,0,0,24,0,0],
-"structfoleys_1_1MagicLevelMeter_1_1LookAndFeelMethods.html#ab7f7fe794b53bcf23a1846e6a418ee9a":[1,0,0,24,0,1],
+"structfoleys_1_1MagicLevelMeter_1_1LookAndFeelMethods.html#ad92355b83eb8e76df18527b1ac8def7d":[1,0,0,24,0,1],
 "structfoleys_1_1SettableProperty.html":[1,0,0,47],
 "structfoleys_1_1SettableProperty.html#a2366a7467e02f34b687d54a3b843ef96":[1,0,0,47,5],
 "structfoleys_1_1SettableProperty.html#a586885fbebf656fcf85ead6508943be5":[1,0,0,47,4],

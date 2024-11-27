@@ -23,13 +23,13 @@
 <area shape="poly" id="edge14_Node000004_Node000005" title=" " alt="" coords="125,438,152,415,176,387,186,370,192,354,196,322,203,292,211,277,225,261,241,251,258,244,260,249,243,256,228,266,215,280,208,294,201,323,197,355,191,372,181,390,156,419,128,442"/>
 <area shape="rect" id="Node000007" href="$classfoleys_1_1GUITreeEditor.html" title="This GUITreeEditor shows the DOM tree for the GUI." alt="" coords="271,671,375,696"/>
 <area shape="poly" id="edge15_Node000004_Node000007" title=" " alt="" coords="145,480,164,493,181,508,194,529,200,549,203,587,207,623,214,640,228,658,248,670,271,678,269,683,246,675,225,661,210,643,201,624,197,587,195,550,189,531,177,512,161,497,142,485"/>
-<area shape="rect" id="Node000016" href="$classfoleys_1_1GuiItem.html" title="The GuiItem class will draw borders and descriptions around widgets, if defined." alt="" coords="289,720,357,746"/>
+<area shape="rect" id="Node000016" href="$classfoleys_1_1GuiItem.html" title="The GuiItem class will draw borders and descriptions around widgets, if defined." alt="" coords="289,720,356,746"/>
 <area shape="poly" id="edge16_Node000004_Node000016" title=" " alt="" coords="147,480,165,493,181,509,196,536,203,562,202,613,201,637,203,660,211,683,229,707,242,717,257,724,289,730,288,735,255,729,239,721,225,711,206,686,197,661,195,637,197,612,198,563,191,538,177,512,162,497,144,485"/>
 <area shape="rect" id="Node000040" href="$classfoleys_1_1MagicLevelMeter.html" title=" " alt="" coords="262,473,384,499"/>
 <area shape="poly" id="edge30_Node000004_Node000040" title=" " alt="" coords="151,466,262,477,261,483,151,471"/>
 <area shape="rect" id="Node000042" href="$classfoleys_1_1MagicPlotComponent.html" title="The MagicPlotComponent allows drawing the data from a MagicPlotSource." alt="" coords="250,325,396,351"/>
 <area shape="poly" id="edge31_Node000004_Node000042" title=" " alt="" coords="117,436,165,397,225,360,254,349,255,354,228,365,168,401,120,441"/>
-<area shape="rect" id="Node000047" href="$classfoleys_1_1MidiDrumpadComponent.html" title=" " alt="" coords="241,572,405,598"/>
+<area shape="rect" id="Node000047" href="$classfoleys_1_1MidiDrumpadComponent.html" title=" " alt="" coords="241,572,404,598"/>
 <area shape="poly" id="edge32_Node000004_Node000047" title=" " alt="" coords="137,480,180,508,195,522,204,535,213,547,228,559,251,569,249,574,225,563,209,551,200,538,191,526,177,512,134,485"/>
 <area shape="rect" id="Node000051" href="$classfoleys_1_1MidiDrumpadComponent_1_1Pad.html" title=" " alt="" coords="227,523,419,548"/>
 <area shape="poly" id="edge33_Node000004_Node000051" title=" " alt="" coords="141,479,227,509,265,519,263,525,226,514,140,484"/>
@@ -45,7 +45,7 @@
 <area shape="poly" id="edge38_Node000004_Node000044" title=" " alt="" coords="122,438,150,414,177,387,190,366,198,347,207,329,225,311,255,296,258,301,228,315,211,332,203,349,195,369,181,391,153,418,125,442"/>
 <area shape="poly" id="edge18_Node000016_Node000012" title=" " alt="" coords="373,737,398,746,421,763,438,788,446,814,447,839,444,864,442,888,444,911,452,935,469,958,483,968,500,975,536,982,535,987,498,980,481,973,465,961,447,937,439,912,437,888,439,863,441,839,440,815,433,791,417,767,396,751,371,742"/>
 <area shape="poly" id="edge23_Node000016_Node000015" title=" " alt="" coords="373,737,398,747,421,763,435,782,442,801,445,838,448,874,455,891,469,908,497,924,528,931,527,936,495,929,465,912,450,894,442,876,439,839,437,802,430,784,417,767,396,752,371,742"/>
-<area shape="rect" id="Node000017" href="$classfoleys_1_1ComboBoxItem.html" title=" " alt="" coords="519,576,629,602"/>
+<area shape="rect" id="Node000017" href="$classfoleys_1_1ComboBoxItem.html" title=" " alt="" coords="518,576,629,602"/>
 <area shape="poly" id="edge17_Node000016_Node000017" title=" " alt="" coords="371,726,396,719,417,707,428,696,434,684,440,660,446,635,454,623,465,611,490,597,517,589,519,595,492,602,469,615,458,626,451,637,445,661,439,686,432,699,421,711,398,724,373,731"/>
 <area shape="rect" id="Node000018" href="$classfoleys_1_1DrumpadItem.html" title=" " alt="" coords="524,625,623,651"/>
 <area shape="poly" id="edge19_Node000016_Node000018" title=" " alt="" coords="371,723,418,706,432,696,441,684,450,672,466,660,494,648,523,641,524,646,496,653,468,664,454,675,445,687,436,699,420,711,373,728"/>
@@ -57,15 +57,15 @@
 <area shape="poly" id="edge22_Node000016_Node000021" title=" " alt="" coords="373,741,517,772,516,777,371,746"/>
 <area shape="rect" id="Node000022" href="$classfoleys_1_1MidiLearnItem.html" title=" " alt="" coords="522,823,626,848"/>
 <area shape="poly" id="edge24_Node000016_Node000022" title=" " alt="" coords="373,742,420,763,435,775,445,787,454,798,468,809,494,820,522,827,520,832,493,825,466,814,450,802,441,790,432,779,418,767,370,747"/>
-<area shape="rect" id="Node000023" href="$classfoleys_1_1PlotItem.html" title=" " alt="" coords="539,872,609,898"/>
+<area shape="rect" id="Node000023" href="$classfoleys_1_1PlotItem.html" title=" " alt="" coords="538,872,609,898"/>
 <area shape="poly" id="edge25_Node000016_Node000023" title=" " alt="" coords="372,739,398,748,421,763,432,775,439,788,445,813,451,837,458,848,469,859,485,869,503,875,539,882,538,887,501,880,482,873,465,863,454,851,446,839,440,814,434,790,428,778,417,767,395,753,370,744"/>
 <area shape="rect" id="Node000024" href="$classfoleys_1_1SliderItem.html" title=" " alt="" coords="534,379,614,404"/>
 <area shape="poly" id="edge26_Node000016_Node000024" title=" " alt="" coords="371,729,396,721,417,707,431,689,440,671,449,635,447,599,440,562,433,525,431,488,440,451,450,432,465,414,480,402,497,394,533,388,534,393,499,399,483,407,469,417,455,435,445,453,437,489,438,525,445,561,452,598,454,636,445,673,436,692,421,711,399,726,373,734"/>
-<area shape="rect" id="Node000025" href="$classfoleys_1_1TextButtonItem.html" title=" " alt="" coords="519,428,629,454"/>
+<area shape="rect" id="Node000025" href="$classfoleys_1_1TextButtonItem.html" title=" " alt="" coords="518,428,629,454"/>
 <area shape="poly" id="edge27_Node000016_Node000025" title=" " alt="" coords="371,728,396,721,417,707,437,677,445,648,445,618,440,587,435,556,435,525,444,494,465,463,490,447,518,439,519,444,492,452,469,467,448,496,440,525,441,556,445,586,450,617,450,648,442,680,421,711,399,726,373,734"/>
 <area shape="rect" id="Node000026" href="$classfoleys_1_1ToggleButtonItem.html" title=" " alt="" coords="512,477,636,503"/>
 <area shape="poly" id="edge28_Node000016_Node000026" title=" " alt="" coords="371,728,396,721,417,707,434,684,441,660,442,636,440,611,438,587,439,562,447,537,465,512,486,498,510,490,512,495,489,503,469,516,452,539,444,563,443,586,445,611,448,636,447,661,439,686,421,711,398,726,373,733"/>
-<area shape="rect" id="Node000027" href="$classfoleys_1_1XYDraggerItem.html" title=" " alt="" coords="519,527,629,552"/>
+<area shape="rect" id="Node000027" href="$classfoleys_1_1XYDraggerItem.html" title=" " alt="" coords="518,527,629,552"/>
 <area shape="poly" id="edge29_Node000016_Node000027" title=" " alt="" coords="371,728,396,720,417,707,431,690,438,672,440,636,443,598,450,580,465,561,490,546,517,539,519,544,492,551,469,566,455,582,448,600,445,636,443,674,436,692,421,711,398,725,373,733"/>
 <area shape="rect" id="Node000002" title=" " alt="" coords="15,55,169,80"/>
 <area shape="poly" id="edge39_Node000002_Node000001" title=" " alt="" coords="184,55,259,46,260,52,185,60"/>
@@ -103,7 +103,7 @@
 <area shape="poly" id="edge60_Node000032_Node000034" title=" " alt="" coords="389,1265,418,1252,431,1242,441,1231,451,1221,466,1210,493,1200,495,1205,468,1215,454,1225,445,1235,435,1246,420,1256,391,1270"/>
 <area shape="poly" id="edge61_Node000032_Node000035" title=" " alt="" coords="352,1262,417,1208,440,1183,450,1172,466,1161,504,1145,506,1150,468,1166,454,1176,444,1187,421,1212,355,1266"/>
 <area shape="poly" id="edge59_Node000032_Node000031" title=" " alt="" coords="405,1300,507,1321,506,1326,404,1305"/>
-<area shape="rect" id="Node000033" href="$classfoleys_1_1StyleBoolPropertyComponent.html" title=" " alt="" coords="479,1225,669,1251"/>
+<area shape="rect" id="Node000033" href="$classfoleys_1_1StyleBoolPropertyComponent.html" title=" " alt="" coords="478,1225,669,1251"/>
 <area shape="poly" id="edge58_Node000032_Node000033" title=" " alt="" coords="408,1267,502,1249,503,1254,409,1272"/>
 <area shape="rect" id="Node000036" href="$classfoleys_1_1StyleTextPropertyComponent.html" title=" " alt="" coords="479,1275,668,1300"/>
 <area shape="poly" id="edge62_Node000032_Node000036" title=" " alt="" coords="420,1284,478,1284,478,1290,420,1289"/>

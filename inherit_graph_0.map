@@ -1,5 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" title=" " alt="" coords="5,17,109,43"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,17,109,42"/>
 <area shape="rect" id="Node000001" href="$classfoleys_1_1ParameterAttachment.html" title=" " alt="" coords="157,5,305,46"/>
 <area shape="poly" id="edge1_Node000000_Node000001" title=" " alt="" coords="124,25,156,25,156,30,124,31"/>
 <area shape="rect" id="Node000003" href="$classfoleys_1_1ParameterAttachment.html" title="The ParameterAttachment is a class you can use to have a value synchronised with an AudioProcessorPar..." alt="" coords="157,71,305,111"/>
