@@ -17,7 +17,7 @@ project (FoleysGUIMagicTests
          VERSION ${FGM_VERSION}
          DESCRIPTION "Unit tests for the foleys_gui_magic JUCE module"
          HOMEPAGE_URL "https://foleysfinest.com/developer/pluginguimagic/"
-         LANGUAGES CXX)
+         LANGUAGES C CXX)
 
 enable_testing()
 

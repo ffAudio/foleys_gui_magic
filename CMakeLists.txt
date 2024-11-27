@@ -36,7 +36,7 @@ set(FGM_VERSION 1.4.0)
 project(foleys_gui_magic
         DESCRIPTION "PluginGuiMagic"
         HOMEPAGE_URL "https://foleysfinest.com/PluginGuiMagic"
-        LANGUAGES CXX)
+        LANGUAGES C CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMakeIncludes")
 
