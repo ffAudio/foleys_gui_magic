@@ -120,8 +120,6 @@ void Container::createSubComponents()
         if (childItem)
         {
             containerBox.addAndMakeVisible (childItem.get());
-            childItem->createSubComponents();
-
             children.push_back (std::move (childItem));
         }
     }
@@ -241,9 +239,6 @@ void Container::updateLayout()
         for (auto& child : children)
             child->setBounds (child->resolvePosition (clientBounds));
     }
-
-    for (auto& child : children)
-        child->updateLayout();
 }
 
 void Container::updateColours()
