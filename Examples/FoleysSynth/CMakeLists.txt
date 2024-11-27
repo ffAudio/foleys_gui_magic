@@ -19,7 +19,7 @@ juce_add_plugin(${PROJECT_NAME}
                 NEEDS_MIDI_INPUT yes
                 FORMATS ${FORMATS}
                 VST3_CATEGORIES "Instrument" "Synth"
-                AAX_CATEGORY "AAX_ePlugInCategory_Instrument"
+                AAX_CATEGORY "SWGenerators"
                 AU_MAIN_TYPE "kAudioUnitType_MusicDevice"
                 COMPANY_WEBSITE "https://foleysfinest.com"
                 COMPANY_EMAIL "info@foleysfinest.com"
