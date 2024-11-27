@@ -52,12 +52,12 @@ MagicLevelMeter::MagicLevelMeter()
 
 void MagicLevelMeter::paint (juce::Graphics& g)
 {
-    actualLookAndFeel->drawLevelMeter (g, *this, source, getLocalBounds());
+    actualLookAndFeel->drawMagicLevelMeter (g, *this, magicLevelSource, getLocalBounds());
 }
 
 void MagicLevelMeter::setLevelSource (MagicLevelSource* newSource)
 {
-    source = newSource;
+    magicLevelSource = newSource;
 }
 
 void MagicLevelMeter::timerCallback()
@@ -79,7 +79,7 @@ void MagicLevelMeter::lookAndFeelChanged()
 
 // ================================================================================
 
-void MagicLevelMeter::LookAndFeelFallback::drawLevelMeter (juce::Graphics& g, MagicLevelMeter& meter, MagicLevelSource* source, juce::Rectangle<int> bounds)
+void MagicLevelMeter::LookAndFeelFallback::drawMagicLevelMeter (juce::Graphics& g, MagicLevelMeter& meter, MagicLevelSource* source, juce::Rectangle<int> bounds)
 {
     const auto backgroundColour = meter.findColour (backgroundColourId);
     if (!backgroundColour.isTransparent())
