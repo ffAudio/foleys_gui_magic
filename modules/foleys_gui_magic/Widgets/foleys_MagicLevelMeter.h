@@ -57,8 +57,8 @@ public:
 
     struct LookAndFeelMethods
     {
-        virtual ~LookAndFeelMethods()                                                                                                  = default;
-        virtual void drawLevelMeter (juce::Graphics& g, MagicLevelMeter& meter, MagicLevelSource* source, juce::Rectangle<int> bounds) = 0;
+        virtual ~LookAndFeelMethods()                                                                                                       = default;
+        virtual void drawMagicLevelMeter (juce::Graphics& g, MagicLevelMeter& meter, MagicLevelSource* source, juce::Rectangle<int> bounds) = 0;
     };
 
     MagicLevelMeter();
@@ -72,13 +72,13 @@ public:
     void lookAndFeelChanged() override;
 
 private:
-    juce::WeakReference<MagicLevelSource> source;
+    juce::WeakReference<MagicLevelSource> magicLevelSource;
 
     class LookAndFeelFallback : public LookAndFeel, public LookAndFeelMethods
     {
     public:
         LookAndFeelFallback() = default;
-        void drawLevelMeter (juce::Graphics& g, MagicLevelMeter& meter, MagicLevelSource* source, juce::Rectangle<int> bounds) override;
+        void drawMagicLevelMeter (juce::Graphics& g, MagicLevelMeter& meter, MagicLevelSource* source, juce::Rectangle<int> bounds) override;
     };
 
     LookAndFeelFallback lookAndFeelFallback;

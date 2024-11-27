@@ -13,7 +13,7 @@
 
 //==============================================================================
 
-juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
+static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     FoleysSynth::addADSRParameters (layout);

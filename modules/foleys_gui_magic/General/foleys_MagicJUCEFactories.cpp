@@ -471,7 +471,7 @@ public:
         else
             label.setJustificationType (juce::Justification::centredLeft);
 
-        label.setFont (juce::Font (getProperty (pFontSize)));
+        label.setFont (juce::FontOptions().withHeight (getProperty (pFontSize)));
 
         label.setEditable (getProperty (pEditable));
 
