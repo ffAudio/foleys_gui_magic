@@ -40,6 +40,9 @@
 namespace foleys
 {
 
+// Keep in synch with XYDraggerItem:
+enum DOT_TYPE { DOT_TYPE_DOT, DOT_TYPE_POLE, DOT_TYPE_ZERO, DOT_TYPE_POLE_ZERO };
+
 /**
  This is a 2D parameter dragging component.
  */
@@ -61,6 +64,7 @@ public:
     XYDragComponent();
 
     void setCrossHair (bool horizontal, bool vertical);
+    void setDotType (DOT_TYPE dotType);
 
     void paint (juce::Graphics& g) override;
 
@@ -71,6 +75,7 @@ public:
     void setRightClickParameter (juce::RangedAudioParameter* parameter);
 
     void setRadius (float radius);
+    void setLineThickness (float thickness);
     void setSenseFactor (float factor);
     void setJumpToClick (bool shouldJumpToClick);
 
@@ -97,6 +102,8 @@ private:
     bool wantsHorizontalDrag = true;
     bool wantsVerticalDrag = true;
 
+    DOT_TYPE dotType = DOT_TYPE_DOT;
+
     ParameterAttachment<float> xAttachment;
     ParameterAttachment<float> yAttachment;
 
@@ -105,6 +112,7 @@ private:
 
     bool  jumpToClick = false;
     float radius      = 4.0f;
+    float lineThickness = 2.0f;
     float senseFactor = 2.0f;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (XYDragComponent)
