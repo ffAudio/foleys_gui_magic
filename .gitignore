@@ -2,7 +2,7 @@
 **/.idea
 cmake-build-*
 [Bb]uilds/
-[Bb]build/
+[Bb]uild/
 logs/
 docs/
 **/*.sav.xml
