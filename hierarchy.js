@@ -11,7 +11,6 @@ var hierarchy =
       [ "MagicPluginEditor", "classfoleys_1_1MagicPluginEditor.html", null ]
     ] ],
     [ "Box< T >", "structfoleys_1_1Box.html", null ],
-    [ "Box< float >", "structfoleys_1_1Box.html", null ],
     [ "ChangeBroadcaster", null, [
       [ "ApplicationSettings", "classfoleys_1_1ApplicationSettings.html", null ]
     ] ],

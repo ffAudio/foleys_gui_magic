@@ -60,8 +60,8 @@ var NAVTREEINDEX =
 "annotated.html",
 "classfoleys_1_1MagicGUIState.html#aa36d253c521d9c10653c23be63defe93",
 "classfoleys_1_1StyleGradientPropertyComponent.html#a31cc081b3c77bc8855de79094fc1da42",
-"functions_func.html"
+"functions_func_t.html"
 ];
 
-var SYNCONMSG = 'click to disable panel synchronisation';
-var SYNCOFFMSG = 'click to enable panel synchronisation';
+var SYNCONMSG = 'click to disable panel synchronization';
+var SYNCOFFMSG = 'click to enable panel synchronization';
