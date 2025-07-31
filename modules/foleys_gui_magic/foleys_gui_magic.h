@@ -129,6 +129,7 @@
 #include "Widgets/foleys_XYDragComponent.h"
 #include "Widgets/foleys_FileBrowserDialog.h"
 #include "Widgets/foleys_MidiLearnComponent.h"
+#include "Widgets/foleys_MidiDisplayComponent.h"
 #include "Widgets/foleys_MidiDrumpadComponent.h"
 
 #include "State/foleys_RadioButtonManager.h"
