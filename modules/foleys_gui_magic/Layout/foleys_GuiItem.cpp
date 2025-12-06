@@ -104,6 +104,9 @@ void GuiItem::updateInternal()
 
     setEditMode (magicBuilder.isEditModeOn());
 
+    // we need to call resized() because changes to decorators can cause *internal* layout changes
+    // and JUCE's setBounds() method thinks we don't need to do that because the outer bounds didn't change
+    resized();
     repaint();
 }
 
