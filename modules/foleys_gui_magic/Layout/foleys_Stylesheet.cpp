@@ -222,6 +222,19 @@ juce::var Stylesheet::getStyleProperty (const juce::Identifier& name, const juce
         }
     }
 
+    // Check type defaults even if no class is assigned
+    if (inherit)
+    {
+        auto typeNode = currentStyle.getChildWithName (IDs::types).getChildWithName (node.getType());
+        if (typeNode.isValid() && typeNode.hasProperty (name))
+        {
+            if (definedHere)
+                *definedHere = typeNode;
+
+            return typeNode.getProperty (name);
+        }
+    }
+
     auto parent = node.getParent();
     if (parent.isValid() && parent.getType() != IDs::magic)
         return getStyleProperty (name, parent, false, definedHere);
