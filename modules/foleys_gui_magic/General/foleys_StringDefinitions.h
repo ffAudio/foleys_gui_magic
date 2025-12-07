@@ -63,6 +63,7 @@ namespace IDs
     static juce::Identifier captionPlacement { "caption-placement" };
     static juce::Identifier captionColour { "caption-color" };
     static juce::Identifier captionSize  { "caption-size" };
+    static juce::Identifier captionGap   { "caption-gap" };
     static juce::Identifier lookAndFeel  { "lookAndFeel" };
     static juce::Identifier tooltip      { "tooltip" };
     static juce::Identifier tooltipText       { "tooltip-text" };
