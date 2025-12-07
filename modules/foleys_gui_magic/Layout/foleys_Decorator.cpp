@@ -134,18 +134,30 @@ Decorator::ClientBounds Decorator::getClientBounds (juce::Rectangle<int> overall
         if (justification == juce::Justification::centred)
             captionBox = overallBounds;
         else if (justification.getOnlyVerticalFlags() & juce::Justification::top)
+        {
             captionBox = box.removeFromTop (captionSize).toNearestInt();
+            box.removeFromTop (captionGap);
+        }
         else if (justification.getOnlyVerticalFlags() & juce::Justification::bottom)
+        {
             captionBox = box.removeFromBottom (captionSize).toNearestInt();
+            box.removeFromBottom (captionGap);
+        }
         else
         {
             juce::Font f (juce::FontOptions().withHeight (captionSize * 0.8f));
             auto       w = float (f.getStringWidth (caption));
 
             if (justification.getOnlyHorizontalFlags() & juce::Justification::left)
+            {
                 captionBox = box.removeFromLeft (w).toNearestInt();
+                box.removeFromLeft (captionGap);
+            }
             else if (justification.getOnlyHorizontalFlags() & juce::Justification::right)
+            {
                 captionBox = box.removeFromRight (w).toNearestInt();
+                box.removeFromRight (captionGap);
+            }
         }
     }
 
@@ -181,6 +193,10 @@ void Decorator::configure (MagicGUIBuilder& builder, const juce::ValueTree& node
     auto sizeVar = builder.getStyleProperty (IDs::captionSize, node);
     if (! sizeVar.isVoid())
         captionSize = static_cast<float> (sizeVar);
+
+    auto gapVar = builder.getStyleProperty (IDs::captionGap, node);
+    if (! gapVar.isVoid())
+        captionGap = static_cast<float> (gapVar);
 
     auto placementVar = builder.getStyleProperty (IDs::captionPlacement, node);
     if (! placementVar.isVoid() && placementVar.toString().isNotEmpty())
@@ -220,6 +236,7 @@ void Decorator::reset()
     caption.clear();
     justification = juce::Justification::centredTop;
     captionSize   = 20.0f;
+    captionGap    = 0.0f;
     captionColour = juce::Colours::silver;
 
     tabCaption.clear();

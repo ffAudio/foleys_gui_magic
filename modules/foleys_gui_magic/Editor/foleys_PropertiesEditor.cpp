@@ -276,6 +276,7 @@ void PropertiesEditor::addDecoratorProperties()
     array.add (new StyleChoicePropertyComponent (builder, IDs::visibility, styleItem, builder.createPropertiesMenuLambda()));
     array.add (new StyleTextPropertyComponent (builder, IDs::caption, styleItem));
     array.add (new StyleTextPropertyComponent (builder, IDs::captionSize, styleItem));
+    array.add (new StyleTextPropertyComponent (builder, IDs::captionGap, styleItem));
     array.add (new StyleColourPropertyComponent (builder, IDs::captionColour, styleItem));
     array.add (new StyleChoicePropertyComponent (builder, IDs::captionPlacement, styleItem, getAllKeyNames (makeJustificationsChoices())));
     array.add (new StyleTextPropertyComponent (builder, IDs::tooltip, styleItem));

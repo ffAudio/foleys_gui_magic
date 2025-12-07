@@ -83,6 +83,7 @@ private:
     juce::String        caption;
     juce::Justification justification = juce::Justification::centredTop;
     float               captionSize   = 20.0f;
+    float               captionGap    = 0.0f;
     juce::Colour        captionColour = juce::Colours::silver;
 
     juce::String        tabCaption;
