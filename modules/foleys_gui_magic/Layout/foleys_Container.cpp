@@ -392,7 +392,7 @@ Container::Scroller::Scroller (Container& ownerToUse)
 void Container::Scroller::paint (juce::Graphics& g)
 {
     auto b = owner.getClientBounds();
-    owner.decorator.drawDecorator (g, {-b.getX(), -b.getY(), owner.getWidth(), owner.getHeight()});
+    owner.decorator.drawDecorator (g, {-b.getX(), -b.getY(), owner.getWidth(), owner.getHeight()}, owner.getLookAndFeel());
 }
 
 void Container::Scroller::setBackgroundColour (juce::Colour colour)

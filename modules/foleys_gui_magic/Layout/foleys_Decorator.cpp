@@ -36,7 +36,7 @@
 namespace foleys
 {
 
-void Decorator::drawDecorator (juce::Graphics& g, juce::Rectangle<int> bounds)
+void Decorator::drawDecorator (juce::Graphics& g, juce::Rectangle<int> bounds, juce::LookAndFeel& lookAndFeel)
 {
     juce::Graphics::ScopedSaveState stateSave (g);
 
@@ -85,7 +85,7 @@ void Decorator::drawDecorator (juce::Graphics& g, juce::Rectangle<int> bounds)
 
         g.setColour (captionColour);
 
-        g.setFont (captionSize * 0.8f);
+        g.setFont (lookAndFeel.getPopupMenuFont().withHeight (captionSize * 0.8f));
         g.drawFittedText (caption, clientBounds.caption, justification.getOnlyHorizontalFlags(), 1);
     }
 }
