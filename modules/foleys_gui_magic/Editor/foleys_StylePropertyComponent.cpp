@@ -75,7 +75,32 @@ StylePropertyComponent::StylePropertyComponent (MagicGUIBuilder& builderToUse, j
     remove.setConnectedEdges (juce::TextButton::ConnectedOnLeft | juce::TextButton::ConnectedOnRight);
     remove.onClick = [&]
     {
-        node.removeProperty (property, &builder.getUndoManager());
+        // Three states:
+        // 1) Property has a non-empty value -> set to empty string
+        // 2) Property is explicitly empty string -> remove property entirely
+        // 3) Property not set (only default) -> do nothing
+
+        if (node.hasProperty (property))
+        {
+            if (node.getProperty (property).toString().isEmpty())
+            {
+                // State 2 -> State 3: remove property entirely
+                // Break the label's Value binding BEFORE removing to prevent sync-back
+                if (auto* label = dynamic_cast<juce::Label*>(editor.get()))
+                {
+                    juce::Value disconnected;
+                    label->getTextValue().referTo (disconnected);
+                }
+                node.removeProperty (property, &builder.getUndoManager());
+            }
+            else
+            {
+                // State 1 -> State 2: set to empty string
+                node.setProperty (property, "", &builder.getUndoManager());
+            }
+        }
+        // State 3: property not set, do nothing (button should be disabled)
+
         refresh();
     };
 

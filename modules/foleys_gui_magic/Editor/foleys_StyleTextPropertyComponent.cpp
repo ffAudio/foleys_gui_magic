@@ -69,11 +69,13 @@ void StyleTextPropertyComponent::refresh()
         if (node == inheritedFrom)
         {
             label->getTextValue().referTo (node.getPropertyAsValue (property, &builder.getUndoManager()));
+            label->setColour (juce::Label::textColourId, EditorColours::text);
         }
         else
         {
             label->getTextValue().referTo (label->getTextValue());
             label->setText (value.toString(), juce::dontSendNotification);
+            label->setColour (juce::Label::textColourId, EditorColours::disabledText);
         }
     }
 
