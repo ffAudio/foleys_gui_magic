@@ -445,7 +445,14 @@ void MagicGUIBuilder::draggedItemOnto (juce::ValueTree dragged, juce::ValueTree 
     if (targetParent.isValid() != false && index < 0)
         index = targetParent.indexOf (target);
 
+    // Check if target is a container by creating a temporary item
+    bool targetIsContainer = false;
     if (target.getType() == IDs::view)
+        targetIsContainer = true;
+    else if (auto tempItem = createGuiItem (juce::ValueTree (target.getType())))
+        targetIsContainer = tempItem->isContainer();
+
+    if (targetIsContainer)
         target.addChild (dragged, index, &undo);
     else
         targetParent.addChild (dragged, index, &undo);
