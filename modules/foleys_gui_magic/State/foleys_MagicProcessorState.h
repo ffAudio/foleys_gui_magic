@@ -132,6 +132,21 @@ public:
      */
     int  getLastController() const;
 
+    /**
+     Returns the last MIDI Channel on which MIDI was received by MIDI Mapper
+     */
+     int getLastMidiChannel() const;
+
+    /**
+     Returns the last MIDI Note received by MIDI Mapper
+     */
+     int getLastMidiNote() const;
+
+    /**
+     Returns the last MIDI Velocity received by MIDI Mapper
+     */
+     int getLastMidiVelocity() const;
+
 private:
 
     void addParametersToMenu (const juce::AudioProcessorParameterGroup& group, juce::PopupMenu& menu, int& index) const;

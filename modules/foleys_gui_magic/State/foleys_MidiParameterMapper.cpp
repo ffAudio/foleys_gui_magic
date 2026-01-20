@@ -59,10 +59,11 @@ void MidiParameterMapper::processMidiBuffer (juce::MidiBuffer& buffer)
 
     for (auto m : buffer)
     {
-        if (m.getMessage().isController())
+        juce::MidiMessage mm = m.getMessage();
+        if (mm.isController())
         {
-            auto number = m.getMessage().getControllerNumber();
-            auto value  = m.getMessage().getControllerValue() / 127.0f;
+            auto number = mm.getControllerNumber();
+            auto value  = mm.getControllerValue() / 127.0f;
             lastController.store (number);
 
             if (isLocked)
@@ -78,6 +79,11 @@ void MidiParameterMapper::processMidiBuffer (juce::MidiBuffer& buffer)
                     p->endChangeGesture();
                 }
             }
+        } else if (mm.isNoteOn())
+        {
+            lastMidiChannel.store(mm.getChannel());
+            lastMidiNote.store(mm.getNoteNumber());
+            lastMidiVelocity.store(mm.getVelocity());
         }
     }
 
@@ -90,6 +96,20 @@ void MidiParameterMapper::mapMidiController (int cc, const juce::String& paramet
     auto mappings = getMappingSettings();
 
     juce::ValueTree node { IDs::mapping, {{IDs::cc, cc}, {IDs::parameter, parameterID}} };
+
+    // If mapping already there, remove it:
+    if (mappings.isValid()) {
+      int index = 0;
+      while (index < mappings.getNumChildren()) {
+        const auto& child = mappings.getChild (index);
+        if (int (child.getProperty (IDs::cc, -1)) == cc && child.getProperty (IDs::parameter, juce::String()).toString() == parameterID) {
+          mappings.removeChild (child, nullptr);
+          return;
+        } else
+          ++index;
+      }
+    }
+    // Otherwise add it:
     mappings.appendChild (node, nullptr);
 }
 
@@ -130,6 +150,21 @@ void MidiParameterMapper::unmapAllMidiController (int cc)
 int MidiParameterMapper::getLastController() const
 {
     return lastController.load();
+}
+
+int MidiParameterMapper::getLastMidiChannel() const
+{
+    return lastMidiChannel.load();
+}
+
+int MidiParameterMapper::getLastMidiNote() const
+{
+    return lastMidiNote.load();
+}
+
+int MidiParameterMapper::getLastMidiVelocity() const
+{
+    return lastMidiVelocity.load();
 }
 
 juce::ValueTree MidiParameterMapper::getMappingSettings()
