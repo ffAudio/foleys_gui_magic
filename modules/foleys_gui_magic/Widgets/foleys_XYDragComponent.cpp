@@ -63,6 +63,18 @@ void XYDragComponent::setCrossHair (bool horizontal, bool vertical)
     wantsHorizontalDrag = vertical;
 }
 
+/**
+ This sets the dot type at the crosshair intersection.
+
+ @param dot plots as a filled circle
+ @param zero plots as an unfilled circle (O)
+ @param pole plots as a cross (X)
+ */
+void XYDragComponent::setDotType (DOT_TYPE dotTypeToDraw)
+{
+    dotType = dotTypeToDraw;
+}
+
 void XYDragComponent::paint (juce::Graphics& g)
 {
     const auto x   = getXposition();
@@ -90,12 +102,31 @@ void XYDragComponent::paint (juce::Graphics& g)
     }
 
     g.setColour (findColour (mouseOverDot ? xyDotOverColourId : xyDotColourId));
-    g.fillEllipse (x - radius, y - radius, 2 * radius, 2 * radius);
+    if (dotType == DOT_TYPE_DOT) {
+        g.fillEllipse (x - radius, y - radius, 2 * radius, 2 * radius);
+    } else if (dotType == DOT_TYPE_POLE) {
+        g.drawLine (x - radius, y - radius, x + radius, y + radius, lineThickness);
+        g.drawLine (x - radius, y + radius, x + radius, y - radius, lineThickness);
+    } else if (dotType == DOT_TYPE_ZERO) {
+        g.drawEllipse (x - radius, y - radius, 2 * radius, 2 * radius, lineThickness);
+    } else if (dotType == DOT_TYPE_POLE_ZERO) {
+        g.drawEllipse (x - radius, y - radius, 2 * radius, 2 * radius, lineThickness);
+        g.drawLine (x - radius, y - radius, x + radius, y + radius, lineThickness);
+        g.drawLine (x - radius, y + radius, x + radius, y - radius, lineThickness);
+    } else {
+        DBG("*** XYDragComponent: Invalid dotType " << dotType);
+    }
 }
 
 void XYDragComponent::setParameterX (juce::RangedAudioParameter* parameter)
 {
     xAttachment.attachToParameter (parameter);
+}
+
+void XYDragComponent::setLineThickness (float thickness)
+{
+    lineThickness = thickness;
+    repaint();
 }
 
 void XYDragComponent::setParameterY (juce::RangedAudioParameter* parameter)
