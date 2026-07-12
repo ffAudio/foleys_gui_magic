@@ -1,5 +1,5 @@
 var foleys__ApplicationSettings_8h =
 [
     [ "ApplicationSettings", "classfoleys_1_1ApplicationSettings.html", "classfoleys_1_1ApplicationSettings" ],
-    [ "SharedApplicationSettings", "namespacefoleys.html#a2c6907407c2021408191599934b8c4e6", null ]
+    [ "foleys::SharedApplicationSettings", "namespacefoleys.html#a2c6907407c2021408191599934b8c4e6", null ]
 ];

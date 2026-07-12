@@ -10,7 +10,7 @@ var hierarchy =
     [ "AudioProcessorEditor", null, [
       [ "MagicPluginEditor", "classfoleys_1_1MagicPluginEditor.html", null ]
     ] ],
-    [ "Box< T >", "structfoleys_1_1Box.html", null ],
+    [ "Box&lt; T &gt;", "structfoleys_1_1Box.html", null ],
     [ "ChangeBroadcaster", null, [
       [ "ApplicationSettings", "classfoleys_1_1ApplicationSettings.html", null ]
     ] ],
@@ -23,7 +23,7 @@ var hierarchy =
       [ "StyleColourPropertyComponent", "classfoleys_1_1StyleColourPropertyComponent.html", null ],
       [ "StyleGradientPropertyComponent", "classfoleys_1_1StyleGradientPropertyComponent.html", null ]
     ] ],
-    [ "ClientBounds", "structfoleys_1_1Decorator_1_1ClientBounds.html", null ],
+    [ "Decorator::ClientBounds", "structfoleys_1_1Decorator_1_1ClientBounds.html", null ],
     [ "Component", null, [
       [ "FileBrowserDialog", "classfoleys_1_1FileBrowserDialog.html", null ],
       [ "GUITreeEditor", "classfoleys_1_1GUITreeEditor.html", null ],
@@ -45,7 +45,7 @@ var hierarchy =
       [ "MagicLevelMeter", "classfoleys_1_1MagicLevelMeter.html", null ],
       [ "MagicPlotComponent", "classfoleys_1_1MagicPlotComponent.html", null ],
       [ "MidiDrumpadComponent", "classfoleys_1_1MidiDrumpadComponent.html", null ],
-      [ "Pad", "classfoleys_1_1MidiDrumpadComponent_1_1Pad.html", null ],
+      [ "MidiDrumpadComponent::Pad", "classfoleys_1_1MidiDrumpadComponent_1_1Pad.html", null ],
       [ "MidiLearnComponent", "classfoleys_1_1MidiLearnComponent.html", null ],
       [ "Palette", "classfoleys_1_1Palette.html", null ],
       [ "PropertiesEditor", "classfoleys_1_1PropertiesEditor.html", null ],
@@ -67,7 +67,7 @@ var hierarchy =
     [ "KeyListener", null, [
       [ "ToolBox", "classfoleys_1_1ToolBox.html", null ]
     ] ],
-    [ "Listener", "classfoleys_1_1MagicGUIBuilder_1_1Listener.html", [
+    [ "MagicGUIBuilder::Listener", "classfoleys_1_1MagicGUIBuilder_1_1Listener.html", [
       [ "ToolBox", "classfoleys_1_1ToolBox.html", null ]
     ] ],
     [ "Listener", null, [
@@ -78,7 +78,7 @@ var hierarchy =
       [ "RadioButtonHandler", "classfoleys_1_1RadioButtonHandler.html", null ]
     ] ],
     [ "Listener", null, [
-      [ "Pad", "classfoleys_1_1MidiDrumpadComponent_1_1Pad.html", null ]
+      [ "MidiDrumpadComponent::Pad", "classfoleys_1_1MidiDrumpadComponent_1_1Pad.html", null ]
     ] ],
     [ "Listener", null, [
       [ "RadioButtonHandler", "classfoleys_1_1RadioButtonHandler.html", null ]
@@ -118,7 +118,7 @@ var hierarchy =
         [ "Skeuomorphic", "classfoleys_1_1Skeuomorphic.html", null ]
       ] ]
     ] ],
-    [ "LookAndFeelMethods", "structfoleys_1_1MagicLevelMeter_1_1LookAndFeelMethods.html", null ],
+    [ "MagicLevelMeter::LookAndFeelMethods", "structfoleys_1_1MagicLevelMeter_1_1LookAndFeelMethods.html", null ],
     [ "MagicGUIState", "classfoleys_1_1MagicGUIState.html", [
       [ "MagicProcessorState", "classfoleys_1_1MagicProcessorState.html", null ]
     ] ],
