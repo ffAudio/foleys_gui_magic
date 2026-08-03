@@ -241,7 +241,7 @@ juce::Rectangle<int> GuiItem::resolvePosition (juce::Rectangle<int> parent)
 
 void GuiItem::paint (juce::Graphics& g)
 {
-    decorator.drawDecorator (g, getLocalBounds());
+    decorator.drawDecorator (g, getLocalBounds(), getLookAndFeel());
 }
 
 juce::Rectangle<int> GuiItem::getClientBounds() const
