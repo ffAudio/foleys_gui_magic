@@ -66,9 +66,12 @@
 #include "Visualisers/foleys_MagicFilterPlot.cpp"
 #include "Visualisers/foleys_MagicAnalyser.cpp"
 #include "Visualisers/foleys_MagicOscilloscope.cpp"
+#include "Visualisers/foleys_MagicOscilloscopeAudio.cpp"
+#include "Visualisers/foleys_MagicScatterPlot.cpp"
 
 #include "Widgets/foleys_MagicLevelMeter.cpp"
 #include "Widgets/foleys_MagicPlotComponent.cpp"
+#include "Widgets/foleys_MagicAudioPlotComponent.cpp"
 #include "Widgets/foleys_XYDragComponent.cpp"
 #include "Widgets/foleys_FileBrowserDialog.cpp"
 #include "Widgets/foleys_MidiLearnComponent.cpp"
