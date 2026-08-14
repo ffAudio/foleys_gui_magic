@@ -38,6 +38,7 @@ namespace foleys
 
 void MidiDisplayComponent::setMagicProcessorState (MagicProcessorState* state)
 {
+    setColour (textColourId, juce::Colours::silver);
     processorState = state;
     startTimerHz (4);
 }
@@ -46,20 +47,20 @@ void MidiDisplayComponent::paint (juce::Graphics& g)
 {
     if (processorState)
     {
-      auto channel = processorState->getLastMidiChannel();
-      auto text = juce::String("Channel: " + (channel > 0 ? juce::String (channel) : "unknown"));
+        auto channel = processorState->getLastMidiChannel();
+        auto text    = juce::String ("Channel: " + (channel > 0 ? juce::String (channel) : "unknown"));
 
-      auto note = processorState->getLastMidiNote();
-      text += ("\nNote: " + (note > 0 ? juce::String (note) : "unknown"));
+        auto note = processorState->getLastMidiNote();
+        text += ("\nNote: " + (note > 0 ? juce::String (note) : "unknown"));
 
-      auto velocity = processorState->getLastMidiVelocity();
-      text += ("\nVelocity: " + (velocity > 0 ? juce::String (velocity) : "unknown"));
+        auto velocity = processorState->getLastMidiVelocity();
+        text += ("\nVelocity: " + (velocity > 0 ? juce::String (velocity) : "unknown"));
 
-      auto cc = processorState->getLastController();
-      text += ("\nCC: " + (cc > 0 ? juce::String (cc) : "unknown"));
+        auto cc = processorState->getLastController();
+        text += ("\nCC: " + (cc > 0 ? juce::String (cc) : "unknown"));
 
-      g.setColour (juce::Colours::silver);
-      g.drawFittedText (text, getLocalBounds(), juce::Justification::centred, 1);
+        g.setColour (findColour (textColourId));
+        g.drawFittedText (text, getLocalBounds(), juce::Justification::centred, 1);
     }
 }
 
@@ -83,4 +84,4 @@ void MidiDisplayComponent::timerCallback()
     repaint();
 }
 
-}
+}  // namespace foleys

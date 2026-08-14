@@ -44,11 +44,17 @@ class MagicProcessorState;
  The MidiDisplayComponent displays the last moved CC controller and allows via dragging
  onto a knob to connect to its parameter
  */
-class MidiDisplayComponent  : public juce::Component,
-                              public juce::SettableTooltipClient,
-                              private juce::Timer
+class MidiDisplayComponent
+  : public juce::Component
+  , public juce::SettableTooltipClient
+  , private juce::Timer
 {
 public:
+    enum ColourIds
+    {
+        textColourId = 0x2002000,
+    };
+
     MidiDisplayComponent() = default;
 
     void setMagicProcessorState (MagicProcessorState* state);
@@ -57,7 +63,6 @@ public:
     void mouseDrag (const juce::MouseEvent& event) override;
 
 private:
-
     void timerCallback() override;
 
     MagicProcessorState* processorState = nullptr;
@@ -65,4 +70,4 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiDisplayComponent)
 };
 
-}
+}  // namespace foleys
