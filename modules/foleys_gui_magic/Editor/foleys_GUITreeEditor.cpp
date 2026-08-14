@@ -207,7 +207,14 @@ juce::var GUITreeEditor::GuiTreeItem::getDragSourceDescription()
 
 bool GUITreeEditor::GuiTreeItem::isInterestedInDragSource (const juce::DragAndDropTarget::SourceDetails&)
 {
-    return itemNode.getType() == IDs::view;
+    if (itemNode.getType() == IDs::view)
+        return true;
+
+    // Check if this node type creates a container
+    if (auto tempItem = builder.createGuiItem (juce::ValueTree (itemNode.getType())))
+        return tempItem->isContainer();
+
+    return false;
 }
 
 void GUITreeEditor::GuiTreeItem::itemDropped (const juce::DragAndDropTarget::SourceDetails &dragSourceDetails, int index)
