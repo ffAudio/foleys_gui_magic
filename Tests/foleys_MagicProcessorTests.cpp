@@ -41,7 +41,8 @@
 
 TEST_CASE ("MagicProcessor test", "[processor]")
 {
-    std::unique_ptr<juce::AudioProcessor> processor (new UnitTestProcessor());
+    juce::ScopedJuceInitialiser_GUI             juceInit;
+    auto                                        processor = std::make_unique<UnitTestProcessor>();
     std::unique_ptr<juce::AudioProcessorEditor> editor (processor->createEditor());
     REQUIRE (editor.get() != nullptr);
 }

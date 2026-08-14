@@ -42,7 +42,8 @@
 
 TEST_CASE ("GUI tree test", "[gui]")
 {
-std::unique_ptr<juce::AudioProcessor> processor (new UnitTestProcessor());
-std::unique_ptr<juce::AudioProcessorEditor> editor (processor->createEditor());
-REQUIRE (editor.get() != nullptr);
+    juce::ScopedJuceInitialiser_GUI             juceInit;
+    auto                                        processor = std::make_unique<UnitTestProcessor>();
+    std::unique_ptr<juce::AudioProcessorEditor> editor (processor->createEditor());
+    REQUIRE (editor.get() != nullptr);
 }
