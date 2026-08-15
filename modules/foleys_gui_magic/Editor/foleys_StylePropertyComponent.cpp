@@ -87,10 +87,7 @@ StylePropertyComponent::StylePropertyComponent (MagicGUIBuilder& builderToUse, j
                 // State 2 -> State 3: remove property entirely
                 // Break the label's Value binding BEFORE removing to prevent sync-back
                 if (auto* label = dynamic_cast<juce::Label*>(editor.get()))
-                {
-                    juce::Value disconnected;
-                    label->getTextValue().referTo (disconnected);
-                }
+                    label->getTextValue().referTo ({});
                 node.removeProperty (property, &builder.getUndoManager());
             }
             else
