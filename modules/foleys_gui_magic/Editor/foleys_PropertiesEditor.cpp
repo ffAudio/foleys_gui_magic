@@ -143,17 +143,22 @@ void PropertiesEditor::setNodeToEdit (juce::ValueTree node)
 
     juce::Array<juce::PropertyComponent*> additional;
 
+    bool isContainer = false;
     if (stylesheet.isClassNode (styleItem))
     {
         for (auto factoryName : builder.getFactoryNames())
             addTypeProperties (factoryName, {});
+        isContainer = true;
     }
     else
     {
         addTypeProperties (styleItem.getType(), additional);
+        juce::ValueTree tempNode (styleItem.getType());
+        if (auto item = builder.createGuiItem (tempNode))
+            isContainer = item->isContainer();
     }
 
-    if (styleItem.getType() == IDs::view || stylesheet.isClassNode (styleItem))
+    if (isContainer)
         addContainerProperties();
 
     if (stylesheet.isClassNode (styleItem))
