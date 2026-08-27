@@ -77,6 +77,21 @@ public:
     int  getLastController() const;
 
     /*!
+     * @return the last MIDI Channel on which MIDI was received by MIDI Mapper
+     */
+    int  getLastMidiChannel() const;
+
+    /*!
+     * @return the last MIDI Note received by MIDI Mapper
+     */
+    int  getLastMidiNote() const;
+
+    /*!
+     * @return the last MIDI Velocity received by MIDI Mapper
+     */
+    int  getLastMidiVelocity() const;
+
+    /*!
      * Grant access to the ValueTree to save or restore the mappings manually
      * @return the ValueTree containing the mappings
      */
@@ -98,6 +113,9 @@ private:
 
     MagicProcessorState&        state;
     std::atomic<int>            lastController { -1 };
+    std::atomic<int>            lastMidiChannel { -1 };
+    std::atomic<int>            lastMidiNote { -1 };
+    std::atomic<int>            lastMidiVelocity { -1 };
     MidiMapping                 midiMapper;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiParameterMapper)
